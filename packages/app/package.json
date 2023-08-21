@@ -1,0 +1,34 @@
+{
+  "name": "@slender/app",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:clean": "rimraf .next && yarn build",
+    "start": "next start",
+    "prod": "yarn build && next start"
+  },
+  "dependencies": {
+    "@types/styled-components": "^5.1.26",
+    "classnames": "^2.3.2",
+    "next": "^13.4.19",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.0.7"
+  },
+  "devDependencies": {
+    "@svgr/webpack": "^6.2.1",
+    "@types/node": "^18.17.6",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "18.2.7",
+    "eslint-config-next": "^13.4.19",
+    "eslint-plugin-react": "^7.33.2"
+  },
+  "engines": {
+    "node": ">=18.17.1",
+    "yarn": ">=1.0.0",
+    "npm": "please-use-yarn"
+  }
+}
