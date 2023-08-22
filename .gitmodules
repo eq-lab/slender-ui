@@ -1,0 +1,3 @@
+[submodule "lib/uikit"]
+	path = lib/uikit
+	url = git@github.com:equilibrium-eosdt/uikit.git
