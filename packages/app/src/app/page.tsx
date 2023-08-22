@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import '@marginly/ui/styles/reset.css'
 
 export default function Home() {
   return (
