@@ -1,93 +1,146 @@
+'use client'
 import Image from 'next/image'
-import styles from './page.module.css'
+import {
+  Container,
+  Header,
+  LogoLink,
+  Wrapper,
+  HeaderButton,
+  TItle,
+  Pluses,
+  ProtocolRow,
+  Protocol,
+  Fund,
+  RatesBox,
+  RatesPack,
+  RatesAside,
+  RatesInfoUnit,
+  RatesTitle,
+  RatesDescription,
+  SugarBlock,
+  SugarInner,
+  Launch,
+  InputBox,
+  InputLabel,
+  Button,
+  Form,
+  LaunchBg,
+} from './styled'
+import './style.css'
+import Space from './common/space'
+import { useState, useRef } from 'react'
+import { useClickOutside } from './use-click-outside'
+import cn from 'classnames'
 
 export default function Home() {
+  const [email, setEmail] = useState('')
+
+  const [isEmailFocused, setIsEmailFocesed] = useState(false)
+  const [isEmailError, setIsEmailError] = useState(false)
+  const ref = useRef(null)
+
+  useClickOutside(ref, () => setIsEmailFocesed(false))
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <main>
+      <Wrapper>
+        <Pluses src="/img/decor.png" alt="" />
+        <Header>
+          <Container>
+            <LogoLink>
+              <img src="/img/logo.svg" alt="" />
+            </LogoLink>
+            <a href="#launch">
+              <HeaderButton className="md">Subscribe</HeaderButton>
+            </a>
+          </Container>
+        </Header>
+        <Space height={200} heightMobile={136} />
+        <Container>
+          <h1>
+            <TItle>
+              Lend & borrow fat stakes at <span className="nobr">a fairer</span> interest{' '}
+              <span className="accent">with no liquidations</span>
+            </TItle>
+          </h1>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+          <Space height={116} heightMobile={74} />
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+          <ProtocolRow>
+            <Protocol>
+              #1 lending protocol on <img src="/img/stellar.svg" alt="" />
+            </Protocol>
+            <Fund>
+              <img src="/img/fund.svg" alt="" /> <span>Supported by Stellar Community Fund</span>
+            </Fund>
+          </ProtocolRow>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+          <Space height={98} heightMobile={96} />
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
+          <RatesBox>
+            <RatesPack src="/img/bag.png" alt="" />
+            <RatesAside>
+              <div>
+                <RatesInfoUnit>
+                  <RatesTitle>Dynamic & fair interest</RatesTitle>
+                  <RatesDescription>
+                    Rates are based on a smooth hyperbolic function without inflection points
+                  </RatesDescription>
+                </RatesInfoUnit>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>Instantly deploy your Next.js site to a shareable URL with Vercel.</p>
-        </a>
-      </div>
+                <RatesInfoUnit>
+                  <RatesTitle>Competitive passive yield</RatesTitle>
+                  <RatesDescription>
+                    Put your $XLM and other funds to work by&nbsp;supplying to Slender
+                  </RatesDescription>
+                </RatesInfoUnit>
+
+                <RatesInfoUnit>
+                  <RatesTitle className="liquidations">No liquidations</RatesTitle>
+                  <RatesDescription>
+                    We don't run risky auctions in case <span className="nobr">of borrowers'</span>{' '}
+                    defaults
+                  </RatesDescription>
+                </RatesInfoUnit>
+              </div>
+
+              <SugarBlock>
+                <SugarInner>
+                  <img src="/img/sugar.svg" alt="" />
+                  <img src="/img/nosugar.svg" alt="" />
+                </SugarInner>
+                <img src="/img/barcode.svg" alt="" />
+              </SugarBlock>
+            </RatesAside>
+          </RatesBox>
+        </Container>
+
+        <Launch id="launch">
+          <LaunchBg src="/img/end.png" alt="" />
+          <Container>
+            <Space height={200} heightMobile={128} />
+
+            <TItle className="title">Be the first to&nbsp;know about our launch</TItle>
+
+            <Space height={80} heightMobile={68} />
+            <Form>
+              <InputBox
+                ref={ref}
+                onClick={() => {
+                  setIsEmailFocesed(true)
+                }}
+                className={cn({ focused: isEmailFocused, error: isEmailError })}
+              >
+                <InputLabel>Your email</InputLabel>
+                <input value={email} className="input" onChange={(e) => setEmail(e.target.value)} />
+              </InputBox>
+
+              <Button>Subscribe</Button>
+            </Form>
+            <Space height={150} heightMobile={150} />
+          </Container>
+        </Launch>
+      </Wrapper>
     </main>
   )
 }
