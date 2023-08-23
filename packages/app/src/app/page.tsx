@@ -13,7 +13,7 @@ export default function Home() {
         <div className="mobile">
           <MobilePlaceholder />
         </div>
-      </LayoutSwitcher>{' '}
+      </LayoutSwitcher>
     </main>
   )
 }
