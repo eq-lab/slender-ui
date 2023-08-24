@@ -11,12 +11,15 @@
     "prod": "yarn build && next start"
   },
   "dependencies": {
+    "@stellar/freighter-api": "^1.6.0",
     "@types/styled-components": "^5.1.26",
     "classnames": "^2.3.2",
     "next": "^13.4.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^6.0.7"
+    "scheduler": "^0.23.0",
+    "styled-components": "^6.0.7",
+    "use-context-selector": "^1.4.1"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.2.1",
@@ -24,6 +27,7 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "18.2.7",
     "eslint-config-next": "^13.4.19",
+    "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.33.2"
   },
   "engines": {

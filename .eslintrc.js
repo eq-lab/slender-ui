@@ -28,6 +28,7 @@ module.exports = {
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
     'react/jsx-key': 'error',
     'react/jsx-boolean-value': ['error', 'never'],
+    'react/jsx-no-constructed-context-values': 'off',
     'react/jsx-curly-brace-presence': ['error', 'never'],
     'import/no-unresolved': 'error',
     'import/no-extraneous-dependencies': 'off',
