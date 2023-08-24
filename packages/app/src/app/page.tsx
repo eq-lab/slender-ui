@@ -1,10 +1,13 @@
 import '@marginly/ui/styles/reset.css'
+import { Providers } from '../global/providers'
+import { Header } from '../widgets/header'
 
 export default function Home() {
   return (
     <main>
-      <h2>Slender App</h2>
-      <p>TBD</p>
+      <Providers>
+        <Header />
+      </Providers>
     </main>
   )
 }
