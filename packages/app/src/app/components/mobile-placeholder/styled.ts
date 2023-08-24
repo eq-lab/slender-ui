@@ -1,6 +1,6 @@
 import { styled } from 'styled-components'
 
-export const LayoutSwitcher = styled.div`
+export const LayoutSwitcherStyled = styled.div`
   .desktop {
     display: none;
   }
@@ -25,8 +25,9 @@ export const Wrapper = styled.div`
   line-height: 40px;
   position: relative;
   overflow: hidden;
-  font-family: 'PlusJakartaSans', sans-serif;
   font-weight: 700;
+  font-family: var(--primary-font);
+
   .bg {
     height: 744px;
     width: auto;

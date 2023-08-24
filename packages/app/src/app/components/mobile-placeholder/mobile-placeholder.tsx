@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { Container, Logo, Wrapper } from '../../components/mobile-placeholder.tsx/styled'
+import { Container, Logo, Wrapper } from './styled'
 
-function MobilePlaceholder() {
+export function MobilePlaceholder() {
   return (
     <Wrapper>
       <img src="/img/bg.png" alt="" className="bg" />
@@ -21,5 +21,3 @@ function MobilePlaceholder() {
     </Wrapper>
   )
 }
-
-export default MobilePlaceholder

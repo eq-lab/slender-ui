@@ -2,18 +2,13 @@
 
 import React from 'react'
 import '@marginly/ui/styles/reset.css'
-import { LayoutSwitcher } from '../../components/mobile-placeholder.tsx/styled'
-import MobilePlaceholder from './mobile-placeholder'
+import { LayoutSwitcher } from './components/layout-switcher'
+import { MobilePlaceholder } from './components/mobile-placeholder/mobile-placeholder'
 
 export default function Home() {
   return (
     <main>
-      <LayoutSwitcher>
-        <div className="desktop">app </div>
-        <div className="mobile">
-          <MobilePlaceholder />
-        </div>
-      </LayoutSwitcher>{' '}
+      <LayoutSwitcher desktop="app" mobile={<MobilePlaceholder />} />
     </main>
   )
 }
