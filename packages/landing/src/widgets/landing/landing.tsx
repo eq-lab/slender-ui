@@ -2,6 +2,7 @@
 
 import React, { ChangeEvent, useState } from 'react'
 import cn from 'classnames'
+import { sendEmail } from '@/widgets/landing/api'
 import {
   Container,
   Header,
@@ -45,8 +46,9 @@ export function Landing() {
     const emailIsValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
     setEmailHasError(!emailIsValid)
     if (emailIsValid) {
-      // TODO send
-      setEmail('')
+      sendEmail(email).then(() => {
+        setEmail('')
+      })
     } else {
       setEmailHasError(true)
     }
