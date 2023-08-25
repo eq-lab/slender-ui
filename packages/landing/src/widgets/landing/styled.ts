@@ -92,16 +92,9 @@ export const Title = styled.div`
   font-size: 48px;
   font-variation-settings: 'wght' 500;
   line-height: 64px;
-  .accent {
-    color: rgb(242, 237, 235);
-    opacity: 0.48;
-  }
   @media (min-width: 1024px) {
     font-size: 64px;
     line-height: 72px;
-    .accent {
-      white-space: nowrap;
-    }
   }
 `
 

@@ -72,8 +72,7 @@ export function Landing() {
         <Container>
           <h1>
             <Title>
-              Lend & borrow fat stakes at <span className="nobr">a fairer</span> interest{' '}
-              <span className="accent">with no liquidations</span>
+              Lend & borrow fat stakes at <span className="nobr">a fairer</span> interest
             </Title>
           </h1>
 
