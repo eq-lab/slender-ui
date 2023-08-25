@@ -1,5 +1,7 @@
 'use client'
-import Image from 'next/image'
+
+import React, { useState, useRef } from 'react'
+import cn from 'classnames'
 import {
   Container,
   Header,
@@ -28,9 +30,7 @@ import {
 } from './styled'
 import './style.css'
 import Space from './common/space'
-import { useState, useRef } from 'react'
 import { useClickOutside } from './use-click-outside'
-import cn from 'classnames'
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -98,8 +98,8 @@ export default function Home() {
                 <RatesInfoUnit>
                   <RatesTitle className="liquidations">No liquidations</RatesTitle>
                   <RatesDescription>
-                    We don't run risky auctions in case <span className="nobr">of borrowers'</span>{' '}
-                    defaults
+                    We don&apos;t run risky auctions in case{' '}
+                    <span className="nobr">of borrowers&apos;</span> defaults
                   </RatesDescription>
                 </RatesInfoUnit>
               </div>

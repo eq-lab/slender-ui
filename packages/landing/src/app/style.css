@@ -1,12 +1,11 @@
 @font-face {
-  font-family: "PlusJakartaSans";
+  font-family: 'PlusJakartaSans';
   font-display: swap;
-  src: url("/fonts/PlusJakartaSans-VariableFont_wght.ttf") format("truetype");
+  src: url('/fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
 }
 
-
 body {
-  font-family:"PlusJakartaSans", sans-serif;
+  font-family: 'PlusJakartaSans', sans-serif;
   line-height: 1.5;
   box-sizing: border-box;
   margin: 0;
@@ -14,7 +13,7 @@ body {
   max-width: 100vw;
   overflow-x: hidden !important;
   background: #000;
-  font-variation-settings: "wght" 500;
+  font-variation-settings: 'wght' 500;
   letter-spacing: 0.01em;
   font-weight: normal;
   text-shadow: 0 0 0;
@@ -23,14 +22,13 @@ body {
 
 h1,
 h2,
-h3, 
+h3,
 h4,
 h5,
 h6 {
   font-weight: normal;
   text-shadow: 0 0 0;
-  font-family:"PlusJakartaSans", sans-serif;
-
+  font-family: 'PlusJakartaSans', sans-serif;
 }
 
 p,
@@ -53,8 +51,8 @@ a:hover {
 
 button,
 input {
-  font-family:"PlusJakartaSans", sans-serif;
-  font-variation-settings: "wght" 500;
+  font-family: 'PlusJakartaSans', sans-serif;
+  font-variation-settings: 'wght' 500;
   font-size: 16px;
   border: 0;
   outline: 0;
@@ -62,13 +60,16 @@ input {
   background: transparent;
 }
 
-button {cursor: pointer; transition: 300ms ease-out;}
- 
+button {
+  cursor: pointer;
+  transition: 300ms ease-out;
+}
+
 input:focus {
   outline: unset;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
@@ -78,10 +79,10 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-input[type="range"],
-input[type="range"]::-webkit-slider-thumb,
-input[type="range"]::-webkit-media-slider-thumb,
-input[type="range"]::-webkit-slider-runnable-track {
+input[type='range'],
+input[type='range']::-webkit-slider-thumb,
+input[type='range']::-webkit-media-slider-thumb,
+input[type='range']::-webkit-slider-runnable-track {
   appearance: none;
   box-sizing: border-box;
   border: 0;
@@ -95,7 +96,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   -moz-appearance: none;
 }
 
-input[type="range"]:focus {
+input[type='range']:focus {
   outline: none;
 }
 
@@ -111,16 +112,20 @@ body {
 
 input:invalid {
   -webkit-box-shadow: none;
-  box-shadow: none; }
+  box-shadow: none;
+}
 
 input:moz-submit-invalid {
   -webkit-box-shadow: none;
-  box-shadow: none; }
+  box-shadow: none;
+}
 
 textarea:invalid {
   -webkit-box-shadow: none;
-  box-shadow: none; }
+  box-shadow: none;
+}
 
 textarea:moz-submit-invalid {
   -webkit-box-shadow: none;
-  box-shadow: none; }
+  box-shadow: none;
+}
