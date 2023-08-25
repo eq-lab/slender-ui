@@ -1,0 +1,21 @@
+name: Unit tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+    unit_tests:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3
+          with:
+            submodules: recursive
+        - name: Use Node.js 18.17.1
+          uses: actions/setup-node@v3
+          with:
+            node-version: 18.17.1
+        - name: Build for testing
+          run: |
+            yarn
+            yarn test
