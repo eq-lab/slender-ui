@@ -1,5 +1,5 @@
 import React from 'react'
-import { LayoutSwitcherStyled } from './mobile-placeholder/styled'
+import { LayoutSwitcherStyled } from './styled'
 
 interface Props {
   mobile: React.ReactNode
