@@ -3,11 +3,8 @@
 import { styled } from 'styled-components'
 
 export const Wrapper = styled.div`
-  font-family: 'PlusJakartaSans', sans-serif;
   position: relative;
-  * {
-    font-family: 'PlusJakartaSans', sans-serif;
-  }
+  font-family: var(--primary-font);
   .nobr {
     white-space: nowrap;
   }
@@ -349,7 +346,6 @@ export const InputBox = styled.div`
   font-size: 16px;
   font-variation-settings: 'wght' 500;
   letter-spacing: 0.16px;
-  font-family: 'PlusJakartaSans', sans-serif;
   position: relative;
   transition: 200ms ease-out;
   text-align: left;
