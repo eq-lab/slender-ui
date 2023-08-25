@@ -35,7 +35,7 @@ export default function Home() {
   const [email, setEmail] = useState('')
 
   const [isEmailFocused, setIsEmailFocesed] = useState(false)
-  const [isEmailError, setIsEmailError] = useState(false)
+  const [isEmailError, setIsEmailFocused] = useState(false)
   const ref = useRef(null)
 
   useClickOutside(ref, () => setIsEmailFocesed(false))
