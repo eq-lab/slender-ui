@@ -43,7 +43,7 @@ export default function Home() {
         <Header>
           <Container>
             <LogoLink>
-              <img src="/img/logo.svg" alt="" />
+              <img src="/img/logo.svg" alt="Slender logo" />
             </LogoLink>
             <a href="#launch">
               <HeaderButton className="md">Subscribe</HeaderButton>
@@ -63,7 +63,7 @@ export default function Home() {
 
           <ProtocolRow>
             <Protocol>
-              #1 lending protocol on <img src="/img/stellar.svg" alt="" />
+              #1 lending protocol on <img src="/img/stellar.svg" alt="Stellar" />
             </Protocol>
             <Fund>
               <img src="/img/fund.svg" alt="" /> <span>Supported by Stellar Community Fund</span>
@@ -101,9 +101,9 @@ export default function Home() {
               <SugarBlock>
                 <SugarInner>
                   <img src="/img/sugar.svg" alt="" />
-                  <img src="/img/nosugar.svg" alt="" />
+                  <img src="/img/nosugar.svg" alt="No added sugar" />
                 </SugarInner>
-                <img src="/img/barcode.svg" alt="" />
+                <img src="/img/barcode.svg" alt="Barcode" />
               </SugarBlock>
             </RatesAside>
           </RatesBox>
