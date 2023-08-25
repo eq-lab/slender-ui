@@ -34,12 +34,10 @@ h5,
 h6 {
   font-weight: normal;
   text-shadow: 0 0 0;
-  font-family: 'PlusJakartaSans', sans-serif;
 }
 
 p,
 a {
-  /* color: var(--text-primary); */
   margin: 0;
 }
 
@@ -57,7 +55,6 @@ a:hover {
 
 button,
 input {
-  font-family: 'PlusJakartaSans', sans-serif;
   font-variation-settings: 'wght' 500;
   font-size: 16px;
   border: 0;
