@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Slender',
-  description: 'Lend & borrow fat stakes at a fairer interest with no liquidations',
+  description: 'Lend & borrow fat stakes at a fairer interest',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

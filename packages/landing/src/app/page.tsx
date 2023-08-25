@@ -91,10 +91,9 @@ export default function Home() {
                 </RatesInfoUnit>
 
                 <RatesInfoUnit>
-                  <RatesTitle className="liquidations">No liquidations</RatesTitle>
+                  <RatesTitle className="liquidations">Flash-loans</RatesTitle>
                   <RatesDescription>
-                    We don&apos;t run risky auctions in case{' '}
-                    <span className="nobr">of borrowers&apos;</span> defaults
+                    Borrow and repay in the same block with no&nbsp;collateral.
                   </RatesDescription>
                 </RatesInfoUnit>
               </div>
