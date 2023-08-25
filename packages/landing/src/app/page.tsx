@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import cn from 'classnames'
 import {
   Container,
@@ -29,16 +29,12 @@ import {
   LaunchBg,
 } from './styled'
 import { Space } from './common/space'
-import { useClickOutside } from './use-click-outside'
 
 export default function Home() {
   const [email, setEmail] = useState('')
 
   const [isEmailFocused, setIsEmailFocused] = useState(false)
   const [isEmailError, setIsEmailError] = useState(false)
-  const ref = useRef(null)
-
-  useClickOutside(ref, () => setIsEmailFocused(false))
 
   return (
     <main>
@@ -124,10 +120,8 @@ export default function Home() {
             <Space height={80} heightMobile={68} />
             <Form>
               <InputBox
-                ref={ref}
-                onClick={() => {
-                  setIsEmailFocused(true)
-                }}
+                onFocus={() => setIsEmailFocused(true)}
+                onBlur={() => setIsEmailFocused(false)}
                 className={cn({ focused: isEmailFocused, error: isEmailError })}
               >
                 <InputLabel>Your email</InputLabel>
