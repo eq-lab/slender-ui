@@ -70,24 +70,6 @@
   }
 }
 
-@font-face {
-  font-family: 'PlusJakartaSans';
-  font-display: swap;
-  src: url('/fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'PlusJakartaSans';
-  font-display: swap;
-  font-weight: 700;
-  src: url('/fonts/PlusJakartaSans-Bold.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'PlusJakartaSans';
-  font-display: swap;
-  font-weight: 500;
-  src: url('/fonts/PlusJakartaSans-Medium.ttf') format('truetype');
-}
-
 * {
   box-sizing: border-box;
   padding: 0;
@@ -98,7 +80,7 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family: 'PlusJakartaSans', sans-serif;
+  font-family: PlusJakartaSans, sans-serif;
   font-weight: 500;
   text-shadow: 0 0 0;
 }

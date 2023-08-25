@@ -1,26 +1,12 @@
 'use client'
 
-import localFont from 'next/font/local'
+import { Plus_Jakarta_Sans as PlusJakartaSans } from 'next/font/google'
 import { createGlobalStyle } from 'styled-components'
 
-export const primaryFont = localFont({
-  src: [
-    {
-      style: 'normal',
-      weight: '500',
-      path: '/fonts/PlusJakartaSans-Medium.ttf',
-    },
-    {
-      style: 'normal',
-      weight: '700',
-      path: '/fonts/PlusJakartaSans-Bold.ttf',
-    },
-  ],
-  fallback: ['sans-serif'],
-})
+export const primaryFont = PlusJakartaSans({ subsets: ['latin'] })
 
 export const GlobalStyle = createGlobalStyle`
-  :root {
+:root {
   --primary-font: ${primaryFont.style.fontFamily};
 }
 
@@ -55,5 +41,4 @@ a {
     color-scheme: dark;
   }
 }
-
 `

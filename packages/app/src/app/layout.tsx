@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import React from 'react'
-import { Providers } from '../global/providers'
-import { GlobalStyle } from './globals'
+import { Providers } from '@/global/providers'
+import { MobilePlaceholder } from '@/global/mobile-placeholder/mobile-placeholder'
+import { LayoutSwitcher } from '@/global/mobile-placeholder/layout-switcher'
+import { GlobalStyle } from '@/global/styles'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,8 +17,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <Providers>
       <html lang="en">
-        <GlobalStyle />
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <GlobalStyle />
+          <LayoutSwitcher desktop={children} mobile={<MobilePlaceholder />} />
+        </body>
       </html>
     </Providers>
   )
