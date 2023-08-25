@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { getUserInfo, isConnected as getIsConnected } from '@stellar/freighter-api'
 import { WalletContext } from './context'
 
-export function WalletProvider({ children }: { children: JSX.Element }) {
+export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [address, setAddress] = useState<string | null>(null)
   const [isConnected, setIsConnected] = useState<boolean | null>(null)
 
