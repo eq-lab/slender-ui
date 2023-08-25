@@ -1,6 +1,6 @@
-import './globals.css'
+import '@/global/globals.css'
 import type { Metadata } from 'next'
-import { GlobalStyle } from './style'
+import { GlobalStyle } from '@/global/styles'
 
 export const metadata: Metadata = {
   title: 'Slender',
