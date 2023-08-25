@@ -4,7 +4,6 @@ import { styled } from 'styled-components'
 
 export const Wrapper = styled.div`
   position: relative;
-  font-family: var(--primary-font);
   .nobr {
     white-space: nowrap;
   }
