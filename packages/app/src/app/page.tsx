@@ -1,10 +1,11 @@
+import React from 'react'
 import '@marginly/ui/styles/reset.css'
+import { Header } from '@/widgets/header'
 
 export default function Home() {
   return (
     <main>
-      <h2>Slender App</h2>
-      <p>TBD</p>
+      <Header />
     </main>
   )
 }

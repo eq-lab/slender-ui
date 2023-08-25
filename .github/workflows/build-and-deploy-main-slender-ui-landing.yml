@@ -1,17 +1,16 @@
-name: Build and deploy Slender UI APP
+name: Build and deploy Slender UI LANDING
 on:
   push:
     branches:
-      - stage
-      - dev
-      - develop
+      - main
+      - master
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-${{ github.ref_name}}-app
-  SERVICE_NAME: ${{ secrets.SERVICE_NAME }}-${{ github.ref_name }}-app
-  NAMESPACE: ${{ secrets.NAMESPACE_DEV }}
+  IMAGE_NAME: ${{ github.repository }}-${{ github.ref_name}}-landing
+  SERVICE_NAME: ${{ secrets.SERVICE_NAME }}-${{ github.ref_name }}-landing
+  NAMESPACE: ${{ secrets.NAMESPACE_PROD }}
   GH_SECR: ${{ secrets.GH_SECR }}
   CLUSTER: ${{ secrets.CLUSTER }}
   LIMIT_CPU: "500m"
@@ -19,7 +18,7 @@ env:
   HELM_REPOSITORY: "eq-lab/devops-helm-charts-deploy"
 
 jobs:
-  build-image-app:
+  build-image-landing:
     runs-on: ubuntu-latest
     outputs:
         output_tag: ${{ steps.tag_env.outputs.tag }}
@@ -52,17 +51,20 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          build-args: BUILD_CONTEXT=app
+          build-args: BUILD_CONTEXT=landing
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
       - name: 'testsleep'
-        run: sleep 30
+        run: |
+              sleep 10
+              echo "test sleep"
   
 
-  deployment-app:
-    needs: build-image-app
+  deployment-landing:
+    needs: build-image-landing
     runs-on: 'ubuntu-latest'
     steps:
     - uses: azure/setup-kubectl@v3
@@ -106,32 +108,7 @@ jobs:
           --set service.enabled=true \
           --set image.repository=$REGISTRY \
           --set image.name=$REGISTRY/$IMAGE_NAME \
-          --set image.tag=${{ needs.build-image-app.outputs.output_tag }} \
+          --set image.tag=${{ needs.build-image-landing.outputs.output_tag }} \
           --set resources.limits.cpu=$LIMIT_CPU \
           --set resources.limits.memory=$LIMIT_MEMORY \
-          ./ 
-    - name: 'virtualservice'
-      run: |
-          cat <<EOF >virtualservice.yml
-          apiVersion: networking.istio.io/v1alpha3
-          kind: VirtualService
-          metadata:
-            name: $SERVICE_NAME
-            namespace: $NAMESPACE
-          spec:
-            gateways:
-              - frontend-stage/frontend-stage
-            hosts:
-              - $SERVICE_NAME.dev.eq
-              - $SERVICE_NAME.stage.eq
-            http:
-              - match:
-                  - uri:
-                      prefix: /
-                route:
-                  - destination:
-                      host: $SERVICE_NAME
-                      port:
-                        number: 3000
-          EOF
-          kubectl apply -f virtualservice.yml
+          ./

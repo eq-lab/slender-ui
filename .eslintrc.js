@@ -28,6 +28,7 @@ module.exports = {
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
     'react/jsx-key': 'error',
     'react/jsx-boolean-value': ['error', 'never'],
+    'react/jsx-no-constructed-context-values': 'off',
     'react/jsx-curly-brace-presence': ['error', 'never'],
     'import/no-unresolved': 'error',
     'import/no-extraneous-dependencies': 'off',
@@ -59,7 +60,7 @@ module.exports = {
     'import/resolver': {
       typescript: {
         alwaysTryTypes: true, // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
-        project: 'packages/*/tsconfig.json',
+        project: path.join(__dirname, 'packages/*/tsconfig.json'),
       },
     },
   },
