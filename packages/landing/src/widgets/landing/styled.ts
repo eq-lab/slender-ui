@@ -4,7 +4,6 @@ import { styled } from 'styled-components'
 
 export const Wrapper = styled.div`
   position: relative;
-  font-family: var(--primary-font);
   .nobr {
     white-space: nowrap;
   }
@@ -36,6 +35,7 @@ export const Header = styled.header`
   z-index: 99;
   ${Container} {
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     background: rgba(204, 187, 184, 0.16);
     padding: 4px;
     border-radius: 8px;
@@ -67,6 +67,7 @@ export const Button = styled.button`
   font-size: 16px;
   font-weight: 700;
   font-variation-settings: 'wght' 700;
+  color: #000;
   letter-spacing: 0.48px;
   &.md {
     height: 48px;
@@ -77,8 +78,8 @@ export const Button = styled.button`
 
 export const HeaderButton = styled(Button)`
   box-shadow:
-    0px 4px 8px 0px rgba(51, 20, 0, 0.08),
-    0px 2px 1px 0px rgba(51, 20, 0, 0.04);
+    0 4px 8px 0 rgba(51, 20, 0, 0.08),
+    0 2px 1px 0 rgba(51, 20, 0, 0.04);
   background: rgba(204, 187, 184, 0.16);
   color: #faf8f7;
   &:hover {
@@ -86,21 +87,14 @@ export const HeaderButton = styled(Button)`
   }
 `
 
-export const TItle = styled.div`
+export const Title = styled.div`
   color: #faf8f7;
   font-size: 48px;
   font-variation-settings: 'wght' 500;
   line-height: 64px;
-  .accent {
-    color: rgb(242, 237, 235);
-    opacity: 0.48;
-  }
   @media (min-width: 1024px) {
     font-size: 64px;
     line-height: 72px;
-    .accent {
-      white-space: nowrap;
-    }
   }
 `
 
@@ -135,7 +129,6 @@ export const ProtocolRow = styled.div`
   @media (min-width: 1024px) {
     flex-direction: row;
     align-items: center;
-    justify-content: center;
     justify-content: space-between;
   }
 `
@@ -169,7 +162,6 @@ export const Fund = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   gap: 8px;
   span {
     color: rgb(242, 237, 235);
@@ -428,6 +420,6 @@ export const LaunchBg = styled.img`
   @media (min-width: 1440px) {
     height: 976px;
     bottom: -460px;
-    left: 0px;
+    left: 0;
   }
 `

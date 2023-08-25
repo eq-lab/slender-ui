@@ -28,7 +28,6 @@ export const Wrapper = styled.div`
   position: relative;
   overflow: hidden;
   font-weight: 700;
-  font-family: var(--primary-font);
 
   .bg {
     height: 744px;
