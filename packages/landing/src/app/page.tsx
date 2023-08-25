@@ -33,7 +33,7 @@ import { Space } from './common/space'
 export default function Home() {
   const [email, setEmail] = useState('')
 
-  const [isEmailFocused, setIsEmailFocused] = useState(false)
+  const [emailIsFocused, setEmailIsFocused] = useState(false)
   const [isEmailError, setIsEmailError] = useState(false)
 
   return (
@@ -119,9 +119,9 @@ export default function Home() {
             <Space height={80} heightMobile={68} />
             <Form>
               <InputBox
-                onFocus={() => setIsEmailFocused(true)}
-                onBlur={() => setIsEmailFocused(false)}
-                className={cn({ focused: isEmailFocused, error: isEmailError })}
+                onFocus={() => setEmailIsFocused(true)}
+                onBlur={() => setEmailIsFocused(false)}
+                className={cn({ focused: !!email || emailIsFocused, error: isEmailError })}
               >
                 <InputLabel>Your email</InputLabel>
                 <input value={email} className="input" onChange={(e) => setEmail(e.target.value)} />
