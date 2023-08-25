@@ -28,8 +28,7 @@ import {
   Form,
   LaunchBg,
 } from './styled'
-import './style.css'
-import Space from './common/space'
+import { Space } from './common/space'
 import { useClickOutside } from './use-click-outside'
 
 export default function Home() {

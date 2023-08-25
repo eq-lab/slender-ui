@@ -1,11 +1,17 @@
-@font-face {
-  font-family: 'PlusJakartaSans';
-  font-display: swap;
-  src: url('/fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
+'use client'
+
+import { Plus_Jakarta_Sans as PlusJakartaSans } from 'next/font/google'
+import { createGlobalStyle } from 'styled-components'
+
+export const primaryFont = PlusJakartaSans({ subsets: ['latin'] })
+
+export const GlobalStyle = createGlobalStyle`
+:root {
+  --primary-font: ${primaryFont.style.fontFamily};
 }
 
 body {
-  font-family: 'PlusJakartaSans', sans-serif;
+  font-family: var(--primary-font);
   line-height: 1.5;
   box-sizing: border-box;
   margin: 0;
@@ -129,3 +135,4 @@ textarea:moz-submit-invalid {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+`
