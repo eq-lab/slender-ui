@@ -1,6 +1,10 @@
 name: Build and deploy Slender UI LANDING
 on:
   push:
+    branches:
+      - stage
+      - dev
+      - develop
   workflow_dispatch:
 
 env:
