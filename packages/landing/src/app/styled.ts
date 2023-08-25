@@ -36,6 +36,7 @@ export const Header = styled.header`
   z-index: 99;
   ${Container} {
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     background: rgba(204, 187, 184, 0.16);
     padding: 4px;
     border-radius: 8px;
@@ -67,6 +68,7 @@ export const Button = styled.button`
   font-size: 16px;
   font-weight: 700;
   font-variation-settings: 'wght' 700;
+  color: #000;
   letter-spacing: 0.48px;
   &.md {
     height: 48px;
