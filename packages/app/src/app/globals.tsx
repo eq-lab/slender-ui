@@ -8,12 +8,12 @@ export const primaryFont = localFont({
     {
       style: 'normal',
       weight: '500',
-      path: './fonts/PlusJakartaSans-Medium.ttf',
+      path: '/fonts/PlusJakartaSans-Medium.ttf',
     },
     {
       style: 'normal',
       weight: '700',
-      path: './fonts/PlusJakartaSans-Bold.ttf',
+      path: '/fonts/PlusJakartaSans-Bold.ttf',
     },
   ],
   fallback: ['sans-serif'],
