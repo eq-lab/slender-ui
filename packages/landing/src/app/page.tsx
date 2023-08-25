@@ -8,7 +8,7 @@ import {
   LogoLink,
   Wrapper,
   HeaderButton,
-  TItle,
+  Title,
   Pluses,
   ProtocolRow,
   Protocol,
@@ -53,10 +53,10 @@ export default function Home() {
         <Space height={200} heightMobile={136} />
         <Container>
           <h1>
-            <TItle>
+            <Title>
               Lend & borrow fat stakes at <span className="nobr">a fairer</span> interest{' '}
               <span className="accent">with no liquidations</span>
-            </TItle>
+            </Title>
           </h1>
 
           <Space height={116} heightMobile={74} />
@@ -114,7 +114,7 @@ export default function Home() {
           <Container>
             <Space height={200} heightMobile={128} />
 
-            <TItle className="title">Be the first to&nbsp;know about our launch</TItle>
+            <Title className="title">Be the first to&nbsp;know about our launch</Title>
 
             <Space height={80} heightMobile={68} />
             <Form>
