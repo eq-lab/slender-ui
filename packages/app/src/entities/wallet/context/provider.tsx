@@ -32,7 +32,6 @@ export function WalletProvider({ children }: { children: JSX.Element }) {
   }, [isConnected])
 
   return (
-    // @ts-expect-error Server Component
     <WalletContext.Provider value={{ address, setAddress, isConnected }}>
       {children}
     </WalletContext.Provider>
