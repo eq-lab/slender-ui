@@ -56,11 +56,12 @@ export function Landing() {
 
   return (
     <main>
+      <div id="top-anchor" />
       <Wrapper>
         <Pluses src="/img/decor.png" alt="" />
         <Header>
           <Container>
-            <LogoLink>
+            <LogoLink href="#top-anchor">
               <img src="/img/logo.svg" alt="Slender logo" />
             </LogoLink>
             <a href="#launch">
@@ -108,9 +109,9 @@ export function Landing() {
                 </RatesInfoUnit>
 
                 <RatesInfoUnit>
-                  <RatesTitle className="liquidations">Flash-loans</RatesTitle>
+                  <RatesTitle className="liquidations">flash-loans</RatesTitle>
                   <RatesDescription>
-                    Borrow and repay in the same block with no&nbsp;collateral.
+                    Borrow and repay in the same block with no&nbsp;collateral
                   </RatesDescription>
                 </RatesInfoUnit>
               </div>
@@ -129,7 +130,7 @@ export function Landing() {
         <Launch id="launch">
           <LaunchBg src="/img/end.png" alt="" />
           <Container>
-            <Space height={200} heightMobile={128} />
+            <Space height={192} heightMobile={128} />
 
             <Title className="title">Be the first to&nbsp;know about our launch</Title>
 
@@ -146,7 +147,7 @@ export function Landing() {
 
               <Button onClick={handleSubscribe}>Subscribe</Button>
             </Form>
-            <Space height={150} heightMobile={150} />
+            <Space height={192} heightMobile={192} />
           </Container>
         </Launch>
       </Wrapper>
