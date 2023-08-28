@@ -6,7 +6,6 @@ export function Header() {
   return (
     <S.Wrapper>
       <div>Slender</div>
-      {/* @ts-expect-error Server Component */}
       <ConnectButton />
     </S.Wrapper>
   )
