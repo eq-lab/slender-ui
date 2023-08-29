@@ -73,7 +73,10 @@ export function Landing() {
         <Container>
           <h1>
             <Title>
-              Lend & borrow fat stakes at <span className="nobr">a fairer</span> interest
+              Lend & borrow fat stakes{' '}
+              <div>
+                at <span className="nobr">a fairer</span> interest
+              </div>
             </Title>
           </h1>
 

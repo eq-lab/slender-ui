@@ -95,6 +95,9 @@ export const Title = styled.div`
   font-size: 48px;
   font-variation-settings: 'wght' 500;
   line-height: 64px;
+  & > div {
+    color: rgba(242, 237, 235, 0.48);
+  }
   @media (min-width: 1024px) {
     font-size: 64px;
     line-height: 72px;
