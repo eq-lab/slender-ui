@@ -23,6 +23,7 @@ module.exports = {
         object: true,
       },
     ],
+    'no-shadow': 'off',
     '@typescript-eslint/no-shadow': 'error',
     'jsx-a11y/anchor-is-valid': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
