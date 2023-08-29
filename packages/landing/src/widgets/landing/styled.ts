@@ -4,6 +4,7 @@ import { styled } from 'styled-components'
 
 export const Wrapper = styled.div`
   position: relative;
+  overflow: hidden;
   .nobr {
     white-space: nowrap;
   }
@@ -27,11 +28,11 @@ export const Container = styled.div`
 
 export const Header = styled.header`
   position: fixed;
-  top: 16px;
+  top: 20px;
   left: 50%;
   width: 100%;
   transform: translateX(-50%);
-  padding: 0 24px;
+  padding: 0 16px;
   z-index: 99;
   ${Container} {
     backdrop-filter: blur(12px);
@@ -49,7 +50,9 @@ export const Header = styled.header`
 `
 
 export const LogoLink = styled.a`
-  padding: 12px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
   img {
     height: 24px;
     object-fit: contain;
@@ -92,6 +95,9 @@ export const Title = styled.div`
   font-size: 48px;
   font-variation-settings: 'wght' 500;
   line-height: 64px;
+  & > div {
+    color: rgba(242, 237, 235, 0.48);
+  }
   @media (min-width: 1024px) {
     font-size: 64px;
     line-height: 72px;
@@ -342,6 +348,7 @@ export const InputBox = styled.div`
   transition: 200ms ease-out;
   text-align: left;
   height: 64px;
+  backdrop-filter: blur(12px);
 
   .input {
     background: transparent;
