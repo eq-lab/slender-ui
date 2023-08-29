@@ -55,8 +55,7 @@ export function Landing() {
   }
 
   return (
-    <main>
-      <div id="top-anchor" />
+    <main id="top-anchor">
       <Wrapper>
         <Pluses src="/img/decor.png" alt="" />
         <Header>
