@@ -1,6 +1,9 @@
-// TODO update when env var is added
-// const SEND_EMAIL_STAGE_PATH = 'https://api-stage.slender.fi/api/users'
-const SEND_EMAIL_PATH = 'https://api.slender.fi/api/users'
+import { isProduction } from '@/shared/config'
+
+const SEND_EMAIL_PROD_PATH = 'https://api.slender.fi/api/users'
+const SEND_EMAIL_DEV_PATH = 'https://api-stage.slender.fi/api/users'
+
+const SEND_EMAIL_PATH = isProduction ? SEND_EMAIL_PROD_PATH : SEND_EMAIL_DEV_PATH
 
 async function postData(url = '', data = {}) {
   // Default options are marked with *
