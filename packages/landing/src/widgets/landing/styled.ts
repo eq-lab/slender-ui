@@ -95,7 +95,7 @@ export const Title = styled.div`
   font-size: 48px;
   font-variation-settings: 'wght' 500;
   line-height: 64px;
-  & > div {
+  > div {
     color: rgba(242, 237, 235, 0.48);
   }
   @media (min-width: 1024px) {
@@ -313,7 +313,7 @@ export const Launch = styled.div`
     align-items: center;
     justify-content: center;
     text-align: center;
-    & > * {
+    > * {
       width: 100%;
       position: relative;
       z-index: 2;
@@ -387,7 +387,7 @@ export const Form = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  & > * {
+  > * {
     width: 100%;
   }
   @media (min-width: 1024px) {
