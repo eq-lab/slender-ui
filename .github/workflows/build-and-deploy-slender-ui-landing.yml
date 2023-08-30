@@ -52,7 +52,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          build-args: BUILD_CONTEXT=landing,${{ vars.DEPLOY_ENVIRONMENT_DEV }}
+          build-args: |
+             BUILD_CONTEXT=landing
+             ${{ vars.DEPLOY_ENVIRONMENT_DEV }}
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
