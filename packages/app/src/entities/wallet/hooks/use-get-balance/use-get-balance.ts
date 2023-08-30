@@ -1,8 +1,8 @@
 import * as SorobanClient from 'soroban-client'
 import { useEffect, useState } from 'react'
 import { useContextSelector } from 'use-context-selector'
+import { FUTURENET_NETWORK_DETAILS, SOROBAN_RPC_URLS } from '@/shared/stellar-constants/networks'
 import { WalletContext } from '../../context/context'
-import { FUTURENET_NETWORK_DETAILS, SOROBAN_RPC_URLS } from '../../constants/networks'
 import { accountIdentifier, decodeStr, decodeU32, decodei128 } from './decoders'
 
 interface SorobanTokenRecord {
