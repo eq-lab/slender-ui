@@ -53,7 +53,7 @@ jobs:
         with:
           build-args: |
             BUILD_CONTEXT=landing
-            ${{ vars.DEPLOY_ENVIRONMENT_PROD }}
+            DEPLOY_ENVIRONMENT_ARG=${{ vars.DEPLOY_ENVIRONMENT_PROD }}
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
