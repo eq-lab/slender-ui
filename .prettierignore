@@ -3,6 +3,7 @@
 # dependencies
 .pnp
 .pnp.js
+contract-bindings
 lib
 
 # testing

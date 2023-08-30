@@ -8,7 +8,8 @@
   "license": "MIT",
   "workspaces": [
     "packages/*",
-    "lib/*"
+    "lib/*",
+    "contract-bindings/*"
   ],
   "scripts": {
     "prepare": "husky install",

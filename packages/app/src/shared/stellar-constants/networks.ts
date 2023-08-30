@@ -1,14 +1,6 @@
-interface NetworkDetails {
-  network: string
-  networkName: string
-  networkUrl: string
-  networkPassphrase: string
-  friendbotUrl?: string
-}
-
 export enum NETWORK_NAMES {
-  TESTNET = 'Test Net',
   PUBNET = 'Main Net',
+  TESTNET = 'Test Net',
   FUTURENET = 'Future Net',
 }
 
@@ -31,6 +23,14 @@ export enum FRIENDBOT_URLS {
 
 export const SOROBAN_RPC_URLS = {
   FUTURENET: 'https://rpc-futurenet.stellar.org/',
+}
+
+interface NetworkDetails {
+  network: string
+  networkName: string
+  networkUrl: string
+  networkPassphrase: string
+  friendbotUrl?: string
 }
 
 export const FUTURENET_NETWORK_DETAILS: NetworkDetails = {
