@@ -55,6 +55,7 @@ a:hover {
 
 button,
 input {
+  font-family: var(--primary-font);
   font-variation-settings: 'wght' 500;
   font-size: 16px;
   border: 0;
