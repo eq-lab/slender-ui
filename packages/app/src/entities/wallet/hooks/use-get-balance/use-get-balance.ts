@@ -1,7 +1,7 @@
 import * as SorobanClient from 'soroban-client'
 import { useEffect, useState } from 'react'
 import { useContextSelector } from 'use-context-selector'
-import { FUTURENET_NETWORK_DETAILS, SOROBAN_RPC_URLS } from '@/shared/stellar-constants/networks'
+import { FUTURENET_NETWORK_DETAILS } from '@/shared/stellar-constants/networks'
 import { WalletContext } from '../../context/context'
 import { accountIdentifier, decodeStr, decodeU32, decodei128 } from './decoders'
 
@@ -23,7 +23,7 @@ type TxToOp = {
   }
 }
 
-const server = new SorobanClient.Server(SOROBAN_RPC_URLS.FUTURENET, {
+const server = new SorobanClient.Server(FUTURENET_NETWORK_DETAILS.rpcUrl, {
   allowHttp: FUTURENET_NETWORK_DETAILS.networkUrl.startsWith('http://'),
 })
 
