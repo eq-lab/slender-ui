@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { getReserve } from 'LendingPool'
 
-export function useDiscount(tokenAddress: string): number | undefined {
-  const [entries, setEntries] = useState<number>()
+const DISCOUNT_PRECISION = 10_000
+
+export function useDiscount(tokenAddress: string): { discount?: number; multiplier: number } {
+  const [discount, setDiscount] = useState<number>()
 
   useEffect(() => {
     ;(async () => {
@@ -10,9 +12,9 @@ export function useDiscount(tokenAddress: string): number | undefined {
         asset: tokenAddress,
       })
       // @ts-ignore
-      setEntries(methodResponse.configuration.get('discount'))
+      setDiscount(methodResponse.configuration.get('discount'))
     })()
   }, [tokenAddress])
 
-  return entries
+  return { discount, multiplier: DISCOUNT_PRECISION }
 }

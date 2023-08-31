@@ -13,11 +13,15 @@ COPY ./packages/$BUILD_CONTEXT/package.json packages/$BUILD_CONTEXT/package.json
 COPY ./lib lib
 RUN ls -la /app/lib
 
+COPY ./contract-bindings contract-bindings
+RUN ls -la /app/contract-bindings
+
 RUN yarn --frozen-lockfile
 
 COPY ./packages/$BUILD_CONTEXT packages/$BUILD_CONTEXT
 
 ENV NODE_ENV production
+ENV NEXT_PUBLIC_DEPLOY_ENVIRONMENT=$DEPLOY_ENVIRONMENT_ARG
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
@@ -29,7 +33,6 @@ EXPOSE 3000
 ENV PORT 3000
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV PACKAGE_NAME=$BUILD_CONTEXT
-ENV DEPLOY_ENVIRONMENT=$DEPLOY_ENVIRONMENT_ARG
 
 CMD ["sh", "-c", "yarn workspace @slender/$PACKAGE_NAME start"]
 
