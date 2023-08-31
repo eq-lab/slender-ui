@@ -39,7 +39,7 @@ export const Header = styled.header`
     -webkit-backdrop-filter: blur(12px);
     background: rgba(204, 187, 184, 0.16);
     padding: 4px;
-    border-radius: 8px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -50,7 +50,7 @@ export const Header = styled.header`
 `
 
 export const LogoLink = styled.a`
-  padding: 0 20px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   img {
@@ -104,14 +104,14 @@ export const Title = styled.div`
   }
 `
 
-export const Pluses = styled.img`
+export const Pluses = styled.div`
   position: absolute;
   height: 360px;
-  width: auto;
   object-fit: cover;
   left: 50%;
   top: 0;
   transform: translateX(-44%);
+  width: 867px;
 
   @media (min-width: 765px) {
     transform: translateX(0);
@@ -190,14 +190,15 @@ export const RatesBox = styled.div`
   }
 `
 
-export const RatesPack = styled.img`
+export const RatesPack = styled.div`
+  position: relative;
+  height: 424px;
   width: 100%;
-  height: auto;
-  object-fit: contain;
-  object-position: center;
 
   @media (min-width: 1024px) {
     margin: auto;
+    width: 436px;
+    height: 630px;
   }
 `
 
@@ -322,7 +323,7 @@ export const Launch = styled.div`
 
   @media (min-width: 1024px) {
     .title {
-      max-width: 675px;
+      max-width: 695px;
     }
   }
 `
@@ -349,6 +350,7 @@ export const InputBox = styled.div`
   text-align: left;
   height: 64px;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
   .input {
     background: transparent;
@@ -390,6 +392,13 @@ export const Form = styled.div`
   > * {
     width: 100%;
   }
+  .email {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    object-position: center;
+    margin: 0 auto;
+  }
   @media (min-width: 1024px) {
     max-width: 675px;
     flex-direction: row;
@@ -402,10 +411,10 @@ export const Form = styled.div`
   }
 `
 
-export const LaunchBg = styled.img`
+export const LaunchBg = styled.div`
   position: absolute;
   height: 630px;
-  width: auto;
+  width: 604px;
   object-fit: contain;
   object-position: center;
   right: 60px;
@@ -422,6 +431,8 @@ export const LaunchBg = styled.img`
     height: 976px;
     bottom: -460px;
     left: -80px;
+    height: 976px;
+    width: 936px;
   }
 
   @media (min-width: 1440px) {
