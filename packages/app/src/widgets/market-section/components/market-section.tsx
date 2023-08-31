@@ -1,14 +1,15 @@
 'use client'
 
 import { MarketCard } from '@/widgets/market-section/components/market-card'
-import { tokens } from '@/shared/stellar-constants/tokens'
+import { SUPPORTED_TOKENS, tokens } from '@/shared/stellar-constants/tokens'
 
 export function MarketSection() {
   return (
-    <>
-      <MarketCard token={tokens.usdc} />
-      <MarketCard token={tokens.xlm} />
-      <MarketCard token={tokens.xrp} />
-    </>
+    <div style={{ fontSize: '20px', margin: '1em 2em' }}>
+      <h2>Market</h2>
+      {SUPPORTED_TOKENS.map((tokenName) => (
+        <MarketCard key={tokenName} token={tokens[tokenName]} />
+      ))}
+    </div>
   )
 }

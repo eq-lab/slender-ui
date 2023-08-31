@@ -2,7 +2,9 @@ const XLM_ADDRESS = 'CD4UEK2CF6LEVAIMYRH7DOEN2AP3CKO763UO2HGBXHVCS5DIFTRKIIBM'
 const XRP_ADDRESS = 'CAF2Z5L5INKVZBIQ3CDDAAHUNQOUS6NSYBUI6ZLK2DSHXBZ3I23HM6Q7'
 const USDC_ADDRESS = 'CDZI6HFGUFB7XJWXLOWW6MUQQ6YX3NPA36ADTYNMRRX7H5YG7GK7I7SU'
 
-export type SupportedToken = 'xlm' | 'xrp' | 'usdc'
+export const SUPPORTED_TOKENS = ['usdc', 'xlm', 'xrp'] as const
+
+export type SupportedToken = (typeof SUPPORTED_TOKENS)[number]
 
 export interface Token {
   code: string
