@@ -14,11 +14,15 @@ interface Props {
   type: SupportedToken
 }
 
-const collateralByBorrow: Record<SupportedToken, [SupportedToken, SupportedToken]> = {
-  usdc: ['xlm', 'xrp'],
-  xlm: ['usdc', 'xrp'],
-  xrp: ['usdc', 'xlm'],
-}
+const SUPPORTED_TOKENS: SupportedToken[] = ['usdc', 'xlm', 'xrp']
+
+const getCollateralsByBorrow = <
+  T extends SupportedToken,
+  E = Exclude<SupportedToken, T>,
+  R = [E, E],
+>(
+  token: T,
+): R => SUPPORTED_TOKENS.filter((element) => element !== token) as R
 
 export function SingleBorrowFlow({ type }: Props) {
   const [step, setStep] = useState<Step | null>(null)
@@ -37,7 +41,7 @@ export function SingleBorrowFlow({ type }: Props) {
         onContinue={() => setStep(Step.Collateral)}
         onBorrowValueChange={setBorrowValue}
         borrowType={type}
-        collateralTypes={collateralByBorrow[type]}
+        collateralTypes={getCollateralsByBorrow(type)}
       />
     ),
     [Step.Collateral]: (
@@ -46,7 +50,7 @@ export function SingleBorrowFlow({ type }: Props) {
         onPrev={() => setStep(Step.Borrow)}
         borrowValue={borrowValue}
         borrowType={type}
-        collateralTypes={collateralByBorrow[type]}
+        collateralTypes={getCollateralsByBorrow(type)}
       />
     ),
   }
