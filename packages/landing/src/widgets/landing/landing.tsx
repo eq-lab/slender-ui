@@ -3,6 +3,7 @@
 import React, { ChangeEvent, useState } from 'react'
 import cn from 'classnames'
 import { sendEmail } from '@/widgets/landing/api'
+import Image from 'next/image'
 import {
   Container,
   Header,
@@ -31,11 +32,14 @@ import {
 } from './styled'
 import { Space } from './space'
 
+const imagePlusesSizes = `(max-width: 1440px) 867px, (max-width: 768px) 712px`
+
 export function Landing() {
   const [email, setEmail] = useState('')
 
   const [emailIsFocused, setEmailIsFocused] = useState(false)
   const [emailHasError, setEmailHasError] = useState(false)
+  const [isEmailSend, setIsEmailSend] = useState(false)
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
@@ -47,6 +51,7 @@ export function Landing() {
     setEmailHasError(!emailIsValid)
     if (emailIsValid) {
       sendEmail(email).then(() => {
+        setIsEmailSend(true)
         setEmail('')
       })
     } else {
@@ -57,7 +62,17 @@ export function Landing() {
   return (
     <main id="top-anchor">
       <Wrapper>
-        <Pluses src="/img/decor.png" alt="" />
+        <Pluses>
+          <Image
+            src="/img/decor.png"
+            alt=""
+            fill
+            style={{
+              objectFit: 'contain',
+            }}
+            sizes={imagePlusesSizes}
+          />
+        </Pluses>
         <Header>
           <Container>
             <LogoLink href="#top-anchor">
@@ -93,7 +108,17 @@ export function Landing() {
           <Space height={98} heightMobile={96} />
 
           <RatesBox>
-            <RatesPack src="/img/bag.png" alt="" />
+            <RatesPack>
+              <Image
+                src="/img/bag.png"
+                alt=""
+                fill
+                style={{
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                }}
+              />
+            </RatesPack>
             <RatesAside>
               <div>
                 <RatesInfoUnit>
@@ -130,25 +155,47 @@ export function Landing() {
         </Container>
 
         <Launch id="launch">
-          <LaunchBg src="/img/end.png" alt="" />
+          <LaunchBg>
+            <Image
+              src="/img/end.png"
+              alt=""
+              fill
+              style={{
+                objectFit: 'contain',
+                objectPosition: 'center',
+              }}
+            />
+          </LaunchBg>
           <Container>
             <Space height={192} heightMobile={128} />
 
-            <Title className="title">Be the first to&nbsp;know about our launch</Title>
+            <Title className="title">
+              {isEmailSend ? (
+                <>We will send you an email about our&nbsp;launch</>
+              ) : (
+                <>Be the first to&nbsp;know about our&nbsp;launch</>
+              )}
+            </Title>
 
             <Space height={80} heightMobile={68} />
-            <Form>
-              <InputBox
-                onFocus={() => setEmailIsFocused(true)}
-                onBlur={() => setEmailIsFocused(false)}
-                className={cn({ focused: !!email || emailIsFocused, error: emailHasError })}
-              >
-                <InputLabel>Your email</InputLabel>
-                <input value={email} className="input" onChange={handleEmailChange} />
-              </InputBox>
+            {isEmailSend ? (
+              <Form>
+                <img src="/img/email.svg" alt="" className="email" />
+              </Form>
+            ) : (
+              <Form>
+                <InputBox
+                  onFocus={() => setEmailIsFocused(true)}
+                  onBlur={() => setEmailIsFocused(false)}
+                  className={cn({ focused: !!email || emailIsFocused, error: emailHasError })}
+                >
+                  <InputLabel>Your email</InputLabel>
+                  <input value={email} className="input" onChange={handleEmailChange} />
+                </InputBox>
 
-              <Button onClick={handleSubscribe}>Subscribe</Button>
-            </Form>
+                <Button onClick={handleSubscribe}>Subscribe</Button>
+              </Form>
+            )}
             <Space height={192} heightMobile={192} />
           </Container>
         </Launch>
