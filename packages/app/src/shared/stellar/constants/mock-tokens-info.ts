@@ -1,4 +1,4 @@
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedToken } from './tokens'
 
 export const APR = '−15.7% (FAKE)'
 const USER_USDT = 5000
@@ -12,7 +12,7 @@ const USDC_USD = 1
 const XRP_USD = 0.53
 export const MINIMUM_HEALTH_VALUE = 0.75
 
-export const coinInfoByType: Record<
+export const mockTokenInfoByType: Record<
   SupportedToken,
   { userValue: number; discount: number; usd: number }
 > = {

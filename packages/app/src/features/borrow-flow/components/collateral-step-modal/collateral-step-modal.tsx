@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import {
+  APR,
+  MINIMUM_HEALTH_VALUE,
+  mockTokenInfoByType,
+} from '@/shared/stellar/constants/mock-tokens-info'
+import { Position } from '@/entities/position/types'
 import { ModalLayout } from '../modal-layout'
-import { APR, MINIMUM_HEALTH_VALUE, coinInfoByType } from '../../constants'
 import { formatUsd } from '../../formatters'
-import { Position } from '../../types'
 
 interface Props {
   onClose: () => void
@@ -30,11 +34,11 @@ export function CollateralStepModal({
 
   const [showExtraInput, setShowExtraInput] = useState(false)
 
-  const borrowCoinInfo = coinInfoByType[borrowType]
-  const coreCollateralInfo = coinInfoByType[coreCollateralType]
+  const borrowCoinInfo = mockTokenInfoByType[borrowType]
+  const coreCollateralInfo = mockTokenInfoByType[coreCollateralType]
   const extraCollateralType =
     collateralTypes[0] === coreCollateralType ? collateralTypes[1] : collateralTypes[0]
-  const extraCollateralInfo = coinInfoByType[extraCollateralType]
+  const extraCollateralInfo = mockTokenInfoByType[extraCollateralType]
 
   const borrowValueInUSD = Number(borrowValue) * borrowCoinInfo.usd
 
@@ -103,7 +107,7 @@ export function CollateralStepModal({
         <div>
           {collateralTypes.map((type) => (
             <button key={type} type="button" onClick={() => setCoreCollateralType(type)}>
-              {coinInfoByType[type].userValue} {type} {type === coreCollateralType && '✓'}
+              {mockTokenInfoByType[type].userValue} {type} {type === coreCollateralType && '✓'}
             </button>
           ))}
         </div>

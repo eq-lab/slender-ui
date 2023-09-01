@@ -1,7 +1,13 @@
 import { useMarketData } from '@/entities/market/hooks/use-market-data'
 import { Token } from '@/shared/stellar/constants/tokens'
 
-export function MarketCard({ token }: { token: Token }) {
+export function MarketCard({
+  token,
+  renderBorrowButton,
+}: {
+  token: Token
+  renderBorrowButton: (percent: string) => React.ReactNode
+}) {
   const { discount, liquidationPenalty, borrowInterestRate, lendInterestRate, percentMultiplier } =
     useMarketData(token.address)
 
@@ -19,7 +25,7 @@ export function MarketCard({ token }: { token: Token }) {
       <h4>{token.code}</h4>
       <p>Discount: {formatPercentage(discount)}</p>
       <p>Liquidation penalty: &minus;{formatPercentage(liquidationPenalty)}</p>
-      <button type="button">&minus;{formatPercentage(borrowInterestRate)} Borrow</button>
+      {renderBorrowButton(formatPercentage(borrowInterestRate))}
       <button type="button">+{formatPercentage(lendInterestRate)} Lend</button>
     </div>
   )
