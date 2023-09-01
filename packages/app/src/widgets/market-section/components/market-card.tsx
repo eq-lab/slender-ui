@@ -1,5 +1,5 @@
 import { useMarketData } from '@/entities/market/hooks/use-market-data'
-import { Token } from '@/shared/stellar-constants/tokens'
+import { Token } from '@/shared/stellar/constants/tokens'
 
 export function MarketCard({ token }: { token: Token }) {
   const { discount, liquidationPenalty, borrowInterestRate, lendInterestRate, percentMultiplier } =

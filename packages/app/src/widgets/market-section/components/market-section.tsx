@@ -1,7 +1,7 @@
 'use client'
 
 import { MarketCard } from '@/widgets/market-section/components/market-card'
-import { SUPPORTED_TOKENS, tokens } from '@/shared/stellar-constants/tokens'
+import { SUPPORTED_TOKENS, tokens } from '@/shared/stellar/constants/tokens'
 
 export function MarketSection() {
   return (

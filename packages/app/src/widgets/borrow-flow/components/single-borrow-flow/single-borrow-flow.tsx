@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar-constants/tokens'
+import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tokens'
 import { BorrowStepModal } from '../borrow-step-modal'
 import { CollateralStepModal } from '../collateral-step-modal'
 

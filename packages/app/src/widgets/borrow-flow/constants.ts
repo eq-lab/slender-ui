@@ -1,4 +1,4 @@
-import { SupportedToken } from '@/shared/stellar-constants/tokens'
+import { SupportedToken } from '@/shared/stellar/constants/tokens'
 
 export const APR = '−15.7% (FAKE)'
 const USER_USDT = 5000

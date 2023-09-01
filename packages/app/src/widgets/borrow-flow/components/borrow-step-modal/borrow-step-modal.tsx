@@ -1,5 +1,5 @@
 import React from 'react'
-import { SupportedToken } from '@/shared/stellar-constants/tokens'
+import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { ModalLayout } from '../modal-layout'
 import { APR, MINIMUM_HEALTH_VALUE, coinInfoByType } from '../../constants'
 
