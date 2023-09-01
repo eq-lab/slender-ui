@@ -13,16 +13,13 @@ type PoolData = {
 export function useMarketData(tokenAddress: string): PoolData & {
   percentMultiplier: number
 } {
-  const [{ borrowInterestRate, lendInterestRate, discount, liquidationPenalty }, setData] =
-    useState<PoolData>({})
+  const [data, setData] = useState<PoolData>({})
 
   useEffect(() => {
     ;(async () => {
-      const [poolResponse] = await Promise.all([
-        getReserve({
-          asset: tokenAddress,
-        }),
-      ])
+      const poolResponse = await getReserve({
+        asset: tokenAddress,
+      })
 
       setData({
         borrowInterestRate: poolResponse.borrower_ir,
@@ -36,10 +33,7 @@ export function useMarketData(tokenAddress: string): PoolData & {
   }, [tokenAddress])
 
   return {
-    discount,
-    liquidationPenalty,
-    borrowInterestRate,
-    lendInterestRate,
+    ...data,
     percentMultiplier: PERCENT_PRECISION,
   }
 }
