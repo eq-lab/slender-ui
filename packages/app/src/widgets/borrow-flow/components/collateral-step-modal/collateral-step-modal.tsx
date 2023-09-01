@@ -3,6 +3,7 @@ import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { ModalLayout } from '../modal-layout'
 import { APR, MINIMUM_HEALTH_VALUE, coinInfoByType } from '../../constants'
 import { formatUsd } from '../../formatters'
+import { Position } from '../../types'
 
 interface Props {
   onClose: () => void
@@ -10,6 +11,7 @@ interface Props {
   borrowValue: string
   borrowType: SupportedToken
   collateralTypes: [SupportedToken, SupportedToken]
+  onSend: (value: Position) => void
 }
 
 export function CollateralStepModal({
@@ -18,20 +20,21 @@ export function CollateralStepModal({
   borrowValue,
   borrowType,
   collateralTypes,
+  onSend,
 }: Props) {
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreCollateral, setCoreCollateral] = useState<SupportedToken>(collateralTypes[0])
+  const [coreCollateralType, setCoreCollateralType] = useState<SupportedToken>(collateralTypes[0])
   const [isCollateralListOpen, setIsCollateralListOpen] = useState(false)
 
   const [showExtraInput, setShowExtraInput] = useState(false)
 
   const borrowCoinInfo = coinInfoByType[borrowType]
-  const coreCollateralInfo = coinInfoByType[coreCollateral]
-  const extraCollateral =
-    collateralTypes[0] === coreCollateral ? collateralTypes[1] : collateralTypes[0]
-  const extraCollateralInfo = coinInfoByType[extraCollateral]
+  const coreCollateralInfo = coinInfoByType[coreCollateralType]
+  const extraCollateralType =
+    collateralTypes[0] === coreCollateralType ? collateralTypes[1] : collateralTypes[0]
+  const extraCollateralInfo = coinInfoByType[extraCollateralType]
 
   const borrowValueInUSD = Number(borrowValue) * borrowCoinInfo.usd
 
@@ -51,9 +54,11 @@ export function CollateralStepModal({
     coreCollateralInfo.userValue,
   ])
 
+  const coreCollateral = Number(coreValue) * coreCollateralInfo.discount
+  const extraCollateral = Number(extraValue) * extraCollateralInfo.discount
+
   const collateral =
-    Number(coreValue) * coreCollateralInfo.discount * coreCollateralInfo.usd +
-    Number(extraValue) * extraCollateralInfo.discount * extraCollateralInfo.usd
+    coreCollateral * coreCollateralInfo.usd + extraCollateral * extraCollateralInfo.usd
 
   const health = Math.max(Math.round(collateral && (1 - borrowValueInUSD / collateral) * 100), 0)
   const borrowCapacity = Math.max(collateral - borrowValueInUSD, 0)
@@ -87,7 +92,7 @@ export function CollateralStepModal({
             setCoreValue(e.target.value)
           }}
         />
-        {coreCollateral}
+        {coreCollateralType}
         {!showExtraInput && (
           <button onClick={() => setIsCollateralListOpen((state) => !state)} type="button">
             change collateral
@@ -97,8 +102,8 @@ export function CollateralStepModal({
       {isCollateralListOpen && !showExtraInput && (
         <div>
           {collateralTypes.map((type) => (
-            <button key={type} type="button" onClick={() => setCoreCollateral(type)}>
-              {coinInfoByType[type].userValue} {type} {type === coreCollateral && '✓'}
+            <button key={type} type="button" onClick={() => setCoreCollateralType(type)}>
+              {coinInfoByType[type].userValue} {type} {type === coreCollateralType && '✓'}
             </button>
           ))}
         </div>
@@ -120,10 +125,23 @@ export function CollateralStepModal({
               setExtraValue(e.target.value)
             }}
           />
-          {extraCollateral}
+          {extraCollateralType}
         </div>
       )}
-      <button type="button" disabled={error}>
+      <button
+        type="button"
+        disabled={error}
+        onClick={() =>
+          onSend({
+            debt: Number(borrowValue),
+            debtType: borrowType,
+            collaterals: [
+              { type: coreCollateralType, value: coreCollateral },
+              showExtraInput ? { type: extraCollateralType, value: extraCollateral } : null,
+            ],
+          })
+        }
+      >
         borrow {borrowValue} {borrowType}
       </button>
       <div>with apr {APR}</div>
