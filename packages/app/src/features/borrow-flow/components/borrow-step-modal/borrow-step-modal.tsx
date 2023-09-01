@@ -1,7 +1,11 @@
 import React from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import {
+  APR,
+  MINIMUM_HEALTH_VALUE,
+  mockTokenInfoByType,
+} from '@/shared/stellar/constants/mock-tokens-info'
 import { ModalLayout } from '../modal-layout'
-import { APR, MINIMUM_HEALTH_VALUE, coinInfoByType } from '../../constants'
 
 interface Props {
   onClose: () => void
@@ -20,8 +24,8 @@ export function BorrowStepModal({
   borrowType,
   collateralTypes,
 }: Props) {
-  const borrowCoinInfo = coinInfoByType[borrowType]
-  const { discount, usd, userValue } = coinInfoByType[collateralTypes[0]]
+  const borrowCoinInfo = mockTokenInfoByType[borrowType]
+  const { discount, usd, userValue } = mockTokenInfoByType[collateralTypes[0]]
 
   const max = Math.floor((userValue * discount * usd * MINIMUM_HEALTH_VALUE) / borrowCoinInfo.usd)
 

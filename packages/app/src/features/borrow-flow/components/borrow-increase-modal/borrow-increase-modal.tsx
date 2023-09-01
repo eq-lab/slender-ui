@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-
+import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
+import { DebtInfo } from '@/entities/position/types'
 import { ModalLayout } from '../modal-layout'
 import { formatUsd } from '../../formatters'
-import { coinInfoByType } from '../../constants'
-import { DebtInfo } from '../../types'
 
 interface Props {
   debt: number
@@ -14,13 +13,14 @@ interface Props {
   onSend: (value: DebtInfo) => void
 }
 
-export function BorrowDecreaseModal({ collateralUsd, debt, onClose, type, onSend }: Props) {
+// TODO: need to rework component logic
+export function BorrowIncreaseModal({ collateralUsd, debt, onClose, type, onSend }: Props) {
   const [value, setValue] = useState('')
 
-  const debtDelta = debt - Number(value)
+  const debtDelta = debt + Number(value)
 
-  const defaultDebtInUsd = debt * coinInfoByType[type].usd
-  const debtDeltaUsd = Math.max(debtDelta * coinInfoByType[type].usd, 0)
+  const defaultDebtInUsd = debt * mockTokenInfoByType[type].usd
+  const debtDeltaUsd = debtDelta * mockTokenInfoByType[type].usd
 
   const defaultHealth = Math.max(
     Math.round(collateralUsd && (1 - defaultDebtInUsd / collateralUsd) * 100),
@@ -29,9 +29,11 @@ export function BorrowDecreaseModal({ collateralUsd, debt, onClose, type, onSend
   const health = Math.max(Math.round(collateralUsd && (1 - debtDeltaUsd / collateralUsd) * 100), 0)
 
   const defaultBorrowCapacity = Math.max(collateralUsd - defaultDebtInUsd, 0)
-  const borrowCapacity = Math.max(collateralUsd - debtDeltaUsd, 0)
+  const borrowCapacity = collateralUsd - debtDeltaUsd
 
-  const debtError = debtDelta < 0
+  const borrowCapacityInterface = Math.max(borrowCapacity, 0)
+  const max = Math.floor(defaultBorrowCapacity / mockTokenInfoByType[type].usd)
+  const borrowCapacityError = borrowCapacity < 0
 
   const infoSlot = (
     <div>
@@ -39,30 +41,26 @@ export function BorrowDecreaseModal({ collateralUsd, debt, onClose, type, onSend
       <div>
         {health}% ({health - defaultHealth}%)
       </div>
-      <div style={{ color: debtError ? 'red' : '' }}>
+      <div>
         Debt {formatUsd(debtDeltaUsd)} ({formatUsd(debtDeltaUsd - defaultDebtInUsd)})
       </div>
       <div>Collateral {formatUsd(collateralUsd)}</div>
-      <div>
-        Borrow capacity {formatUsd(borrowCapacity)} (
-        {formatUsd(borrowCapacity - defaultBorrowCapacity)})
+      <div style={{ color: borrowCapacityError ? 'red' : '' }}>
+        Borrow capacity {formatUsd(borrowCapacityInterface)} (
+        {formatUsd(borrowCapacityInterface - defaultBorrowCapacity)})
       </div>
     </div>
   )
 
   return (
     <ModalLayout infoSlot={infoSlot} onClose={onClose}>
-      <h3>How much to pay off</h3>
+      <h3>How much to borrow</h3>
       <input onChange={(e) => setValue(e.target.value)} type="number" value={value} />
-      <button type="button" onClick={() => setValue(String(debt))}>
-        max {debt}
+      <button type="button" onClick={() => setValue(String(max))} disabled={borrowCapacityError}>
+        max {max}
       </button>
       <div>
-        <button
-          onClick={() => onSend({ debt: debtDelta, debtType: type })}
-          type="button"
-          disabled={debtError}
-        >
+        <button onClick={() => onSend({ debt: debtDelta, debtType: type })} type="button">
           pay off {value} {type}
         </button>
       </div>
