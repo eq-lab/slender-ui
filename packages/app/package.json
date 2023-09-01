@@ -8,7 +8,9 @@
     "build": "next build",
     "build:clean": "rimraf .next && yarn build",
     "start": "next start",
-    "prod": "yarn build && next start"
+    "prod": "yarn build && next start",
+    "test:ts": "tsc --noEmit",
+    "test:ts:watch": "tsc --noEmit --incremental --watch"
   },
   "dependencies": {
     "@stellar/freighter-api": "^1.6.0",

@@ -1,7 +1,8 @@
 import * as SorobanClient from 'soroban-client'
 import { useEffect, useState } from 'react'
 import { useContextSelector } from 'use-context-selector'
-import { FUTURENET_NETWORK_DETAILS, SOROBAN_RPC_URLS } from '@/shared/stellar-constants/networks'
+import { FUTURENET_NETWORK_DETAILS } from '@/shared/stellar/constants/networks'
+import { useMakeGetTx } from '@/shared/stellar/hooks/invoke'
 import { WalletContext } from '../../context/context'
 import { accountIdentifier, decodeStr, decodeU32, decodei128 } from './decoders'
 
@@ -23,52 +24,26 @@ type TxToOp = {
   }
 }
 
-const server = new SorobanClient.Server(SOROBAN_RPC_URLS.FUTURENET, {
+const server = new SorobanClient.Server(FUTURENET_NETWORK_DETAILS.rpcUrl, {
   allowHttp: FUTURENET_NETWORK_DETAILS.networkUrl.startsWith('http://'),
 })
 
-const FEE = '100'
-const ACCOUNT_SEQUENCE = '0'
-
-export const useGetBalance = (address: string) => {
+export const useGetBalance = (tokenAddress: string) => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord | null>(null)
-  const publicKey = useContextSelector(WalletContext, (state) => state.address)
+  const userAddress = useContextSelector(WalletContext, (state) => state.address)
+  const getTx = useMakeGetTx(tokenAddress)
 
   useEffect(() => {
-    if (!publicKey) {
+    if (!userAddress) {
       setBalanceInfo(null)
       return
     }
 
-    const contract = new SorobanClient.Contract(address)
-    const source = new SorobanClient.Account(publicKey, ACCOUNT_SEQUENCE)
-    const balanceTxParams = [accountIdentifier(publicKey)]
-
-    const newTxBuilder = () =>
-      new SorobanClient.TransactionBuilder(source, {
-        fee: FEE,
-        networkPassphrase: FUTURENET_NETWORK_DETAILS.networkPassphrase,
-      })
-
-    const balanceTx = newTxBuilder()
-      .addOperation(contract.call('balance', ...balanceTxParams))
-      .setTimeout(SorobanClient.TimeoutInfinite)
-      .build()
-
-    const nameTx = newTxBuilder()
-      .addOperation(contract.call('name'))
-      .setTimeout(SorobanClient.TimeoutInfinite)
-      .build()
-
-    const symbolTx = newTxBuilder()
-      .addOperation(contract.call('symbol'))
-      .setTimeout(SorobanClient.TimeoutInfinite)
-      .build()
-
-    const decimalsTx = newTxBuilder()
-      .addOperation(contract.call('decimals'))
-      .setTimeout(SorobanClient.TimeoutInfinite)
-      .build()
+    const balanceTxParams = [accountIdentifier(userAddress)]
+    const balanceTx = getTx('balance', balanceTxParams)
+    const nameTx = getTx('name')
+    const symbolTx = getTx('symbol')
+    const decimalsTx = getTx('decimals')
 
     const txs: TxToOp = {
       balance: {
@@ -112,7 +87,7 @@ export const useGetBalance = (address: string) => {
     )
 
     tokenBalanceInfo.then((balance) => setBalanceInfo(balance))
-  }, [address, publicKey])
+  }, [getTx, tokenAddress, userAddress])
 
   return balanceInfo
 }

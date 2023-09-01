@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { SupportedToken } from '@/shared/stellar-constants/tokens'
+import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tokens'
 import { BorrowStepModal } from '../borrow-step-modal'
 import { CollateralStepModal } from '../collateral-step-modal'
 
@@ -13,8 +13,6 @@ enum Step {
 interface Props {
   type: SupportedToken
 }
-
-const SUPPORTED_TOKENS: SupportedToken[] = ['usdc', 'xlm', 'xrp']
 
 const getCollateralsByBorrow = <
   T extends SupportedToken,
