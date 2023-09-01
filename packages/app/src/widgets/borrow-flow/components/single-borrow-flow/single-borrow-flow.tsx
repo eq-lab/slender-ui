@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tokens'
 import { BorrowStepModal } from '../borrow-step-modal'
 import { CollateralStepModal } from '../collateral-step-modal'
+import { Position } from '../../types'
 
 enum Step {
   Borrow = 'Borrow',
@@ -12,6 +13,7 @@ enum Step {
 
 interface Props {
   type: SupportedToken
+  onSend: (value: Position) => void
 }
 
 const getCollateralsByBorrow = <
@@ -22,13 +24,18 @@ const getCollateralsByBorrow = <
   token: T,
 ): R => SUPPORTED_TOKENS.filter((element) => element !== token) as R
 
-export function SingleBorrowFlow({ type }: Props) {
+export function SingleBorrowFlow({ type, onSend }: Props) {
   const [step, setStep] = useState<Step | null>(null)
   const [borrowValue, setBorrowValue] = useState('')
 
   const handleClose = () => {
     setStep(null)
     setBorrowValue('')
+  }
+
+  const handleSend = (value: Position) => {
+    handleClose()
+    onSend(value)
   }
 
   const modalByStep = {
@@ -49,6 +56,7 @@ export function SingleBorrowFlow({ type }: Props) {
         borrowValue={borrowValue}
         borrowType={type}
         collateralTypes={getCollateralsByBorrow(type)}
+        onSend={handleSend}
       />
     ),
   }
