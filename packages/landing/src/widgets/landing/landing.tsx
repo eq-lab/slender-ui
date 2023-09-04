@@ -83,7 +83,7 @@ export function Landing() {
             </a>
           </Container>
         </Header>
-        <Space height={200} heightMobile={136} />
+        <Space $height={200} $heightMobile={136} />
         <Container>
           <h1>
             <Title>
@@ -94,7 +94,7 @@ export function Landing() {
             </Title>
           </h1>
 
-          <Space height={116} heightMobile={74} />
+          <Space $height={116} $heightMobile={74} />
 
           <ProtocolRow>
             <Protocol>
@@ -105,7 +105,7 @@ export function Landing() {
             </Fund>
           </ProtocolRow>
 
-          <Space height={98} heightMobile={96} />
+          <Space $height={98} $heightMobile={96} />
 
           <RatesBox>
             <RatesPack>
@@ -167,7 +167,7 @@ export function Landing() {
             />
           </LaunchBg>
           <Container>
-            <Space height={192} heightMobile={128} />
+            <Space $height={192} $heightMobile={128} />
 
             <Title className="title">
               {isEmailSend ? (
@@ -177,7 +177,7 @@ export function Landing() {
               )}
             </Title>
 
-            <Space height={80} heightMobile={68} />
+            <Space $height={80} $heightMobile={68} />
             {isEmailSend ? (
               <Form>
                 <img src="/img/email.svg" alt="" className="email" />
@@ -196,7 +196,7 @@ export function Landing() {
                 <Button onClick={handleSubscribe}>Subscribe</Button>
               </Form>
             )}
-            <Space height={192} heightMobile={192} />
+            <Space $height={192} $heightMobile={192} />
           </Container>
         </Launch>
       </Wrapper>
