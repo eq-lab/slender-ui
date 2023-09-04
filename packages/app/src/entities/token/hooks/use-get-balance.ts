@@ -2,23 +2,26 @@ import * as SorobanClient from 'soroban-client'
 import { useEffect, useState } from 'react'
 import { useContextSelector } from 'use-context-selector'
 import { invoke, useMakeGetTx } from '@/shared/stellar/hooks/invoke'
-import { decodeStr, decodeU32, decodei128 } from '@/shared/stellar/decoders'
-import { WalletContext } from '../../context/context'
+import { decodei128 } from '@/shared/stellar/decoders'
+import { TokenAddress } from '@/shared/stellar/constants/tokens'
+import { MarketContext } from '../context/context'
 
 interface SorobanTokenRecord {
-  [key: string]: unknown
   balance: string
   name: string
   symbol: string
   decimals: number
 }
 
+const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
+
 const accountIdentifier = (account: string) => new SorobanClient.Address(account).toScVal()
 
-export const useGetBalance = (tokenAddress: string) => {
+export const useGetBalance = (tokenAddress: TokenAddress, userAddress?: string) => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord | null>()
-  const userAddress = useContextSelector(WalletContext, (state) => state.address)
   const makeGetTx = useMakeGetTx()
+  const tokenCache =
+    useContextSelector(MarketContext, (state) => state.tokens?.[tokenAddress]) ?? defaultTokenRecord
 
   useEffect(() => {
     if (!userAddress) {
@@ -29,19 +32,11 @@ export const useGetBalance = (tokenAddress: string) => {
     const getTx = makeGetTx(tokenAddress)
     const balanceTxParams = [accountIdentifier(userAddress)]
     const balanceTx = getTx('balance', balanceTxParams)
-    const nameTx = getTx('name')
-    const symbolTx = getTx('symbol')
-    const decimalsTx = getTx('decimals')
 
-    Promise.all([
-      invoke(balanceTx, decodei128),
-      invoke(nameTx, decodeStr),
-      invoke(symbolTx, decodeStr),
-      invoke(decimalsTx, decodeU32),
-    ]).then(([balance, name, symbol, decimals]) => {
-      setBalanceInfo({ balance, name, symbol, decimals })
+    invoke(balanceTx, decodei128).then((balance) => {
+      setBalanceInfo({ balance, ...tokenCache })
     })
-  }, [makeGetTx, tokenAddress, userAddress])
+  }, [makeGetTx, tokenAddress, userAddress, tokenCache])
 
   return balanceInfo
 }

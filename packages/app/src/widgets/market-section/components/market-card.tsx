@@ -1,4 +1,4 @@
-import { useMarketData } from '@/entities/market/hooks/use-market-data'
+import { useMarketData } from '@/entities/token/hooks/use-market-data'
 import { Token } from '@/shared/stellar/constants/tokens'
 
 export function MarketCard({
