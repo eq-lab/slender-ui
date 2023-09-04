@@ -15,7 +15,7 @@ const server = new SorobanClient.Server(FUTURENET_NETWORK_DETAILS.rpcUrl, {
 
 export function useMakeGetTx() {
   const userAddress =
-    useContextSelector(WalletContext, (state) => state.address) ?? PLACEHOLDER_NULL_ACCOUNT
+    useContextSelector(WalletContext, (state) => state.address) || PLACEHOLDER_NULL_ACCOUNT
   const sourceAccount = useMemo(
     () => new SorobanClient.Account(userAddress, ACCOUNT_SEQUENCE),
     [userAddress],
