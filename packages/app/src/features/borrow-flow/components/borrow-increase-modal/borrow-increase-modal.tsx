@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
-import { DebtInfo } from '@/entities/position/types'
+import { Position } from '@/entities/position/types'
 import { ModalLayout } from '../modal-layout'
 import { formatUsd } from '../../formatters'
 
@@ -10,7 +10,7 @@ interface Props {
   collateralUsd: number
   onClose: () => void
   type: SupportedToken
-  onSend: (value: DebtInfo) => void
+  onSend: (value: Position['debts']) => void
 }
 
 // TODO: need to rework component logic
@@ -60,7 +60,7 @@ export function BorrowIncreaseModal({ collateralUsd, debt, onClose, type, onSend
         max {max}
       </button>
       <div>
-        <button onClick={() => onSend({ debt: debtDelta, debtType: type })} type="button">
+        <button onClick={() => onSend([{ value: debtDelta, type }, null])} type="button">
           pay off {value} {type}
         </button>
       </div>

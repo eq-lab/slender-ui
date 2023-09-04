@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
-import { DebtInfo } from '@/entities/position/types'
+import { Position } from '@/entities/position/types'
 import { ModalLayout } from '../modal-layout'
 import { formatUsd } from '../../formatters'
 
@@ -11,7 +11,7 @@ interface Props {
   collateralUsd: number
   onClose: () => void
   type: SupportedToken
-  onSend: (value: DebtInfo) => void
+  onSend: (value: Position['debts']) => void
 }
 
 export function BorrowDecreaseModal({ collateralUsd, debt, onClose, type, onSend }: Props) {
@@ -59,7 +59,7 @@ export function BorrowDecreaseModal({ collateralUsd, debt, onClose, type, onSend
       </button>
       <div>
         <button
-          onClick={() => onSend({ debt: debtDelta, debtType: type })}
+          onClick={() => onSend([{ value: debtDelta, type }, null])}
           type="button"
           disabled={debtError}
         >
