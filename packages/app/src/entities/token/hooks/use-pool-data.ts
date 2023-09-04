@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getReserve } from 'LendingPool'
+import { getReserve } from '@bindings/pool'
 
 const PERCENT_PRECISION = 1e4
 

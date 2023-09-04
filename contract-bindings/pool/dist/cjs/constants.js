@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RPC_URL = exports.NETWORK_PASSPHRASE = exports.CONTRACT_ID_HEX = exports.CONTRACT_ID = void 0;
 const soroban_client_1 = require("soroban-client");
 /**
- * The Soroban contract ID for the LendingPool contract.
+ * The Soroban contract ID for the @bindings/pool contract.
  */
-exports.CONTRACT_ID = 'CAGJHZGBIZ42YU5KSJ4RSDQ3O3GUGVDLD42CGEBJHBCSDO6HSK6SOKT2';
+exports.CONTRACT_ID = 'CB7DCWRAO33YSWOFLIIGUOHHBVEBQHVI3EWT33ANW6D477U5OJPGYSFN';
 /**
- * The Soroban contract ID for the LendingPool contract, in hex.
+ * The Soroban contract ID for the @bindings/pool contract, in hex.
  * If {@link CONTRACT_ID} is a new-style `C…` string, you will need this hex
  * version when making calls to RPC for now.
  */
