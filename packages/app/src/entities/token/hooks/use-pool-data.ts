@@ -10,7 +10,7 @@ type PoolData = {
   liquidationPenalty?: number
 }
 
-export function useMarketData(tokenAddress: string): PoolData & {
+export function usePoolData(tokenAddress: string): PoolData & {
   percentMultiplier: number
 } {
   const [data, setData] = useState<PoolData>({})
