@@ -5,8 +5,8 @@ import { getUserInfo, isConnected as getIsConnected } from '@stellar/freighter-a
 import { WalletContext } from './context'
 
 export function WalletProvider({ children }: { children: JSX.Element }) {
-  const [address, setAddress] = useState<string | null>(null)
-  const [isConnected, setIsConnected] = useState<boolean | null>(null)
+  const [address, setAddress] = useState<string>()
+  const [isConnected, setIsConnected] = useState<boolean>()
 
   useEffect(() => {
     ;(async () => {
@@ -32,7 +32,6 @@ export function WalletProvider({ children }: { children: JSX.Element }) {
   }, [isConnected])
 
   return (
-    // @ts-expect-error Server Component
     <WalletContext.Provider value={{ address, setAddress, isConnected }}>
       {children}
     </WalletContext.Provider>

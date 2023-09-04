@@ -51,7 +51,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          build-args: BUILD_CONTEXT=app
+          build-args: |
+            BUILD_CONTEXT=app
+            DEPLOY_ENVIRONMENT_ARG=${{ vars.DEPLOY_ENVIRONMENT_PROD }}
+            NEXT_PUBLIC_BUILD_NUMBER_ARG=${{ github.sha }}
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}

@@ -8,7 +8,8 @@
   "license": "MIT",
   "workspaces": [
     "packages/*",
-    "lib/*"
+    "lib/*",
+    "contract-bindings/*"
   ],
   "scripts": {
     "prepare": "husky install",
@@ -45,7 +46,7 @@
     "prettier": "^3.0.2",
     "rimraf": "^5.0.1",
     "ts-jest": "^29.1.1",
-    "typescript": "5.0.4"
+    "typescript": "5.2.2"
   },
   "lint-staged": {
     "*.!({js,ts,jsx,tsx})": "prettier --write --ignore-unknown",

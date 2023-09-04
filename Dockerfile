@@ -1,5 +1,7 @@
 FROM node:18.17.1-alpine3.18 AS build
 ARG BUILD_CONTEXT
+ARG DEPLOY_ENVIRONMENT_ARG
+ARG NEXT_PUBLIC_BUILD_NUMBER_ARG
 
 RUN apk update \
   && apk --no-cache --update add libc6-compat alpine-sdk python3
@@ -12,11 +14,16 @@ COPY ./packages/$BUILD_CONTEXT/package.json packages/$BUILD_CONTEXT/package.json
 COPY ./lib lib
 RUN ls -la /app/lib
 
+COPY ./contract-bindings contract-bindings
+RUN ls -la /app/contract-bindings
+
 RUN yarn --frozen-lockfile
 
 COPY ./packages/$BUILD_CONTEXT packages/$BUILD_CONTEXT
 
 ENV NODE_ENV production
+ENV NEXT_PUBLIC_DEPLOY_ENVIRONMENT=$DEPLOY_ENVIRONMENT_ARG
+ENV NEXT_PUBLIC_BUILD_NUMBER=$NEXT_PUBLIC_BUILD_NUMBER_ARG
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 

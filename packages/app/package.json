@@ -8,7 +8,9 @@
     "build": "next build",
     "build:clean": "rimraf .next && yarn build",
     "start": "next start",
-    "prod": "yarn build && next start"
+    "prod": "yarn build && next start",
+    "test:ts": "tsc --noEmit",
+    "test:ts:watch": "tsc --noEmit --incremental --watch"
   },
   "dependencies": {
     "@stellar/freighter-api": "^1.6.0",
@@ -18,6 +20,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "scheduler": "^0.23.0",
+    "soroban-client": "^0.9.1",
     "styled-components": "^6.0.7",
     "use-context-selector": "^1.4.1"
   },
