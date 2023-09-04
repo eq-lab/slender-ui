@@ -61,12 +61,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: 'testsleep'
-        run: |
-              sleep 10
-              echo "test sleep"
-  
-
   deployment-landing:
     needs: build-image-landing
     runs-on: 'ubuntu-latest'
@@ -83,7 +77,7 @@ jobs:
       with:
         repository: ${{ env.HELM_REPOSITORY }}
         ref: 'main'
-        token: ${{ secrets.PAT }}  
+        token: ${{ secrets.PAT }}
     # - name: 'Prep extraEnv'
     #   run: |
     #       cat <<EOF >extraEnv.yml

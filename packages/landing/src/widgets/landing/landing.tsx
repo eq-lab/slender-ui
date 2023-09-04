@@ -1,64 +1,33 @@
-'use client'
-
-import React, { ChangeEvent, useState } from 'react'
-import cn from 'classnames'
-import { sendEmail } from '@/widgets/landing/api'
+import React from 'react'
 import Image from 'next/image'
+import { SubscriptionSection } from '@/widgets/landing/subscription-section'
 import {
   Container,
-  Header,
-  LogoLink,
-  Wrapper,
-  HeaderButton,
-  Title,
-  Pluses,
-  ProtocolRow,
-  Protocol,
   Fund,
-  RatesBox,
-  RatesPack,
+  Header,
+  HeaderButton,
+  Launch,
+  LaunchBg,
+  LogoLink,
+  Pluses,
+  Protocol,
+  ProtocolRow,
   RatesAside,
-  RatesInfoUnit,
-  RatesTitle,
+  RatesBox,
   RatesDescription,
+  RatesInfoUnit,
+  RatesPack,
+  RatesTitle,
   SugarBlock,
   SugarInner,
-  Launch,
-  InputBox,
-  InputLabel,
-  Button,
-  Form,
-  LaunchBg,
+  Title,
+  Wrapper,
 } from './styled'
 import { Space } from './space'
 
-const imagePlusesSizes = `(max-width: 1440px) 867px, (max-width: 768px) 712px`
+const LAUNCH_ANCHOR = 'launch'
 
 export function Landing() {
-  const [email, setEmail] = useState('')
-
-  const [emailIsFocused, setEmailIsFocused] = useState(false)
-  const [emailHasError, setEmailHasError] = useState(false)
-  const [isEmailSend, setIsEmailSend] = useState(false)
-
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-    setEmailHasError(false)
-  }
-
-  const handleSubscribe = () => {
-    const emailIsValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
-    setEmailHasError(!emailIsValid)
-    if (emailIsValid) {
-      sendEmail(email).then(() => {
-        setIsEmailSend(true)
-        setEmail('')
-      })
-    } else {
-      setEmailHasError(true)
-    }
-  }
-
   return (
     <main id="top-anchor">
       <Wrapper>
@@ -70,20 +39,21 @@ export function Landing() {
             style={{
               objectFit: 'contain',
             }}
-            sizes={imagePlusesSizes}
+            sizes="(max-width: 1440px) 867px, (max-width: 768px) 712px"
           />
         </Pluses>
         <Header>
           <Container>
             <LogoLink href="#top-anchor">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/img/logo.svg" alt="Slender logo" />
             </LogoLink>
-            <a href="#launch">
+            <a href={`#${LAUNCH_ANCHOR}`}>
               <HeaderButton className="md">Subscribe</HeaderButton>
             </a>
           </Container>
         </Header>
-        <Space height={200} heightMobile={136} />
+        <Space $height={200} $heightMobile={136} />
         <Container>
           <h1>
             <Title>
@@ -94,18 +64,20 @@ export function Landing() {
             </Title>
           </h1>
 
-          <Space height={116} heightMobile={74} />
+          <Space $height={116} $heightMobile={74} />
 
           <ProtocolRow>
             <Protocol>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               #1 lending protocol on <img src="/img/stellar.svg" alt="Stellar" />
             </Protocol>
             <Fund>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/img/fund.svg" alt="" /> <span>Supported by Stellar Community Fund</span>
             </Fund>
           </ProtocolRow>
 
-          <Space height={98} heightMobile={96} />
+          <Space $height={98} $heightMobile={96} />
 
           <RatesBox>
             <RatesPack>
@@ -145,16 +117,19 @@ export function Landing() {
 
               <SugarBlock>
                 <SugarInner>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/img/sugar.svg" alt="" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/img/nosugar.svg" alt="No added sugar" />
                 </SugarInner>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/img/barcode.svg" alt="Barcode" />
               </SugarBlock>
             </RatesAside>
           </RatesBox>
         </Container>
 
-        <Launch id="launch">
+        <Launch id={LAUNCH_ANCHOR}>
           <LaunchBg>
             <Image
               src="/img/end.png"
@@ -166,38 +141,7 @@ export function Landing() {
               }}
             />
           </LaunchBg>
-          <Container>
-            <Space height={192} heightMobile={128} />
-
-            <Title className="title">
-              {isEmailSend ? (
-                <>We will send you an email about our&nbsp;launch</>
-              ) : (
-                <>Be the first to&nbsp;know about our&nbsp;launch</>
-              )}
-            </Title>
-
-            <Space height={80} heightMobile={68} />
-            {isEmailSend ? (
-              <Form>
-                <img src="/img/email.svg" alt="" className="email" />
-              </Form>
-            ) : (
-              <Form>
-                <InputBox
-                  onFocus={() => setEmailIsFocused(true)}
-                  onBlur={() => setEmailIsFocused(false)}
-                  className={cn({ focused: !!email || emailIsFocused, error: emailHasError })}
-                >
-                  <InputLabel>Your email</InputLabel>
-                  <input value={email} className="input" onChange={handleEmailChange} />
-                </InputBox>
-
-                <Button onClick={handleSubscribe}>Subscribe</Button>
-              </Form>
-            )}
-            <Space height={192} heightMobile={192} />
-          </Container>
+          <SubscriptionSection />
         </Launch>
       </Wrapper>
     </main>
