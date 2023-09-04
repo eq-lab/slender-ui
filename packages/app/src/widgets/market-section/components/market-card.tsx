@@ -1,4 +1,4 @@
-import { useMarketData } from '@/entities/market/hooks/use-market-data'
+import { usePoolData } from '@/entities/token/hooks/use-pool-data'
 import { Token } from '@/shared/stellar/constants/tokens'
 
 export function MarketCard({
@@ -9,7 +9,7 @@ export function MarketCard({
   renderBorrowButton: (percent: string) => React.ReactNode
 }) {
   const { discount, liquidationPenalty, borrowInterestRate, lendInterestRate, percentMultiplier } =
-    useMarketData(token.address)
+    usePoolData(token.address)
 
   if (discount === undefined) {
     return 'Loading...'

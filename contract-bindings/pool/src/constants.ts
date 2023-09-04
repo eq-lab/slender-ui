@@ -1,12 +1,12 @@
 import { Contract } from 'soroban-client'
 
 /**
- * The Soroban contract ID for the LendingPool contract.
+ * The Soroban contract ID for the @bindings/pool contract.
  */
-export const CONTRACT_ID = 'CAGJHZGBIZ42YU5KSJ4RSDQ3O3GUGVDLD42CGEBJHBCSDO6HSK6SOKT2'
+export const CONTRACT_ID = 'CB7DCWRAO33YSWOFLIIGUOHHBVEBQHVI3EWT33ANW6D477U5OJPGYSFN'
 
 /**
- * The Soroban contract ID for the LendingPool contract, in hex.
+ * The Soroban contract ID for the @bindings/pool contract, in hex.
  * If {@link CONTRACT_ID} is a new-style `C…` string, you will need this hex
  * version when making calls to RPC for now.
  */

@@ -15,7 +15,7 @@ type InvokeArgs<R extends ResponseTypes, T = string> = Options<R> & {
     parseResultXdr?: (xdr: string) => T;
 };
 /**
- * Invoke a method on the LendingPool contract.
+ * Invoke a method on the @bindings/pool contract.
  *
  * Uses Freighter to determine the current user and if necessary sign the transaction.
  *

@@ -1,11 +1,14 @@
 'use client'
 
-import { useGetBalance } from '@/entities/wallet/hooks/use-get-balance/use-get-balance'
-import { tokens, XLM_ADDRESS } from '@/shared/stellar/constants/tokens'
+import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { tokens } from '@/shared/stellar/constants/tokens'
+import { useContextSelector } from 'use-context-selector'
+import { WalletContext } from '@/entities/wallet/context/context'
 
 export function Balances() {
-  const nativeBalance = useGetBalance(XLM_ADDRESS)
-  const usdcBalance = useGetBalance(tokens.usdc.address)
+  const userAddress = useContextSelector(WalletContext, (state) => state.address)
+  const nativeBalance = useGetBalance(tokens.xlm.address, userAddress)
+  const usdcBalance = useGetBalance(tokens.usdc.address, userAddress)
 
   return (
     <>

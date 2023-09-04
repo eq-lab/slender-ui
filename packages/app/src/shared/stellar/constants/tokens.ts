@@ -1,11 +1,19 @@
-export const XLM_ADDRESS = 'CB64D3G7SM2RTH6JSGG34DDTFTQ5CFDKVDZJZSODMCX4NJ2HV2KN7OHT'
+enum Underlying {
+  // native XLM token
+  'xlm' = 'CB64D3G7SM2RTH6JSGG34DDTFTQ5CFDKVDZJZSODMCX4NJ2HV2KN7OHT',
+  'xrp' = 'CAZ2XLJZKWFNWRQAF5VE3HQMJGH3KDKT4PLJ6EEKUVJ4Y4C735FPWLO2',
+  'usdc' = 'CDJM6XUBXAGACNPCEL22TZ753DWYEXFDPMBZREWQAEGDXCQ2IXID6NLB',
+}
 
-const UNDERLYING_XLM_ADDRESS = 'CD4UEK2CF6LEVAIMYRH7DOEN2AP3CKO763UO2HGBXHVCS5DIFTRKIIBM'
-const UNDERLYING_XRP_ADDRESS = 'CAF2Z5L5INKVZBIQ3CDDAAHUNQOUS6NSYBUI6ZLK2DSHXBZ3I23HM6Q7'
-const UNDERLYING_USDC_ADDRESS = 'CDZI6HFGUFB7XJWXLOWW6MUQQ6YX3NPA36ADTYNMRRX7H5YG7GK7I7SU'
-const S_TOKEN_XLM = 'CAC2ASEKVFU4YH5HIY3OUG2D2KSEUMFEZ36R2LHM53HMEISGWNXEBVW7'
-const S_TOKEN_XRP = 'CC4UUAVB66BT4XATZY5YJIGLEYS4ADVRIIYMTAQ4HBMMO3YYC2ASRHEC'
-const S_TOKEN_USDC = 'CC2M4S57Y6QH3EEE4JXIL4LZHJ7EN57KBXWGMKDCZRH4HT5ROXX5U7VK'
+enum SToken {
+  'xlm' = 'CB3CYOVCV4FV2TQXZXL4AECSOQRWBRWBQ5UJE5BUMUDZLIPMLSF6VKKW',
+  'xrp' = 'CB2L7V2NVYWETT22FF5IKW5OVUDEJOEVSUXEOBYSMU4P73UUT5BVHDFF',
+  'usdc' = 'CBAOL37Z4MYJDNKN5X2XVLBMCWMPFNVS53OVPXVIBNEWCUM3ROY7KCRQ',
+}
+
+export type TokenAddress = Underlying | SToken
+
+export const cachedTokenAddresses = [...Object.values(Underlying), ...Object.values(SToken)]
 
 export const SUPPORTED_TOKENS = ['usdc', 'xlm', 'xrp'] as const
 
@@ -14,27 +22,27 @@ export type SupportedToken = (typeof SUPPORTED_TOKENS)[number]
 export interface Token {
   code: string
   title: string
-  address: string
-  sAddress: string
+  address: Underlying
+  sAddress: SToken
 }
 
 export const tokens: Record<SupportedToken, Token> = {
   xlm: {
     code: 'XLM',
     title: 'Lumen',
-    address: UNDERLYING_XLM_ADDRESS,
-    sAddress: S_TOKEN_XLM,
+    address: Underlying.xlm,
+    sAddress: SToken.xlm,
   },
   xrp: {
     code: 'XRP',
     title: 'Ripple',
-    address: UNDERLYING_XRP_ADDRESS,
-    sAddress: S_TOKEN_XRP,
+    address: Underlying.xrp,
+    sAddress: SToken.xrp,
   },
   usdc: {
     code: 'USDC',
     title: 'USD Coin',
-    address: UNDERLYING_USDC_ADDRESS,
-    sAddress: S_TOKEN_USDC,
+    address: Underlying.usdc,
+    sAddress: SToken.usdc,
   },
 }

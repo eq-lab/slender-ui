@@ -939,6 +939,30 @@ export async function priceFeed<R extends ResponseTypes = undefined>({asset}: {a
     });
 }
 
+/**
+ * Deposits a specified amount of an asset into the reserve associated with the asset.
+ * Depositor receives s-tokens according to the current index value.
+ * 
+ * 
+ * # Arguments
+ * 
+ * - who - The address of the user making the deposit.
+ * - asset - The address of the asset to be deposited for lend.
+ * - amount - The amount to be deposited.
+ * 
+ * # Errors
+ * 
+ * Returns `NoReserveExistForAsset` if no reserve exists for the specified asset.
+ * Returns `MathOverflowError' if an overflow occurs when calculating the amount of tokens.
+ * Returns `MustNotHaveDebt` if user already has debt.
+ * 
+ * # Panics
+ * 
+ * If the caller is not authorized.
+ * If the deposit amount is invalid or does not meet the reserve requirements.
+ * If the reserve data cannot be retrieved from storage.
+ * 
+ */
 export async function deposit<R extends ResponseTypes = undefined>({who, asset, amount}: {who: Address, asset: Address, amount: i128}, options: {
   /**
    * The fee to pay for the transaction. Default: 100.
@@ -947,7 +971,7 @@ export async function deposit<R extends ResponseTypes = undefined>({who, asset, 
   /**
    * What type of response to return.
    *
-   *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+   *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
    *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
    *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
    */
@@ -963,7 +987,7 @@ export async function deposit<R extends ResponseTypes = undefined>({who, asset, 
         ((i) => addressToScVal(i))(asset),
         ((i) => i128ToScVal(i))(amount)],
         ...options,
-        parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+        parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
             try {
                 return new Ok(scValStrToJs(xdr));
             } catch (e) {
@@ -1009,7 +1033,7 @@ export async function repay<R extends ResponseTypes = undefined>({who, asset, am
   /**
    * What type of response to return.
    *
-   *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+   *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
    *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
    *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
    */
@@ -1025,7 +1049,7 @@ export async function repay<R extends ResponseTypes = undefined>({who, asset, am
         ((i) => addressToScVal(i))(asset),
         ((i) => i128ToScVal(i))(amount)],
         ...options,
-        parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+        parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
             try {
                 return new Ok(scValStrToJs(xdr));
             } catch (e) {
@@ -1133,7 +1157,7 @@ export async function withdraw<R extends ResponseTypes = undefined>({who, asset,
   /**
    * What type of response to return.
    *
-   *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+   *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
    *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
    *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
    */
@@ -1150,7 +1174,7 @@ export async function withdraw<R extends ResponseTypes = undefined>({who, asset,
         ((i) => i128ToScVal(i))(amount),
         ((i) => addressToScVal(i))(to)],
         ...options,
-        parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+        parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
             try {
                 return new Ok(scValStrToJs(xdr));
             } catch (e) {
@@ -1166,6 +1190,22 @@ export async function withdraw<R extends ResponseTypes = undefined>({who, asset,
     });
 }
 
+/**
+ * Allows users to borrow a specific `amount` of the reserve underlying asset, provided that the borrower
+ * already deposited enough collateral
+ * 
+ * # Arguments
+ * - who The address of user performing borrowing
+ * - asset The address of the underlying asset to borrow
+ * - amount The amount to be borrowed
+ * 
+ * # Panics
+ * - Panics when caller is not authorized as who
+ * - Panics if user balance doesn't meet requirements for borrowing an amount of asset
+ * - Panics with `MustNotBeInCollateralAsset` if there is a collateral in borrowing asset.
+ * - Panics with `UtilizationCapExceeded` if utilization after borrow is above the limit.
+ * 
+ */
 export async function borrow<R extends ResponseTypes = undefined>({who, asset, amount}: {who: Address, asset: Address, amount: i128}, options: {
   /**
    * The fee to pay for the transaction. Default: 100.
@@ -1174,7 +1214,7 @@ export async function borrow<R extends ResponseTypes = undefined>({who, asset, a
   /**
    * What type of response to return.
    *
-   *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+   *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
    *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
    *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
    */
@@ -1190,7 +1230,7 @@ export async function borrow<R extends ResponseTypes = undefined>({who, asset, a
         ((i) => addressToScVal(i))(asset),
         ((i) => i128ToScVal(i))(amount)],
         ...options,
-        parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+        parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
             try {
                 return new Ok(scValStrToJs(xdr));
             } catch (e) {
@@ -1378,7 +1418,7 @@ export async function liquidate<R extends ResponseTypes = undefined>({liquidator
   /**
    * What type of response to return.
    *
-   *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+   *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
    *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
    *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
    */
@@ -1394,7 +1434,7 @@ export async function liquidate<R extends ResponseTypes = undefined>({liquidator
         ((i) => addressToScVal(i))(who),
         ((i) => xdr.ScVal.scvBool(i))(receive_stoken)],
         ...options,
-        parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+        parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
             try {
                 return new Ok(scValStrToJs(xdr));
             } catch (e) {
@@ -1548,7 +1588,7 @@ export async function stokenUnderlyingBalance<R extends ResponseTypes = undefine
     });
 }
 
-export async function setPrice<R extends ResponseTypes = undefined>({asset, price}: {asset: Address, price: i128}, options: {
+export async function setPrice<R extends ResponseTypes = undefined>({_asset, _price}: {_asset: Address, _price: i128}, options: {
   /**
    * The fee to pay for the transaction. Default: 100.
    */
@@ -1568,8 +1608,8 @@ export async function setPrice<R extends ResponseTypes = undefined>({asset, pric
 } = {}) {
     return await invoke({
         method: 'set_price',
-        args: [((i) => addressToScVal(i))(asset),
-        ((i) => i128ToScVal(i))(price)],
+        args: [((i) => addressToScVal(i))(_asset),
+        ((i) => i128ToScVal(i))(_price)],
         ...options,
         parseResultXdr: () => {},
     });
@@ -1675,7 +1715,7 @@ export async function flashLoanFee<R extends ResponseTypes = undefined>(options:
  * # Panics
  * 
  */
-export async function flashLoan<R extends ResponseTypes = undefined>({who, receiver, loan_assets, _params}: {who: Address, receiver: Address, loan_assets: Array<FlashLoanAsset>, _params: Buffer}, options: {
+export async function flashLoan<R extends ResponseTypes = undefined>({who, receiver, loan_assets, params}: {who: Address, receiver: Address, loan_assets: Array<FlashLoanAsset>, params: Buffer}, options: {
   /**
    * The fee to pay for the transaction. Default: 100.
    */
@@ -1683,7 +1723,7 @@ export async function flashLoan<R extends ResponseTypes = undefined>({who, recei
   /**
    * What type of response to return.
    *
-   *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+   *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
    *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
    *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
    */
@@ -1698,9 +1738,9 @@ export async function flashLoan<R extends ResponseTypes = undefined>({who, recei
         args: [((i) => addressToScVal(i))(who),
         ((i) => addressToScVal(i))(receiver),
         ((i) => xdr.ScVal.scvVec(i.map((i)=>FlashLoanAssetToXdr(i))))(loan_assets),
-        ((i) => xdr.ScVal.scvBytes(i))(_params)],
+        ((i) => xdr.ScVal.scvBytes(i))(params)],
         ...options,
-        parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+        parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
             try {
                 return new Ok(scValStrToJs(xdr));
             } catch (e) {
@@ -1716,7 +1756,7 @@ export async function flashLoan<R extends ResponseTypes = undefined>({who, recei
     });
 }
 
-export async function getPrice<R extends ResponseTypes = undefined>({asset}: {asset: Address}, options: {
+export async function getPrice<R extends ResponseTypes = undefined>({_asset}: {_asset: Address}, options: {
   /**
    * The fee to pay for the transaction. Default: 100.
    */
@@ -1736,7 +1776,7 @@ export async function getPrice<R extends ResponseTypes = undefined>({asset}: {as
 } = {}) {
     return await invoke({
         method: 'get_price',
-        args: [((i) => addressToScVal(i))(asset)],
+        args: [((i) => addressToScVal(i))(_asset)],
         ...options,
         parseResultXdr: (xdr): i128 => {
             return scValStrToJs(xdr);
@@ -2155,39 +2195,6 @@ function FlashLoanAssetFromXdr(base64Xdr: string): FlashLoanAsset {
         amount: scValToJs(map.get("amount")) as unknown as i128,
         asset: scValToJs(map.get("asset")) as unknown as Address,
         borrow: scValToJs(map.get("borrow")) as unknown as boolean
-    };
-}
-
-export interface MintBurn {
-  asset_balance: AssetBalance;
-  mint: boolean;
-  who: Address;
-}
-
-function MintBurnToXdr(mintBurn?: MintBurn): xdr.ScVal {
-    if (!mintBurn) {
-        return xdr.ScVal.scvVoid();
-    }
-    let arr = [
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("asset_balance"), val: ((i)=>AssetBalanceToXdr(i))(mintBurn["asset_balance"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("mint"), val: ((i)=>xdr.ScVal.scvBool(i))(mintBurn["mint"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("who"), val: ((i)=>addressToScVal(i))(mintBurn["who"])})
-        ];
-    return xdr.ScVal.scvMap(arr);
-}
-
-
-function MintBurnFromXdr(base64Xdr: string): MintBurn {
-    let scVal = strToScVal(base64Xdr);
-    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
-    let map = new Map<string, any>(obj);
-    if (!obj) {
-        throw new Error('Invalid XDR');
-    }
-    return {
-        asset_balance: scValToJs(map.get("asset_balance")) as unknown as AssetBalance,
-        mint: scValToJs(map.get("mint")) as unknown as boolean,
-        who: scValToJs(map.get("who")) as unknown as Address
     };
 }
 

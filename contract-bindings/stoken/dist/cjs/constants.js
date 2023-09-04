@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RPC_URL = exports.NETWORK_PASSPHRASE = exports.CONTRACT_ID_HEX = exports.CONTRACT_ID = void 0;
 const soroban_client_1 = require("soroban-client");
 /**
- * The Soroban contract ID for the stoken contract.
+ * The Soroban contract ID for the @bindings/stoken contract.
  */
-exports.CONTRACT_ID = 'CC3VH7FCLXCFFPSTV2BSHFRG7ZVRZOBG5IA7LLCH3WKPIJPWFXAEV3GY';
+exports.CONTRACT_ID = 'CB3CYOVCV4FV2TQXZXL4AECSOQRWBRWBQ5UJE5BUMUDZLIPMLSF6VKKW';
 /**
- * The Soroban contract ID for the stoken contract, in hex.
+ * The Soroban contract ID for the @bindings/stoken contract, in hex.
  * If {@link CONTRACT_ID} is a new-style `C…` string, you will need this hex
  * version when making calls to RPC for now.
  */
@@ -19,4 +19,4 @@ exports.NETWORK_PASSPHRASE = 'Test SDF Future Network ; October 2022';
 /**
  * The Soroban RPC endpoint used to initialize this library.
  */
-exports.RPC_URL = 'https://rpc-futurenet.stellar.org:443/soroban/rpc';
+exports.RPC_URL = 'https://rpc-futurenet.stellar.org:443';

@@ -1,6 +1,6 @@
 {
     "version": "0.0.0",
-    "name": "LendingPool",
+    "name": "@bindings/pool",
     "dependencies": {
         "@stellar/freighter-api": "1.5.1",
         "buffer": "6.0.3",
