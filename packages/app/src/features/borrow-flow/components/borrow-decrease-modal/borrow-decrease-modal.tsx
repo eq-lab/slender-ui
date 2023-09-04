@@ -59,7 +59,7 @@ export function BorrowDecreaseModal({ collateralUsd, debt, onClose, type, onSend
       </button>
       <div>
         <button
-          onClick={() => onSend([{ value: debtDelta, type }, null])}
+          onClick={() => onSend([{ value: debtDelta, type }])}
           type="button"
           disabled={debtError}
         >
