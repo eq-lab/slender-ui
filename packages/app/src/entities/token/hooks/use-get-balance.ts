@@ -15,11 +15,11 @@ interface SorobanTokenRecord {
 
 const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
 
-const accountIdentifier = (account: string) => new SorobanClient.Address(account).toScVal()
+const encodeAddress = (account: string) => new SorobanClient.Address(account).toScVal()
 
 export const useGetBalance = (tokenAddress: TokenAddress, userAddress?: string) => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord | null>()
-  const makeGetInvoke = useMakeInvoke()
+  const makeInvoke = useMakeInvoke()
   const tokenCache =
     useContextSelector(MarketContext, (state) => state.tokens?.[tokenAddress]) ?? defaultTokenRecord
 
@@ -29,12 +29,12 @@ export const useGetBalance = (tokenAddress: TokenAddress, userAddress?: string) 
       return
     }
 
-    const invoke = makeGetInvoke(tokenAddress)
-    const balanceTxParams = [accountIdentifier(userAddress)]
+    const invoke = makeInvoke(tokenAddress)
+    const balanceTxParams = [encodeAddress(userAddress)]
     invoke('balance', decodei128, balanceTxParams).then((balance) => {
       setBalanceInfo({ balance, ...tokenCache })
     })
-  }, [makeGetInvoke, tokenAddress, userAddress, tokenCache])
+  }, [makeInvoke, tokenAddress, userAddress, tokenCache])
 
   return balanceInfo
 }
