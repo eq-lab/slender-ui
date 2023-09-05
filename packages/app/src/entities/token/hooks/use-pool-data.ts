@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getReserve } from '@bindings/pool'
+import { getReserve, collatCoeff, debtCoeff } from '@bindings/pool'
 
 const PERCENT_PRECISION = 1e4
 
@@ -8,6 +8,9 @@ type PoolData = {
   lendInterestRate?: bigint
   discount?: number
   liquidationPenalty?: number
+  utilizationCapacity?: number
+  collateralCoefficient?: bigint
+  debtCoefficient?: bigint
 }
 
 export function usePoolData(tokenAddress: string): PoolData & {
@@ -17,17 +20,28 @@ export function usePoolData(tokenAddress: string): PoolData & {
 
   useEffect(() => {
     ;(async () => {
-      const poolResponse = await getReserve({
+      const assetArg = {
         asset: tokenAddress,
-      })
+      }
+      const [poolReserve, rawCollateralCoefficient, rawDebtCoefficient] = await Promise.all([
+        getReserve(assetArg),
+        collatCoeff(assetArg),
+        debtCoeff(assetArg),
+      ])
 
       setData({
-        borrowInterestRate: poolResponse.borrower_ir,
-        lendInterestRate: poolResponse.lender_ir,
+        borrowInterestRate: poolReserve.borrower_ir,
+        lendInterestRate: poolReserve.lender_ir,
         // @ts-ignore
-        discount: poolResponse.configuration.get('discount'),
+        discount: poolReserve.configuration.get('discount'),
         // @ts-ignore
-        liquidationPenalty: poolResponse.configuration.get('liq_bonus') - PERCENT_PRECISION,
+        liquidationPenalty: poolReserve.configuration.get('liq_bonus') - PERCENT_PRECISION,
+        // @ts-ignore
+        utilizationCapacity: poolReserve.configuration.get('util_cap'),
+        collateralCoefficient: rawCollateralCoefficient.isOk()
+          ? rawCollateralCoefficient.unwrap()
+          : undefined,
+        debtCoefficient: rawDebtCoefficient.isOk() ? rawDebtCoefficient.unwrap() : undefined,
       })
     })()
   }, [tokenAddress])

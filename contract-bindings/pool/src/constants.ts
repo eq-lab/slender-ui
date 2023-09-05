@@ -3,7 +3,7 @@ import { Contract } from 'soroban-client'
 /**
  * The Soroban contract ID for the @bindings/pool contract.
  */
-export const CONTRACT_ID = 'CB7DCWRAO33YSWOFLIIGUOHHBVEBQHVI3EWT33ANW6D477U5OJPGYSFN'
+export const CONTRACT_ID = 'CA5REFCZXE4S74KTTZNW6QNPVNSQBNU5QAA46FIWX43XPSKMRIXW3NGS'
 
 /**
  * The Soroban contract ID for the @bindings/pool contract, in hex.

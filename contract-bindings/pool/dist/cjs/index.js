@@ -676,30 +676,6 @@ async function priceFeed({ asset }, options = {}) {
     });
 }
 exports.priceFeed = priceFeed;
-/**
- * Deposits a specified amount of an asset into the reserve associated with the asset.
- * Depositor receives s-tokens according to the current index value.
- *
- *
- * # Arguments
- *
- * - who - The address of the user making the deposit.
- * - asset - The address of the asset to be deposited for lend.
- * - amount - The amount to be deposited.
- *
- * # Errors
- *
- * Returns `NoReserveExistForAsset` if no reserve exists for the specified asset.
- * Returns `MathOverflowError' if an overflow occurs when calculating the amount of tokens.
- * Returns `MustNotHaveDebt` if user already has debt.
- *
- * # Panics
- *
- * If the caller is not authorized.
- * If the deposit amount is invalid or does not meet the reserve requirements.
- * If the reserve data cannot be retrieved from storage.
- *
- */
 async function deposit({ who, asset, amount }, options = {}) {
     return await (0, invoke_js_1.invoke)({
         method: 'deposit',
@@ -867,22 +843,6 @@ async function withdraw({ who, asset, amount, to }, options = {}) {
     });
 }
 exports.withdraw = withdraw;
-/**
- * Allows users to borrow a specific `amount` of the reserve underlying asset, provided that the borrower
- * already deposited enough collateral
- *
- * # Arguments
- * - who The address of user performing borrowing
- * - asset The address of the underlying asset to borrow
- * - amount The amount to be borrowed
- *
- * # Panics
- * - Panics when caller is not authorized as who
- * - Panics if user balance doesn't meet requirements for borrowing an amount of asset
- * - Panics with `MustNotBeInCollateralAsset` if there is a collateral in borrowing asset.
- * - Panics with `UtilizationCapExceeded` if utilization after borrow is above the limit.
- *
- */
 async function borrow({ who, asset, amount }, options = {}) {
     return await (0, invoke_js_1.invoke)({
         method: 'borrow',
@@ -1124,11 +1084,11 @@ async function stokenUnderlyingBalance({ stoken_address }, options = {}) {
     });
 }
 exports.stokenUnderlyingBalance = stokenUnderlyingBalance;
-async function setPrice({ _asset, _price }, options = {}) {
+async function setPrice({ asset, price }, options = {}) {
     return await (0, invoke_js_1.invoke)({
         method: 'set_price',
-        args: [((i) => (0, convert_js_1.addressToScVal)(i))(_asset),
-            ((i) => (0, convert_js_1.i128ToScVal)(i))(_price)],
+        args: [((i) => (0, convert_js_1.addressToScVal)(i))(asset),
+            ((i) => (0, convert_js_1.i128ToScVal)(i))(price)],
         ...options,
         parseResultXdr: () => { },
     });
@@ -1202,13 +1162,13 @@ exports.flashLoanFee = flashLoanFee;
  * # Panics
  *
  */
-async function flashLoan({ who, receiver, loan_assets, params }, options = {}) {
+async function flashLoan({ who, receiver, loan_assets, _params }, options = {}) {
     return await (0, invoke_js_1.invoke)({
         method: 'flash_loan',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(who),
             ((i) => (0, convert_js_1.addressToScVal)(i))(receiver),
             ((i) => soroban_client_1.xdr.ScVal.scvVec(i.map((i) => FlashLoanAssetToXdr(i))))(loan_assets),
-            ((i) => soroban_client_1.xdr.ScVal.scvBytes(i))(params)],
+            ((i) => soroban_client_1.xdr.ScVal.scvBytes(i))(_params)],
         ...options,
         parseResultXdr: (xdr) => {
             try {
@@ -1228,10 +1188,10 @@ async function flashLoan({ who, receiver, loan_assets, params }, options = {}) {
     });
 }
 exports.flashLoan = flashLoan;
-async function getPrice({ _asset }, options = {}) {
+async function getPrice({ asset }, options = {}) {
     return await (0, invoke_js_1.invoke)({
         method: 'get_price',
-        args: [((i) => (0, convert_js_1.addressToScVal)(i))(_asset)],
+        args: [((i) => (0, convert_js_1.addressToScVal)(i))(asset)],
         ...options,
         parseResultXdr: (xdr) => {
             return (0, convert_js_1.scValStrToJs)(xdr);
@@ -1527,6 +1487,30 @@ function FlashLoanAssetFromXdr(base64Xdr) {
         amount: (0, convert_js_1.scValToJs)(map.get("amount")),
         asset: (0, convert_js_1.scValToJs)(map.get("asset")),
         borrow: (0, convert_js_1.scValToJs)(map.get("borrow"))
+    };
+}
+function MintBurnToXdr(mintBurn) {
+    if (!mintBurn) {
+        return soroban_client_1.xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("asset_balance"), val: ((i) => AssetBalanceToXdr(i))(mintBurn["asset_balance"]) }),
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("mint"), val: ((i) => soroban_client_1.xdr.ScVal.scvBool(i))(mintBurn["mint"]) }),
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("who"), val: ((i) => (0, convert_js_1.addressToScVal)(i))(mintBurn["who"]) })
+    ];
+    return soroban_client_1.xdr.ScVal.scvMap(arr);
+}
+function MintBurnFromXdr(base64Xdr) {
+    let scVal = (0, convert_js_1.strToScVal)(base64Xdr);
+    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
+    let map = new Map(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        asset_balance: (0, convert_js_1.scValToJs)(map.get("asset_balance")),
+        mint: (0, convert_js_1.scValToJs)(map.get("mint")),
+        who: (0, convert_js_1.scValToJs)(map.get("who"))
     };
 }
 function PriceDataToXdr(priceData) {
