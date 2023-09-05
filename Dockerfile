@@ -17,6 +17,9 @@ RUN ls -la /app/lib
 COPY ./contract-bindings contract-bindings
 RUN ls -la /app/contract-bindings
 
+COPY ./shared shared
+RUN ls -la /app/shared
+
 RUN yarn --frozen-lockfile
 
 COPY ./packages/$BUILD_CONTEXT packages/$BUILD_CONTEXT
