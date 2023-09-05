@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getReserve, collatCoeff } from '@bindings/pool'
-import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
-import { decodei128 } from '@/shared/stellar/decoders'
-import { logInfo } from '@/shared/logger'
+import { getReserve, collatCoeff, debtCoeff } from '@bindings/pool'
 
 const PERCENT_PRECISION = 1e4
 
@@ -11,51 +8,43 @@ type PoolData = {
   lendInterestRate?: bigint
   discount?: number
   liquidationPenalty?: number
-  collateralCoefficient?: number
+  utilizationCapacity?: number
+  collateralCoefficient?: bigint
+  debtCoefficient?: bigint
 }
 
-const withDefaultCatch = <T, D>(promise: Promise<T>, defaultValue: D): Promise<T | D> =>
-  new Promise<T | D>((resolve) => {
-    promise.then(resolve).catch((e) => {
-      logInfo('Replaced with a default value because of', e)
-      resolve(defaultValue)
-    })
-  })
-
-export function usePoolData(
-  tokenAddress: string,
-  sTokenAddress: string,
-): PoolData & {
+export function usePoolData(tokenAddress: string): PoolData & {
   percentMultiplier: number
 } {
   const [data, setData] = useState<PoolData>({})
-  const makeInvoke = useMakeInvoke()
-  const invokeSToken = makeInvoke(sTokenAddress)
 
   useEffect(() => {
     ;(async () => {
       const assetArg = {
         asset: tokenAddress,
       }
-      const [poolResponse, totalSupply, rawCollateralCoefficient] = await Promise.all([
+      const [poolReserve, rawCollateralCoefficient, rawDebtCoefficient] = await Promise.all([
         getReserve(assetArg),
-        invokeSToken('total_supply', decodei128),
-        withDefaultCatch(collatCoeff(assetArg), { value: 0 }),
+        collatCoeff(assetArg),
+        debtCoeff(assetArg),
       ])
 
       setData({
-        borrowInterestRate: poolResponse.borrower_ir,
-        lendInterestRate: poolResponse.lender_ir,
+        borrowInterestRate: poolReserve.borrower_ir,
+        lendInterestRate: poolReserve.lender_ir,
         // @ts-ignore
-        discount: poolResponse.configuration.get('discount'),
+        discount: poolReserve.configuration.get('discount'),
         // @ts-ignore
-        liquidationPenalty: poolResponse.configuration.get('liq_bonus') - PERCENT_PRECISION,
-        totalSupply,
+        liquidationPenalty: poolReserve.configuration.get('liq_bonus') - PERCENT_PRECISION,
         // @ts-ignore
-        collateralCoefficient: String(rawCollateralCoefficient.value),
+        utilizationCapacity: poolReserve.configuration.get('util_cap'),
+        collateralCoefficient: rawCollateralCoefficient.isOk()
+          ? rawCollateralCoefficient.unwrap()
+          : undefined,
+        debtCoefficient: rawDebtCoefficient.isOk() ? rawDebtCoefficient.unwrap() : undefined,
       })
     })()
-  }, [tokenAddress, invokeSToken])
+  }, [tokenAddress])
 
   return {
     ...data,

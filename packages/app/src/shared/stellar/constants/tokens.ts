@@ -11,6 +11,12 @@ enum SToken {
   'usdc' = 'CCNUW2EQLVT766VAPG42ZKU4SMJUL3NUOP4YE4KX4Z6CWXRFNW4ARPD7',
 }
 
+enum DebtToken {
+  'xlm' = 'CAPSAJ3O46QL7G7XFHGG632HZ2FSJGPYCLKCQM3IS767KIKOOFRJONWO',
+  'xrp' = 'CDNVGXMLOFWODB7QCOQCEGN5MRULKPVX46AJGOW57WNN6G3PORX7D3EA',
+  'usdc' = 'CDYIRILRL6J6QUY2EVNNUKX7IBAUGSBCQ2OO5PUY62D5UWP547CRFX4S',
+}
+
 export type TokenAddress = Underlying | SToken
 
 export const cachedTokenAddresses = [...Object.values(Underlying), ...Object.values(SToken)]
@@ -24,6 +30,7 @@ export interface Token {
   title: string
   address: Underlying
   sAddress: SToken
+  debtAddress: DebtToken
 }
 
 export const tokens: Record<SupportedToken, Token> = {
@@ -32,17 +39,20 @@ export const tokens: Record<SupportedToken, Token> = {
     title: 'Lumen',
     address: Underlying.xlm,
     sAddress: SToken.xlm,
+    debtAddress: DebtToken.xlm,
   },
   xrp: {
     code: 'XRP',
     title: 'Ripple',
     address: Underlying.xrp,
     sAddress: SToken.xrp,
+    debtAddress: DebtToken.xrp,
   },
   usdc: {
     code: 'USDC',
     title: 'USD Coin',
     address: Underlying.usdc,
     sAddress: SToken.usdc,
+    debtAddress: DebtToken.usdc,
   },
 }
