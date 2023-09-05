@@ -641,30 +641,6 @@ export async function priceFeed({ asset }, options = {}) {
         },
     });
 }
-/**
- * Deposits a specified amount of an asset into the reserve associated with the asset.
- * Depositor receives s-tokens according to the current index value.
- *
- *
- * # Arguments
- *
- * - who - The address of the user making the deposit.
- * - asset - The address of the asset to be deposited for lend.
- * - amount - The amount to be deposited.
- *
- * # Errors
- *
- * Returns `NoReserveExistForAsset` if no reserve exists for the specified asset.
- * Returns `MathOverflowError' if an overflow occurs when calculating the amount of tokens.
- * Returns `MustNotHaveDebt` if user already has debt.
- *
- * # Panics
- *
- * If the caller is not authorized.
- * If the deposit amount is invalid or does not meet the reserve requirements.
- * If the reserve data cannot be retrieved from storage.
- *
- */
 export async function deposit({ who, asset, amount }, options = {}) {
     return await invoke({
         method: 'deposit',
@@ -828,22 +804,6 @@ export async function withdraw({ who, asset, amount, to }, options = {}) {
         },
     });
 }
-/**
- * Allows users to borrow a specific `amount` of the reserve underlying asset, provided that the borrower
- * already deposited enough collateral
- *
- * # Arguments
- * - who The address of user performing borrowing
- * - asset The address of the underlying asset to borrow
- * - amount The amount to be borrowed
- *
- * # Panics
- * - Panics when caller is not authorized as who
- * - Panics if user balance doesn't meet requirements for borrowing an amount of asset
- * - Panics with `MustNotBeInCollateralAsset` if there is a collateral in borrowing asset.
- * - Panics with `UtilizationCapExceeded` if utilization after borrow is above the limit.
- *
- */
 export async function borrow({ who, asset, amount }, options = {}) {
     return await invoke({
         method: 'borrow',
@@ -1076,11 +1036,11 @@ export async function stokenUnderlyingBalance({ stoken_address }, options = {}) 
         },
     });
 }
-export async function setPrice({ _asset, _price }, options = {}) {
+export async function setPrice({ asset, price }, options = {}) {
     return await invoke({
         method: 'set_price',
-        args: [((i) => addressToScVal(i))(_asset),
-            ((i) => i128ToScVal(i))(_price)],
+        args: [((i) => addressToScVal(i))(asset),
+            ((i) => i128ToScVal(i))(price)],
         ...options,
         parseResultXdr: () => { },
     });
@@ -1151,13 +1111,13 @@ export async function flashLoanFee(options = {}) {
  * # Panics
  *
  */
-export async function flashLoan({ who, receiver, loan_assets, params }, options = {}) {
+export async function flashLoan({ who, receiver, loan_assets, _params }, options = {}) {
     return await invoke({
         method: 'flash_loan',
         args: [((i) => addressToScVal(i))(who),
             ((i) => addressToScVal(i))(receiver),
             ((i) => xdr.ScVal.scvVec(i.map((i) => FlashLoanAssetToXdr(i))))(loan_assets),
-            ((i) => xdr.ScVal.scvBytes(i))(params)],
+            ((i) => xdr.ScVal.scvBytes(i))(_params)],
         ...options,
         parseResultXdr: (xdr) => {
             try {
@@ -1176,10 +1136,10 @@ export async function flashLoan({ who, receiver, loan_assets, params }, options 
         },
     });
 }
-export async function getPrice({ _asset }, options = {}) {
+export async function getPrice({ asset }, options = {}) {
     return await invoke({
         method: 'get_price',
-        args: [((i) => addressToScVal(i))(_asset)],
+        args: [((i) => addressToScVal(i))(asset)],
         ...options,
         parseResultXdr: (xdr) => {
             return scValStrToJs(xdr);
@@ -1474,6 +1434,30 @@ function FlashLoanAssetFromXdr(base64Xdr) {
         amount: scValToJs(map.get("amount")),
         asset: scValToJs(map.get("asset")),
         borrow: scValToJs(map.get("borrow"))
+    };
+}
+function MintBurnToXdr(mintBurn) {
+    if (!mintBurn) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("asset_balance"), val: ((i) => AssetBalanceToXdr(i))(mintBurn["asset_balance"]) }),
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("mint"), val: ((i) => xdr.ScVal.scvBool(i))(mintBurn["mint"]) }),
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("who"), val: ((i) => addressToScVal(i))(mintBurn["who"]) })
+    ];
+    return xdr.ScVal.scvMap(arr);
+}
+function MintBurnFromXdr(base64Xdr) {
+    let scVal = strToScVal(base64Xdr);
+    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
+    let map = new Map(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        asset_balance: scValToJs(map.get("asset_balance")),
+        mint: scValToJs(map.get("mint")),
+        who: scValToJs(map.get("who"))
     };
 }
 function PriceDataToXdr(priceData) {

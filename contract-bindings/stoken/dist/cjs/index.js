@@ -14,7 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pool = exports.underlying_asset = exports.transfer_underlying_to = exports.transfer_on_liquidation = exports.total_supply = exports.symbol = exports.name = exports.decimals = exports.burn = exports.mint = exports.set_authorized = exports.clawback = exports.burn_from = exports.transfer_from = exports.transfer = exports.authorized = exports.spendable_balance = exports.balance = exports.approve = exports.allowance = exports.version = exports.upgrade = exports.initialize = exports.Err = exports.Ok = void 0;
+exports.pool = exports.underlyingAsset = exports.transferUnderlyingTo = exports.transferOnLiquidation = exports.totalSupply = exports.symbol = exports.name = exports.decimals = exports.burn = exports.mint = exports.setAuthorized = exports.clawback = exports.burnFrom = exports.transferFrom = exports.transfer = exports.authorized = exports.spendableBalance = exports.balance = exports.approve = exports.allowance = exports.version = exports.upgrade = exports.initialize = exports.Err = exports.Ok = void 0;
 const soroban_client_1 = require("soroban-client");
 const buffer_1 = require("buffer");
 const convert_js_1 = require("./convert.js");
@@ -166,42 +166,35 @@ function DataKeyFromXdr(base64Xdr) {
  * Panics if name or symbol is empty
  *
  */
-async function initialize({ name, symbol, pool, underlying_asset }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function initialize({ name, symbol, pool, underlying_asset }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'initialize',
         args: [((i) => soroban_client_1.xdr.ScVal.scvString(i))(name),
             ((i) => soroban_client_1.xdr.ScVal.scvString(i))(symbol),
             ((i) => (0, convert_js_1.addressToScVal)(i))(pool),
             ((i) => (0, convert_js_1.addressToScVal)(i))(underlying_asset)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 exports.initialize = initialize;
-async function upgrade({ new_wasm_hash }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function upgrade({ new_wasm_hash }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'upgrade',
         args: [((i) => soroban_client_1.xdr.ScVal.scvBytes(i))(new_wasm_hash)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 exports.upgrade = upgrade;
-async function version({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function version(options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'version',
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
 exports.version = version;
 /**
@@ -217,17 +210,16 @@ exports.version = version;
  * The amount of tokens that the `spender` is allowed to withdraw from the `from` address.
  *
  */
-async function allowance({ from, spender }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function allowance({ from, spender }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'allowance',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(from),
             ((i) => (0, convert_js_1.addressToScVal)(i))(spender)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
 exports.allowance = allowance;
 /**
@@ -247,19 +239,16 @@ exports.allowance = allowance;
  * Panics if the updated allowance exceeds the maximum value of i128.
  *
  */
-async function approve({ from, spender, amount, expiration_ledger }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function approve({ from, spender, amount, expiration_ledger }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'approve',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(from),
             ((i) => (0, convert_js_1.addressToScVal)(i))(spender),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount),
             ((i) => soroban_client_1.xdr.ScVal.scvU32(i))(expiration_ledger)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 exports.approve = approve;
 /**
@@ -274,16 +263,15 @@ exports.approve = approve;
  * The balance of tokens for the specified `id`.
  *
  */
-async function balance({ id }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function balance({ id }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'balance',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(id)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
 exports.balance = balance;
 /**
@@ -299,18 +287,17 @@ exports.balance = balance;
  *
  * Currently the same as `balance(id)`
  */
-async function spendable_balance({ id }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function spendableBalance({ id }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'spendable_balance',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(id)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
-exports.spendable_balance = spendable_balance;
+exports.spendableBalance = spendableBalance;
 /**
  * Checks whether a specified `id` is authorized.
  *
@@ -322,16 +309,15 @@ exports.spendable_balance = spendable_balance;
  *
  * Returns true if the id is authorized, otherwise returns false
  */
-async function authorized({ id }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function authorized({ id }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'authorized',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(id)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
 exports.authorized = authorized;
 /**
@@ -349,18 +335,15 @@ exports.authorized = authorized;
  * Panics if the amount is negative.
  *
  */
-async function transfer({ from, to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function transfer({ from, to, amount }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'transfer',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(from),
             ((i) => (0, convert_js_1.addressToScVal)(i))(to),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 exports.transfer = transfer;
 /**
@@ -380,35 +363,29 @@ exports.transfer = transfer;
  * Panics if the amount is negative.
  *
  */
-async function transfer_from({ spender, from, to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function transferFrom({ spender, from, to, amount }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'transfer_from',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(spender),
             ((i) => (0, convert_js_1.addressToScVal)(i))(from),
             ((i) => (0, convert_js_1.addressToScVal)(i))(to),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
-exports.transfer_from = transfer_from;
-async function burn_from({ _spender, _from, _amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+exports.transferFrom = transferFrom;
+async function burnFrom({ _spender, _from, _amount }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'burn_from',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(_spender),
             ((i) => (0, convert_js_1.addressToScVal)(i))(_from),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(_amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
-exports.burn_from = burn_from;
+exports.burnFrom = burnFrom;
 /**
  * Clawbacks a specified amount of tokens from the from account.
  *
@@ -424,17 +401,14 @@ exports.burn_from = burn_from;
  * Panics if overflow happens
  *
  */
-async function clawback({ from, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function clawback({ from, amount }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'clawback',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(from),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 exports.clawback = clawback;
 /**
@@ -450,19 +424,16 @@ exports.clawback = clawback;
  * Panics if the caller is not the pool associated with this token.
  *
  */
-async function set_authorized({ id, authorize }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function setAuthorized({ id, authorize }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'set_authorized',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(id),
             ((i) => soroban_client_1.xdr.ScVal.scvBool(i))(authorize)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
-exports.set_authorized = set_authorized;
+exports.setAuthorized = setAuthorized;
 /**
  * Mints a specified amount of tokens for a given `id` and returns total supply
  *
@@ -477,17 +448,14 @@ exports.set_authorized = set_authorized;
  * Panics if the caller is not the pool associated with this token.
  *
  */
-async function mint({ to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function mint({ to, amount }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'mint',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(to),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 exports.mint = mint;
 /**
@@ -506,19 +474,16 @@ exports.mint = mint;
  * Panics if the caller is not the pool associated with this token.
  *
  */
-async function burn({ from, amount_to_burn, amount_to_withdraw, to }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function burn({ from, amount_to_burn, amount_to_withdraw, to }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'burn',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(from),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount_to_burn),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount_to_withdraw),
             ((i) => (0, convert_js_1.addressToScVal)(i))(to)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 exports.burn = burn;
 /**
@@ -529,15 +494,14 @@ exports.burn = burn;
  * The number of decimal places used by the token.
  *
  */
-async function decimals({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function decimals(options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'decimals',
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
 exports.decimals = decimals;
 /**
@@ -548,15 +512,14 @@ exports.decimals = decimals;
  * The name of the token as a `soroban_sdk::Bytes` value.
  *
  */
-async function name({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function name(options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'name',
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
 exports.name = name;
 /**
@@ -567,15 +530,14 @@ exports.name = name;
  * The symbol of the token as a `soroban_sdk::Bytes` value.
  *
  */
-async function symbol({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function symbol(options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'symbol',
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
 exports.symbol = symbol;
 /**
@@ -586,17 +548,16 @@ exports.symbol = symbol;
  * The total supply of tokens.
  *
  */
-async function total_supply({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function totalSupply(options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'total_supply',
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
-exports.total_supply = total_supply;
+exports.totalSupply = totalSupply;
 /**
  * Transfers tokens during a liquidation.
  *
@@ -611,20 +572,17 @@ exports.total_supply = total_supply;
  * Panics if caller is not associated pool.
  *
  */
-async function transfer_on_liquidation({ from, to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function transferOnLiquidation({ from, to, amount }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'transfer_on_liquidation',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(from),
             ((i) => (0, convert_js_1.addressToScVal)(i))(to),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
-exports.transfer_on_liquidation = transfer_on_liquidation;
+exports.transferOnLiquidation = transferOnLiquidation;
 /**
  * Transfers the underlying asset to the specified recipient.
  *
@@ -639,19 +597,16 @@ exports.transfer_on_liquidation = transfer_on_liquidation;
  * Panics if caller is not associated pool.
  *
  */
-async function transfer_underlying_to({ to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function transferUnderlyingTo({ to, amount }, options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'transfer_underlying_to',
         args: [((i) => (0, convert_js_1.addressToScVal)(i))(to),
             ((i) => (0, convert_js_1.i128ToScVal)(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
-exports.transfer_underlying_to = transfer_underlying_to;
+exports.transferUnderlyingTo = transferUnderlyingTo;
 /**
  * Retrieves the address of the underlying asset.
  *
@@ -660,17 +615,16 @@ exports.transfer_underlying_to = transfer_underlying_to;
  * The address of the underlying asset.
  *
  */
-async function underlying_asset({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function underlyingAsset(options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'underlying_asset',
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
-exports.underlying_asset = underlying_asset;
+exports.underlyingAsset = underlyingAsset;
 /**
  * Retrieves the address of the pool.
  *
@@ -679,15 +633,14 @@ exports.underlying_asset = underlying_asset;
  * The address of the associated pool.
  *
  */
-async function pool({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+async function pool(options = {}) {
+    return await (0, invoke_js_1.invoke)({
         method: 'pool',
-    };
-    // @ts-ignore Type does exist
-    const response = await (0, invoke_js_1.invoke)(invokeArgs);
-    return (0, convert_js_1.scValStrToJs)(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return (0, convert_js_1.scValStrToJs)(xdr);
+        },
+    });
 }
 exports.pool = pool;
 function CommonDataKeyToXdr(commonDataKey) {
@@ -729,6 +682,7 @@ function ReserveConfigurationToXdr(reserveConfiguration) {
         new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("decimals"), val: ((i) => soroban_client_1.xdr.ScVal.scvU32(i))(reserveConfiguration["decimals"]) }),
         new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("discount"), val: ((i) => soroban_client_1.xdr.ScVal.scvU32(i))(reserveConfiguration["discount"]) }),
         new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("is_active"), val: ((i) => soroban_client_1.xdr.ScVal.scvBool(i))(reserveConfiguration["is_active"]) }),
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("is_base_asset"), val: ((i) => soroban_client_1.xdr.ScVal.scvBool(i))(reserveConfiguration["is_base_asset"]) }),
         new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("liq_bonus"), val: ((i) => soroban_client_1.xdr.ScVal.scvU32(i))(reserveConfiguration["liq_bonus"]) }),
         new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("liq_cap"), val: ((i) => (0, convert_js_1.i128ToScVal)(i))(reserveConfiguration["liq_cap"]) }),
         new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("util_cap"), val: ((i) => soroban_client_1.xdr.ScVal.scvU32(i))(reserveConfiguration["util_cap"]) })
@@ -747,6 +701,7 @@ function ReserveConfigurationFromXdr(base64Xdr) {
         decimals: (0, convert_js_1.scValToJs)(map.get("decimals")),
         discount: (0, convert_js_1.scValToJs)(map.get("discount")),
         is_active: (0, convert_js_1.scValToJs)(map.get("is_active")),
+        is_base_asset: (0, convert_js_1.scValToJs)(map.get("is_base_asset")),
         liq_bonus: (0, convert_js_1.scValToJs)(map.get("liq_bonus")),
         liq_cap: (0, convert_js_1.scValToJs)(map.get("liq_cap")),
         util_cap: (0, convert_js_1.scValToJs)(map.get("util_cap"))
@@ -911,6 +866,7 @@ const Errors = [
     { message: "" },
     { message: "" },
     { message: "" },
+    { message: "" },
     { message: "" }
 ];
 function AccountPositionToXdr(accountPosition) {
@@ -935,6 +891,76 @@ function AccountPositionFromXdr(base64Xdr) {
         debt: (0, convert_js_1.scValToJs)(map.get("debt")),
         discounted_collateral: (0, convert_js_1.scValToJs)(map.get("discounted_collateral")),
         npv: (0, convert_js_1.scValToJs)(map.get("npv"))
+    };
+}
+function AssetBalanceToXdr(assetBalance) {
+    if (!assetBalance) {
+        return soroban_client_1.xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("asset"), val: ((i) => (0, convert_js_1.addressToScVal)(i))(assetBalance["asset"]) }),
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("balance"), val: ((i) => (0, convert_js_1.i128ToScVal)(i))(assetBalance["balance"]) })
+    ];
+    return soroban_client_1.xdr.ScVal.scvMap(arr);
+}
+function AssetBalanceFromXdr(base64Xdr) {
+    let scVal = (0, convert_js_1.strToScVal)(base64Xdr);
+    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
+    let map = new Map(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        asset: (0, convert_js_1.scValToJs)(map.get("asset")),
+        balance: (0, convert_js_1.scValToJs)(map.get("balance"))
+    };
+}
+function FlashLoanAssetToXdr(flashLoanAsset) {
+    if (!flashLoanAsset) {
+        return soroban_client_1.xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("amount"), val: ((i) => (0, convert_js_1.i128ToScVal)(i))(flashLoanAsset["amount"]) }),
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("asset"), val: ((i) => (0, convert_js_1.addressToScVal)(i))(flashLoanAsset["asset"]) }),
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("borrow"), val: ((i) => soroban_client_1.xdr.ScVal.scvBool(i))(flashLoanAsset["borrow"]) })
+    ];
+    return soroban_client_1.xdr.ScVal.scvMap(arr);
+}
+function FlashLoanAssetFromXdr(base64Xdr) {
+    let scVal = (0, convert_js_1.strToScVal)(base64Xdr);
+    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
+    let map = new Map(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        amount: (0, convert_js_1.scValToJs)(map.get("amount")),
+        asset: (0, convert_js_1.scValToJs)(map.get("asset")),
+        borrow: (0, convert_js_1.scValToJs)(map.get("borrow"))
+    };
+}
+function MintBurnToXdr(mintBurn) {
+    if (!mintBurn) {
+        return soroban_client_1.xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("asset_balance"), val: ((i) => AssetBalanceToXdr(i))(mintBurn["asset_balance"]) }),
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("mint"), val: ((i) => soroban_client_1.xdr.ScVal.scvBool(i))(mintBurn["mint"]) }),
+        new soroban_client_1.xdr.ScMapEntry({ key: ((i) => soroban_client_1.xdr.ScVal.scvSymbol(i))("who"), val: ((i) => (0, convert_js_1.addressToScVal)(i))(mintBurn["who"]) })
+    ];
+    return soroban_client_1.xdr.ScVal.scvMap(arr);
+}
+function MintBurnFromXdr(base64Xdr) {
+    let scVal = (0, convert_js_1.strToScVal)(base64Xdr);
+    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
+    let map = new Map(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        asset_balance: (0, convert_js_1.scValToJs)(map.get("asset_balance")),
+        mint: (0, convert_js_1.scValToJs)(map.get("mint")),
+        who: (0, convert_js_1.scValToJs)(map.get("who"))
     };
 }
 function TokenMetadataToXdr(tokenMetadata) {

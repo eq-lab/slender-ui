@@ -1,7 +1,7 @@
 /**
  * The Soroban contract ID for the @bindings/debttoken contract.
  */
-export declare const CONTRACT_ID = "CAY2AGOEOHYA4QUHOYZVQWSAAVLMIDRQKDDC2KHY6YTD5DMJEI2CVOWV";
+export declare const CONTRACT_ID = "CAPSAJ3O46QL7G7XFHGG632HZ2FSJGPYCLKCQM3IS767KIKOOFRJONWO";
 /**
  * The Soroban contract ID for the @bindings/debttoken contract, in hex.
  * If {@link CONTRACT_ID} is a new-style `C…` string, you will need this hex

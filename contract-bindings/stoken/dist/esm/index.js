@@ -147,40 +147,33 @@ function DataKeyFromXdr(base64Xdr) {
  * Panics if name or symbol is empty
  *
  */
-export async function initialize({ name, symbol, pool, underlying_asset }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function initialize({ name, symbol, pool, underlying_asset }, options = {}) {
+    return await invoke({
         method: 'initialize',
         args: [((i) => xdr.ScVal.scvString(i))(name),
             ((i) => xdr.ScVal.scvString(i))(symbol),
             ((i) => addressToScVal(i))(pool),
             ((i) => addressToScVal(i))(underlying_asset)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
-export async function upgrade({ new_wasm_hash }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function upgrade({ new_wasm_hash }, options = {}) {
+    return await invoke({
         method: 'upgrade',
         args: [((i) => xdr.ScVal.scvBytes(i))(new_wasm_hash)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
-export async function version({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function version(options = {}) {
+    return await invoke({
         method: 'version',
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Returns the amount of tokens that the `spender` is allowed to withdraw from the `from` address.
@@ -195,17 +188,16 @@ export async function version({ signAndSend, fee } = { signAndSend: false, fee: 
  * The amount of tokens that the `spender` is allowed to withdraw from the `from` address.
  *
  */
-export async function allowance({ from, spender }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function allowance({ from, spender }, options = {}) {
+    return await invoke({
         method: 'allowance',
         args: [((i) => addressToScVal(i))(from),
             ((i) => addressToScVal(i))(spender)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Set the allowance for a spender to withdraw from the `from` address by a specified amount of tokens.
@@ -224,19 +216,16 @@ export async function allowance({ from, spender }, { signAndSend, fee } = { sign
  * Panics if the updated allowance exceeds the maximum value of i128.
  *
  */
-export async function approve({ from, spender, amount, expiration_ledger }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function approve({ from, spender, amount, expiration_ledger }, options = {}) {
+    return await invoke({
         method: 'approve',
         args: [((i) => addressToScVal(i))(from),
             ((i) => addressToScVal(i))(spender),
             ((i) => i128ToScVal(i))(amount),
             ((i) => xdr.ScVal.scvU32(i))(expiration_ledger)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Returns the balance of tokens for a specified `id`.
@@ -250,16 +239,15 @@ export async function approve({ from, spender, amount, expiration_ledger }, { si
  * The balance of tokens for the specified `id`.
  *
  */
-export async function balance({ id }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function balance({ id }, options = {}) {
+    return await invoke({
         method: 'balance',
         args: [((i) => addressToScVal(i))(id)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Returns the spendable balance of tokens for a specified id.
@@ -274,16 +262,15 @@ export async function balance({ id }, { signAndSend, fee } = { signAndSend: fals
  *
  * Currently the same as `balance(id)`
  */
-export async function spendable_balance({ id }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function spendableBalance({ id }, options = {}) {
+    return await invoke({
         method: 'spendable_balance',
         args: [((i) => addressToScVal(i))(id)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Checks whether a specified `id` is authorized.
@@ -296,16 +283,15 @@ export async function spendable_balance({ id }, { signAndSend, fee } = { signAnd
  *
  * Returns true if the id is authorized, otherwise returns false
  */
-export async function authorized({ id }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function authorized({ id }, options = {}) {
+    return await invoke({
         method: 'authorized',
         args: [((i) => addressToScVal(i))(id)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Transfers a specified amount of tokens from one account (`from`) to another account (`to`).
@@ -322,18 +308,15 @@ export async function authorized({ id }, { signAndSend, fee } = { signAndSend: f
  * Panics if the amount is negative.
  *
  */
-export async function transfer({ from, to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function transfer({ from, to, amount }, options = {}) {
+    return await invoke({
         method: 'transfer',
         args: [((i) => addressToScVal(i))(from),
             ((i) => addressToScVal(i))(to),
             ((i) => i128ToScVal(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Transfers a specified amount of tokens from the from account to the to account on behalf of the spender account.
@@ -352,32 +335,26 @@ export async function transfer({ from, to, amount }, { signAndSend, fee } = { si
  * Panics if the amount is negative.
  *
  */
-export async function transfer_from({ spender, from, to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function transferFrom({ spender, from, to, amount }, options = {}) {
+    return await invoke({
         method: 'transfer_from',
         args: [((i) => addressToScVal(i))(spender),
             ((i) => addressToScVal(i))(from),
             ((i) => addressToScVal(i))(to),
             ((i) => i128ToScVal(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
-export async function burn_from({ _spender, _from, _amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function burnFrom({ _spender, _from, _amount }, options = {}) {
+    return await invoke({
         method: 'burn_from',
         args: [((i) => addressToScVal(i))(_spender),
             ((i) => addressToScVal(i))(_from),
             ((i) => i128ToScVal(i))(_amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Clawbacks a specified amount of tokens from the from account.
@@ -394,17 +371,14 @@ export async function burn_from({ _spender, _from, _amount }, { signAndSend, fee
  * Panics if overflow happens
  *
  */
-export async function clawback({ from, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function clawback({ from, amount }, options = {}) {
+    return await invoke({
         method: 'clawback',
         args: [((i) => addressToScVal(i))(from),
             ((i) => i128ToScVal(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Sets the authorization status for a specified `id`.
@@ -419,17 +393,14 @@ export async function clawback({ from, amount }, { signAndSend, fee } = { signAn
  * Panics if the caller is not the pool associated with this token.
  *
  */
-export async function set_authorized({ id, authorize }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function setAuthorized({ id, authorize }, options = {}) {
+    return await invoke({
         method: 'set_authorized',
         args: [((i) => addressToScVal(i))(id),
             ((i) => xdr.ScVal.scvBool(i))(authorize)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Mints a specified amount of tokens for a given `id` and returns total supply
@@ -445,17 +416,14 @@ export async function set_authorized({ id, authorize }, { signAndSend, fee } = {
  * Panics if the caller is not the pool associated with this token.
  *
  */
-export async function mint({ to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function mint({ to, amount }, options = {}) {
+    return await invoke({
         method: 'mint',
         args: [((i) => addressToScVal(i))(to),
             ((i) => i128ToScVal(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Burns a specified amount of tokens from the from account and returns total supply
@@ -473,19 +441,16 @@ export async function mint({ to, amount }, { signAndSend, fee } = { signAndSend:
  * Panics if the caller is not the pool associated with this token.
  *
  */
-export async function burn({ from, amount_to_burn, amount_to_withdraw, to }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function burn({ from, amount_to_burn, amount_to_withdraw, to }, options = {}) {
+    return await invoke({
         method: 'burn',
         args: [((i) => addressToScVal(i))(from),
             ((i) => i128ToScVal(i))(amount_to_burn),
             ((i) => i128ToScVal(i))(amount_to_withdraw),
             ((i) => addressToScVal(i))(to)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Returns the number of decimal places used by the token.
@@ -495,15 +460,14 @@ export async function burn({ from, amount_to_burn, amount_to_withdraw, to }, { s
  * The number of decimal places used by the token.
  *
  */
-export async function decimals({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function decimals(options = {}) {
+    return await invoke({
         method: 'decimals',
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Returns the name of the token.
@@ -513,15 +477,14 @@ export async function decimals({ signAndSend, fee } = { signAndSend: false, fee:
  * The name of the token as a `soroban_sdk::Bytes` value.
  *
  */
-export async function name({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function name(options = {}) {
+    return await invoke({
         method: 'name',
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Returns the symbol of the token.
@@ -531,15 +494,14 @@ export async function name({ signAndSend, fee } = { signAndSend: false, fee: 100
  * The symbol of the token as a `soroban_sdk::Bytes` value.
  *
  */
-export async function symbol({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function symbol(options = {}) {
+    return await invoke({
         method: 'symbol',
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Returns the total supply of tokens.
@@ -549,15 +511,14 @@ export async function symbol({ signAndSend, fee } = { signAndSend: false, fee: 1
  * The total supply of tokens.
  *
  */
-export async function total_supply({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function totalSupply(options = {}) {
+    return await invoke({
         method: 'total_supply',
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Transfers tokens during a liquidation.
@@ -573,18 +534,15 @@ export async function total_supply({ signAndSend, fee } = { signAndSend: false, 
  * Panics if caller is not associated pool.
  *
  */
-export async function transfer_on_liquidation({ from, to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function transferOnLiquidation({ from, to, amount }, options = {}) {
+    return await invoke({
         method: 'transfer_on_liquidation',
         args: [((i) => addressToScVal(i))(from),
             ((i) => addressToScVal(i))(to),
             ((i) => i128ToScVal(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Transfers the underlying asset to the specified recipient.
@@ -600,17 +558,14 @@ export async function transfer_on_liquidation({ from, to, amount }, { signAndSen
  * Panics if caller is not associated pool.
  *
  */
-export async function transfer_underlying_to({ to, amount }, { signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function transferUnderlyingTo({ to, amount }, options = {}) {
+    return await invoke({
         method: 'transfer_underlying_to',
         args: [((i) => addressToScVal(i))(to),
             ((i) => i128ToScVal(i))(amount)],
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return;
+        ...options,
+        parseResultXdr: () => { },
+    });
 }
 /**
  * Retrieves the address of the underlying asset.
@@ -620,15 +575,14 @@ export async function transfer_underlying_to({ to, amount }, { signAndSend, fee 
  * The address of the underlying asset.
  *
  */
-export async function underlying_asset({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function underlyingAsset(options = {}) {
+    return await invoke({
         method: 'underlying_asset',
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 /**
  * Retrieves the address of the pool.
@@ -638,15 +592,14 @@ export async function underlying_asset({ signAndSend, fee } = { signAndSend: fal
  * The address of the associated pool.
  *
  */
-export async function pool({ signAndSend, fee } = { signAndSend: false, fee: 100 }) {
-    let invokeArgs = {
-        signAndSend,
-        fee,
+export async function pool(options = {}) {
+    return await invoke({
         method: 'pool',
-    };
-    // @ts-ignore Type does exist
-    const response = await invoke(invokeArgs);
-    return scValStrToJs(response.xdr);
+        ...options,
+        parseResultXdr: (xdr) => {
+            return scValStrToJs(xdr);
+        },
+    });
 }
 function CommonDataKeyToXdr(commonDataKey) {
     if (!commonDataKey) {
@@ -687,6 +640,7 @@ function ReserveConfigurationToXdr(reserveConfiguration) {
         new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("decimals"), val: ((i) => xdr.ScVal.scvU32(i))(reserveConfiguration["decimals"]) }),
         new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("discount"), val: ((i) => xdr.ScVal.scvU32(i))(reserveConfiguration["discount"]) }),
         new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("is_active"), val: ((i) => xdr.ScVal.scvBool(i))(reserveConfiguration["is_active"]) }),
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("is_base_asset"), val: ((i) => xdr.ScVal.scvBool(i))(reserveConfiguration["is_base_asset"]) }),
         new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("liq_bonus"), val: ((i) => xdr.ScVal.scvU32(i))(reserveConfiguration["liq_bonus"]) }),
         new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("liq_cap"), val: ((i) => i128ToScVal(i))(reserveConfiguration["liq_cap"]) }),
         new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("util_cap"), val: ((i) => xdr.ScVal.scvU32(i))(reserveConfiguration["util_cap"]) })
@@ -705,6 +659,7 @@ function ReserveConfigurationFromXdr(base64Xdr) {
         decimals: scValToJs(map.get("decimals")),
         discount: scValToJs(map.get("discount")),
         is_active: scValToJs(map.get("is_active")),
+        is_base_asset: scValToJs(map.get("is_base_asset")),
         liq_bonus: scValToJs(map.get("liq_bonus")),
         liq_cap: scValToJs(map.get("liq_cap")),
         util_cap: scValToJs(map.get("util_cap"))
@@ -869,6 +824,7 @@ const Errors = [
     { message: "" },
     { message: "" },
     { message: "" },
+    { message: "" },
     { message: "" }
 ];
 function AccountPositionToXdr(accountPosition) {
@@ -893,6 +849,76 @@ function AccountPositionFromXdr(base64Xdr) {
         debt: scValToJs(map.get("debt")),
         discounted_collateral: scValToJs(map.get("discounted_collateral")),
         npv: scValToJs(map.get("npv"))
+    };
+}
+function AssetBalanceToXdr(assetBalance) {
+    if (!assetBalance) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("asset"), val: ((i) => addressToScVal(i))(assetBalance["asset"]) }),
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("balance"), val: ((i) => i128ToScVal(i))(assetBalance["balance"]) })
+    ];
+    return xdr.ScVal.scvMap(arr);
+}
+function AssetBalanceFromXdr(base64Xdr) {
+    let scVal = strToScVal(base64Xdr);
+    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
+    let map = new Map(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        asset: scValToJs(map.get("asset")),
+        balance: scValToJs(map.get("balance"))
+    };
+}
+function FlashLoanAssetToXdr(flashLoanAsset) {
+    if (!flashLoanAsset) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("amount"), val: ((i) => i128ToScVal(i))(flashLoanAsset["amount"]) }),
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("asset"), val: ((i) => addressToScVal(i))(flashLoanAsset["asset"]) }),
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("borrow"), val: ((i) => xdr.ScVal.scvBool(i))(flashLoanAsset["borrow"]) })
+    ];
+    return xdr.ScVal.scvMap(arr);
+}
+function FlashLoanAssetFromXdr(base64Xdr) {
+    let scVal = strToScVal(base64Xdr);
+    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
+    let map = new Map(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        amount: scValToJs(map.get("amount")),
+        asset: scValToJs(map.get("asset")),
+        borrow: scValToJs(map.get("borrow"))
+    };
+}
+function MintBurnToXdr(mintBurn) {
+    if (!mintBurn) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("asset_balance"), val: ((i) => AssetBalanceToXdr(i))(mintBurn["asset_balance"]) }),
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("mint"), val: ((i) => xdr.ScVal.scvBool(i))(mintBurn["mint"]) }),
+        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("who"), val: ((i) => addressToScVal(i))(mintBurn["who"]) })
+    ];
+    return xdr.ScVal.scvMap(arr);
+}
+function MintBurnFromXdr(base64Xdr) {
+    let scVal = strToScVal(base64Xdr);
+    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
+    let map = new Map(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        asset_balance: scValToJs(map.get("asset_balance")),
+        mint: scValToJs(map.get("mint")),
+        who: scValToJs(map.get("who"))
     };
 }
 function TokenMetadataToXdr(tokenMetadata) {
