@@ -1,4 +1,4 @@
-import { isProduction } from '@/shared/config'
+import { isProduction } from '@slender/shared/config'
 
 const SEND_EMAIL_PROD_PATH = 'https://api.slender.fi/api/users'
 const SEND_EMAIL_DEV_PATH = 'https://api-stage.slender.fi/api/users'
