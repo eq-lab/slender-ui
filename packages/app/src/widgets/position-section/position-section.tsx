@@ -7,6 +7,7 @@ import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info
 import { Position as PositionType } from '@/entities/position/types'
 import { BorrowDecreaseModal } from '@/features/borrow-flow/components/borrow-decrease-modal'
 import { BorrowIncreaseModal } from '@/features/borrow-flow/components/borrow-increase-modal'
+import { excludeSupportedTokens } from '@/features/borrow-flow/utils'
 
 const getCollateralUsd = (collateral: PositionType['collaterals']) => {
   const sum = collateral.reduce((acc, elem) => {
@@ -14,6 +15,16 @@ const getCollateralUsd = (collateral: PositionType['collaterals']) => {
     const { type, value } = elem
     const coinInfo = mockTokenInfoByType[type]
     return acc + value * coinInfo.usd * coinInfo.discount
+  }, 0)
+  return sum
+}
+
+const getDebtUsd = (debt: PositionType['debts']) => {
+  const sum = debt.reduce((acc, elem) => {
+    if (!elem) return acc
+    const { type, value } = elem
+    const coinInfo = mockTokenInfoByType[type]
+    return acc + value * coinInfo.usd
   }, 0)
   return sum
 }
@@ -44,10 +55,26 @@ export function PositionSection() {
   const renderIncreaseModal = () => {
     const modalData = getModalData(increaseModalIndex)
     if (!modalData) return null
+    const firstCollateral = modalData.availablePosition.collaterals[0].type
+    const secondCollateral = modalData.availablePosition.collaterals[1]?.type
+    const secondDebt = modalData.availablePosition.debts[1]?.type
+
+    const getDebtTypes = () => {
+      if (secondDebt) {
+        return [modalData.debt.type]
+      }
+
+      return excludeSupportedTokens(
+        secondCollateral ? [firstCollateral, secondCollateral] : [firstCollateral],
+      )
+    }
+
     return (
       <BorrowIncreaseModal
+        debtTypes={getDebtTypes()}
         debt={modalData.debt.value}
-        collateralUsd={getCollateralUsd(modalData.availablePosition.collaterals)}
+        collateralSumUsd={getCollateralUsd(modalData.availablePosition.collaterals)}
+        debtSumUsd={getDebtUsd(modalData.availablePosition.debts)}
         type={modalData.debt.type}
         onClose={() => setIncreaseModalIndex(null)}
         onSend={(value) =>
