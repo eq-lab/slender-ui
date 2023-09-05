@@ -4,13 +4,19 @@ import { useContextSelector } from 'use-context-selector'
 import { MarketContext } from '@/entities/token/context/context'
 import { useTokenData } from '@/entities/token/hooks/use-token-data'
 
+const makeFormatPercentWithPrecision =
+  (multiplier: number) =>
+  (value?: number | bigint): string =>
+    value === undefined ? '...' : `${(Number(value) * 100) / multiplier}%`
+
 function useMarketDataForDisplay(token: Token) {
   const {
     discount,
     liquidationPenalty,
+    percentMultiplier,
     borrowInterestRate,
     lendInterestRate,
-    percentMultiplier,
+    contractMultiplier,
     collateralCoefficient = 0n,
     debtCoefficient = 0n,
     utilizationCapacity = 0,
@@ -20,23 +26,25 @@ function useMarketDataForDisplay(token: Token) {
   const decimals = tokenCache?.decimals ?? 0
 
   const { totalSupply: sTotalSupply } = useTokenData(token.sAddress)
-  const totalSupplied = Number(BigInt(sTotalSupply) * collateralCoefficient) / 10 ** decimals
+  const totalSupplied =
+    ((Number(sTotalSupply) / contractMultiplier) * Number(collateralCoefficient)) / 10 ** decimals
 
   const { totalSupply: debtTotalSupply } = useTokenData(token.debtAddress)
-  const totalBorrowed = Number(BigInt(debtTotalSupply) * debtCoefficient) / 10 ** decimals
+  const totalBorrowed =
+    ((Number(debtTotalSupply) / contractMultiplier) * Number(debtCoefficient)) / 10 ** decimals
 
   const reserved = totalSupplied * (1 - utilizationCapacity / percentMultiplier)
 
   const availableToBorrow = totalSupplied - totalBorrowed - reserved
 
-  const formatPercentage = (value?: number | bigint): string =>
-    value === undefined ? '...' : `${(Number(value) * 100) / percentMultiplier}%`
+  const formatPercentage = makeFormatPercentWithPrecision(percentMultiplier)
+  const formatInterestRate = makeFormatPercentWithPrecision(contractMultiplier)
 
   return {
     discount: formatPercentage(discount),
     liquidationPenalty: formatPercentage(liquidationPenalty),
-    borrowInterestRate: formatPercentage(borrowInterestRate),
-    lendInterestRate: formatPercentage(lendInterestRate),
+    borrowInterestRate: formatInterestRate(borrowInterestRate),
+    lendInterestRate: formatInterestRate(lendInterestRate),
     totalSupplied,
     totalBorrowed,
     reserved,

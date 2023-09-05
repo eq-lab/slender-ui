@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getReserve, collatCoeff, debtCoeff } from '@bindings/pool'
 
 const PERCENT_PRECISION = 1e4
+const CONTRACT_MATH_PRECISION = 1e9
 
 type PoolData = {
   borrowInterestRate?: bigint
@@ -15,6 +16,7 @@ type PoolData = {
 
 export function usePoolData(tokenAddress: string): PoolData & {
   percentMultiplier: number
+  contractMultiplier: number
 } {
   const [data, setData] = useState<PoolData>({})
 
@@ -49,5 +51,6 @@ export function usePoolData(tokenAddress: string): PoolData & {
   return {
     ...data,
     percentMultiplier: PERCENT_PRECISION,
+    contractMultiplier: CONTRACT_MATH_PRECISION,
   }
 }
