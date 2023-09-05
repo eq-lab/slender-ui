@@ -19,7 +19,11 @@ enum DebtToken {
 
 export type TokenAddress = Underlying | SToken
 
-export const cachedTokenAddresses = [...Object.values(Underlying), ...Object.values(SToken)]
+export const cachedTokenAddresses = [
+  ...Object.values(Underlying),
+  ...Object.values(SToken),
+  ...Object.values(DebtToken),
+]
 
 export const SUPPORTED_TOKENS = ['usdc', 'xlm', 'xrp'] as const
 
