@@ -42,7 +42,7 @@ export function useMakeInvoke() {
           .setTimeout(SorobanClient.TimeoutInfinite)
           .build()
         const { results } = await server.simulateTransaction(tx)
-        const [result] = results
+        const [result] = results ?? []
         return decoder(result?.xdr ?? '')
       }
     },
