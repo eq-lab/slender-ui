@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { buildNumber } from '@/shared/config'
+import { buildNumber } from '../config'
 
 export function VersionAlert() {
   useEffect(() => {

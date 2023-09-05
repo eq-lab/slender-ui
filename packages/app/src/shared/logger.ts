@@ -1,4 +1,4 @@
-import { isProduction } from '@slender/landing/src/shared/config'
+import { isProduction } from '@slender/shared/config'
 
 export function logInfo(...args: unknown[]) {
   if (!isProduction) {
