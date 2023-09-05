@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
-import { Position } from '@/entities/position/types'
 import { ModalLayout } from '../modal-layout'
-import { formatUsd } from '../../formatters'
+import { getHealth, getBorrowCapacity } from '../../utils'
+import { PositionSummary } from '../position-summary'
 
 interface Props {
-  debt: number
   debtSumUsd: number
   collateralSumUsd: number
   onClose: () => void
   type: SupportedToken
-  onSend: (value: Position['debts']) => void
+  onSend: (value: Partial<Record<SupportedToken, number>>) => void
   debtTypes: SupportedToken[]
 }
 
 export function BorrowIncreaseModal({
   collateralSumUsd,
-  debt,
   onClose,
   type,
   onSend,
@@ -31,71 +29,75 @@ export function BorrowIncreaseModal({
   const [isDebtListOpen, setIsDebtListOpen] = useState(false)
   const [showExtraInput, setShowExtraInput] = useState(false)
 
-  const debtDelta = debt + Number(value)
-
   useEffect(() => {
     setCoreDebtType(type)
   }, [type])
 
-  const debtDeltaUsd = debtSumUsd + Number(value) * mockTokenInfoByType[coreDebtType].usd
+  const extraDebtType = debtTypes[0] === coreDebtType ? debtTypes[1] : debtTypes[0]
 
-  const defaultHealth = Math.max(
-    Math.round(collateralSumUsd && (1 - debtSumUsd / collateralSumUsd) * 100),
-    0,
-  )
+  const actualDebtUsd =
+    debtSumUsd +
+    Number(value) * mockTokenInfoByType[coreDebtType].usd +
+    (extraDebtType ? Number(extraValue) * mockTokenInfoByType[extraDebtType].usd : 0)
 
-  const health = Math.max(
-    Math.round(collateralSumUsd && (1 - debtDeltaUsd / collateralSumUsd) * 100),
-    0,
-  )
+  const { health, healthDelta } = getHealth({
+    collateralSumUsd,
+    actualDebtUsd,
+    debtSumUsd,
+  })
+
+  const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError } = getBorrowCapacity({
+    collateralSumUsd,
+    actualDebtUsd,
+    debtSumUsd,
+  })
+
+  const debtUsdDelta = actualDebtUsd - debtSumUsd
 
   const hasExtraDeptType = Boolean(debtTypes[1])
   const defaultBorrowCapacity = Math.max(collateralSumUsd - debtSumUsd, 0)
-  const borrowCapacity = collateralSumUsd - debtDeltaUsd
 
-  const borrowCapacityInterface = Math.max(borrowCapacity, 0)
   const max = Math.floor(defaultBorrowCapacity / mockTokenInfoByType[coreDebtType].usd)
-  const borrowCapacityError = borrowCapacity < 0
-
-  const extraCollateralType = debtTypes[0] === coreDebtType ? debtTypes[1] : debtTypes[0]
-
-  const infoSlot = (
-    <div>
-      <h4>Position summary</h4>
-      <div>
-        {health}% ({health - defaultHealth}%)
-      </div>
-      <div>
-        Debt {formatUsd(debtDeltaUsd)} ({formatUsd(debtDeltaUsd - debtSumUsd)})
-      </div>
-      <div>Collateral {formatUsd(collateralSumUsd)}</div>
-      <div style={{ color: borrowCapacityError ? 'red' : '' }}>
-        Borrow capacity {formatUsd(borrowCapacityInterface)} (
-        {formatUsd(borrowCapacityInterface - defaultBorrowCapacity)})
-      </div>
-    </div>
-  )
 
   const secondInputError = false
 
-  const getSaveData = (): Position['debts'] => {
-    if (coreDebtType === type) {
-      return [{ value: debtDelta, type: coreDebtType }]
+  const getSaveData = (): Partial<Record<SupportedToken, number>> => {
+    const core = { [coreDebtType]: Number(value) }
+
+    if (showExtraInput && extraDebtType) {
+      return {
+        ...core,
+        [extraDebtType]: Number(extraValue),
+      }
     }
 
-    return [
-      { value: debt, type },
-      { value: Number(value), type: coreDebtType },
-    ]
+    return core
   }
 
   return (
-    <ModalLayout infoSlot={infoSlot} onClose={onClose}>
+    <ModalLayout
+      infoSlot={
+        <PositionSummary
+          actualDebtUsd={actualDebtUsd}
+          borrowCapacityDelta={borrowCapacityDelta}
+          borrowCapacityInterface={borrowCapacityInterface}
+          collateralSumUsd={collateralSumUsd}
+          health={health}
+          debtUsdDelta={debtUsdDelta}
+          healthDelta={healthDelta}
+          borrowCapacityError={borrowCapacityError}
+        />
+      }
+      onClose={onClose}
+    >
       <h3>How much to borrow</h3>
       <input onChange={(e) => setValue(e.target.value)} type="number" value={value} />
-      <button type="button" onClick={() => setValue(String(max))}>
-        max {max}
-      </button>
+      {coreDebtType}
+      {!showExtraInput && (
+        <button type="button" onClick={() => setValue(String(max))}>
+          max {max}
+        </button>
+      )}
       {!showExtraInput && hasExtraDeptType && (
         <button onClick={() => setIsDebtListOpen((state) => !state)} type="button">
           change collateral
@@ -133,7 +135,7 @@ export function BorrowIncreaseModal({
               setExtraValue(e.target.value)
             }}
           />
-          {extraCollateralType}
+          {extraDebtType}
         </div>
       )}
       <div>
