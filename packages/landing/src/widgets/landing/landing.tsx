@@ -108,7 +108,7 @@ export function Landing() {
                 </RatesInfoUnit>
 
                 <RatesInfoUnit>
-                  <RatesTitle className="liquidations">flash-loans</RatesTitle>
+                  <RatesTitle className="liquidations">Flash loans</RatesTitle>
                   <RatesDescription>
                     Borrow and repay in the same block with no&nbsp;collateral
                   </RatesDescription>
