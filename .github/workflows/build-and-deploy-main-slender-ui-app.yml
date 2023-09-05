@@ -59,9 +59,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      - name: 'testsleep'
-        run: sleep 30
-  
 
   deployment-app:
     needs: build-image-app
@@ -79,7 +76,7 @@ jobs:
       with:
         repository: ${{ env.HELM_REPOSITORY }}
         ref: 'main'
-        token: ${{ secrets.PAT }}  
+        token: ${{ secrets.PAT }}
     # - name: 'Prep extraEnv'
     #   run: |
     #       cat <<EOF >extraEnv.yml
@@ -111,4 +108,4 @@ jobs:
           --set image.tag=${{ needs.build-image-app.outputs.output_tag }} \
           --set resources.limits.cpu=$LIMIT_CPU \
           --set resources.limits.memory=$LIMIT_MEMORY \
-          ./ 
+          ./
