@@ -14,7 +14,7 @@ interface Props {
   debtTypes: SupportedToken[]
 }
 
-export function BorrowIncreaseModal({
+export function DebtIncreaseModal({
   stakeSumUsd,
   onClose,
   type,

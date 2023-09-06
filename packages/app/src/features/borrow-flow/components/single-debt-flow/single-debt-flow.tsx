@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
-import { BorrowStepModal } from '../borrow-step-modal'
+import { DebtStepModal } from '../debt-step-modal'
 import { StakeStepModal } from '../stake-step-modal'
 import { excludeSupportedTokens } from '../../utils'
 
@@ -18,7 +18,7 @@ interface Props {
   buttonText: string
 }
 
-export function SingleBorrowFlow({ type, onSend, buttonText }: Props) {
+export function SingleDebtFlow({ type, onSend, buttonText }: Props) {
   const [step, setStep] = useState<Step | null>(null)
   const [borrowValue, setBorrowValue] = useState('')
 
@@ -34,7 +34,7 @@ export function SingleBorrowFlow({ type, onSend, buttonText }: Props) {
 
   const modalByStep = {
     [Step.Borrow]: (
-      <BorrowStepModal
+      <DebtStepModal
         borrowValue={borrowValue}
         onClose={handleClose}
         onContinue={() => setStep(Step.Stake)}

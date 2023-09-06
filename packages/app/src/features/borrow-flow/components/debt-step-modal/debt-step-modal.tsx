@@ -16,7 +16,7 @@ interface Props {
   stakeType: SupportedToken
 }
 
-export function BorrowStepModal({
+export function DebtStepModal({
   onClose,
   onContinue,
   borrowValue,

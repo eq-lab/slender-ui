@@ -39,7 +39,7 @@ export function StakeDecreaseModal({
     actualStakeSumUsd,
   })
 
-  const { borrowCapacityDelta, borrowCapacityInterface } = getBorrowCapacity({
+  const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError } = getBorrowCapacity({
     stakeSumUsd,
     actualDebtUsd: debtSumUsd,
     debtSumUsd,
@@ -57,9 +57,9 @@ export function StakeDecreaseModal({
           borrowCapacityDelta={borrowCapacityDelta}
           borrowCapacity={borrowCapacityInterface}
           stakeSumUsd={actualStakeSumUsd}
+          borrowCapacityError={borrowCapacityError}
           health={health}
           healthDelta={healthDelta}
-          debtError={debtDelta < 0}
           stakeSumUsdDelta={actualStakeSumUsd - stakeSumUsd}
         />
       }
@@ -74,7 +74,7 @@ export function StakeDecreaseModal({
         <button
           onClick={() => onSend({ value: Number(value), type })}
           type="button"
-          disabled={debtError}
+          disabled={debtError || borrowCapacityError}
         >
           pay off {value} {type}
         </button>

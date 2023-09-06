@@ -16,14 +16,7 @@ interface Props {
   debtSumUsd: number
 }
 
-export function BorrowDecreaseModal({
-  stakeSumUsd,
-  debt,
-  onClose,
-  type,
-  onSend,
-  debtSumUsd,
-}: Props) {
+export function DebtDecreaseModal({ stakeSumUsd, debt, onClose, type, onSend, debtSumUsd }: Props) {
   const [value, setValue] = useState('')
 
   const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * mockTokenInfoByType[type].usd, 0)
