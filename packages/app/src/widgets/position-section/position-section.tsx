@@ -9,26 +9,35 @@ import { BorrowDecreaseModal } from '@/features/borrow-flow/components/borrow-de
 import { BorrowIncreaseModal } from '@/features/borrow-flow/components/borrow-increase-modal'
 import { excludeSupportedTokens } from '@/features/borrow-flow/utils'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { getCollateralUsd, getDebtUsd, sumObj } from './utils'
+import { StakeDecreaseModal } from '@/features/borrow-flow/components/stake-decrease-modal'
+import { getStakeUsd, getDebtUsd, sumObj } from './utils'
 
 export function PositionSection() {
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
-  const [decreaseModalIndex, setDecreaseModalIndex] = useState<0 | 1 | null>(null)
-  const [increaseModalIndex, setIncreaseModalIndex] = useState<0 | 1 | null>(null)
+  const [decreaseDebtModalIndex, setDecreaseDebtModalIndex] = useState<0 | 1 | null>(null)
+  const [increaseDebtModalIndex, setIncreaseDebtModalIndex] = useState<0 | 1 | null>(null)
+  const [decreaseStakeModalIndex, setDecreaseStakeModalIndex] = useState<0 | 1 | null>(null)
 
-  const getModalData = (modalIndex: 0 | 1 | null) => {
+  const getDebtModalData = (modalIndex: 0 | 1 | null) => {
     if (!position || modalIndex === null) return null
     const debt = position.debts[modalIndex]
     if (!debt) return null
     return { debt, availablePosition: position }
   }
 
-  const renderIncreaseModal = () => {
-    const modalData = getModalData(increaseModalIndex)
+  const getStakeModalData = (modalIndex: 0 | 1 | null) => {
+    if (!position || modalIndex === null) return null
+    const stakes = position.stakes[modalIndex]
+    if (!stakes) return null
+    return { stakes, availablePosition: position }
+  }
+
+  const renderIncreaseDebtModal = () => {
+    const modalData = getDebtModalData(increaseDebtModalIndex)
     if (!modalData) return null
-    const firstCollateral = modalData.availablePosition.collaterals[0].type
-    const secondCollateral = modalData.availablePosition.collaterals[1]?.type
+    const firstStake = modalData.availablePosition.stakes[0].type
+    const secondStake = modalData.availablePosition.stakes[1]?.type
     const secondDebt = modalData.availablePosition.debts[1]?.type
 
     const getDebtTypes = () => {
@@ -36,9 +45,7 @@ export function PositionSection() {
         return [modalData.debt.type]
       }
 
-      return excludeSupportedTokens(
-        secondCollateral ? [firstCollateral, secondCollateral] : [firstCollateral],
-      )
+      return excludeSupportedTokens(secondStake ? [firstStake, secondStake] : [firstStake])
     }
 
     const handleSend = (sendValue: Partial<Record<'usdc' | 'xlm' | 'xrp', number>>) => {
@@ -61,25 +68,25 @@ export function PositionSection() {
 
       setPosition({
         debts: arr,
-        collaterals: modalData.availablePosition.collaterals,
+        stakes: modalData.availablePosition.stakes,
       })
-      setIncreaseModalIndex(null)
+      setIncreaseDebtModalIndex(null)
     }
 
     return (
       <BorrowIncreaseModal
         debtTypes={getDebtTypes()}
-        collateralSumUsd={getCollateralUsd(modalData.availablePosition.collaterals)}
+        stakeSumUsd={getStakeUsd(modalData.availablePosition.stakes)}
         debtSumUsd={getDebtUsd(modalData.availablePosition.debts)}
         type={modalData.debt.type}
-        onClose={() => setIncreaseModalIndex(null)}
+        onClose={() => setIncreaseDebtModalIndex(null)}
         onSend={handleSend}
       />
     )
   }
 
-  const renderDecreaseModal = () => {
-    const modalData = getModalData(decreaseModalIndex)
+  const renderDecreaseDebtModal = () => {
+    const modalData = getDebtModalData(decreaseDebtModalIndex)
     if (!modalData) return null
 
     const handleSend = (value: PositionCell) => {
@@ -93,18 +100,50 @@ export function PositionSection() {
       })
       setPosition({
         debts: newDebts,
-        collaterals: modalData.availablePosition.collaterals,
+        stakes: modalData.availablePosition.stakes,
       })
-      setDecreaseModalIndex(null)
+      setDecreaseDebtModalIndex(null)
     }
 
     return (
       <BorrowDecreaseModal
         debt={modalData.debt.value}
         debtSumUsd={getDebtUsd(modalData.availablePosition.debts)}
-        collateralSumUsd={getCollateralUsd(modalData.availablePosition.collaterals)}
+        stakeSumUsd={getStakeUsd(modalData.availablePosition.stakes)}
         type={modalData.debt.type}
-        onClose={() => setDecreaseModalIndex(null)}
+        onClose={() => setDecreaseDebtModalIndex(null)}
+        onSend={handleSend}
+      />
+    )
+  }
+
+  const renderDecreaseStakeModal = () => {
+    const modalData = getStakeModalData(decreaseStakeModalIndex)
+    if (!modalData) return null
+
+    const handleSend = (value: PositionCell) => {
+      const sendType = value.type
+      const prev = modalData.availablePosition.stakes
+      const newStakes = prev.map((el) => {
+        if (el.type === sendType) {
+          return { value: el.value - value.value, type: sendType }
+        }
+        return el
+      })
+      setPosition({
+        debts: modalData.availablePosition.debts,
+        stakes: newStakes as [PositionCell, ...PositionCell[]],
+      })
+      setDecreaseStakeModalIndex(null)
+    }
+
+    return (
+      <StakeDecreaseModal
+        stake={modalData.stakes.value}
+        debtSumUsd={getDebtUsd(modalData.availablePosition.debts)}
+        stakeSumUsd={getStakeUsd(modalData.availablePosition.stakes)}
+        type={modalData.stakes.type}
+        onClose={() => setDecreaseStakeModalIndex(null)}
         onSend={handleSend}
       />
     )
@@ -119,15 +158,21 @@ export function PositionSection() {
       {position ? (
         <div style={{ display: 'flex', gap: 8 }}>
           <div>
-            <h4>lent</h4>
-            {position.collaterals.map((collateral) => {
-              if (!collateral) return null
-              const { type, value } = collateral
-              return (
-                <div key={type}>
-                  {value} {type}
-                </div>
-              )
+            <h4>lend</h4>
+            {position.stakes.map((stake, index) => {
+              if (!stake) return null
+              const { type, value } = stake
+              if (index === 0 || index === 1) {
+                return (
+                  <div key={type}>
+                    {value} {type}{' '}
+                    <button type="button" onClick={() => setDecreaseStakeModalIndex(index)}>
+                      -
+                    </button>
+                  </div>
+                )
+              }
+              return null
             })}
           </div>
           <div>
@@ -139,10 +184,10 @@ export function PositionSection() {
                   return (
                     <div key={debt.type}>
                       {debt.value} {debt.type}{' '}
-                      <button type="button" onClick={() => setDecreaseModalIndex(index)}>
+                      <button type="button" onClick={() => setDecreaseDebtModalIndex(index)}>
                         -
                       </button>
-                      <button type="button" onClick={() => setIncreaseModalIndex(index)}>
+                      <button type="button" onClick={() => setIncreaseDebtModalIndex(index)}>
                         +
                       </button>
                     </div>
@@ -156,8 +201,9 @@ export function PositionSection() {
       ) : (
         <>empty</>
       )}
-      {renderDecreaseModal()}
-      {renderIncreaseModal()}
+      {renderDecreaseDebtModal()}
+      {renderIncreaseDebtModal()}
+      {renderDecreaseStakeModal()}
     </div>
   )
 }

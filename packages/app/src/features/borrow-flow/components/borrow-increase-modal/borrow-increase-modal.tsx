@@ -7,7 +7,7 @@ import { PositionSummary } from '../position-summary'
 
 interface Props {
   debtSumUsd: number
-  collateralSumUsd: number
+  stakeSumUsd: number
   onClose: () => void
   type: SupportedToken
   onSend: (value: Partial<Record<SupportedToken, number>>) => void
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export function BorrowIncreaseModal({
-  collateralSumUsd,
+  stakeSumUsd,
   onClose,
   type,
   onSend,
@@ -41,21 +41,23 @@ export function BorrowIncreaseModal({
     (extraDebtType ? Number(extraValue) * mockTokenInfoByType[extraDebtType].usd : 0)
 
   const { health, healthDelta } = getHealth({
-    collateralSumUsd,
+    stakeSumUsd,
     actualDebtUsd,
     debtSumUsd,
+    actualStakeSumUsd: stakeSumUsd,
   })
 
   const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError } = getBorrowCapacity({
-    collateralSumUsd,
+    stakeSumUsd,
     actualDebtUsd,
     debtSumUsd,
+    actualStakeUsd: stakeSumUsd,
   })
 
   const debtUsdDelta = actualDebtUsd - debtSumUsd
 
   const hasExtraDeptType = Boolean(debtTypes[1])
-  const defaultBorrowCapacity = Math.max(collateralSumUsd - debtSumUsd, 0)
+  const defaultBorrowCapacity = Math.max(stakeSumUsd - debtSumUsd, 0)
 
   const max = Math.floor(defaultBorrowCapacity / mockTokenInfoByType[coreDebtType].usd)
 
@@ -78,10 +80,10 @@ export function BorrowIncreaseModal({
     <ModalLayout
       infoSlot={
         <PositionSummary
-          actualDebtUsd={actualDebtUsd}
+          debtUsd={actualDebtUsd}
           borrowCapacityDelta={borrowCapacityDelta}
-          borrowCapacityInterface={borrowCapacityInterface}
-          collateralSumUsd={collateralSumUsd}
+          borrowCapacity={borrowCapacityInterface}
+          stakeSumUsd={stakeSumUsd}
           health={health}
           debtUsdDelta={debtUsdDelta}
           healthDelta={healthDelta}

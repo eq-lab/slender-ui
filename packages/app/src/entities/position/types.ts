@@ -6,6 +6,6 @@ export interface PositionCell {
 }
 
 export interface Position {
-  collaterals: [PositionCell, ...PositionCell[]]
+  stakes: [PositionCell, ...PositionCell[]]
   debts: PositionCell[]
 }

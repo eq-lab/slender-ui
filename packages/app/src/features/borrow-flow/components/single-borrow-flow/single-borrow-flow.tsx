@@ -4,12 +4,12 @@ import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
 import { BorrowStepModal } from '../borrow-step-modal'
-import { CollateralStepModal } from '../collateral-step-modal'
+import { StakeStepModal } from '../stake-step-modal'
 import { excludeSupportedTokens } from '../../utils'
 
 enum Step {
   Borrow = 'Borrow',
-  Collateral = 'Collateral',
+  Stake = 'Stake',
 }
 
 interface Props {
@@ -37,19 +37,19 @@ export function SingleBorrowFlow({ type, onSend, buttonText }: Props) {
       <BorrowStepModal
         borrowValue={borrowValue}
         onClose={handleClose}
-        onContinue={() => setStep(Step.Collateral)}
+        onContinue={() => setStep(Step.Stake)}
         onBorrowValueChange={setBorrowValue}
         borrowType={type}
-        collateralTypes={excludeSupportedTokens([type])}
+        stakeType={excludeSupportedTokens([type])[0]}
       />
     ),
-    [Step.Collateral]: (
-      <CollateralStepModal
+    [Step.Stake]: (
+      <StakeStepModal
         onClose={handleClose}
         onPrev={() => setStep(Step.Borrow)}
         borrowValue={borrowValue}
         borrowType={type}
-        collateralTypes={excludeSupportedTokens([type])}
+        stakeTypes={excludeSupportedTokens([type])}
         onSend={handleSend}
       />
     ),

@@ -14,61 +14,52 @@ interface Props {
   onPrev?: () => void
   borrowValue: string
   borrowType: SupportedToken
-  collateralTypes: [SupportedToken, SupportedToken]
+  stakeTypes: [SupportedToken, SupportedToken]
   onSend: (value: Position) => void
 }
 
-export function CollateralStepModal({
+export function StakeStepModal({
   onClose,
   onPrev,
   borrowValue,
   borrowType,
-  collateralTypes,
+  stakeTypes,
   onSend,
 }: Props) {
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreCollateralType, setCoreCollateralType] = useState<SupportedToken>(collateralTypes[0])
-  const [isCollateralListOpen, setIsCollateralListOpen] = useState(false)
+  const [coreStakeType, setCoreStakeType] = useState<SupportedToken>(stakeTypes[0])
+  const [isStakeListOpen, setIsStakeListOpen] = useState(false)
 
   const [showExtraInput, setShowExtraInput] = useState(false)
 
   const borrowCoinInfo = mockTokenInfoByType[borrowType]
-  const coreCollateralInfo = mockTokenInfoByType[coreCollateralType]
-  const extraCollateralType =
-    collateralTypes[0] === coreCollateralType ? collateralTypes[1] : collateralTypes[0]
-  const extraCollateralInfo = mockTokenInfoByType[extraCollateralType]
+  const coreStakeInfo = mockTokenInfoByType[coreStakeType]
+  const extraStakeType = stakeTypes[0] === coreStakeType ? stakeTypes[1] : stakeTypes[0]
+  const extraStakeInfo = mockTokenInfoByType[extraStakeType]
 
   const borrowValueInUSD = Number(borrowValue) * borrowCoinInfo.usd
 
   useEffect(() => {
     const inputValue = Math.floor(
-      borrowValueInUSD /
-        (coreCollateralInfo.discount * coreCollateralInfo.usd * MINIMUM_HEALTH_VALUE),
+      borrowValueInUSD / (coreStakeInfo.discount * coreStakeInfo.usd * MINIMUM_HEALTH_VALUE),
     )
 
-    const finalValue =
-      inputValue > coreCollateralInfo.userValue ? coreCollateralInfo.userValue : inputValue
+    const finalValue = inputValue > coreStakeInfo.userValue ? coreStakeInfo.userValue : inputValue
     setCoreValue(String(finalValue))
-  }, [
-    borrowValueInUSD,
-    coreCollateralInfo.discount,
-    coreCollateralInfo.usd,
-    coreCollateralInfo.userValue,
-  ])
+  }, [borrowValueInUSD, coreStakeInfo.discount, coreStakeInfo.usd, coreStakeInfo.userValue])
 
-  const coreCollateral = Number(coreValue) * coreCollateralInfo.discount
-  const extraCollateral = Number(extraValue) * extraCollateralInfo.discount
+  const coreStake = Number(coreValue) * coreStakeInfo.discount
+  const extraStake = Number(extraValue) * extraStakeInfo.discount
 
-  const collateral =
-    coreCollateral * coreCollateralInfo.usd + extraCollateral * extraCollateralInfo.usd
+  const stake = coreStake * coreStakeInfo.usd + extraStake * extraStakeInfo.usd
 
-  const health = Math.max(Math.round(collateral && (1 - borrowValueInUSD / collateral) * 100), 0)
-  const borrowCapacity = Math.max(collateral - borrowValueInUSD, 0)
+  const health = Math.max(Math.round(stake && (1 - borrowValueInUSD / stake) * 100), 0)
+  const borrowCapacity = Math.max(stake - borrowValueInUSD, 0)
 
-  const firstInputError = Number(coreValue) > coreCollateralInfo.userValue
-  const secondInputError = Number(extraValue) > extraCollateralInfo.userValue
+  const firstInputError = Number(coreValue) > coreStakeInfo.userValue
+  const secondInputError = Number(extraValue) > extraStakeInfo.userValue
   const borrowCapacityError = borrowCapacity <= 0
 
   const error = borrowCapacityError || firstInputError || secondInputError
@@ -78,9 +69,7 @@ export function CollateralStepModal({
       <h4>Position summary</h4>
       <div>{health}%</div>
       <div>Debt {formatUsd(borrowValueInUSD)}</div>
-      <div style={{ color: borrowCapacityError ? 'red' : '' }}>
-        Collateral {formatUsd(collateral)}
-      </div>
+      <div style={{ color: borrowCapacityError ? 'red' : '' }}>Collateral {formatUsd(stake)}</div>
       <div>Borrow capacity {formatUsd(borrowCapacity)}</div>
     </div>
   )
@@ -96,18 +85,18 @@ export function CollateralStepModal({
             setCoreValue(e.target.value)
           }}
         />
-        {coreCollateralType}
+        {coreStakeType}
         {!showExtraInput && (
-          <button onClick={() => setIsCollateralListOpen((state) => !state)} type="button">
+          <button onClick={() => setIsStakeListOpen((state) => !state)} type="button">
             change collateral
           </button>
         )}
       </div>
-      {isCollateralListOpen && !showExtraInput && (
+      {isStakeListOpen && !showExtraInput && (
         <div>
-          {collateralTypes.map((type) => (
-            <button key={type} type="button" onClick={() => setCoreCollateralType(type)}>
-              {mockTokenInfoByType[type].userValue} {type} {type === coreCollateralType && '✓'}
+          {stakeTypes.map((type) => (
+            <button key={type} type="button" onClick={() => setCoreStakeType(type)}>
+              {mockTokenInfoByType[type].userValue} {type} {type === coreStakeType && '✓'}
             </button>
           ))}
         </div>
@@ -129,7 +118,7 @@ export function CollateralStepModal({
               setExtraValue(e.target.value)
             }}
           />
-          {extraCollateralType}
+          {extraStakeType}
         </div>
       )}
       <button
@@ -138,9 +127,9 @@ export function CollateralStepModal({
         onClick={() =>
           onSend({
             debts: [{ type: borrowType, value: Number(borrowValue) }],
-            collaterals: [
-              { type: coreCollateralType, value: Number(coreValue) },
-              ...(showExtraInput ? [{ type: extraCollateralType, value: Number(extraValue) }] : []),
+            stakes: [
+              { type: coreStakeType, value: Number(coreValue) },
+              ...(showExtraInput ? [{ type: extraStakeType, value: Number(extraValue) }] : []),
             ],
           })
         }
