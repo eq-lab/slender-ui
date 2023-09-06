@@ -25,7 +25,7 @@ export const sumObj = <T extends string>(
   return result
 }
 
-export const getCollateralUsd = (collateral: PositionType['collaterals']) => {
+export const getStakeUsd = (collateral: PositionType['stakes']) => {
   const sum = collateral.reduce((acc, elem) => {
     if (!elem) return acc
     const { type, value } = elem

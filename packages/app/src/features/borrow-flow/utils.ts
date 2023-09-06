@@ -8,21 +8,20 @@ export const excludeSupportedTokens = <
 ): R => SUPPORTED_TOKENS.filter((element) => !token.includes(element)) as R
 
 export const getHealth = ({
-  collateralSumUsd,
+  stakeSumUsd,
   debtSumUsd,
   actualDebtUsd,
+  actualStakeSumUsd,
 }: {
-  collateralSumUsd: number
+  stakeSumUsd: number
   debtSumUsd: number
   actualDebtUsd: number
+  actualStakeSumUsd: number
 }) => {
-  const defaultHealth = Math.max(
-    Math.round(collateralSumUsd && (1 - debtSumUsd / collateralSumUsd) * 100),
-    0,
-  )
+  const defaultHealth = Math.max(Math.round(stakeSumUsd && (1 - debtSumUsd / stakeSumUsd) * 100), 0)
 
   const health = Math.max(
-    Math.round(collateralSumUsd && (1 - actualDebtUsd / collateralSumUsd) * 100),
+    Math.round(stakeSumUsd && (1 - actualDebtUsd / (actualStakeSumUsd || 1)) * 100),
     0,
   )
 
@@ -30,16 +29,18 @@ export const getHealth = ({
 }
 
 export const getBorrowCapacity = ({
-  collateralSumUsd,
+  stakeSumUsd,
   debtSumUsd,
   actualDebtUsd,
+  actualStakeUsd,
 }: {
-  collateralSumUsd: number
+  stakeSumUsd: number
   debtSumUsd: number
   actualDebtUsd: number
+  actualStakeUsd: number
 }) => {
-  const defaultBorrowCapacity = Math.max(collateralSumUsd - debtSumUsd, 0)
-  const borrowCapacity = collateralSumUsd - actualDebtUsd
+  const defaultBorrowCapacity = Math.max(stakeSumUsd - debtSumUsd, 0)
+  const borrowCapacity = actualStakeUsd - actualDebtUsd
   const borrowCapacityInterface = Math.max(borrowCapacity, 0)
   const borrowCapacityError = borrowCapacity < 0
 

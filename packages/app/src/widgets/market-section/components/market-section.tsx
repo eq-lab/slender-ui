@@ -3,6 +3,7 @@
 import { MarketCard } from '@/widgets/market-section/components/market-card'
 import { SUPPORTED_TOKENS, tokens } from '@/shared/stellar/constants/tokens'
 import { SingleBorrowFlow } from '@/features/borrow-flow/components/single-borrow-flow'
+import { SingleStakeFlow } from '@/features/borrow-flow/components/single-stake-flow'
 import { useContextSelector } from 'use-context-selector'
 import { PositionContext } from '@/entities/position/context/context'
 
@@ -16,6 +17,9 @@ export function MarketSection() {
         <MarketCard
           key={tokenName}
           token={tokens[tokenName]}
+          renderLendButton={(text) => (
+            <SingleStakeFlow type={tokenName} buttonText={`+${text} Lend`} onSend={setPosition} />
+          )}
           renderBorrowButton={(text) => (
             <SingleBorrowFlow
               type={tokenName}

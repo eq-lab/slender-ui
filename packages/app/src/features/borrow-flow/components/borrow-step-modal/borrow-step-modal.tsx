@@ -13,7 +13,7 @@ interface Props {
   borrowValue: string
   onBorrowValueChange: (value: string) => void
   borrowType: SupportedToken
-  collateralTypes: [SupportedToken, SupportedToken]
+  stakeType: SupportedToken
 }
 
 export function BorrowStepModal({
@@ -22,10 +22,10 @@ export function BorrowStepModal({
   borrowValue,
   onBorrowValueChange,
   borrowType,
-  collateralTypes,
+  stakeType,
 }: Props) {
   const borrowCoinInfo = mockTokenInfoByType[borrowType]
-  const { discount, usd, userValue } = mockTokenInfoByType[collateralTypes[0]]
+  const { discount, usd, userValue } = mockTokenInfoByType[stakeType]
 
   const max = Math.floor((userValue * discount * usd * MINIMUM_HEALTH_VALUE) / borrowCoinInfo.usd)
 

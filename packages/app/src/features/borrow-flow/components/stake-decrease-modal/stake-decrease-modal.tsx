@@ -8,7 +8,7 @@ import { getHealth, getBorrowCapacity } from '../../utils'
 import { PositionSummary } from '../position-summary'
 
 interface Props {
-  debt: number
+  stake: number
   stakeSumUsd: number
   onClose: () => void
   type: SupportedToken
@@ -16,9 +16,9 @@ interface Props {
   debtSumUsd: number
 }
 
-export function BorrowDecreaseModal({
+export function StakeDecreaseModal({
   stakeSumUsd,
-  debt,
+  stake,
   onClose,
   type,
   onSend,
@@ -26,45 +26,49 @@ export function BorrowDecreaseModal({
 }: Props) {
   const [value, setValue] = useState('')
 
-  const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * mockTokenInfoByType[type].usd, 0)
+  const actualStakeSumUsd = Math.max(
+    stakeSumUsd -
+      Number(value) * mockTokenInfoByType[type].usd * mockTokenInfoByType[type].discount,
+    0,
+  )
 
   const { health, healthDelta } = getHealth({
     stakeSumUsd,
-    actualDebtUsd: debtDeltaUsd,
+    actualDebtUsd: debtSumUsd,
     debtSumUsd,
-    actualStakeSumUsd: stakeSumUsd,
+    actualStakeSumUsd,
   })
 
   const { borrowCapacityDelta, borrowCapacityInterface } = getBorrowCapacity({
     stakeSumUsd,
-    actualDebtUsd: debtDeltaUsd,
+    actualDebtUsd: debtSumUsd,
     debtSumUsd,
-    actualStakeUsd: stakeSumUsd,
+    actualStakeUsd: actualStakeSumUsd,
   })
 
-  const debtDelta = debt - Number(value)
+  const debtDelta = stake - Number(value)
   const debtError = debtDelta < 0
 
   return (
     <ModalLayout
       infoSlot={
         <PositionSummary
-          debtUsd={debtDeltaUsd}
+          debtUsd={debtSumUsd}
           borrowCapacityDelta={borrowCapacityDelta}
           borrowCapacity={borrowCapacityInterface}
-          stakeSumUsd={stakeSumUsd}
+          stakeSumUsd={actualStakeSumUsd}
           health={health}
-          debtUsdDelta={debtDeltaUsd - debtSumUsd}
           healthDelta={healthDelta}
           debtError={debtDelta < 0}
+          stakeSumUsdDelta={actualStakeSumUsd - stakeSumUsd}
         />
       }
       onClose={onClose}
     >
       <h3>How much to pay off</h3>
       <input onChange={(e) => setValue(e.target.value)} type="number" value={value} />
-      <button type="button" onClick={() => setValue(String(debt))}>
-        max {debt}
+      <button type="button" onClick={() => setValue(String(stake))}>
+        max {stake}
       </button>
       <div>
         <button
