@@ -9,20 +9,16 @@ RUN apk update \
 WORKDIR /app
 COPY package.json .
 COPY yarn.lock .
+
 COPY ./packages/$BUILD_CONTEXT/package.json packages/$BUILD_CONTEXT/package.json
 
 COPY ./lib lib
-RUN ls -la /app/lib
-
 COPY ./contract-bindings contract-bindings
-RUN ls -la /app/contract-bindings
-
-COPY ./shared shared
-RUN ls -la /app/shared
 
 RUN yarn --frozen-lockfile
 
 COPY ./packages/$BUILD_CONTEXT packages/$BUILD_CONTEXT
+COPY ./packages/shared packages/shared
 
 ENV NODE_ENV production
 ENV NEXT_PUBLIC_DEPLOY_ENVIRONMENT=$DEPLOY_ENVIRONMENT_ARG
