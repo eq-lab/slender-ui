@@ -14,11 +14,12 @@ COPY ./packages/$BUILD_CONTEXT/package.json packages/$BUILD_CONTEXT/package.json
 
 COPY ./lib lib
 COPY ./contract-bindings contract-bindings
+COPY ./packages/shared packages/shared
 
 RUN yarn --frozen-lockfile
 
 COPY ./packages/$BUILD_CONTEXT packages/$BUILD_CONTEXT
-COPY ./packages/shared packages/shared
+
 
 ENV NODE_ENV production
 ENV NEXT_PUBLIC_DEPLOY_ENVIRONMENT=$DEPLOY_ENVIRONMENT_ARG
