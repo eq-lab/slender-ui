@@ -6,7 +6,7 @@ import { decodei128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
 import { MarketContext } from '../context/context'
 
-interface SorobanTokenRecord {
+export interface SorobanTokenRecord {
   balance: string
   name: string
   symbol: string

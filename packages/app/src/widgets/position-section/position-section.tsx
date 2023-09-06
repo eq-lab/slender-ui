@@ -1,6 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { tokens } from '@/shared/stellar/constants/tokens'
+import { useGetBalance, SorobanTokenRecord } from '@/entities/token/hooks/use-get-balance'
+import { WalletContext } from '@/entities/wallet/context/context'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
@@ -12,12 +15,47 @@ import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { StakeDecreaseModal } from '@/features/borrow-flow/components/stake-decrease-modal'
 import { getStakeUsd, getDebtUsd, sumObj } from './utils'
 
+const sorobanTokenRecordToPositionCell = (tokenRecord: SorobanTokenRecord): PositionCell => ({
+  value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
+  type: tokenRecord.symbol.substring(1).toLowerCase() as PositionCell["type"],
+})
+
 export function PositionSection() {
+  const userAddress = useContextSelector(WalletContext, (state) => state.address)
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
   const [decreaseDebtModalIndex, setDecreaseDebtModalIndex] = useState<0 | 1 | null>(null)
   const [increaseDebtModalIndex, setIncreaseDebtModalIndex] = useState<0 | 1 | null>(null)
   const [decreaseStakeModalIndex, setDecreaseStakeModalIndex] = useState<0 | 1 | null>(null)
+
+  const debtXlmBalance = useGetBalance(tokens.xlm.debtAddress, userAddress)
+  const lendXlmBalance = useGetBalance(tokens.xlm.sAddress, userAddress)
+
+  const debtXrpBalance = useGetBalance(tokens.xrp.debtAddress, userAddress)
+  const lendXrpBalance = useGetBalance(tokens.xrp.sAddress, userAddress)
+
+  const debtUdcBalance = useGetBalance(tokens.usdc.debtAddress, userAddress)
+  const lendUdcBalance = useGetBalance(tokens.usdc.sAddress, userAddress)
+
+  useEffect(() => {
+    const debtBalances = [debtXlmBalance, debtXrpBalance, debtUdcBalance]
+    const lendBalances = [lendXlmBalance, lendXrpBalance, lendUdcBalance]
+
+    const debtPositions = debtBalances.reduce((resultArr: PositionCell[], currentItem) => {
+      if (currentItem && Number(currentItem.balance)) resultArr.push(sorobanTokenRecordToPositionCell(currentItem))
+      return resultArr
+    }, [])
+
+    const lendPositions = lendBalances.reduce((resultArr: PositionCell[], currentItem) => {
+      if (currentItem && Number(currentItem.balance)) resultArr.push(sorobanTokenRecordToPositionCell(currentItem))
+      return resultArr
+    }, [])
+
+    setPosition({
+      stakes: debtPositions as [PositionCell, ...PositionCell[]],
+      debts: lendPositions,
+    })
+  }, [setPosition, debtXlmBalance, debtXrpBalance, debtUdcBalance, lendXlmBalance, lendXrpBalance, lendUdcBalance])
 
   const getDebtModalData = (modalIndex: 0 | 1 | null) => {
     if (!position || modalIndex === null) return null

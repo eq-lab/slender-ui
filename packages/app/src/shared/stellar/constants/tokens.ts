@@ -17,7 +17,7 @@ enum DebtToken {
   'usdc' = 'CDYIRILRL6J6QUY2EVNNUKX7IBAUGSBCQ2OO5PUY62D5UWP547CRFX4S',
 }
 
-export type TokenAddress = Underlying | SToken
+export type TokenAddress = Underlying | SToken | DebtToken
 
 export const cachedTokenAddresses = [
   ...Object.values(Underlying),
