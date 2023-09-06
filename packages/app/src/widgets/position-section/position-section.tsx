@@ -51,7 +51,7 @@ export function PositionSection() {
       return resultArr
     }, [])
 
-    setPosition({
+    if (debtPositions.length && lendPositions.length) setPosition({
       stakes: debtPositions as [PositionCell, ...PositionCell[]],
       debts: lendPositions,
     })
