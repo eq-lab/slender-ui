@@ -7,8 +7,8 @@ import { WalletContext } from '@/entities/wallet/context/context'
 
 export function Balances() {
   const userAddress = useContextSelector(WalletContext, (state) => state.address)
-  const nativeBalance = useGetBalance(tokens.xlm.address, userAddress)
-  const usdcBalance = useGetBalance(tokens.usdc.address, userAddress)
+  const nativeBalance = useGetBalance([tokens.xlm.address], userAddress)?.[0]
+  const usdcBalance = useGetBalance([tokens.usdc.address], userAddress)?.[0]
 
   return (
     <>
