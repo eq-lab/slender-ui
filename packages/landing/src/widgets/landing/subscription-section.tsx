@@ -18,7 +18,7 @@ export function SubscriptionSection(this: any) {
     setEmailHasError(false)
   }
 
-  const handleSubscribe = (e: any) => {
+  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const emailIsValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
     setEmailHasError(!emailIsValid)
@@ -51,7 +51,7 @@ export function SubscriptionSection(this: any) {
           <img src="/img/email.svg" alt="" className="email" />
         </Form>
       ) : (
-        <Form onSubmit={(e: any) => handleSubscribe(e)}>
+        <Form onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubscribe(e)}>
           <InputBox
             onFocus={() => setEmailIsFocused(true)}
             onBlur={() => setEmailIsFocused(false)}
@@ -61,9 +61,7 @@ export function SubscriptionSection(this: any) {
             <input value={email} className="input" onChange={handleEmailChange} />
           </InputBox>
 
-          <Button onClick={(e: any) => handleSubscribe(e)} type="submit">
-            Subscribe
-          </Button>
+          <Button type="submit">Subscribe</Button>
         </Form>
       )}
       <Space $height={192} $heightMobile={192} />
