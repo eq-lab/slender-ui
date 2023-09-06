@@ -4,8 +4,8 @@ import React from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
-import { useDebtDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
-import { useDebtIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
+import { useDebtDecrease } from '@/features/borrow-flow/hooks/use-debt-decrease'
+import { useDebtIncrease } from '@/features/borrow-flow/hooks/use-debt-increase'
 import { useStakeDecrease } from '@/features/borrow-flow/hooks/use-stake-decrease'
 
 export function PositionSection() {
