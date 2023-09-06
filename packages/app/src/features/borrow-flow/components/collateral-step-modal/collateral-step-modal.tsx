@@ -137,10 +137,10 @@ export function CollateralStepModal({
         disabled={error}
         onClick={() =>
           onSend({
-            debts: [{ type: borrowType, value: Number(borrowValue) }, null],
+            debts: [{ type: borrowType, value: Number(borrowValue) }],
             collaterals: [
               { type: coreCollateralType, value: Number(coreValue) },
-              showExtraInput ? { type: extraCollateralType, value: extraCollateral } : null,
+              ...(showExtraInput ? [{ type: extraCollateralType, value: Number(extraValue) }] : []),
             ],
           })
         }

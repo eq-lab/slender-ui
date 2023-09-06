@@ -1,5 +1,5 @@
-import { usePoolData } from '@/entities/token/hooks/use-pool-data'
 import { Token } from '@/shared/stellar/constants/tokens'
+import { useMarketDataForDisplay } from '@/widgets/market-section/components/use-market-data-for-display'
 
 export function MarketCard({
   token,
@@ -8,25 +8,34 @@ export function MarketCard({
   token: Token
   renderBorrowButton: (percent: string) => React.ReactNode
 }) {
-  const { discount, liquidationPenalty, borrowInterestRate, lendInterestRate, percentMultiplier } =
-    usePoolData(token.address)
+  const {
+    discount,
+    liquidationPenalty,
+    borrowInterestRate,
+    lendInterestRate,
+    totalSupplied,
+    totalBorrowed,
+    reserved,
+    availableToBorrow,
+  } = useMarketDataForDisplay(token)
 
   if (discount === undefined) {
     return 'Loading...'
   }
-
-  const formatPercentage = (value?: number | bigint): string =>
-    value === undefined ? '...' : `${(Number(value) * 100) / percentMultiplier}%`
 
   return (
     <div>
       <hr />
       <h3 style={{ fontVariationSettings: '"wght" 700' }}>{token.title}</h3>
       <h4>{token.code}</h4>
-      <p>Discount: {formatPercentage(discount)}</p>
-      <p>Liquidation penalty: &minus;{formatPercentage(liquidationPenalty)}</p>
-      {renderBorrowButton(formatPercentage(borrowInterestRate))}
-      <button type="button">+{formatPercentage(lendInterestRate)} Lend</button>
+      <p>Total Supplied: {totalSupplied}</p>
+      <p>Total Borrowed: {totalBorrowed}</p>
+      <p>Reserved: {reserved}</p>
+      <p>Available to Borrow: {availableToBorrow}</p>
+      <p>Discount: {discount}</p>
+      <p>Liquidation penalty: &minus;{liquidationPenalty}</p>
+      {renderBorrowButton(borrowInterestRate)}
+      <button type="button">+{lendInterestRate} Lend</button>
     </div>
   )
 }

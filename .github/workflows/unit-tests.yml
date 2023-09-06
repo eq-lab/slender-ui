@@ -1,4 +1,4 @@
-name: Unit tests
+name: Tests
 on:
   push:
   pull_request:
@@ -7,6 +7,9 @@ on:
 jobs:
     unit_tests:
         runs-on: ubuntu-latest
+        strategy:
+          matrix:
+            apps: [app, landing]
         steps:
         - uses: actions/checkout@v3
           with:
@@ -19,3 +22,7 @@ jobs:
           run: |
             yarn
             yarn test
+        - name: Tyest build ${{ matrix.apps }}
+          run: |
+            yarn workspace @slender/${{ matrix.apps }} build
+
