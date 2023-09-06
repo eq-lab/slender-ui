@@ -73,6 +73,11 @@ export const Wrapper = styled.div`
 
 export const Logo = styled.img`
   display: block;
+  margin: 192px 0;
+
+  @media (min-width: 768px) {
+    margin: 282px 0;
+  }
 `
 
 export const Container = styled.div`
@@ -81,15 +86,11 @@ export const Container = styled.div`
   margin: 0 auto;
   max-width: calc(720px + 48px);
   width: 100%;
-  padding: 192px 24px 50px;
+  padding: 0 24px 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   min-height: 100vh;
   min-height: 100dvh;
-
-  @media (min-width: 768px) {
-    padding-top: 282px;
-  }
 `
