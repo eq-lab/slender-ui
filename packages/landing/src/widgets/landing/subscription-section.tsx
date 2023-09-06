@@ -6,7 +6,7 @@ import cn from 'classnames'
 import { sendEmail } from '@/widgets/landing/api'
 import { Space } from '@/widgets/landing/space'
 
-export function SubscriptionSection() {
+export function SubscriptionSection(this: any) {
   const [email, setEmail] = useState('')
 
   const [emailIsFocused, setEmailIsFocused] = useState(false)
@@ -18,7 +18,8 @@ export function SubscriptionSection() {
     setEmailHasError(false)
   }
 
-  const handleSubscribe = () => {
+  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     const emailIsValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
     setEmailHasError(!emailIsValid)
     if (emailIsValid) {
@@ -50,7 +51,7 @@ export function SubscriptionSection() {
           <img src="/img/email.svg" alt="" className="email" />
         </Form>
       ) : (
-        <Form>
+        <Form onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubscribe(e)}>
           <InputBox
             onFocus={() => setEmailIsFocused(true)}
             onBlur={() => setEmailIsFocused(false)}
@@ -60,7 +61,7 @@ export function SubscriptionSection() {
             <input value={email} className="input" onChange={handleEmailChange} />
           </InputBox>
 
-          <Button onClick={handleSubscribe}>Subscribe</Button>
+          <Button type="submit">Subscribe</Button>
         </Form>
       )}
       <Space $height={192} $heightMobile={192} />
