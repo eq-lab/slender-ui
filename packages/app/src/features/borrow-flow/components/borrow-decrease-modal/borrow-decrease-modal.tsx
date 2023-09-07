@@ -9,7 +9,7 @@ import { PositionSummary } from '../position-summary'
 
 interface Props {
   debt: number
-  stakeSumUsd: number
+  depositSumUsd: number
   onClose: () => void
   type: SupportedToken
   onSend: (value: PositionCell) => void
@@ -17,7 +17,7 @@ interface Props {
 }
 
 export function BorrowDecreaseModal({
-  stakeSumUsd,
+  depositSumUsd,
   debt,
   onClose,
   type,
@@ -29,17 +29,17 @@ export function BorrowDecreaseModal({
   const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * mockTokenInfoByType[type].usd, 0)
 
   const { health, healthDelta } = getHealth({
-    stakeSumUsd,
+    depositSumUsd,
     actualDebtUsd: debtDeltaUsd,
     debtSumUsd,
-    actualStakeSumUsd: stakeSumUsd,
+    actualDepositSumUsd: depositSumUsd,
   })
 
   const { borrowCapacityDelta, borrowCapacityInterface } = getBorrowCapacity({
-    stakeSumUsd,
+    depositSumUsd,
     actualDebtUsd: debtDeltaUsd,
     debtSumUsd,
-    actualStakeUsd: stakeSumUsd,
+    actualDepositUsd: depositSumUsd,
   })
 
   const debtDelta = debt - Number(value)
@@ -52,7 +52,7 @@ export function BorrowDecreaseModal({
           debtUsd={debtDeltaUsd}
           borrowCapacityDelta={borrowCapacityDelta}
           borrowCapacity={borrowCapacityInterface}
-          stakeSumUsd={stakeSumUsd}
+          depositSumUsd={depositSumUsd}
           health={health}
           debtUsdDelta={debtDeltaUsd - debtSumUsd}
           healthDelta={healthDelta}

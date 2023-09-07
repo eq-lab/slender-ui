@@ -6,8 +6,8 @@ interface Props {
   healthDelta?: number
   debtUsd: number
   debtUsdDelta?: number
-  stakeSumUsd: number
-  stakeSumUsdDelta?: number
+  depositSumUsd: number
+  depositSumUsdDelta?: number
   borrowCapacityError?: boolean
   debtError?: boolean
   borrowCapacity: number
@@ -19,11 +19,11 @@ export function PositionSummary({
   healthDelta,
   debtUsdDelta,
   debtUsd,
-  stakeSumUsd,
+  depositSumUsd,
   borrowCapacityError,
   borrowCapacity,
   borrowCapacityDelta,
-  stakeSumUsdDelta,
+  depositSumUsdDelta,
   debtError,
 }: Props) {
   return (
@@ -36,8 +36,8 @@ export function PositionSummary({
         Debt {formatUsd(debtUsd)} {debtUsdDelta ? `(${formatUsd(debtUsdDelta)})` : ''}
       </div>
       <div>
-        Collateral {formatUsd(stakeSumUsd)}{' '}
-        {stakeSumUsdDelta ? `(${formatUsd(stakeSumUsdDelta)})` : ''}
+        Collateral {formatUsd(depositSumUsd)}{' '}
+        {depositSumUsdDelta ? `(${formatUsd(depositSumUsdDelta)})` : ''}
       </div>
       <div style={{ color: borrowCapacityError ? 'red' : '' }}>
         Borrow capacity {formatUsd(borrowCapacity)}{' '}

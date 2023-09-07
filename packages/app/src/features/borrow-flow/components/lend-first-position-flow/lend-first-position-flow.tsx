@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
-import { StakeNoPositionModal } from '../stake-no-position-modal'
+import { LendFirstPositionModal } from '../lend-first-position-modal'
 
 interface Props {
   type: SupportedToken
@@ -11,12 +11,12 @@ interface Props {
   buttonText: string
 }
 
-export function SingleStakeFlow({ type, onSend, buttonText }: Props) {
+export function LendFirstPositionFlow({ type, onSend, buttonText }: Props) {
   const [isModalOpen, setModalOpenStatus] = useState(false)
 
   const handleSend = (value: number) => {
     setModalOpenStatus(false)
-    onSend({ debts: [], stakes: [{ value, type }] })
+    onSend({ debts: [], deposits: [{ value, type }] })
   }
 
   const handleClick = () => {
@@ -31,7 +31,7 @@ export function SingleStakeFlow({ type, onSend, buttonText }: Props) {
         </button>
       )}
       {isModalOpen && (
-        <StakeNoPositionModal
+        <LendFirstPositionModal
           onClose={() => setModalOpenStatus(false)}
           onSend={handleSend}
           type={type}
