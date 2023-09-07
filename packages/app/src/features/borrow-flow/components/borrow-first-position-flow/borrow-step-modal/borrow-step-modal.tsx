@@ -5,35 +5,35 @@ import {
   MINIMUM_HEALTH_VALUE,
   mockTokenInfoByType,
 } from '@/shared/stellar/constants/mock-tokens-info'
-import { ModalLayout } from '../modal-layout'
+import { ModalLayout } from '../../modal-layout'
 
 interface Props {
   onClose: () => void
   onContinue: () => void
-  borrowValue: string
+  value: string
   onBorrowValueChange: (value: string) => void
-  borrowType: SupportedToken
-  stakeType: SupportedToken
+  type: SupportedToken
+  depositType: SupportedToken
 }
 
 export function BorrowStepModal({
   onClose,
   onContinue,
-  borrowValue,
+  value,
   onBorrowValueChange,
-  borrowType,
-  stakeType,
+  type,
+  depositType,
 }: Props) {
-  const borrowCoinInfo = mockTokenInfoByType[borrowType]
-  const { discount, usd, userValue } = mockTokenInfoByType[stakeType]
+  const borrowCoinInfo = mockTokenInfoByType[type]
+  const { discount, usd, userValue } = mockTokenInfoByType[depositType]
 
   const max = Math.floor((userValue * discount * usd * MINIMUM_HEALTH_VALUE) / borrowCoinInfo.usd)
 
   const infoSlot = (
     <div>
-      <h4>{borrowType} Coin</h4>
+      <h4>{type} Coin</h4>
       <div>Borrow APR {APR}</div>
-      <div>Available 100,000 {borrowType} (FAKE)</div>
+      <div>Available 100,000 {type} (FAKE)</div>
     </div>
   )
   return (
@@ -43,22 +43,18 @@ export function BorrowStepModal({
         <input
           max={max}
           type="number"
-          value={borrowValue}
+          value={value}
           onChange={(e) => {
             onBorrowValueChange(e.target.value)
           }}
         />
-        {borrowType}
+        {type}
         <button onClick={() => onBorrowValueChange(String(max))} type="button">
           max: {max}
         </button>
       </div>
       <div>
-        <button
-          onClick={onContinue}
-          type="button"
-          disabled={!borrowValue || Number(borrowValue) > max}
-        >
+        <button onClick={onContinue} type="button" disabled={!value || Number(value) > max}>
           Continue
         </button>
       </div>

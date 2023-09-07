@@ -9,7 +9,7 @@ interface Props {
   type: SupportedToken
 }
 
-export function StakeNoPositionModal({ onClose, onSend, type }: Props) {
+export function LendFirstPositionModal({ onClose, onSend, type }: Props) {
   const [value, setValue] = useState('')
 
   const { userValue, discount } = mockTokenInfoByType[type]

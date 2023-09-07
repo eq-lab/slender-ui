@@ -8,17 +8,17 @@ import { getHealth, getBorrowCapacity } from '../../utils'
 import { PositionSummary } from '../position-summary'
 
 interface Props {
-  stake: number
-  stakeSumUsd: number
+  deposit: number
+  depositSumUsd: number
   onClose: () => void
   type: SupportedToken
   onSend: (value: PositionCell) => void
   debtSumUsd: number
 }
 
-export function StakeDecreaseModal({
-  stakeSumUsd,
-  stake,
+export function LendDecreaseModal({
+  depositSumUsd,
+  deposit,
   onClose,
   type,
   onSend,
@@ -26,27 +26,27 @@ export function StakeDecreaseModal({
 }: Props) {
   const [value, setValue] = useState('')
 
-  const actualStakeSumUsd = Math.max(
-    stakeSumUsd -
+  const actualDepositSumUsd = Math.max(
+    depositSumUsd -
       Number(value) * mockTokenInfoByType[type].usd * mockTokenInfoByType[type].discount,
     0,
   )
 
   const { health, healthDelta } = getHealth({
-    stakeSumUsd,
+    depositSumUsd,
     actualDebtUsd: debtSumUsd,
     debtSumUsd,
-    actualStakeSumUsd,
+    actualDepositSumUsd,
   })
 
-  const { borrowCapacityDelta, borrowCapacityInterface } = getBorrowCapacity({
-    stakeSumUsd,
+  const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError } = getBorrowCapacity({
+    depositSumUsd,
     actualDebtUsd: debtSumUsd,
     debtSumUsd,
-    actualStakeUsd: actualStakeSumUsd,
+    actualDepositUsd: actualDepositSumUsd,
   })
 
-  const debtDelta = stake - Number(value)
+  const debtDelta = deposit - Number(value)
   const debtError = debtDelta < 0
 
   return (
@@ -56,25 +56,25 @@ export function StakeDecreaseModal({
           debtUsd={debtSumUsd}
           borrowCapacityDelta={borrowCapacityDelta}
           borrowCapacity={borrowCapacityInterface}
-          stakeSumUsd={actualStakeSumUsd}
+          depositSumUsd={actualDepositSumUsd}
+          borrowCapacityError={borrowCapacityError}
           health={health}
           healthDelta={healthDelta}
-          debtError={debtDelta < 0}
-          stakeSumUsdDelta={actualStakeSumUsd - stakeSumUsd}
+          depositSumUsdDelta={actualDepositSumUsd - depositSumUsd}
         />
       }
       onClose={onClose}
     >
       <h3>How much to pay off</h3>
       <input onChange={(e) => setValue(e.target.value)} type="number" value={value} />
-      <button type="button" onClick={() => setValue(String(stake))}>
-        max {stake}
+      <button type="button" onClick={() => setValue(String(deposit))}>
+        max {deposit}
       </button>
       <div>
         <button
           onClick={() => onSend({ value: Number(value), type })}
           type="button"
-          disabled={debtError}
+          disabled={debtError || borrowCapacityError}
         >
           pay off {value} {type}
         </button>

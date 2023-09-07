@@ -1,4 +1,6 @@
 import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tokens'
+import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
+import { Position as PositionType } from '@/entities/position/types'
 
 export const excludeSupportedTokens = <
   T extends [SupportedToken] | [SupportedToken, SupportedToken],
@@ -8,20 +10,23 @@ export const excludeSupportedTokens = <
 ): R => SUPPORTED_TOKENS.filter((element) => !token.includes(element)) as R
 
 export const getHealth = ({
-  stakeSumUsd,
+  depositSumUsd,
   debtSumUsd,
   actualDebtUsd,
-  actualStakeSumUsd,
+  actualDepositSumUsd,
 }: {
-  stakeSumUsd: number
+  depositSumUsd: number
   debtSumUsd: number
   actualDebtUsd: number
-  actualStakeSumUsd: number
+  actualDepositSumUsd: number
 }) => {
-  const defaultHealth = Math.max(Math.round(stakeSumUsd && (1 - debtSumUsd / stakeSumUsd) * 100), 0)
+  const defaultHealth = Math.max(
+    Math.round(depositSumUsd && (1 - debtSumUsd / depositSumUsd) * 100),
+    0,
+  )
 
   const health = Math.max(
-    Math.round(stakeSumUsd && (1 - actualDebtUsd / (actualStakeSumUsd || 1)) * 100),
+    Math.round(depositSumUsd && (1 - actualDebtUsd / (actualDepositSumUsd || 1)) * 100),
     0,
   )
 
@@ -29,18 +34,18 @@ export const getHealth = ({
 }
 
 export const getBorrowCapacity = ({
-  stakeSumUsd,
+  depositSumUsd,
   debtSumUsd,
   actualDebtUsd,
-  actualStakeUsd,
+  actualDepositUsd,
 }: {
-  stakeSumUsd: number
+  depositSumUsd: number
   debtSumUsd: number
   actualDebtUsd: number
-  actualStakeUsd: number
+  actualDepositUsd: number
 }) => {
-  const defaultBorrowCapacity = Math.max(stakeSumUsd - debtSumUsd, 0)
-  const borrowCapacity = actualStakeUsd - actualDebtUsd
+  const defaultBorrowCapacity = Math.max(depositSumUsd - debtSumUsd, 0)
+  const borrowCapacity = actualDepositUsd - actualDebtUsd
   const borrowCapacityInterface = Math.max(borrowCapacity, 0)
   const borrowCapacityError = borrowCapacity < 0
 
@@ -49,4 +54,48 @@ export const getBorrowCapacity = ({
     borrowCapacityError,
     borrowCapacityInterface,
   }
+}
+
+export const getDepositUsd = (collateral: PositionType['deposits']) => {
+  const sum = collateral.reduce((acc, elem) => {
+    if (!elem) return acc
+    const { type, value } = elem
+    const coinInfo = mockTokenInfoByType[type]
+    return acc + value * coinInfo.usd * coinInfo.discount
+  }, 0)
+  return sum
+}
+
+export const getDebtUsd = (debt: PositionType['debts']) => {
+  const sum = debt.reduce((acc, elem) => {
+    if (!elem) return acc
+    const { type, value } = elem
+    const coinInfo = mockTokenInfoByType[type]
+    return acc + value * coinInfo.usd
+  }, 0)
+  return sum
+}
+
+export const sumObj = <T extends string>(
+  obj1: { [K in T]?: number },
+  obj2: { [K in T]?: number },
+) => {
+  const result = {} as { [K in T]?: number }
+
+  Object.entries(obj1).forEach((entry) => {
+    const [key, value] = entry as [T, number]
+    result[key] = value
+    if (key in obj2) {
+      result[key] = (result[key] || 0) + (obj2[key] || 0)
+    }
+  })
+
+  Object.entries(obj2).forEach((entry) => {
+    const [key, value] = entry as [T, number]
+    if (!(key in obj1)) {
+      result[key] = value
+    }
+  })
+
+  return result
 }
