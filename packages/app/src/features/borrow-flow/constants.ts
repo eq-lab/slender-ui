@@ -1,0 +1,1 @@
+export const DEFAULT_HEALTH_VALUE = 0.75

@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
-import {
-  MINIMUM_HEALTH_VALUE,
-  mockTokenInfoByType,
-} from '@/shared/stellar/constants/mock-tokens-info'
+import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { ModalLayout } from '../../modal-layout'
 import { formatUsd } from '../../../formatters'
+import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 
 interface Props {
   onClose: () => void
@@ -44,7 +42,7 @@ export function LendStepModal({
 
   useEffect(() => {
     const inputValue = Math.floor(
-      debtValueInUSD / (coreDepositInfo.discount * coreDepositInfo.usd * MINIMUM_HEALTH_VALUE),
+      debtValueInUSD / (coreDepositInfo.discount * coreDepositInfo.usd * DEFAULT_HEALTH_VALUE),
     )
 
     const finalValue =

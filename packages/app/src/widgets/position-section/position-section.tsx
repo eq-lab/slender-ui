@@ -3,7 +3,6 @@
 import React from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
@@ -17,9 +16,6 @@ export function PositionSection() {
 
   return (
     <div>
-      <div>user xml: {mockTokenInfoByType.xlm.userValue} (FAKE)</div>
-      <div>user xrp: {mockTokenInfoByType.xrp.userValue} (FAKE)</div>
-      <div>user usdc: {mockTokenInfoByType.usdc.userValue} (FAKE)</div>
       <h2>Positions</h2>
       {position ? (
         <div style={{ display: 'flex', gap: 8 }}>

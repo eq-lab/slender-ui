@@ -13,16 +13,18 @@ interface Props {
 export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props) {
   const [value, setValue] = useState('')
 
-  const { userValue, discount } = mockTokenInfoByType[depositToken]
+  const { userValue } = mockTokenInfoByType[depositToken]
   const max = userValue
-  const { lendInterestRate } = useMarketDataForDisplay(tokens[depositToken])
+  const { lendInterestRate, discount, liquidationPenalty } = useMarketDataForDisplay(
+    tokens[depositToken],
+  )
 
   const infoSlot = (
     <div>
       <h4>{depositToken} Coin</h4>
       <div>Lend APR {lendInterestRate}</div>
-      <div>Discount {discount}% (FAKE)</div>
-      <div>Liquidation penalty -3% (FAKE)</div>
+      <div>Discount {discount}%</div>
+      <div>Liquidation penalty {liquidationPenalty}</div>
     </div>
   )
   return (

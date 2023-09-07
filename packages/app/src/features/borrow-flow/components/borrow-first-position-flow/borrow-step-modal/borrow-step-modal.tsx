@@ -1,10 +1,8 @@
 import React from 'react'
 import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
-import {
-  MINIMUM_HEALTH_VALUE,
-  mockTokenInfoByType,
-} from '@/shared/stellar/constants/mock-tokens-info'
+import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
 
 interface Props {
@@ -27,14 +25,16 @@ export function BorrowStepModal({
   const borrowCoinInfo = mockTokenInfoByType[debtToken]
   const { discount, usd, userValue } = mockTokenInfoByType[depositToken]
 
-  const max = Math.floor((userValue * discount * usd * MINIMUM_HEALTH_VALUE) / borrowCoinInfo.usd)
-  const { borrowInterestRate } = useMarketDataForDisplay(tokens[debtToken])
+  const max = Math.floor((userValue * discount * usd * DEFAULT_HEALTH_VALUE) / borrowCoinInfo.usd)
+  const { borrowInterestRate, availableToBorrow } = useMarketDataForDisplay(tokens[debtToken])
 
   const infoSlot = (
     <div>
       <h4>{debtToken} Coin</h4>
       <div>Borrow APR {borrowInterestRate}</div>
-      <div>Available 100,000 {debtToken} (FAKE)</div>
+      <div>
+        Available {availableToBorrow} {tokens[debtToken].code}
+      </div>
     </div>
   )
   return (
