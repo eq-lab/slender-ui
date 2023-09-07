@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { DebtIncreaseModal } from '../components/debt-increase-modal'
-import { excludeSupportedTokens, getDebtUsd, getStakeUsd, sumObj } from '../utils'
+import { BorrowIncreaseModal } from '../components/borrow-increase-modal'
+import { excludeSupportedTokens, getDebtUsd, getDepositUsd, sumObj } from '../utils'
 
-export const useDebtIncrease = (): {
+export const useBorrowIncrease = (): {
   modal: React.ReactNode
   open: (value: SupportedToken) => void
 } => {
@@ -18,8 +18,8 @@ export const useDebtIncrease = (): {
     const debt = position.debts.find((debtItem) => debtItem.type === modalType)
     if (!debt) return null
 
-    const firstStake = position.stakes[0].type
-    const secondStake = position.stakes[1]?.type
+    const firstDeposit = position.deposits[0].type
+    const secondDeposit = position.deposits[1]?.type
     const secondDebt = position.debts[1]?.type
 
     const getDebtTypes = () => {
@@ -27,7 +27,7 @@ export const useDebtIncrease = (): {
         return [debt.type]
       }
 
-      return excludeSupportedTokens(secondStake ? [firstStake, secondStake] : [firstStake])
+      return excludeSupportedTokens(secondDeposit ? [firstDeposit, secondDeposit] : [firstDeposit])
     }
 
     const handleSend = (sendValue: Partial<Record<'usdc' | 'xlm' | 'xrp', number>>) => {
@@ -50,15 +50,15 @@ export const useDebtIncrease = (): {
 
       setPosition({
         debts: arr,
-        stakes: position.stakes,
+        deposits: position.deposits,
       })
       setModalType(null)
     }
 
     return (
-      <DebtIncreaseModal
+      <BorrowIncreaseModal
         debtTypes={getDebtTypes()}
-        stakeSumUsd={getStakeUsd(position.stakes)}
+        depositSumUsd={getDepositUsd(position.deposits)}
         debtSumUsd={getDebtUsd(position.debts)}
         type={debt.type}
         onClose={() => setModalType(null)}

@@ -3,10 +3,10 @@ import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { PositionCell } from '@/entities/position/types'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { DebtDecreaseModal } from '../components/debt-decrease-modal'
-import { getDebtUsd, getStakeUsd } from '../utils'
+import { BorrowDecreaseModal } from '../components/borrow-decrease-modal'
+import { getDebtUsd, getDepositUsd } from '../utils'
 
-export const useDebtDecrease = (): {
+export const useBorrowDecrease = (): {
   modal: React.ReactNode
   open: (value: SupportedToken) => void
 } => {
@@ -28,15 +28,15 @@ export const useDebtDecrease = (): {
       })
       setPosition({
         debts: newDebts,
-        stakes: position.stakes,
+        deposits: position.deposits,
       })
       setModalType(null)
     }
 
     return (
-      <DebtDecreaseModal
+      <BorrowDecreaseModal
         debtSumUsd={getDebtUsd(position.debts)}
-        stakeSumUsd={getStakeUsd(position.stakes)}
+        depositSumUsd={getDepositUsd(position.deposits)}
         debt={debt.value}
         type={debt.type}
         onClose={() => setModalType(null)}

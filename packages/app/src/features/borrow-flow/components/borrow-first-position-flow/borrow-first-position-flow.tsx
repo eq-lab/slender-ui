@@ -3,13 +3,13 @@
 import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
-import { DebtStepModal } from '../debt-step-modal'
-import { StakeStepModal } from '../stake-step-modal'
+import { BorrowStepModal } from './borrow-step-modal'
+import { LendStepModal } from './lend-step-modal'
 import { excludeSupportedTokens } from '../../utils'
 
 enum Step {
   Borrow = 'Borrow',
-  Stake = 'Stake',
+  Deposit = 'Deposit',
 }
 
 interface Props {
@@ -18,13 +18,13 @@ interface Props {
   buttonText: string
 }
 
-export function SingleDebtFlow({ type, onSend, buttonText }: Props) {
+export function BorrowFirstPositionFlow({ type, onSend, buttonText }: Props) {
   const [step, setStep] = useState<Step | null>(null)
-  const [borrowValue, setBorrowValue] = useState('')
+  const [debtValue, setDebtValue] = useState('')
 
   const handleClose = () => {
     setStep(null)
-    setBorrowValue('')
+    setDebtValue('')
   }
 
   const handleSend = (value: Position) => {
@@ -34,22 +34,22 @@ export function SingleDebtFlow({ type, onSend, buttonText }: Props) {
 
   const modalByStep = {
     [Step.Borrow]: (
-      <DebtStepModal
-        borrowValue={borrowValue}
+      <BorrowStepModal
+        value={debtValue}
         onClose={handleClose}
-        onContinue={() => setStep(Step.Stake)}
-        onBorrowValueChange={setBorrowValue}
-        borrowType={type}
-        stakeType={excludeSupportedTokens([type])[0]}
+        onContinue={() => setStep(Step.Deposit)}
+        onBorrowValueChange={setDebtValue}
+        type={type}
+        depositType={excludeSupportedTokens([type])[0]}
       />
     ),
-    [Step.Stake]: (
-      <StakeStepModal
+    [Step.Deposit]: (
+      <LendStepModal
         onClose={handleClose}
         onPrev={() => setStep(Step.Borrow)}
-        borrowValue={borrowValue}
-        borrowType={type}
-        stakeTypes={excludeSupportedTokens([type])}
+        debtValue={debtValue}
+        debtType={type}
+        depositTypes={excludeSupportedTokens([type])}
         onSend={handleSend}
       />
     ),

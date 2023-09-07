@@ -4,16 +4,16 @@ import React from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
-import { useDebtDecrease } from '@/features/borrow-flow/hooks/use-debt-decrease'
-import { useDebtIncrease } from '@/features/borrow-flow/hooks/use-debt-increase'
-import { useStakeDecrease } from '@/features/borrow-flow/hooks/use-stake-decrease'
+import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
+import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
+import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 
 export function PositionSection() {
   const position = useContextSelector(PositionContext, (state) => state.position)
 
-  const { modal: debtDecreaseModal, open: openDebtDecreaseModal } = useDebtDecrease()
-  const { modal: debtIncreaseModal, open: openDebtIncreaseModal } = useDebtIncrease()
-  const { modal: stakeDecreaseModal, open: openStakeDecreaseModal } = useStakeDecrease()
+  const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
+  const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
+  const { modal: lendDecreaseModal, open: openLendDecreaseModal } = useLendDecrease()
 
   return (
     <div>
@@ -25,13 +25,13 @@ export function PositionSection() {
         <div style={{ display: 'flex', gap: 8 }}>
           <div>
             <h4>lend</h4>
-            {position.stakes.map((stake) => {
-              if (!stake) return null
-              const { type, value } = stake
+            {position.deposits.map((deposit) => {
+              if (!deposit) return null
+              const { type, value } = deposit
               return (
                 <div key={type}>
                   {value} {type}{' '}
-                  <button type="button" onClick={() => openStakeDecreaseModal(type)}>
+                  <button type="button" onClick={() => openLendDecreaseModal(type)}>
                     -
                   </button>
                 </div>
@@ -47,10 +47,10 @@ export function PositionSection() {
                 return (
                   <div key={type}>
                     {value} {type}{' '}
-                    <button type="button" onClick={() => openDebtDecreaseModal(type)}>
+                    <button type="button" onClick={() => openBorrowDecreaseModal(type)}>
                       -
                     </button>
-                    <button type="button" onClick={() => openDebtIncreaseModal(type)}>
+                    <button type="button" onClick={() => openBorrowIncreaseModal(type)}>
                       +
                     </button>
                   </div>
@@ -62,9 +62,9 @@ export function PositionSection() {
       ) : (
         <>empty</>
       )}
-      {debtDecreaseModal}
-      {debtIncreaseModal}
-      {stakeDecreaseModal}
+      {borrowDecreaseModal}
+      {borrowIncreaseModal}
+      {lendDecreaseModal}
     </div>
   )
 }
