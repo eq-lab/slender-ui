@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
-import { useMarketDataForDisplay } from '@/widgets/market-section/components/use-market-data-for-display'
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { ModalLayout } from '../modal-layout'
 
 interface Props {

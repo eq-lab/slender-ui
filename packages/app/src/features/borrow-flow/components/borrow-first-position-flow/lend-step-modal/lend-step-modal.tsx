@@ -5,7 +5,7 @@ import {
   mockTokenInfoByType,
 } from '@/shared/stellar/constants/mock-tokens-info'
 import { Position } from '@/entities/position/types'
-import { useMarketDataForDisplay } from '@/widgets/market-section/components/use-market-data-for-display'
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { ModalLayout } from '../../modal-layout'
 import { formatUsd } from '../../../formatters'
 

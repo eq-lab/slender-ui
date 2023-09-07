@@ -1,5 +1,5 @@
 import { Token } from '@/shared/stellar/constants/tokens'
-import { useMarketDataForDisplay } from '@/widgets/market-section/components/use-market-data-for-display'
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 
 export function MarketCard({
   token,
