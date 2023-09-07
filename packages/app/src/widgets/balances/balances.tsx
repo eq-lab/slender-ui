@@ -1,4 +1,5 @@
 'use client'
+
 import React, { useMemo } from 'react'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { tokens } from '@/shared/stellar/constants/tokens'
