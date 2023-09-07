@@ -49,7 +49,7 @@ export function PositionSection() {
 
     if (debtPositions?.length || lendPositions?.length)
       setPosition({
-        stakes: debtPositions as [PositionCell, ...PositionCell[]],
+        deposits: debtPositions as [PositionCell, ...PositionCell[]],
         debts: lendPositions || [],
       })
   }, [setPosition, debtBalances, lendBalances])

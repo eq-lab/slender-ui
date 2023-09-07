@@ -17,10 +17,10 @@ const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
 
 const encodeAddress = (account: string) => new SorobanClient.Address(account).toScVal()
 
-export const useGetBalance = (tokenAddressArray: TokenAddress[], userAddress?: string) => {
+export const useGetBalance = (tokenAddresses: TokenAddress[], userAddress?: string) => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[] | null>(null)
   const makeInvoke = useMakeInvoke()
-  const tokensCache = useContextSelector(MarketContext, (state) => state.tokens) // ?? defaultTokenRecord
+  const tokensCache = useContextSelector(MarketContext, (state) => state.tokens)
 
   const getBalances = useCallback(async () => {
     if (!userAddress) {
@@ -29,19 +29,20 @@ export const useGetBalance = (tokenAddressArray: TokenAddress[], userAddress?: s
     }
     const balanceTxParams = [encodeAddress(userAddress)]
 
-    const balancesArray: SorobanTokenRecord[] = []
+    const balances: SorobanTokenRecord[] = (
+      await Promise.all(
+        tokenAddresses.map((tokenAddress) => {
+          const invoke = makeInvoke(tokenAddress)
+          return invoke('balance', decodei128, balanceTxParams)
+        }),
+      )
+    ).map((balance, index) => ({
+      balance,
+      ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
+    }))
 
-    await Promise.all(
-      tokenAddressArray.map((tokenAddress) => {
-        const tokenCache = tokensCache?.[tokenAddress] ?? defaultTokenRecord
-        const invoke = makeInvoke(tokenAddress)
-        return invoke('balance', decodei128, balanceTxParams).then((balance) => {
-          balancesArray.push({ balance, ...tokenCache })
-        })
-      }),
-    )
-    setBalanceInfo(balancesArray)
-  }, [makeInvoke, tokenAddressArray, userAddress, tokensCache])
+    setBalanceInfo(balances)
+  }, [makeInvoke, tokenAddresses, userAddress, tokensCache])
 
   useEffect(() => {
     getBalances()
