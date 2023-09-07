@@ -11,7 +11,7 @@ interface Props {
   deposit: number
   depositSumUsd: number
   onClose: () => void
-  type: SupportedToken
+  token: SupportedToken
   onSend: (value: PositionCell) => void
   debtSumUsd: number
 }
@@ -20,7 +20,7 @@ export function LendDecreaseModal({
   depositSumUsd,
   deposit,
   onClose,
-  type,
+  token,
   onSend,
   debtSumUsd,
 }: Props) {
@@ -28,7 +28,7 @@ export function LendDecreaseModal({
 
   const actualDepositSumUsd = Math.max(
     depositSumUsd -
-      Number(value) * mockTokenInfoByType[type].usd * mockTokenInfoByType[type].discount,
+      Number(value) * mockTokenInfoByType[token].usd * mockTokenInfoByType[token].discount,
     0,
   )
 
@@ -72,11 +72,11 @@ export function LendDecreaseModal({
       </button>
       <div>
         <button
-          onClick={() => onSend({ value: Number(value), type })}
+          onClick={() => onSend({ value: Number(value), token })}
           type="button"
           disabled={debtError || borrowCapacityError}
         >
-          pay off {value} {type}
+          pay off {value} {token}
         </button>
       </div>
     </ModalLayout>

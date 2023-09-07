@@ -59,8 +59,8 @@ export const getBorrowCapacity = ({
 export const getDepositUsd = (collateral: PositionType['deposits']) => {
   const sum = collateral.reduce((acc, elem) => {
     if (!elem) return acc
-    const { type, value } = elem
-    const coinInfo = mockTokenInfoByType[type]
+    const { token, value } = elem
+    const coinInfo = mockTokenInfoByType[token]
     return acc + value * coinInfo.usd * coinInfo.discount
   }, 0)
   return sum
@@ -69,8 +69,8 @@ export const getDepositUsd = (collateral: PositionType['deposits']) => {
 export const getDebtUsd = (debt: PositionType['debts']) => {
   const sum = debt.reduce((acc, elem) => {
     if (!elem) return acc
-    const { type, value } = elem
-    const coinInfo = mockTokenInfoByType[type]
+    const { token, value } = elem
+    const coinInfo = mockTokenInfoByType[token]
     return acc + value * coinInfo.usd
   }, 0)
   return sum

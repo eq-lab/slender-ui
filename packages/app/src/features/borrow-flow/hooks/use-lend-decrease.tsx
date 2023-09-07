@@ -13,13 +13,13 @@ export const useLendDecrease = () => {
 
   const renderModal = () => {
     if (!position || !modalType) return null
-    const deposit = position.deposits.find((depositItem) => depositItem.type === modalType)
+    const deposit = position.deposits.find((depositItem) => depositItem.token === modalType)
     if (!deposit) return null
 
-    const handleSend = ({ type, value }: PositionCell) => {
+    const handleSend = ({ token, value }: PositionCell) => {
       const newDeposits = position.deposits.map((el) => {
-        if (el.type === type) {
-          return { value: el.value - value, type }
+        if (el.token === token) {
+          return { value: el.value - value, token }
         }
         return el
       })
@@ -35,7 +35,7 @@ export const useLendDecrease = () => {
         deposit={deposit.value}
         debtSumUsd={getDebtUsd(position.debts)}
         depositSumUsd={getDepositUsd(position.deposits)}
-        type={deposit.type}
+        token={deposit.token}
         onClose={() => setModalType(null)}
         onSend={handleSend}
       />

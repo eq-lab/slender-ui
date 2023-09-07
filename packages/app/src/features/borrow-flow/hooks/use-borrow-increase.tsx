@@ -15,16 +15,16 @@ export const useBorrowIncrease = (): {
 
   const renderModal = () => {
     if (!position || !modalType) return null
-    const debt = position.debts.find((debtItem) => debtItem.type === modalType)
+    const debt = position.debts.find((debtItem) => debtItem.token === modalType)
     if (!debt) return null
 
-    const firstDeposit = position.deposits[0].type
-    const secondDeposit = position.deposits[1]?.type
-    const secondDebt = position.debts[1]?.type
+    const firstDeposit = position.deposits[0].token
+    const secondDeposit = position.deposits[1]?.token
+    const secondDebt = position.debts[1]?.token
 
     const getDebtTypes = () => {
       if (secondDebt) {
-        return [debt.type]
+        return [debt.token]
       }
 
       return excludeSupportedTokens(secondDeposit ? [firstDeposit, secondDeposit] : [firstDeposit])
@@ -34,22 +34,22 @@ export const useBorrowIncrease = (): {
       const prevDebtsObj = position.debts.reduce(
         (acc, el) => ({
           ...acc,
-          [el.type]: el.value,
+          [el.token]: el.value,
         }),
         {},
       )
       const finalDebtsObj = sumObj(prevDebtsObj, sendValue)
 
-      const arr = Object.entries(finalDebtsObj).map((entry) => {
-        const [key, value] = entry as [SupportedToken, number]
+      const debts = Object.entries(finalDebtsObj).map((entry) => {
+        const [token, value] = entry as [SupportedToken, number]
         return {
-          type: key,
+          token,
           value,
         }
       })
 
       setPosition({
-        debts: arr,
+        debts,
         deposits: position.deposits,
       })
       setModalType(null)
@@ -60,7 +60,7 @@ export const useBorrowIncrease = (): {
         debtTypes={getDebtTypes()}
         depositSumUsd={getDepositUsd(position.deposits)}
         debtSumUsd={getDebtUsd(position.debts)}
-        type={debt.type}
+        type={debt.token}
         onClose={() => setModalType(null)}
         onSend={handleSend}
       />

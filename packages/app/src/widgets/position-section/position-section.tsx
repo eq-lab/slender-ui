@@ -27,11 +27,11 @@ export function PositionSection() {
             <h4>lend</h4>
             {position.deposits.map((deposit) => {
               if (!deposit) return null
-              const { type, value } = deposit
+              const { token, value } = deposit
               return (
-                <div key={type}>
-                  {value} {type}{' '}
-                  <button type="button" onClick={() => openLendDecreaseModal(type)}>
+                <div key={token}>
+                  {value} {token}{' '}
+                  <button type="button" onClick={() => openLendDecreaseModal(token)}>
                     -
                   </button>
                 </div>
@@ -43,14 +43,14 @@ export function PositionSection() {
             <div>
               {position.debts.map((debt) => {
                 if (!debt) return null
-                const { type, value } = debt
+                const { token, value } = debt
                 return (
-                  <div key={type}>
-                    {value} {type}{' '}
-                    <button type="button" onClick={() => openBorrowDecreaseModal(type)}>
+                  <div key={token}>
+                    {value} {token}{' '}
+                    <button type="button" onClick={() => openBorrowDecreaseModal(token)}>
                       -
                     </button>
-                    <button type="button" onClick={() => openBorrowIncreaseModal(type)}>
+                    <button type="button" onClick={() => openBorrowIncreaseModal(token)}>
                       +
                     </button>
                   </div>

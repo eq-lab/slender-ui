@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
 import {
-  APR,
   MINIMUM_HEALTH_VALUE,
   mockTokenInfoByType,
 } from '@/shared/stellar/constants/mock-tokens-info'
 import { Position } from '@/entities/position/types'
+import { useMarketDataForDisplay } from '@/widgets/market-section/components/use-market-data-for-display'
 import { ModalLayout } from '../../modal-layout'
 import { formatUsd } from '../../../formatters'
 
@@ -13,8 +13,8 @@ interface Props {
   onClose: () => void
   onPrev?: () => void
   debtValue: string
-  debtType: SupportedToken
-  depositTypes: [SupportedToken, SupportedToken]
+  debtToken: SupportedToken
+  depositTokens: [SupportedToken, SupportedToken]
   onSend: (value: Position) => void
 }
 
@@ -22,22 +22,23 @@ export function LendStepModal({
   onClose,
   onPrev,
   debtValue,
-  debtType,
-  depositTypes,
+  debtToken,
+  depositTokens,
   onSend,
 }: Props) {
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDepositType, setCoreDepositType] = useState<SupportedToken>(depositTypes[0])
+  const [coreDepositToken, setCoreDepositToken] = useState<SupportedToken>(depositTokens[0])
   const [isDepositListOpen, setIsDepositListOpen] = useState(false)
 
   const [showExtraInput, setShowExtraInput] = useState(false)
 
-  const debtCoinInfo = mockTokenInfoByType[debtType]
-  const coreDepositInfo = mockTokenInfoByType[coreDepositType]
-  const extraDepositType = depositTypes[0] === coreDepositType ? depositTypes[1] : depositTypes[0]
-  const extraDepositInfo = mockTokenInfoByType[extraDepositType]
+  const debtCoinInfo = mockTokenInfoByType[debtToken]
+  const coreDepositInfo = mockTokenInfoByType[coreDepositToken]
+  const extraDepositToken =
+    depositTokens[0] === coreDepositToken ? depositTokens[1] : depositTokens[0]
+  const extraDepositInfo = mockTokenInfoByType[extraDepositToken]
 
   const debtValueInUSD = Number(debtValue) * debtCoinInfo.usd
 
@@ -50,6 +51,8 @@ export function LendStepModal({
       inputValue > coreDepositInfo.userValue ? coreDepositInfo.userValue : inputValue
     setCoreValue(String(finalValue))
   }, [debtValueInUSD, coreDepositInfo.discount, coreDepositInfo.usd, coreDepositInfo.userValue])
+
+  const { borrowInterestRate } = useMarketDataForDisplay(tokens[debtToken])
 
   const coreDeposit = Number(coreValue) * coreDepositInfo.discount
   const extraDeposit = Number(extraValue) * extraDepositInfo.discount
@@ -86,7 +89,7 @@ export function LendStepModal({
             setCoreValue(e.target.value)
           }}
         />
-        {coreDepositType}
+        {coreDepositToken}
         {!showExtraInput && (
           <button onClick={() => setIsDepositListOpen((state) => !state)} type="button">
             change collateral
@@ -95,9 +98,9 @@ export function LendStepModal({
       </div>
       {isDepositListOpen && !showExtraInput && (
         <div>
-          {depositTypes.map((type) => (
-            <button key={type} type="button" onClick={() => setCoreDepositType(type)}>
-              {mockTokenInfoByType[type].userValue} {type} {type === coreDepositType && '✓'}
+          {depositTokens.map((type) => (
+            <button key={type} type="button" onClick={() => setCoreDepositToken(type)}>
+              {mockTokenInfoByType[type].userValue} {type} {type === coreDepositToken && '✓'}
             </button>
           ))}
         </div>
@@ -119,7 +122,7 @@ export function LendStepModal({
               setExtraValue(e.target.value)
             }}
           />
-          {extraDepositType}
+          {extraDepositToken}
         </div>
       )}
       <button
@@ -127,17 +130,17 @@ export function LendStepModal({
         disabled={error}
         onClick={() =>
           onSend({
-            debts: [{ type: debtType, value: Number(debtValue) }],
+            debts: [{ token: debtToken, value: Number(debtValue) }],
             deposits: [
-              { type: coreDepositType, value: Number(coreValue) },
-              ...(showExtraInput ? [{ type: extraDepositType, value: Number(extraValue) }] : []),
+              { token: coreDepositToken, value: Number(coreValue) },
+              ...(showExtraInput ? [{ token: extraDepositToken, value: Number(extraValue) }] : []),
             ],
           })
         }
       >
-        borrow {debtValue} {debtType}
+        borrow {debtValue} {debtToken}
       </button>
-      <div>with apr {APR}</div>
+      <div>with apr {borrowInterestRate}</div>
     </ModalLayout>
   )
 }

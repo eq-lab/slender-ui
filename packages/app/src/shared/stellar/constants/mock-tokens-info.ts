@@ -1,6 +1,5 @@
 import { SupportedToken } from './tokens'
 
-export const APR = '−15.7% (FAKE)'
 const USER_USDT = 5000
 const USER_XML = 10000
 const USER_XRP = 3000
