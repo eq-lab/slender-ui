@@ -1,7 +1,6 @@
 import { Token } from '@/shared/stellar/constants/tokens'
-import { useContextSelector } from 'use-context-selector'
 import { usePoolData } from './use-pool-data'
-import { MarketContext } from '../context/context'
+import { useMarketData } from '../context/context'
 import { useTokenData } from './use-token-data'
 
 const makeFormatPercentWithPrecision =
@@ -22,7 +21,7 @@ export function useMarketDataForDisplay(token: Token) {
     utilizationCapacity = 0,
   } = usePoolData(token.address)
 
-  const tokenCache = useContextSelector(MarketContext, (state) => state.tokens?.[token.address])
+  const tokenCache = useMarketData()?.[token.address]
   const decimals = tokenCache?.decimals ?? 0
 
   const { totalSupply: sTotalSupply } = useTokenData(token.sAddress)
