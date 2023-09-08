@@ -17,9 +17,12 @@ export function CurrencyRatesProvider({ children }: { children: JSX.Element }) {
 
   useEffect(() => {
     getRates()
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       getRates()
     }, UPDATE_RATES_INTERVAL_MS)
+    return () => {
+      clearInterval(intervalId)
+    }
   }, [])
 
   return (
