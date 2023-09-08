@@ -11,6 +11,7 @@ import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decre
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 import { useGetCryptocurrencyUsdRates } from '@/entities/currency-rates/hooks/use-get-cryptocurrency-usd-rates'
+import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
 
 const sorobanTokenRecordToPositionCell = (tokenRecord: SorobanTokenRecord): PositionCell => ({
   value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
@@ -58,6 +59,7 @@ export function PositionSection() {
   const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
   const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
   const { modal: lendDecreaseModal, open: openLendDecreaseModal } = useLendDecrease()
+  const { modal: lendIncreaseModal, open: openLendIncreaseModal } = useLendIncrease()
 
   return (
     <div>
@@ -75,9 +77,15 @@ export function PositionSection() {
                   <button type="button" onClick={() => openLendDecreaseModal(token)}>
                     -
                   </button>
+                  <button type="button" onClick={() => openLendIncreaseModal(token)}>
+                    +
+                  </button>
                 </div>
               )
             })}
+            <button type="button" onClick={() => openLendIncreaseModal()}>
+              + lend more
+            </button>
           </div>
           <div>
             <h4>borrowed</h4>
@@ -97,6 +105,9 @@ export function PositionSection() {
                   </div>
                 )
               })}
+              <button type="button" onClick={() => openBorrowIncreaseModal()}>
+                + debt more
+              </button>
             </div>
           </div>
         </div>
@@ -106,6 +117,7 @@ export function PositionSection() {
       {borrowDecreaseModal}
       {borrowIncreaseModal}
       {lendDecreaseModal}
+      {lendIncreaseModal}
     </div>
   )
 }

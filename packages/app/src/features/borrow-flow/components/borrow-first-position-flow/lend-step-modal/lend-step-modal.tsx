@@ -96,9 +96,9 @@ export function LendStepModal({
       </div>
       {isDepositListOpen && !showExtraInput && (
         <div>
-          {depositTokens.map((type) => (
-            <button key={type} type="button" onClick={() => setCoreDepositToken(type)}>
-              {mockTokenInfoByType[type].userValue} {type} {type === coreDepositToken && '✓'}
+          {depositTokens.map((token) => (
+            <button key={token} type="button" onClick={() => setCoreDepositToken(token)}>
+              {mockTokenInfoByType[token].userValue} {token} {token === coreDepositToken && '✓'}
             </button>
           ))}
         </div>

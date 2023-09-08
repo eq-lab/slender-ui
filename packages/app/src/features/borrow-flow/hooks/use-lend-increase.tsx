@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { BorrowIncreaseModal } from '../components/borrow-increase-modal'
+import { PositionCell } from '@/entities/position/types'
+import { LendIncreaseModal } from '../components/lend-increase-modal'
 import { excludeSupportedTokens, getDebtUsd, getDepositUsd, sumObj } from '../utils'
 
-export const useBorrowIncrease = (): {
+export const useLendIncrease = (): {
   modal: React.ReactNode
   open: (value?: SupportedToken) => void
 } => {
@@ -13,14 +14,14 @@ export const useBorrowIncrease = (): {
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
   const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
 
-  const depositTokens = position?.deposits.map((deposit) => deposit.token) || []
+  const debtsTokens = position?.debts.map((debt) => debt.token) || []
 
   const open = (value?: SupportedToken) => {
     if (value) {
       setModalToken(value)
       return
     }
-    const firstToken = excludeSupportedTokens(depositTokens)[0]
+    const firstToken = excludeSupportedTokens(debtsTokens)[0]
     if (firstToken) {
       setModalToken(firstToken)
     }
@@ -30,33 +31,33 @@ export const useBorrowIncrease = (): {
     if (!position || !modalToken) return null
 
     const handleSend = (sendValue: Partial<Record<'usdc' | 'xlm' | 'xrp', number>>) => {
-      const prevDebtsObj = position.debts.reduce(
+      const prevDepositsObj = position.deposits.reduce(
         (acc, el) => ({
           ...acc,
           [el.token]: el.value,
         }),
         {},
       )
-      const finalDebtsObj = sumObj(prevDebtsObj, sendValue)
+      const finalDebtsObj = sumObj(prevDepositsObj, sendValue)
 
-      const debts = Object.entries(finalDebtsObj).map((entry) => {
-        const [token, value] = entry as [SupportedToken, number]
+      const arr = Object.entries(finalDebtsObj).map((entry) => {
+        const [key, value] = entry as [SupportedToken, number]
         return {
-          token,
+          token: key,
           value,
         }
       })
 
       setPosition({
-        debts,
-        deposits: position.deposits,
+        debts: position.debts,
+        deposits: arr as [PositionCell, ...PositionCell[]],
       })
       setModalToken(null)
     }
 
     return (
-      <BorrowIncreaseModal
-        debtTokens={excludeSupportedTokens(depositTokens)}
+      <LendIncreaseModal
+        depositTokens={excludeSupportedTokens(debtsTokens)}
         depositSumUsd={getDepositUsd(position.deposits)}
         debtSumUsd={getDebtUsd(position.debts)}
         token={modalToken}
