@@ -1,4 +1,4 @@
-enum Underlying {
+export enum Underlying {
   // the native XLM token
   'xlm' = 'CB64D3G7SM2RTH6JSGG34DDTFTQ5CFDKVDZJZSODMCX4NJ2HV2KN7OHT',
   'xrp' = 'CBZCT5E5OLBGUUTU3V7K47COJ5SQFSXNW2LZKN4Q6I3C7BZ6P6S2MCO2',
@@ -19,11 +19,13 @@ enum DebtToken {
 
 export type TokenAddress = Underlying | SToken | DebtToken
 
-export const cachedTokenAddresses = [
+export const CACHED_TOKEN_ADDRESSES = [
   ...Object.values(Underlying),
   ...Object.values(SToken),
   ...Object.values(DebtToken),
-]
+] as const
+
+export const CACHED_MARKET_ADDRESSES = Object.values(Underlying)
 
 export const SUPPORTED_TOKENS = ['usdc', 'xlm', 'xrp'] as const
 

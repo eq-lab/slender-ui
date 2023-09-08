@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { ModalLayout } from '../modal-layout'
 
 interface Props {
@@ -13,8 +13,8 @@ interface Props {
 export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props) {
   const [value, setValue] = useState('')
 
-  const { userValue } = mockTokenInfoByType[depositToken]
-  const max = userValue
+  const { balance = '0', decimals = 0 } = useGetBalance([tokens[depositToken].address])[0] || {}
+  const max = Number(balance) / 10 ** decimals
   const { lendInterestRate, discount, liquidationPenalty } = useMarketDataForDisplay(
     tokens[depositToken],
   )
@@ -23,7 +23,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props)
     <div>
       <h4>{depositToken} Coin</h4>
       <div>Lend APR {lendInterestRate}</div>
-      <div>Discount {discount}%</div>
+      <div>Discount {discount}</div>
       <div>Liquidation penalty {liquidationPenalty}</div>
     </div>
   )

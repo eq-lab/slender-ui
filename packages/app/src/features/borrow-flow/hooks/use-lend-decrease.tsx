@@ -3,13 +3,17 @@ import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { PositionCell } from '@/entities/position/types'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { getDebtUsd, getDepositUsd } from '../utils'
 import { LendDecreaseModal } from '../components/lend-decrease-modal'
+import { useDebtUsd } from './use-debt-usd'
+import { useDepositUsd } from './use-deposit-usd'
 
 export const useLendDecrease = () => {
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
   const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
+
+  const debtSumUsd = useDebtUsd(position?.debts)
+  const depositSumUsd = useDepositUsd(position?.deposits)
 
   const renderModal = () => {
     if (!position || !modalToken) return null
@@ -33,8 +37,8 @@ export const useLendDecrease = () => {
     return (
       <LendDecreaseModal
         deposit={deposit.value}
-        debtSumUsd={getDebtUsd(position.debts)}
-        depositSumUsd={getDepositUsd(position.deposits)}
+        debtSumUsd={debtSumUsd}
+        depositSumUsd={depositSumUsd}
         token={deposit.token}
         onClose={() => setModalToken(null)}
         onSend={handleSend}

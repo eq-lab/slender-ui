@@ -6,7 +6,7 @@ type SupportedTokenRates = {
   [key in SupportedToken]: number
 }
 
-export const useGetCryptocurrencyUsdRates = (): SupportedTokenRates => {
+export const usePriceInUsd = (): SupportedTokenRates => {
   const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates)
 
   const supportedTokenEntries =

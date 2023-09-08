@@ -1,9 +1,9 @@
 import * as SorobanClient from 'soroban-client'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
-import { decodei128 } from '@/shared/stellar/decoders'
+import { decodeI128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { useMarketData } from '../context/context'
+import { useTokenCache } from '../context/context'
 
 export interface SorobanTokenRecord {
   balance: string
@@ -22,33 +22,39 @@ export const useGetBalance = (
 ): SorobanTokenRecord[] => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
   const makeInvoke = useMakeInvoke()
-  const tokensCache = useMarketData()
-
-  const updateBalances = useCallback(async () => {
-    if (!userAddress) {
-      setBalanceInfo([])
-      return
-    }
-    const balanceTxParams = [encodeAddress(userAddress)]
-
-    const balances: SorobanTokenRecord[] = (
-      await Promise.all(
-        tokenAddresses.map((tokenAddress) => {
-          const invoke = makeInvoke(tokenAddress)
-          return invoke('balance', decodei128, balanceTxParams)
-        }),
-      )
-    ).map((balance, index) => ({
-      balance,
-      ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
-    }))
-
-    setBalanceInfo(balances)
-  }, [makeInvoke, tokenAddresses, userAddress, tokensCache])
+  const tokensCache = useTokenCache()
+  const cachedAddresses = useRef(tokenAddresses)
 
   useEffect(() => {
-    updateBalances()
-  }, [updateBalances])
+    async function updateBalances() {
+      if (!userAddress) {
+        setBalanceInfo([])
+        return
+      }
+      const balanceTxParams = [encodeAddress(userAddress)]
+
+      const balances: SorobanTokenRecord[] = (
+        await Promise.all(
+          tokenAddresses.map((tokenAddress) => {
+            const invoke = makeInvoke(tokenAddress)
+            return invoke('balance', decodeI128, balanceTxParams)
+          }),
+        )
+      ).map((balance, index) => ({
+        balance,
+        ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
+      }))
+
+      setBalanceInfo(balances)
+    }
+    if (
+      tokenAddresses.length !== cachedAddresses.current.length ||
+      !tokenAddresses.every((address, index) => address === cachedAddresses.current[index])
+    ) {
+      cachedAddresses.current = tokenAddresses
+      updateBalances()
+    }
+  }, [makeInvoke, tokenAddresses, userAddress, tokensCache])
 
   return balanceInfo
 }
