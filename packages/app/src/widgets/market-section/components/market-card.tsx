@@ -1,12 +1,14 @@
 import { Token } from '@/shared/stellar/constants/tokens'
-import { useMarketDataForDisplay } from '@/widgets/market-section/components/use-market-data-for-display'
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 
 export function MarketCard({
   token,
   renderBorrowButton,
+  renderLendButton,
 }: {
   token: Token
   renderBorrowButton: (percent: string) => React.ReactNode
+  renderLendButton: (percent: string) => React.ReactNode
 }) {
   const {
     discount,
@@ -35,7 +37,7 @@ export function MarketCard({
       <p>Discount: {discount}</p>
       <p>Liquidation penalty: &minus;{liquidationPenalty}</p>
       {renderBorrowButton(borrowInterestRate)}
-      <button type="button">+{lendInterestRate} Lend</button>
+      {renderLendButton(lendInterestRate)}
     </div>
   )
 }

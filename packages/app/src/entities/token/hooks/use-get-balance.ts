@@ -1,12 +1,11 @@
 import * as SorobanClient from 'soroban-client'
-import { useEffect, useState } from 'react'
-import { useContextSelector } from 'use-context-selector'
+import { useEffect, useState, useCallback } from 'react'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
 import { decodei128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { MarketContext } from '../context/context'
+import { useMarketData } from '../context/context'
 
-interface SorobanTokenRecord {
+export interface SorobanTokenRecord {
   balance: string
   name: string
   symbol: string
@@ -17,24 +16,39 @@ const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
 
 const encodeAddress = (account: string) => new SorobanClient.Address(account).toScVal()
 
-export const useGetBalance = (tokenAddress: TokenAddress, userAddress?: string) => {
-  const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord | null>()
+export const useGetBalance = (
+  tokenAddresses: TokenAddress[],
+  userAddress?: string,
+): SorobanTokenRecord[] => {
+  const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
   const makeInvoke = useMakeInvoke()
-  const tokenCache =
-    useContextSelector(MarketContext, (state) => state.tokens?.[tokenAddress]) ?? defaultTokenRecord
+  const tokensCache = useMarketData()
 
-  useEffect(() => {
+  const updateBalances = useCallback(async () => {
     if (!userAddress) {
-      setBalanceInfo(null)
+      setBalanceInfo([])
       return
     }
-
-    const invoke = makeInvoke(tokenAddress)
     const balanceTxParams = [encodeAddress(userAddress)]
-    invoke('balance', decodei128, balanceTxParams).then((balance) => {
-      setBalanceInfo({ balance, ...tokenCache })
-    })
-  }, [makeInvoke, tokenAddress, userAddress, tokenCache])
+
+    const balances: SorobanTokenRecord[] = (
+      await Promise.all(
+        tokenAddresses.map((tokenAddress) => {
+          const invoke = makeInvoke(tokenAddress)
+          return invoke('balance', decodei128, balanceTxParams)
+        }),
+      )
+    ).map((balance, index) => ({
+      balance,
+      ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
+    }))
+
+    setBalanceInfo(balances)
+  }, [makeInvoke, tokenAddresses, userAddress, tokensCache])
+
+  useEffect(() => {
+    updateBalances()
+  }, [updateBalances])
 
   return balanceInfo
 }

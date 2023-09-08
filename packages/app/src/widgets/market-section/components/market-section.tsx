@@ -2,7 +2,8 @@
 
 import { MarketCard } from '@/widgets/market-section/components/market-card'
 import { SUPPORTED_TOKENS, tokens } from '@/shared/stellar/constants/tokens'
-import { SingleBorrowFlow } from '@/features/borrow-flow/components/single-borrow-flow'
+import { BorrowFirstPositionFlow } from '@/features/borrow-flow/components/borrow-first-position-flow'
+import { LendFirstPositionFlow } from '@/features/borrow-flow/components/lend-first-position-flow'
 import { useContextSelector } from 'use-context-selector'
 import { PositionContext } from '@/entities/position/context/context'
 
@@ -16,9 +17,16 @@ export function MarketSection() {
         <MarketCard
           key={tokenName}
           token={tokens[tokenName]}
+          renderLendButton={(text) => (
+            <LendFirstPositionFlow
+              token={tokenName}
+              buttonText={`+${text} Lend`}
+              onSend={setPosition}
+            />
+          )}
           renderBorrowButton={(text) => (
-            <SingleBorrowFlow
-              type={tokenName}
+            <BorrowFirstPositionFlow
+              token={tokenName}
               buttonText={`-${text} Borrow`}
               onSend={setPosition}
             />

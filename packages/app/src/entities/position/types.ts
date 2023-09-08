@@ -1,11 +1,11 @@
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 
 export interface PositionCell {
-  type: SupportedToken
+  token: SupportedToken
   value: number
 }
 
 export interface Position {
-  collaterals: [PositionCell, ...PositionCell[]]
+  deposits: [PositionCell, ...PositionCell[]]
   debts: PositionCell[]
 }

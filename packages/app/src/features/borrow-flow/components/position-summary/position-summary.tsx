@@ -3,39 +3,45 @@ import { formatUsd } from '../../formatters'
 
 interface Props {
   health: number
-  healthDelta: number
-  debtUsdDelta: number
-  actualDebtUsd: number
-  collateralSumUsd: number
+  healthDelta?: number
+  debtUsd: number
+  debtUsdDelta?: number
+  depositSumUsd: number
+  depositSumUsdDelta?: number
   borrowCapacityError?: boolean
   debtError?: boolean
-  borrowCapacityInterface: number
-  borrowCapacityDelta: number
+  borrowCapacity: number
+  borrowCapacityDelta?: number
 }
 
 export function PositionSummary({
   health,
   healthDelta,
   debtUsdDelta,
-  actualDebtUsd,
-  collateralSumUsd,
+  debtUsd,
+  depositSumUsd,
   borrowCapacityError,
-  borrowCapacityInterface,
+  borrowCapacity,
   borrowCapacityDelta,
+  depositSumUsdDelta,
   debtError,
 }: Props) {
   return (
     <div>
       <h4>Position summary</h4>
       <div>
-        {health}% ({healthDelta}%)
+        {health}% {healthDelta ? `(${healthDelta}%)` : ''}
       </div>
       <div style={{ color: debtError ? 'red' : '' }}>
-        Debt {formatUsd(actualDebtUsd)} ({formatUsd(debtUsdDelta)})
+        Debt {formatUsd(debtUsd)} {debtUsdDelta ? `(${formatUsd(debtUsdDelta)})` : ''}
       </div>
-      <div>Collateral {formatUsd(collateralSumUsd)}</div>
+      <div>
+        Collateral {formatUsd(depositSumUsd)}{' '}
+        {depositSumUsdDelta ? `(${formatUsd(depositSumUsdDelta)})` : ''}
+      </div>
       <div style={{ color: borrowCapacityError ? 'red' : '' }}>
-        Borrow capacity {formatUsd(borrowCapacityInterface)} ({formatUsd(borrowCapacityDelta)})
+        Borrow capacity {formatUsd(borrowCapacity)}{' '}
+        {borrowCapacityDelta ? `(${formatUsd(borrowCapacityDelta)})` : ''}
       </div>
     </div>
   )

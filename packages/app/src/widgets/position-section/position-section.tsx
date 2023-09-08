@@ -1,163 +1,123 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useMemo, useEffect } from 'react'
+import { tokens, SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
+import { useGetBalance, SorobanTokenRecord } from '@/entities/token/hooks/use-get-balance'
+import { WalletContext } from '@/entities/wallet/context/context'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { PositionCell } from '@/entities/position/types'
-import { BorrowDecreaseModal } from '@/features/borrow-flow/components/borrow-decrease-modal'
-import { BorrowIncreaseModal } from '@/features/borrow-flow/components/borrow-increase-modal'
-import { excludeSupportedTokens } from '@/features/borrow-flow/utils'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { getCollateralUsd, getDebtUsd, sumObj } from './utils'
+import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
+import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
+import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
+import { useGetCryptocurrencyUsdRates } from '@/entities/currency-rates/hooks/use-get-cryptocurrency-usd-rates'
+import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
+
+const sorobanTokenRecordToPositionCell = (tokenRecord: SorobanTokenRecord): PositionCell => ({
+  value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
+  token: tokenRecord.symbol.substring(1).toLowerCase() as PositionCell['token'],
+})
 
 export function PositionSection() {
+  const userAddress = useContextSelector(WalletContext, (state) => state.address)
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
-  const [decreaseModalIndex, setDecreaseModalIndex] = useState<0 | 1 | null>(null)
-  const [increaseModalIndex, setIncreaseModalIndex] = useState<0 | 1 | null>(null)
+  const rates = useGetCryptocurrencyUsdRates()
 
-  const getModalData = (modalIndex: 0 | 1 | null) => {
-    if (!position || modalIndex === null) return null
-    const debt = position.debts[modalIndex]
-    if (!debt) return null
-    return { debt, availablePosition: position }
-  }
+  const debtSupportedTokensArray = useMemo(
+    () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].debtAddress),
+    [],
+  )
+  const lendSupportedTokensArray = useMemo(
+    () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].sAddress),
+    [],
+  )
 
-  const renderIncreaseModal = () => {
-    const modalData = getModalData(increaseModalIndex)
-    if (!modalData) return null
-    const firstCollateral = modalData.availablePosition.collaterals[0].type
-    const secondCollateral = modalData.availablePosition.collaterals[1]?.type
-    const secondDebt = modalData.availablePosition.debts[1]?.type
+  const debtBalances = useGetBalance(debtSupportedTokensArray, userAddress)
+  const lendBalances = useGetBalance(lendSupportedTokensArray, userAddress)
 
-    const getDebtTypes = () => {
-      if (secondDebt) {
-        return [modalData.debt.type]
-      }
+  useEffect(() => {
+    const debtPositions = debtBalances?.reduce((resultArr: PositionCell[], currentItem) => {
+      if (currentItem && Number(currentItem.balance))
+        resultArr.push(sorobanTokenRecordToPositionCell(currentItem))
+      return resultArr
+    }, [])
 
-      return excludeSupportedTokens(
-        secondCollateral ? [firstCollateral, secondCollateral] : [firstCollateral],
-      )
-    }
+    const lendPositions = lendBalances?.reduce((resultArr: PositionCell[], currentItem) => {
+      if (currentItem && Number(currentItem.balance))
+        resultArr.push(sorobanTokenRecordToPositionCell(currentItem))
+      return resultArr
+    }, [])
 
-    const handleSend = (sendValue: Partial<Record<'usdc' | 'xlm' | 'xrp', number>>) => {
-      const prevDebtsObj = modalData.availablePosition.debts.reduce(
-        (acc, el) => ({
-          ...acc,
-          [el.type]: el.value,
-        }),
-        {},
-      )
-      const finalDebtsObj = sumObj(prevDebtsObj, sendValue)
-
-      const arr = Object.entries(finalDebtsObj).map((entry) => {
-        const [key, value] = entry as [SupportedToken, number]
-        return {
-          type: key,
-          value,
-        }
-      })
-
+    if (debtPositions?.length || lendPositions?.length)
       setPosition({
-        debts: arr,
-        collaterals: modalData.availablePosition.collaterals,
+        deposits: lendPositions as [PositionCell, ...PositionCell[]],
+        debts: debtPositions || [],
       })
-      setIncreaseModalIndex(null)
-    }
+  }, [setPosition, debtBalances, lendBalances])
 
-    return (
-      <BorrowIncreaseModal
-        debtTypes={getDebtTypes()}
-        collateralSumUsd={getCollateralUsd(modalData.availablePosition.collaterals)}
-        debtSumUsd={getDebtUsd(modalData.availablePosition.debts)}
-        type={modalData.debt.type}
-        onClose={() => setIncreaseModalIndex(null)}
-        onSend={handleSend}
-      />
-    )
-  }
-
-  const renderDecreaseModal = () => {
-    const modalData = getModalData(decreaseModalIndex)
-    if (!modalData) return null
-
-    const handleSend = (value: PositionCell) => {
-      const sendType = value.type
-      const prev = modalData.availablePosition.debts
-      const newDebts = prev.map((el) => {
-        if (el.type === sendType) {
-          return { value: el.value - value.value, type: sendType }
-        }
-        return el
-      })
-      setPosition({
-        debts: newDebts,
-        collaterals: modalData.availablePosition.collaterals,
-      })
-      setDecreaseModalIndex(null)
-    }
-
-    return (
-      <BorrowDecreaseModal
-        debt={modalData.debt.value}
-        debtSumUsd={getDebtUsd(modalData.availablePosition.debts)}
-        collateralSumUsd={getCollateralUsd(modalData.availablePosition.collaterals)}
-        type={modalData.debt.type}
-        onClose={() => setDecreaseModalIndex(null)}
-        onSend={handleSend}
-      />
-    )
-  }
+  const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
+  const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
+  const { modal: lendDecreaseModal, open: openLendDecreaseModal } = useLendDecrease()
+  const { modal: lendIncreaseModal, open: openLendIncreaseModal } = useLendIncrease()
 
   return (
     <div>
-      <div>user xml: {mockTokenInfoByType.xlm.userValue} (FAKE)</div>
-      <div>user xrp: {mockTokenInfoByType.xrp.userValue} (FAKE)</div>
-      <div>user usdc: {mockTokenInfoByType.usdc.userValue} (FAKE)</div>
       <h2>Positions</h2>
       {position ? (
         <div style={{ display: 'flex', gap: 8 }}>
           <div>
-            <h4>lent</h4>
-            {position.collaterals.map((collateral) => {
-              if (!collateral) return null
-              const { type, value } = collateral
+            <h4>lend</h4>
+            {position.deposits.map((deposit) => {
+              if (!deposit) return null
+              const { token, value } = deposit
               return (
-                <div key={type}>
-                  {value} {type}
+                <div key={token}>
+                  {value} {token}{' '}
+                  <button type="button" onClick={() => openLendDecreaseModal(token)}>
+                    -
+                  </button>
+                  <button type="button" onClick={() => openLendIncreaseModal(token)}>
+                    +
+                  </button>
                 </div>
               )
             })}
+            <button type="button" onClick={() => openLendIncreaseModal()}>
+              + lend more
+            </button>
           </div>
           <div>
             <h4>borrowed</h4>
             <div>
-              {position.debts.map((debt, index) => {
+              {position.debts.map((debt) => {
                 if (!debt) return null
-                if (index === 0 || index === 1) {
-                  return (
-                    <div key={debt.type}>
-                      {debt.value} {debt.type}{' '}
-                      <button type="button" onClick={() => setDecreaseModalIndex(index)}>
-                        -
-                      </button>
-                      <button type="button" onClick={() => setIncreaseModalIndex(index)}>
-                        +
-                      </button>
-                    </div>
-                  )
-                }
-                return null
+                const { token, value } = debt
+                return (
+                  <div key={token}>
+                    {value} {token}{' '}
+                    <button type="button" onClick={() => openBorrowDecreaseModal(token)}>
+                      -
+                    </button>
+                    <button type="button" onClick={() => openBorrowIncreaseModal(token)}>
+                      +
+                    </button>
+                  </div>
+                )
               })}
+              <button type="button" onClick={() => openBorrowIncreaseModal()}>
+                + debt more
+              </button>
             </div>
           </div>
         </div>
       ) : (
         <>empty</>
       )}
-      {renderDecreaseModal()}
-      {renderIncreaseModal()}
+      {borrowDecreaseModal}
+      {borrowIncreaseModal}
+      {lendDecreaseModal}
+      {lendIncreaseModal}
     </div>
   )
 }

@@ -3,28 +3,28 @@
 import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
-import { BorrowStepModal } from '../borrow-step-modal'
-import { CollateralStepModal } from '../collateral-step-modal'
+import { BorrowStepModal } from './borrow-step-modal'
+import { LendStepModal } from './lend-step-modal'
 import { excludeSupportedTokens } from '../../utils'
 
 enum Step {
   Borrow = 'Borrow',
-  Collateral = 'Collateral',
+  Deposit = 'Deposit',
 }
 
 interface Props {
-  type: SupportedToken
+  token: SupportedToken
   onSend: (value: Position) => void
   buttonText: string
 }
 
-export function SingleBorrowFlow({ type, onSend, buttonText }: Props) {
+export function BorrowFirstPositionFlow({ token, onSend, buttonText }: Props) {
   const [step, setStep] = useState<Step | null>(null)
-  const [borrowValue, setBorrowValue] = useState('')
+  const [debtValue, setDebtValue] = useState('')
 
   const handleClose = () => {
     setStep(null)
-    setBorrowValue('')
+    setDebtValue('')
   }
 
   const handleSend = (value: Position) => {
@@ -32,24 +32,26 @@ export function SingleBorrowFlow({ type, onSend, buttonText }: Props) {
     onSend(value)
   }
 
+  const [firstDepositToken, secondDepositToken] = excludeSupportedTokens([token])
+
   const modalByStep = {
-    [Step.Borrow]: (
+    [Step.Borrow]: firstDepositToken && (
       <BorrowStepModal
-        borrowValue={borrowValue}
+        value={debtValue}
         onClose={handleClose}
-        onContinue={() => setStep(Step.Collateral)}
-        onBorrowValueChange={setBorrowValue}
-        borrowType={type}
-        collateralTypes={excludeSupportedTokens([type])}
+        onContinue={() => setStep(Step.Deposit)}
+        onBorrowValueChange={setDebtValue}
+        debtToken={token}
+        depositToken={firstDepositToken}
       />
     ),
-    [Step.Collateral]: (
-      <CollateralStepModal
+    [Step.Deposit]: firstDepositToken && secondDepositToken && (
+      <LendStepModal
         onClose={handleClose}
         onPrev={() => setStep(Step.Borrow)}
-        borrowValue={borrowValue}
-        borrowType={type}
-        collateralTypes={excludeSupportedTokens([type])}
+        debtValue={debtValue}
+        debtToken={token}
+        depositTokens={[firstDepositToken, secondDepositToken]}
         onSend={handleSend}
       />
     ),
@@ -60,13 +62,13 @@ export function SingleBorrowFlow({ type, onSend, buttonText }: Props) {
   }
 
   return (
-    <div>
+    <>
       {!step && (
         <button type="button" onClick={handleClick}>
           {buttonText}
         </button>
       )}
       {step && modalByStep[step]}
-    </div>
+    </>
   )
 }
