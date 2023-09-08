@@ -2,11 +2,11 @@ import { useContextSelector } from 'use-context-selector'
 import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tokens'
 import { CurrencyRatesContext } from '../context/context'
 
-type SupportedTokenRates = {
+export type SupportedTokenRates = {
   [key in SupportedToken]: number
 }
 
-export const useGetCryptocurrencyUsdRates = (): SupportedTokenRates => {
+export const useGetCryptocurrencyUsdRates = (): SupportedTokenRates | undefined => {
   const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates)
 
   const supportedTokenEntries =
