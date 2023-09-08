@@ -32,24 +32,26 @@ export function BorrowFirstPositionFlow({ token, onSend, buttonText }: Props) {
     onSend(value)
   }
 
+  const [firstDepositToken, secondDepositToken] = excludeSupportedTokens([token])
+
   const modalByStep = {
-    [Step.Borrow]: (
+    [Step.Borrow]: firstDepositToken && (
       <BorrowStepModal
         value={debtValue}
         onClose={handleClose}
         onContinue={() => setStep(Step.Deposit)}
         onBorrowValueChange={setDebtValue}
         debtToken={token}
-        depositToken={excludeSupportedTokens([token])[0]}
+        depositToken={firstDepositToken}
       />
     ),
-    [Step.Deposit]: (
+    [Step.Deposit]: firstDepositToken && secondDepositToken && (
       <LendStepModal
         onClose={handleClose}
         onPrev={() => setStep(Step.Borrow)}
         debtValue={debtValue}
         debtToken={token}
-        depositTokens={excludeSupportedTokens([token])}
+        depositTokens={[firstDepositToken, secondDepositToken]}
         onSend={handleSend}
       />
     ),

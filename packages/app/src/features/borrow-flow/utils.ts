@@ -2,31 +2,26 @@ import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tok
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { Position as PositionType } from '@/entities/position/types'
 
-export const excludeSupportedTokens = <
-  T extends [SupportedToken] | [SupportedToken, SupportedToken],
-  R = T['length'] extends 1 ? [SupportedToken, SupportedToken] : [SupportedToken],
->(
-  token: T,
-): R => SUPPORTED_TOKENS.filter((element) => !token.includes(element)) as R
+export const excludeSupportedTokens = (token: SupportedToken[]): SupportedToken[] =>
+  SUPPORTED_TOKENS.filter((element) => !token.includes(element)) as SupportedToken[]
+
+interface PositionInput {
+  depositUsd: number
+  debtUsd: number
+  actualDebtUsd: number
+  actualDepositUsd: number
+}
 
 export const getHealth = ({
-  depositSumUsd,
-  debtSumUsd,
+  depositUsd,
+  debtUsd,
   actualDebtUsd,
-  actualDepositSumUsd,
-}: {
-  depositSumUsd: number
-  debtSumUsd: number
-  actualDebtUsd: number
-  actualDepositSumUsd: number
-}) => {
-  const defaultHealth = Math.max(
-    Math.round(depositSumUsd && (1 - debtSumUsd / depositSumUsd) * 100),
-    0,
-  )
+  actualDepositUsd,
+}: PositionInput) => {
+  const defaultHealth = Math.max(Math.round(depositUsd && (1 - debtUsd / depositUsd) * 100), 0)
 
   const health = Math.max(
-    Math.round(depositSumUsd && (1 - actualDebtUsd / (actualDepositSumUsd || 1)) * 100),
+    Math.round(depositUsd && (1 - actualDebtUsd / (actualDepositUsd || 1)) * 100),
     0,
   )
 
@@ -34,26 +29,28 @@ export const getHealth = ({
 }
 
 export const getBorrowCapacity = ({
-  depositSumUsd,
-  debtSumUsd,
+  depositUsd,
+  debtUsd,
   actualDebtUsd,
   actualDepositUsd,
-}: {
-  depositSumUsd: number
-  debtSumUsd: number
-  actualDebtUsd: number
-  actualDepositUsd: number
-}) => {
-  const defaultBorrowCapacity = Math.max(depositSumUsd - debtSumUsd, 0)
+}: PositionInput) => {
+  const defaultBorrowCapacity = Math.max(depositUsd - debtUsd, 0)
   const borrowCapacity = actualDepositUsd - actualDebtUsd
   const borrowCapacityInterface = Math.max(borrowCapacity, 0)
   const borrowCapacityError = borrowCapacity < 0
 
   return {
     borrowCapacityDelta: borrowCapacityInterface - defaultBorrowCapacity,
+    defaultBorrowCapacity,
     borrowCapacityError,
     borrowCapacityInterface,
   }
+}
+
+export const getPositionInfo = (positionInput: PositionInput) => {
+  const heathInfo = getHealth(positionInput)
+  const borrowCapacityInfo = getBorrowCapacity(positionInput)
+  return { ...heathInfo, ...borrowCapacityInfo }
 }
 
 export const getDepositUsd = (collateral: PositionType['deposits']) =>

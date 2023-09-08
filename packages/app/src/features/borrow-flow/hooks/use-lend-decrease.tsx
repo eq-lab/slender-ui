@@ -9,11 +9,11 @@ import { LendDecreaseModal } from '../components/lend-decrease-modal'
 export const useLendDecrease = () => {
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
-  const [modalType, setModalType] = useState<SupportedToken | null>(null)
+  const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
 
   const renderModal = () => {
-    if (!position || !modalType) return null
-    const deposit = position.deposits.find((depositItem) => depositItem.token === modalType)
+    if (!position || !modalToken) return null
+    const deposit = position.deposits.find((depositItem) => depositItem.token === modalToken)
     if (!deposit) return null
 
     const handleSend = ({ token, value }: PositionCell) => {
@@ -27,7 +27,7 @@ export const useLendDecrease = () => {
         debts: position.debts,
         deposits: newDeposits as [PositionCell, ...PositionCell[]],
       })
-      setModalType(null)
+      setModalToken(null)
     }
 
     return (
@@ -36,11 +36,11 @@ export const useLendDecrease = () => {
         debtSumUsd={getDebtUsd(position.debts)}
         depositSumUsd={getDepositUsd(position.deposits)}
         token={deposit.token}
-        onClose={() => setModalType(null)}
+        onClose={() => setModalToken(null)}
         onSend={handleSend}
       />
     )
   }
 
-  return { modal: renderModal(), open: setModalType }
+  return { modal: renderModal(), open: setModalToken }
 }

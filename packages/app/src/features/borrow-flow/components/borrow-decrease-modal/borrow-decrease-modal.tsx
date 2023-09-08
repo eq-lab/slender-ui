@@ -4,7 +4,7 @@ import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { PositionCell } from '@/entities/position/types'
 import { ModalLayout } from '../modal-layout'
-import { getHealth, getBorrowCapacity } from '../../utils'
+import { getPositionInfo } from '../../utils'
 import { PositionSummary } from '../position-summary'
 
 interface Props {
@@ -28,17 +28,10 @@ export function BorrowDecreaseModal({
 
   const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * mockTokenInfoByType[token].usd, 0)
 
-  const { health, healthDelta } = getHealth({
-    depositSumUsd,
+  const { health, healthDelta, borrowCapacityInterface, borrowCapacityDelta } = getPositionInfo({
+    depositUsd: depositSumUsd,
     actualDebtUsd: debtDeltaUsd,
-    debtSumUsd,
-    actualDepositSumUsd: depositSumUsd,
-  })
-
-  const { borrowCapacityDelta, borrowCapacityInterface } = getBorrowCapacity({
-    depositSumUsd,
-    actualDebtUsd: debtDeltaUsd,
-    debtSumUsd,
+    debtUsd: debtSumUsd,
     actualDepositUsd: depositSumUsd,
   })
 

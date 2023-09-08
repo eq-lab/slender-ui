@@ -12,11 +12,11 @@ export const useBorrowDecrease = (): {
 } => {
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
-  const [modalType, setModalType] = useState<SupportedToken | null>(null)
+  const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
 
   const renderModal = () => {
-    if (!position || !modalType) return null
-    const debt = position.debts.find((debtCell) => debtCell.token === modalType)
+    if (!position || !modalToken) return null
+    const debt = position.debts.find((debtCell) => debtCell.token === modalToken)
     if (!debt) return null
 
     const handleSend = ({ token, value }: PositionCell) => {
@@ -30,7 +30,7 @@ export const useBorrowDecrease = (): {
         debts: newDebts,
         deposits: position.deposits,
       })
-      setModalType(null)
+      setModalToken(null)
     }
 
     return (
@@ -39,11 +39,11 @@ export const useBorrowDecrease = (): {
         depositSumUsd={getDepositUsd(position.deposits)}
         debt={debt.value}
         token={debt.token}
-        onClose={() => setModalType(null)}
+        onClose={() => setModalToken(null)}
         onSend={handleSend}
       />
     )
   }
 
-  return { modal: renderModal(), open: setModalType }
+  return { modal: renderModal(), open: setModalToken }
 }
