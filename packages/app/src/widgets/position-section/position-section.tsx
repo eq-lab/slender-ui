@@ -38,8 +38,9 @@ export function PositionSection() {
   useEffect(() => {
     const debtPositions = debtBalances?.reduce(
       (resultArr: PositionCell[], currentItem, currentIndex) => {
-        if (currentItem && Number(currentItem.balance))
+        if (currentItem && Number(currentItem.balance)) {
           resultArr.push(sorobanTokenRecordToPositionCell(currentItem, currentIndex))
+        }
         return resultArr
       },
       [],
@@ -47,8 +48,9 @@ export function PositionSection() {
 
     const lendPositions = lendBalances?.reduce(
       (resultArr: PositionCell[], currentItem, currentIndex) => {
-        if (currentItem && Number(currentItem.balance))
+        if (currentItem && Number(currentItem.balance)) {
           resultArr.push(sorobanTokenRecordToPositionCell(currentItem, currentIndex))
+        }
         return resultArr
       },
       [],

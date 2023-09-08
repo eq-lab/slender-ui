@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
 import { decodeI128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { useTokenCache } from '../context/context'
+import { CachedTokens, useTokenCache } from '../context/context'
 
 export interface SorobanTokenRecord {
   balance: string
@@ -16,6 +16,9 @@ const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
 
 const encodeAddress = (account: string) => new SorobanClient.Address(account).toScVal()
 
+const isArraysEqual = <T>(a?: T[], b?: T[]) =>
+  a?.length === b?.length && a?.every((value, index) => value === b?.[index])
+
 export const useGetBalance = (
   tokenAddresses: TokenAddress[],
   userAddress?: string,
@@ -23,7 +26,10 @@ export const useGetBalance = (
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
   const makeInvoke = useMakeInvoke()
   const tokensCache = useTokenCache()
-  const cachedAddresses = useRef(tokenAddresses)
+
+  const previousTokenAddresses = useRef<TokenAddress[]>()
+  const previousUserAddress = useRef<string>()
+  const previousTokensCache = useRef<Partial<CachedTokens>>()
 
   useEffect(() => {
     async function updateBalances() {
@@ -48,13 +54,19 @@ export const useGetBalance = (
       setBalanceInfo(balances)
     }
     if (
-      tokenAddresses.length !== cachedAddresses.current.length ||
-      !tokenAddresses.every((address, index) => address === cachedAddresses.current[index])
+      !isArraysEqual(tokenAddresses, previousTokenAddresses.current) ||
+      userAddress !== previousUserAddress.current ||
+      tokensCache !== previousTokensCache.current
     ) {
-      cachedAddresses.current = tokenAddresses
       updateBalances()
     }
   }, [makeInvoke, tokenAddresses, userAddress, tokensCache])
+
+  useEffect(() => {
+    previousTokenAddresses.current = tokenAddresses
+    previousUserAddress.current = userAddress
+    previousTokensCache.current = tokensCache
+  })
 
   return balanceInfo
 }
