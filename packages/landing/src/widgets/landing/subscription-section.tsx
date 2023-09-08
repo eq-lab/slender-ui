@@ -1,12 +1,12 @@
 'use client'
 
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { Button, Container, Form, InputBox, InputLabel, Title } from '@/widgets/landing/styled'
 import cn from 'classnames'
 import { sendEmail } from '@/widgets/landing/api'
 import { Space } from '@/widgets/landing/space'
 
-export function SubscriptionSection(this: any) {
+export function SubscriptionSection() {
   const [email, setEmail] = useState('')
 
   const [emailIsFocused, setEmailIsFocused] = useState(false)
@@ -18,8 +18,8 @@ export function SubscriptionSection(this: any) {
     setEmailHasError(false)
   }
 
-  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubscribe = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     const emailIsValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
     setEmailHasError(!emailIsValid)
     if (emailIsValid) {
@@ -51,7 +51,7 @@ export function SubscriptionSection(this: any) {
           <img src="/img/email.svg" alt="" className="email" />
         </Form>
       ) : (
-        <Form onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubscribe(e)}>
+        <Form onSubmit={handleSubscribe}>
           <InputBox
             onFocus={() => setEmailIsFocused(true)}
             onBlur={() => setEmailIsFocused(false)}

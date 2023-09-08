@@ -56,25 +56,21 @@ export const getBorrowCapacity = ({
   }
 }
 
-export const getDepositUsd = (collateral: PositionType['deposits']) => {
-  const sum = collateral.reduce((acc, elem) => {
+export const getDepositUsd = (collateral: PositionType['deposits']) =>
+  collateral.reduce((acc, elem) => {
     if (!elem) return acc
-    const { type, value } = elem
-    const coinInfo = mockTokenInfoByType[type]
+    const { token, value } = elem
+    const coinInfo = mockTokenInfoByType[token]
     return acc + value * coinInfo.usd * coinInfo.discount
   }, 0)
-  return sum
-}
 
-export const getDebtUsd = (debt: PositionType['debts']) => {
-  const sum = debt.reduce((acc, elem) => {
+export const getDebtUsd = (debt: PositionType['debts']) =>
+  debt.reduce((acc, elem) => {
     if (!elem) return acc
-    const { type, value } = elem
-    const coinInfo = mockTokenInfoByType[type]
+    const { token, value } = elem
+    const coinInfo = mockTokenInfoByType[token]
     return acc + value * coinInfo.usd
   }, 0)
-  return sum
-}
 
 export const sumObj = <T extends string>(
   obj1: { [K in T]?: number },

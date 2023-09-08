@@ -16,13 +16,13 @@ export const useBorrowDecrease = (): {
 
   const renderModal = () => {
     if (!position || !modalType) return null
-    const debt = position.debts.find((debtCell) => debtCell.type === modalType)
+    const debt = position.debts.find((debtCell) => debtCell.token === modalType)
     if (!debt) return null
 
-    const handleSend = ({ type, value }: PositionCell) => {
+    const handleSend = ({ token, value }: PositionCell) => {
       const newDebts = position.debts.map((debtCell) => {
-        if (debtCell.type === type) {
-          return { value: debtCell.value - value, type }
+        if (debtCell.token === token) {
+          return { value: debtCell.value - value, token }
         }
         return debtCell
       })
@@ -38,7 +38,7 @@ export const useBorrowDecrease = (): {
         debtSumUsd={getDebtUsd(position.debts)}
         depositSumUsd={getDepositUsd(position.deposits)}
         debt={debt.value}
-        type={debt.type}
+        token={debt.token}
         onClose={() => setModalType(null)}
         onSend={handleSend}
       />

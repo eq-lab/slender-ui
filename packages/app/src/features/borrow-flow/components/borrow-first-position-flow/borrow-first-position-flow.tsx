@@ -13,12 +13,12 @@ enum Step {
 }
 
 interface Props {
-  type: SupportedToken
+  token: SupportedToken
   onSend: (value: Position) => void
   buttonText: string
 }
 
-export function BorrowFirstPositionFlow({ type, onSend, buttonText }: Props) {
+export function BorrowFirstPositionFlow({ token, onSend, buttonText }: Props) {
   const [step, setStep] = useState<Step | null>(null)
   const [debtValue, setDebtValue] = useState('')
 
@@ -39,8 +39,8 @@ export function BorrowFirstPositionFlow({ type, onSend, buttonText }: Props) {
         onClose={handleClose}
         onContinue={() => setStep(Step.Deposit)}
         onBorrowValueChange={setDebtValue}
-        type={type}
-        depositType={excludeSupportedTokens([type])[0]}
+        debtToken={token}
+        depositToken={excludeSupportedTokens([token])[0]}
       />
     ),
     [Step.Deposit]: (
@@ -48,8 +48,8 @@ export function BorrowFirstPositionFlow({ type, onSend, buttonText }: Props) {
         onClose={handleClose}
         onPrev={() => setStep(Step.Borrow)}
         debtValue={debtValue}
-        debtType={type}
-        depositTypes={excludeSupportedTokens([type])}
+        debtToken={token}
+        depositTokens={excludeSupportedTokens([token])}
         onSend={handleSend}
       />
     ),
@@ -60,13 +60,13 @@ export function BorrowFirstPositionFlow({ type, onSend, buttonText }: Props) {
   }
 
   return (
-    <div>
+    <>
       {!step && (
         <button type="button" onClick={handleClick}>
           {buttonText}
         </button>
       )}
       {step && modalByStep[step]}
-    </div>
+    </>
   )
 }

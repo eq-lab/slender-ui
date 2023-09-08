@@ -1,26 +1,30 @@
 import React, { useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { APR, mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
+import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
+import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { ModalLayout } from '../modal-layout'
 
 interface Props {
   onClose: () => void
   onSend: (value: number) => void
-  type: SupportedToken
+  depositToken: SupportedToken
 }
 
-export function LendFirstPositionModal({ onClose, onSend, type }: Props) {
+export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props) {
   const [value, setValue] = useState('')
 
-  const { userValue, discount } = mockTokenInfoByType[type]
+  const { userValue } = mockTokenInfoByType[depositToken]
   const max = userValue
+  const { lendInterestRate, discount, liquidationPenalty } = useMarketDataForDisplay(
+    tokens[depositToken],
+  )
 
   const infoSlot = (
     <div>
-      <h4>{type} Coin</h4>
-      <div>Lend APR {APR}</div>
-      <div>Discount {discount}% (FAKE)</div>
-      <div>Liquidation penalty -3% (FAKE)</div>
+      <h4>{depositToken} Coin</h4>
+      <div>Lend APR {lendInterestRate}</div>
+      <div>Discount {discount}%</div>
+      <div>Liquidation penalty {liquidationPenalty}</div>
     </div>
   )
   return (
@@ -35,7 +39,7 @@ export function LendFirstPositionModal({ onClose, onSend, type }: Props) {
             setValue(e.target.value)
           }}
         />
-        {type}
+        {depositToken}
         <button onClick={() => setValue(String(max))} type="button">
           max: {max}
         </button>

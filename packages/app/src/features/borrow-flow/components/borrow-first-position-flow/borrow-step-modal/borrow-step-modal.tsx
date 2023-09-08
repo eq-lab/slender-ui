@@ -1,10 +1,8 @@
 import React from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import {
-  APR,
-  MINIMUM_HEALTH_VALUE,
-  mockTokenInfoByType,
-} from '@/shared/stellar/constants/mock-tokens-info'
+import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
+import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
 
 interface Props {
@@ -12,8 +10,8 @@ interface Props {
   onContinue: () => void
   value: string
   onBorrowValueChange: (value: string) => void
-  type: SupportedToken
-  depositType: SupportedToken
+  debtToken: SupportedToken
+  depositToken: SupportedToken
 }
 
 export function BorrowStepModal({
@@ -21,19 +19,22 @@ export function BorrowStepModal({
   onContinue,
   value,
   onBorrowValueChange,
-  type,
-  depositType,
+  debtToken,
+  depositToken,
 }: Props) {
-  const borrowCoinInfo = mockTokenInfoByType[type]
-  const { discount, usd, userValue } = mockTokenInfoByType[depositType]
+  const borrowCoinInfo = mockTokenInfoByType[debtToken]
+  const { discount, usd, userValue } = mockTokenInfoByType[depositToken]
 
-  const max = Math.floor((userValue * discount * usd * MINIMUM_HEALTH_VALUE) / borrowCoinInfo.usd)
+  const max = Math.floor((userValue * discount * usd * DEFAULT_HEALTH_VALUE) / borrowCoinInfo.usd)
+  const { borrowInterestRate, availableToBorrow } = useMarketDataForDisplay(tokens[debtToken])
 
   const infoSlot = (
     <div>
-      <h4>{type} Coin</h4>
-      <div>Borrow APR {APR}</div>
-      <div>Available 100,000 {type} (FAKE)</div>
+      <h4>{debtToken} Coin</h4>
+      <div>Borrow APR {borrowInterestRate}</div>
+      <div>
+        Available {availableToBorrow} {tokens[debtToken].code}
+      </div>
     </div>
   )
   return (
@@ -48,7 +49,7 @@ export function BorrowStepModal({
             onBorrowValueChange(e.target.value)
           }}
         />
-        {type}
+        {debtToken}
         <button onClick={() => onBorrowValueChange(String(max))} type="button">
           max: {max}
         </button>

@@ -6,7 +6,6 @@ import { useGetBalance, SorobanTokenRecord } from '@/entities/token/hooks/use-ge
 import { WalletContext } from '@/entities/wallet/context/context'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { PositionCell } from '@/entities/position/types'
 import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
@@ -15,7 +14,7 @@ import { useGetCryptocurrencyUsdRates } from '@/entities/currency-rates/hooks/us
 
 const sorobanTokenRecordToPositionCell = (tokenRecord: SorobanTokenRecord): PositionCell => ({
   value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
-  type: tokenRecord.symbol.substring(1).toLowerCase() as PositionCell['type'],
+  token: tokenRecord.symbol.substring(1).toLowerCase() as PositionCell['token'],
 })
 
 export function PositionSection() {
@@ -62,9 +61,6 @@ export function PositionSection() {
 
   return (
     <div>
-      <div>user xml: {mockTokenInfoByType.xlm.userValue} (FAKE)</div>
-      <div>user xrp: {mockTokenInfoByType.xrp.userValue} (FAKE)</div>
-      <div>user usdc: {mockTokenInfoByType.usdc.userValue} (FAKE)</div>
       <h2>Positions</h2>
       {position ? (
         <div style={{ display: 'flex', gap: 8 }}>
@@ -72,11 +68,11 @@ export function PositionSection() {
             <h4>lend</h4>
             {position.deposits.map((deposit) => {
               if (!deposit) return null
-              const { type, value } = deposit
+              const { token, value } = deposit
               return (
-                <div key={type}>
-                  {value} {type}{' '}
-                  <button type="button" onClick={() => openLendDecreaseModal(type)}>
+                <div key={token}>
+                  {value} {token}{' '}
+                  <button type="button" onClick={() => openLendDecreaseModal(token)}>
                     -
                   </button>
                 </div>
@@ -88,14 +84,14 @@ export function PositionSection() {
             <div>
               {position.debts.map((debt) => {
                 if (!debt) return null
-                const { type, value } = debt
+                const { token, value } = debt
                 return (
-                  <div key={type}>
-                    {value} {type}{' '}
-                    <button type="button" onClick={() => openBorrowDecreaseModal(type)}>
+                  <div key={token}>
+                    {value} {token}{' '}
+                    <button type="button" onClick={() => openBorrowDecreaseModal(token)}>
                       -
                     </button>
-                    <button type="button" onClick={() => openBorrowIncreaseModal(type)}>
+                    <button type="button" onClick={() => openBorrowIncreaseModal(token)}>
                       +
                     </button>
                   </div>

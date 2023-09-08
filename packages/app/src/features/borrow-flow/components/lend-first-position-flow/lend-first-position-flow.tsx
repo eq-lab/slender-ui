@@ -6,17 +6,17 @@ import { Position } from '@/entities/position/types'
 import { LendFirstPositionModal } from '../lend-first-position-modal'
 
 interface Props {
-  type: SupportedToken
+  token: SupportedToken
   onSend: (value: Position) => void
   buttonText: string
 }
 
-export function LendFirstPositionFlow({ type, onSend, buttonText }: Props) {
+export function LendFirstPositionFlow({ token, onSend, buttonText }: Props) {
   const [isModalOpen, setModalOpenStatus] = useState(false)
 
   const handleSend = (value: number) => {
     setModalOpenStatus(false)
-    onSend({ debts: [], deposits: [{ value, type }] })
+    onSend({ debts: [], deposits: [{ token, value }] })
   }
 
   const handleClick = () => {
@@ -34,7 +34,7 @@ export function LendFirstPositionFlow({ type, onSend, buttonText }: Props) {
         <LendFirstPositionModal
           onClose={() => setModalOpenStatus(false)}
           onSend={handleSend}
-          type={type}
+          depositToken={token}
         />
       )}
     </div>

@@ -19,14 +19,14 @@ export function MarketSection() {
           token={tokens[tokenName]}
           renderLendButton={(text) => (
             <LendFirstPositionFlow
-              type={tokenName}
+              token={tokenName}
               buttonText={`+${text} Lend`}
               onSend={setPosition}
             />
           )}
           renderBorrowButton={(text) => (
             <BorrowFirstPositionFlow
-              type={tokenName}
+              token={tokenName}
               buttonText={`-${text} Borrow`}
               onSend={setPosition}
             />

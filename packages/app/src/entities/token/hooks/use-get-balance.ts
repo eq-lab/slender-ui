@@ -1,10 +1,9 @@
 import * as SorobanClient from 'soroban-client'
 import { useEffect, useState, useCallback } from 'react'
-import { useContextSelector } from 'use-context-selector'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
 import { decodei128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { MarketContext } from '../context/context'
+import { useMarketData } from '../context/context'
 
 export interface SorobanTokenRecord {
   balance: string
@@ -17,14 +16,17 @@ const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
 
 const encodeAddress = (account: string) => new SorobanClient.Address(account).toScVal()
 
-export const useGetBalance = (tokenAddresses: TokenAddress[], userAddress?: string) => {
-  const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[] | null>(null)
+export const useGetBalance = (
+  tokenAddresses: TokenAddress[],
+  userAddress?: string,
+): SorobanTokenRecord[] => {
+  const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
   const makeInvoke = useMakeInvoke()
-  const tokensCache = useContextSelector(MarketContext, (state) => state.tokens)
+  const tokensCache = useMarketData()
 
-  const getBalances = useCallback(async () => {
+  const updateBalances = useCallback(async () => {
     if (!userAddress) {
-      setBalanceInfo(null)
+      setBalanceInfo([])
       return
     }
     const balanceTxParams = [encodeAddress(userAddress)]
@@ -45,8 +47,8 @@ export const useGetBalance = (tokenAddresses: TokenAddress[], userAddress?: stri
   }, [makeInvoke, tokenAddresses, userAddress, tokensCache])
 
   useEffect(() => {
-    getBalances()
-  }, [getBalances])
+    updateBalances()
+  }, [updateBalances])
 
   return balanceInfo
 }
