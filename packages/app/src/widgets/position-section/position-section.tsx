@@ -11,6 +11,7 @@ import { PositionCell } from '@/entities/position/types'
 import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
+import { useGetCryptocurrencyUsdRates } from '@/entities/currency-rates/hooks/use-get-cryptocurrency-usd-rates'
 
 const sorobanTokenRecordToPositionCell = (tokenRecord: SorobanTokenRecord): PositionCell => ({
   value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
@@ -21,6 +22,7 @@ export function PositionSection() {
   const userAddress = useContextSelector(WalletContext, (state) => state.address)
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
+  const rates = useGetCryptocurrencyUsdRates()
 
   const debtSupportedTokensArray = useMemo(
     () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].debtAddress),
@@ -49,8 +51,8 @@ export function PositionSection() {
 
     if (debtPositions?.length || lendPositions?.length)
       setPosition({
-        deposits: debtPositions as [PositionCell, ...PositionCell[]],
-        debts: lendPositions || [],
+        deposits: lendPositions as [PositionCell, ...PositionCell[]],
+        debts: debtPositions || [],
       })
   }, [setPosition, debtBalances, lendBalances])
 
