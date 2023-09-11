@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
+import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useAvailableToBorrow } from '@/entities/token/hooks/use-available-to-borrow'
 import { useTokenInfo } from '../../hooks/use-token-info'
@@ -37,7 +37,7 @@ export function BorrowIncreaseModal({
 
   const extraDebtToken = debtTokens[0] === coreDebtToken ? debtTokens[1] : debtTokens[0]
 
-  const { availableToBorrow } = useAvailableToBorrow(tokens[coreDebtToken])
+  const { availableToBorrow } = useAvailableToBorrow(tokenContracts[coreDebtToken])
 
   const coreDebtInfo = useTokenInfo(coreDebtToken)
   const extraDebtInfo = useTokenInfo(extraDebtToken ?? coreDebtToken)
@@ -74,7 +74,9 @@ export function BorrowIncreaseModal({
     extraDebtToken &&
     Math.min(availableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
 
-  const depositBalances = useGetBalance(debtTokens.map((tokenName) => tokens[tokenName].address))
+  const depositBalances = useGetBalance(
+    debtTokens.map((tokenName) => tokenContracts[tokenName].address),
+  )
 
   const coreInputError = Number(value) > coreInputMax
   const extraInputError = Number(extraValue) > (extraInputMax || 0)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
+import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
@@ -39,7 +39,9 @@ export function LendStepModal({
     depositTokens[0] === coreDepositToken ? depositTokens[1] : depositTokens[0]
   const extraDepositInfo = useTokenInfo(extraDepositToken)
 
-  const depositBalances = useGetBalance(depositTokens.map((tokenName) => tokens[tokenName].address))
+  const depositBalances = useGetBalance(
+    depositTokens.map((tokenName) => tokenContracts[tokenName].address),
+  )
 
   const debtValueInUSD = Number(debtValue) * debtCoinInfo.priceInUsd
 
@@ -59,7 +61,7 @@ export function LendStepModal({
     coreDepositInfo.userBalance,
   ])
 
-  const { borrowInterestRate } = useMarketDataForDisplay(tokens[debtToken])
+  const { borrowInterestRate } = useMarketDataForDisplay(tokenContracts[debtToken])
 
   const coreDeposit = Number(coreValue) * coreDepositInfo.discount
   const extraDeposit = Number(extraValue) * extraDepositInfo.discount

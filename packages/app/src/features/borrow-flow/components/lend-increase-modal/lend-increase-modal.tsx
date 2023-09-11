@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
+import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
@@ -40,7 +40,9 @@ export function LendIncreaseModal({
   const possibleDepositInfo = useTokenInfo(extraDebtToken ?? coreDepositToken)
   const extraDepositInfo = extraDebtToken ? possibleDepositInfo : undefined
 
-  const depositBalances = useGetBalance(depositTokens.map((tokenName) => tokens[tokenName].address))
+  const depositBalances = useGetBalance(
+    depositTokens.map((tokenName) => tokenContracts[tokenName].address),
+  )
 
   const actualDepositUsd =
     depositSumUsd +

@@ -37,34 +37,20 @@ export type SToken = (typeof sToken)[keyof typeof sToken]
 export type DebtToken = (typeof debtToken)[keyof typeof debtToken]
 export type TokenAddress = Underlying | SToken | DebtToken
 
-export interface Token {
-  code: string
-  title: string
+export interface TokenAddresses {
   address: Underlying
   sAddress: SToken
   debtAddress: DebtToken
 }
 
-export const tokens: Record<SupportedToken, Token> = {
-  xlm: {
-    code: 'XLM',
-    title: 'Lumen',
-    address: underlying.xlm,
-    sAddress: sToken.xlm,
-    debtAddress: debtToken.xlm,
+export const tokenContracts = SUPPORTED_TOKENS.reduce(
+  (acc, token) => {
+    acc[token] = {
+      address: underlying[token],
+      sAddress: sToken[token],
+      debtAddress: debtToken[token],
+    }
+    return acc
   },
-  xrp: {
-    code: 'XRP',
-    title: 'Ripple',
-    address: underlying.xrp,
-    sAddress: sToken.xrp,
-    debtAddress: debtToken.xrp,
-  },
-  usdc: {
-    code: 'USDC',
-    title: 'USD Coin',
-    address: underlying.usdc,
-    sAddress: sToken.usdc,
-    debtAddress: debtToken.usdc,
-  },
-}
+  {} as Record<SupportedToken, TokenAddresses>,
+)
