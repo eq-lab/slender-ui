@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
