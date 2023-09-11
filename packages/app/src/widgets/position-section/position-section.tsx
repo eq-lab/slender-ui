@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { tokens, SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
 import { useGetBalance, SorobanTokenRecord } from '@/entities/token/hooks/use-get-balance'
 import { WalletContext } from '@/entities/wallet/context/context'
@@ -10,51 +10,60 @@ import { PositionCell } from '@/entities/position/types'
 import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
-import { useGetCryptocurrencyUsdRates } from '@/entities/currency-rates/hooks/use-get-cryptocurrency-usd-rates'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
-
-const sorobanTokenRecordToPositionCell = (tokenRecord: SorobanTokenRecord): PositionCell => ({
-  value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
-  token: tokenRecord.symbol.substring(1).toLowerCase() as PositionCell['token'],
-})
 
 export function PositionSection() {
   const userAddress = useContextSelector(WalletContext, (state) => state.address)
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
-  const rates = useGetCryptocurrencyUsdRates()
 
-  const debtSupportedTokensArray = useMemo(
-    () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].debtAddress),
-    [],
+  const debtBalances = useGetBalance(
+    SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].debtAddress),
+    userAddress,
   )
-  const lendSupportedTokensArray = useMemo(
-    () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].sAddress),
-    [],
+  const lendBalances = useGetBalance(
+    SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].sAddress),
+    userAddress,
   )
 
-  const debtBalances = useGetBalance(debtSupportedTokensArray, userAddress)
-  const lendBalances = useGetBalance(lendSupportedTokensArray, userAddress)
+  const sorobanTokenRecordToPositionCell = (
+    tokenRecord: SorobanTokenRecord,
+    index: number,
+  ): PositionCell => ({
+    value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
+    token: SUPPORTED_TOKENS[index]!,
+  })
 
+  // TODO move to provider
   useEffect(() => {
-    const debtPositions = debtBalances?.reduce((resultArr: PositionCell[], currentItem) => {
-      if (currentItem && Number(currentItem.balance))
-        resultArr.push(sorobanTokenRecordToPositionCell(currentItem))
-      return resultArr
-    }, [])
+    const debtPositions = debtBalances?.reduce(
+      (resultArr: PositionCell[], currentItem, currentIndex) => {
+        if (currentItem && Number(currentItem.balance)) {
+          resultArr.push(sorobanTokenRecordToPositionCell(currentItem, currentIndex))
+        }
+        return resultArr
+      },
+      [],
+    )
 
-    const lendPositions = lendBalances?.reduce((resultArr: PositionCell[], currentItem) => {
-      if (currentItem && Number(currentItem.balance))
-        resultArr.push(sorobanTokenRecordToPositionCell(currentItem))
-      return resultArr
-    }, [])
+    const lendPositions = lendBalances?.reduce(
+      (resultArr: PositionCell[], currentItem, currentIndex) => {
+        if (currentItem && Number(currentItem.balance)) {
+          resultArr.push(sorobanTokenRecordToPositionCell(currentItem, currentIndex))
+        }
+        return resultArr
+      },
+      [],
+    )
 
-    if (debtPositions?.length || lendPositions?.length)
+    // TODO remove if, don't render empty lists
+    if (debtPositions?.length || lendPositions?.length) {
       setPosition({
         deposits: lendPositions as [PositionCell, ...PositionCell[]],
         debts: debtPositions || [],
       })
-  }, [setPosition, debtBalances, lendBalances])
+    }
+  }, [userAddress, setPosition, debtBalances, lendBalances])
 
   const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
   const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
@@ -112,7 +121,7 @@ export function PositionSection() {
           </div>
         </div>
       ) : (
-        <>empty</>
+        'No positions'
       )}
       {borrowDecreaseModal}
       {borrowIncreaseModal}

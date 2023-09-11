@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
 import { formatUsd } from '../../../formatters'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
@@ -32,36 +33,45 @@ export function LendStepModal({
 
   const [showExtraInput, setShowExtraInput] = useState(false)
 
-  const debtCoinInfo = mockTokenInfoByType[debtToken]
-  const coreDepositInfo = mockTokenInfoByType[coreDepositToken]
+  const debtCoinInfo = useTokenInfo(debtToken)
+  const coreDepositInfo = useTokenInfo(coreDepositToken)
   const extraDepositToken =
     depositTokens[0] === coreDepositToken ? depositTokens[1] : depositTokens[0]
-  const extraDepositInfo = mockTokenInfoByType[extraDepositToken]
+  const extraDepositInfo = useTokenInfo(extraDepositToken)
 
-  const debtValueInUSD = Number(debtValue) * debtCoinInfo.usd
+  const depositBalances = useGetBalance(depositTokens.map((tokenName) => tokens[tokenName].address))
+
+  const debtValueInUSD = Number(debtValue) * debtCoinInfo.priceInUsd
 
   useEffect(() => {
     const inputValue = Math.floor(
-      debtValueInUSD / (coreDepositInfo.discount * coreDepositInfo.usd * DEFAULT_HEALTH_VALUE),
+      debtValueInUSD /
+        (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE),
     )
 
     const finalValue =
-      inputValue > coreDepositInfo.userValue ? coreDepositInfo.userValue : inputValue
+      inputValue > coreDepositInfo.userBalance ? coreDepositInfo.userBalance : inputValue
     setCoreValue(String(finalValue))
-  }, [debtValueInUSD, coreDepositInfo.discount, coreDepositInfo.usd, coreDepositInfo.userValue])
+  }, [
+    debtValueInUSD,
+    coreDepositInfo.discount,
+    coreDepositInfo.priceInUsd,
+    coreDepositInfo.userBalance,
+  ])
 
   const { borrowInterestRate } = useMarketDataForDisplay(tokens[debtToken])
 
   const coreDeposit = Number(coreValue) * coreDepositInfo.discount
   const extraDeposit = Number(extraValue) * extraDepositInfo.discount
 
-  const deposit = coreDeposit * coreDepositInfo.usd + extraDeposit * extraDepositInfo.usd
+  const deposit =
+    coreDeposit * coreDepositInfo.priceInUsd + extraDeposit * extraDepositInfo.priceInUsd
 
   const health = Math.max(Math.round(deposit && (1 - debtValueInUSD / deposit) * 100), 0)
   const borrowCapacity = Math.max(deposit - debtValueInUSD, 0)
 
-  const firstInputError = Number(coreValue) > coreDepositInfo.userValue
-  const secondInputError = Number(extraValue) > extraDepositInfo.userValue
+  const firstInputError = Number(coreValue) > coreDepositInfo.userBalance
+  const secondInputError = Number(extraValue) > extraDepositInfo.userBalance
   const borrowCapacityError = borrowCapacity <= 0
 
   const error = borrowCapacityError || firstInputError || secondInputError
@@ -96,9 +106,14 @@ export function LendStepModal({
       </div>
       {isDepositListOpen && !showExtraInput && (
         <div>
-          {depositTokens.map((token) => (
-            <button key={token} type="button" onClick={() => setCoreDepositToken(token)}>
-              {mockTokenInfoByType[token].userValue} {token} {token === coreDepositToken && '✓'}
+          {depositTokens.map((depositToken, index) => (
+            <button
+              key={depositToken}
+              type="button"
+              onClick={() => setCoreDepositToken(depositToken)}
+            >
+              {depositBalances[index]?.balance ?? 0} {depositToken}{' '}
+              {depositToken === coreDepositToken && '✓'}
             </button>
           ))}
         </div>

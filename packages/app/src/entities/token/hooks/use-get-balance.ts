@@ -1,9 +1,10 @@
 import * as SorobanClient from 'soroban-client'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
-import { decodei128 } from '@/shared/stellar/decoders'
+import { decodeI128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { useMarketData } from '../context/context'
+import { CachedTokens } from '../context/context'
+import { useTokenCache } from '../context/hooks'
 
 export interface SorobanTokenRecord {
   balance: string
@@ -16,39 +17,57 @@ const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
 
 const encodeAddress = (account: string) => new SorobanClient.Address(account).toScVal()
 
+const isArraysEqual = <T>(a?: T[], b?: T[]) =>
+  a?.length === b?.length && a?.every((value, index) => value === b?.[index])
+
 export const useGetBalance = (
   tokenAddresses: TokenAddress[],
   userAddress?: string,
 ): SorobanTokenRecord[] => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
   const makeInvoke = useMakeInvoke()
-  const tokensCache = useMarketData()
+  const tokensCache = useTokenCache()
 
-  const updateBalances = useCallback(async () => {
-    if (!userAddress) {
-      setBalanceInfo([])
-      return
+  const previousTokenAddresses = useRef<TokenAddress[]>()
+  const previousUserAddress = useRef<string>()
+  const previousTokensCache = useRef<Partial<CachedTokens>>()
+
+  useEffect(() => {
+    async function updateBalances() {
+      if (!userAddress) {
+        setBalanceInfo([])
+        return
+      }
+      const balanceTxParams = [encodeAddress(userAddress)]
+
+      const balances: SorobanTokenRecord[] = (
+        await Promise.all(
+          tokenAddresses.map((tokenAddress) => {
+            const invoke = makeInvoke(tokenAddress)
+            return invoke('balance', decodeI128, balanceTxParams)
+          }),
+        )
+      ).map((balance, index) => ({
+        balance,
+        ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
+      }))
+
+      setBalanceInfo(balances)
     }
-    const balanceTxParams = [encodeAddress(userAddress)]
-
-    const balances: SorobanTokenRecord[] = (
-      await Promise.all(
-        tokenAddresses.map((tokenAddress) => {
-          const invoke = makeInvoke(tokenAddress)
-          return invoke('balance', decodei128, balanceTxParams)
-        }),
-      )
-    ).map((balance, index) => ({
-      balance,
-      ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
-    }))
-
-    setBalanceInfo(balances)
+    if (
+      !isArraysEqual(tokenAddresses, previousTokenAddresses.current) ||
+      userAddress !== previousUserAddress.current ||
+      tokensCache !== previousTokensCache.current
+    ) {
+      updateBalances()
+    }
   }, [makeInvoke, tokenAddresses, userAddress, tokensCache])
 
   useEffect(() => {
-    updateBalances()
-  }, [updateBalances])
+    previousTokenAddresses.current = tokenAddresses
+    previousUserAddress.current = userAddress
+    previousTokensCache.current = tokensCache
+  })
 
   return balanceInfo
 }

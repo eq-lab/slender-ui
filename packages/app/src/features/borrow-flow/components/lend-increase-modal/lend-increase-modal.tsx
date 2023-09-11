@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
+import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
+import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { PositionSummary } from '../position-summary'
@@ -35,13 +36,16 @@ export function LendIncreaseModal({
 
   const extraDebtToken = depositTokens[0] === coreDepositToken ? depositTokens[1] : depositTokens[0]
 
-  const coreDepositInfo = mockTokenInfoByType[coreDepositToken]
-  const extraDepositInfo = extraDebtToken && mockTokenInfoByType[extraDebtToken]
+  const coreDepositInfo = useTokenInfo(coreDepositToken)
+  const possibleDepositInfo = useTokenInfo(extraDebtToken ?? coreDepositToken)
+  const extraDepositInfo = extraDebtToken ? possibleDepositInfo : undefined
+
+  const depositBalances = useGetBalance(depositTokens.map((tokenName) => tokens[tokenName].address))
 
   const actualDepositUsd =
     depositSumUsd +
-    Number(value) * coreDepositInfo.usd * coreDepositInfo.discount +
-    Number(extraValue) * (extraDepositInfo?.usd || 0) * (extraDepositInfo?.discount || 0)
+    Number(value) * coreDepositInfo.userBalance * coreDepositInfo.discount +
+    Number(extraValue) * (extraDepositInfo?.priceInUsd || 0) * (extraDepositInfo?.discount || 0)
 
   const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError, health, healthDelta } =
     getPositionInfo({
@@ -53,11 +57,11 @@ export function LendIncreaseModal({
 
   const hasExtraDepositToken = Boolean(depositTokens[1])
 
-  const coreInputMax = coreDepositInfo.userValue
-  const extraInputMax = extraDepositInfo?.userValue || 0
+  const coreInputMax = coreDepositInfo.userBalance
+  const extraInputMax = extraDepositInfo?.userBalance || 0
 
-  const coreInputError = Number(value) > coreDepositInfo.userValue
-  const extraInputError = Number(extraValue) > (extraDepositInfo?.userValue || 0)
+  const coreInputError = Number(value) > coreDepositInfo.userBalance
+  const extraInputError = Number(extraValue) > (extraDepositInfo?.userBalance || 0)
 
   const getSaveData = (): Partial<Record<SupportedToken, number>> => {
     const core = { [coreDepositToken]: Number(value) }
@@ -108,7 +112,7 @@ export function LendIncreaseModal({
       )}
       {isDepositListOpen && !showExtraInput && (
         <div>
-          {depositTokens.map((depositToken) => {
+          {depositTokens.map((depositToken, index) => {
             if (!depositToken) {
               return null
             }
@@ -118,7 +122,7 @@ export function LendIncreaseModal({
                 type="button"
                 onClick={() => setCoreDepositToken(depositToken)}
               >
-                {mockTokenInfoByType[depositToken].userValue} {depositToken}{' '}
+                {depositBalances[index]?.balance ?? 0} {depositToken}{' '}
                 {depositToken === coreDepositToken && '✓'}
               </button>
             )
