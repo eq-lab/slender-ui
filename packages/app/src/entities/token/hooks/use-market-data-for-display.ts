@@ -1,7 +1,7 @@
 import { Token } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
-import { useTokenData } from './use-token-data'
-import { useMarketData, useTokenCache } from '../context/hooks'
+import { useMarketData } from '../context/hooks'
+import { useAvailableToBorrow } from './use-available-to-borrow'
 
 const makeFormatPercentWithPrecision =
   (multiplier: number) =>
@@ -18,35 +18,12 @@ export function useMarketDataForDisplay(token: Token): {
   reserved: number
   availableToBorrow: number
 } {
-  const {
-    percentMultiplier,
-    borrowInterestRate,
-    lendInterestRate,
-    contractMultiplier,
-    collateralCoefficient = 0n,
-    debtCoefficient = 0n,
-  } = usePoolData(token.address)
+  const { percentMultiplier, borrowInterestRate, lendInterestRate, contractMultiplier } =
+    usePoolData(token.address)
   const marketData = useMarketData()
-  const {
-    discount,
-    liquidationPenalty,
-    utilizationCapacity = 0,
-  } = marketData?.[token.address] ?? {}
+  const { discount, liquidationPenalty } = marketData?.[token.address] ?? {}
 
-  const tokenCache = useTokenCache()?.[token.address]
-  const decimals = tokenCache?.decimals ?? 0
-
-  const { totalSupply: sTotalSupply } = useTokenData(token.sAddress)
-  const totalSupplied =
-    ((Number(sTotalSupply) / contractMultiplier) * Number(collateralCoefficient)) / 10 ** decimals
-
-  const { totalSupply: debtTotalSupply } = useTokenData(token.debtAddress)
-  const totalBorrowed =
-    ((Number(debtTotalSupply) / contractMultiplier) * Number(debtCoefficient)) / 10 ** decimals
-
-  const reserved = totalSupplied * (1 - utilizationCapacity / percentMultiplier)
-
-  const availableToBorrow = totalSupplied - totalBorrowed - reserved
+  const { availableToBorrow, reserved, totalBorrowed, totalSupplied } = useAvailableToBorrow(token)
 
   const formatPercentage = makeFormatPercentWithPrecision(percentMultiplier)
   const formatInterestRate = makeFormatPercentWithPrecision(contractMultiplier)
