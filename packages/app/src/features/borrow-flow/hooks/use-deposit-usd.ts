@@ -1,7 +1,7 @@
 import { Position as PositionType } from '@/entities/position/types'
 import { tokens } from '@/shared/stellar/constants/tokens'
-import { usePriceInUsd } from '@/entities/currency-rates/hooks/use-price-in-usd'
-import { useMarketData } from '@/entities/token/context/context'
+import { useMarketData } from '@/entities/token/context/hooks'
+import { usePriceInUsd } from '@/entities/currency-rates/context/hooks'
 
 export const useDepositUsd = (collaterals?: PositionType['deposits']): number => {
   const priceInUsd = usePriceInUsd()

@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
 import { decodeI128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { CachedTokens, useTokenCache } from '../context/context'
+import { CachedTokens } from '../context/context'
+import { useTokenCache } from '../context/hooks'
 
 export interface SorobanTokenRecord {
   balance: string

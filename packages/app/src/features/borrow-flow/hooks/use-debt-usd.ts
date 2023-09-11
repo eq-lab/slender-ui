@@ -1,5 +1,5 @@
 import { Position as PositionType } from '@/entities/position/types'
-import { usePriceInUsd } from '@/entities/currency-rates/hooks/use-price-in-usd'
+import { usePriceInUsd } from '@/entities/currency-rates/context/hooks'
 
 export const useDebtUsd = (debts: PositionType['debts'] = []): number => {
   const priceInUsd = usePriceInUsd()

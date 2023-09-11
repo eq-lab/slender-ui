@@ -1,7 +1,7 @@
 import { Token } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
-import { useMarketData, useTokenCache } from '../context/context'
 import { useTokenData } from './use-token-data'
+import { useMarketData, useTokenCache } from '../context/hooks'
 
 const makeFormatPercentWithPrecision =
   (multiplier: number) =>

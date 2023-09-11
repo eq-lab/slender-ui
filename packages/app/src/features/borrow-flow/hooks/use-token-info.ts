@@ -1,7 +1,7 @@
 import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
-import { usePriceInUsd } from '@/entities/currency-rates/hooks/use-price-in-usd'
-import { useMarketData } from '@/entities/token/context/context'
+import { useMarketData } from '@/entities/token/context/hooks'
+import { usePriceInUsd } from '@/entities/currency-rates/context/hooks'
 
 export function useTokenInfo(token: SupportedToken): {
   userBalance: number
