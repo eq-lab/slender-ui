@@ -2,7 +2,7 @@ import { Contract } from 'soroban-client';
 /**
  * The Soroban contract ID for the @bindings/pool contract.
  */
-export const CONTRACT_ID = 'CA5REFCZXE4S74KTTZNW6QNPVNSQBNU5QAA46FIWX43XPSKMRIXW3NGS';
+export const CONTRACT_ID = 'CAVSCGJKXNS5UW25N4FOC647I2GNQ66N47FND55L6TMDQ7OU5LIMDKGH';
 /**
  * The Soroban contract ID for the @bindings/pool contract, in hex.
  * If {@link CONTRACT_ID} is a new-style `C…` string, you will need this hex
