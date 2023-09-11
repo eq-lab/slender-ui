@@ -25,10 +25,14 @@ export function BorrowStepModal({
   const borrowCoinInfo = useTokenInfo(debtToken)
   const { discount, priceInUsd, userBalance } = useTokenInfo(depositToken)
 
-  const max = Math.floor(
-    (userBalance * discount * priceInUsd * DEFAULT_HEALTH_VALUE) / borrowCoinInfo.priceInUsd,
-  )
   const { borrowInterestRate, availableToBorrow } = useMarketDataForDisplay(tokens[debtToken])
+
+  const max = Math.min(
+    Math.floor(
+      (userBalance * discount * priceInUsd * DEFAULT_HEALTH_VALUE) / borrowCoinInfo.priceInUsd,
+    ),
+    availableToBorrow,
+  )
 
   const infoSlot = (
     <div>
@@ -57,7 +61,7 @@ export function BorrowStepModal({
         </button>
       </div>
       <div>
-        <button onClick={onContinue} type="button" disabled={!value || Number(value) > max}>
+        <button onClick={onContinue} type="button" disabled={!Number(value) || Number(value) > max}>
           Continue
         </button>
       </div>

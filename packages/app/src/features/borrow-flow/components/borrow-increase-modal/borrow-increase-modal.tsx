@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { useAvailableToBorrow } from '@/entities/token/hooks/use-available-to-borrow'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
@@ -35,6 +36,9 @@ export function BorrowIncreaseModal({
   }, [token])
 
   const extraDebtToken = debtTokens[0] === coreDebtToken ? debtTokens[1] : debtTokens[0]
+
+  const { availableToBorrow } = useAvailableToBorrow(tokens[coreDebtToken])
+
   const coreDebtInfo = useTokenInfo(coreDebtToken)
   const extraDebtInfo = useTokenInfo(extraDebtToken ?? coreDebtToken)
 
@@ -61,13 +65,19 @@ export function BorrowIncreaseModal({
 
   const hasExtraDeptToken = Boolean(debtTokens[1])
 
-  const coreInputMax = Math.floor(defaultBorrowCapacity / coreDebtInfo.priceInUsd)
+  const coreInputMax = Math.min(
+    availableToBorrow,
+    Math.floor(defaultBorrowCapacity / coreDebtInfo.priceInUsd),
+  )
+
   const extraInputMax =
-    extraDebtToken && Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd)
+    extraDebtToken &&
+    Math.min(availableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
 
   const depositBalances = useGetBalance(debtTokens.map((tokenName) => tokens[tokenName].address))
 
-  const secondInputError = false
+  const coreInputError = Number(value) > coreInputMax
+  const extraInputError = Number(extraValue) > (extraInputMax || 0)
 
   const getSaveData = (): Partial<Record<SupportedToken, number>> => {
     const core = { [coreDebtToken]: Number(value) }
@@ -81,6 +91,8 @@ export function BorrowIncreaseModal({
 
     return core
   }
+
+  const sendButtonDisable = borrowCapacityError || coreInputError || extraInputError
 
   return (
     <ModalLayout
@@ -99,7 +111,12 @@ export function BorrowIncreaseModal({
       onClose={onClose}
     >
       <h3>How much to borrow</h3>
-      <input onChange={(e) => setValue(e.target.value)} type="number" value={value} />
+      <input
+        onChange={(e) => setValue(e.target.value)}
+        type="number"
+        value={value}
+        style={{ border: coreInputError ? '1px solid red' : '' }}
+      />
       {coreDebtToken}
 
       <button type="button" onClick={() => setValue(String(coreInputMax))}>
@@ -136,7 +153,7 @@ export function BorrowIncreaseModal({
       {showExtraInput && (
         <div>
           <input
-            style={{ border: secondInputError ? '1px solid red' : '' }}
+            style={{ border: extraInputError ? '1px solid red' : '' }}
             type="number"
             value={extraValue}
             onChange={(e) => {
@@ -150,7 +167,7 @@ export function BorrowIncreaseModal({
         </div>
       )}
       <div>
-        <button onClick={() => onSend(getSaveData())} type="button" disabled={borrowCapacityError}>
+        <button onClick={() => onSend(getSaveData())} type="button" disabled={sendButtonDisable}>
           Borrow
         </button>
       </div>
