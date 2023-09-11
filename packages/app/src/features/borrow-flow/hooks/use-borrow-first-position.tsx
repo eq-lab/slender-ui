@@ -1,35 +1,35 @@
-'use client'
-
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
-import { BorrowStepModal } from './borrow-step-modal'
-import { LendStepModal } from './lend-step-modal'
-import { excludeSupportedTokens } from '../../utils'
+import { useContextSelector } from 'use-context-selector'
+import { PositionContext } from '@/entities/position/context/context'
+import { BorrowStepModal } from '../components/borrow-first-position-flow/borrow-step-modal'
+import { LendStepModal } from '../components/borrow-first-position-flow/lend-step-modal'
+import { excludeSupportedTokens } from '../utils'
 
 enum Step {
   Borrow = 'Borrow',
   Deposit = 'Deposit',
 }
 
-interface Props {
-  token: SupportedToken
-  onSend: (value: Position) => void
-  buttonText: string
-}
-
-export function BorrowFirstPositionFlow({ token, onSend, buttonText }: Props) {
+export const useBorrowFirstPosition = (
+  token: SupportedToken,
+): {
+  modal: React.ReactNode
+  open: () => void
+} => {
+  const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
   const [step, setStep] = useState<Step | null>(null)
   const [debtValue, setDebtValue] = useState('')
 
-  const handleClose = () => {
+  const close = () => {
     setStep(null)
     setDebtValue('')
   }
 
   const handleSend = (value: Position) => {
-    handleClose()
-    onSend(value)
+    close()
+    setPosition(value)
   }
 
   const [firstDepositToken, secondDepositToken] = excludeSupportedTokens([token])
@@ -38,7 +38,7 @@ export function BorrowFirstPositionFlow({ token, onSend, buttonText }: Props) {
     [Step.Borrow]: firstDepositToken && (
       <BorrowStepModal
         value={debtValue}
-        onClose={handleClose}
+        onClose={close}
         onContinue={() => setStep(Step.Deposit)}
         onBorrowValueChange={setDebtValue}
         debtToken={token}
@@ -47,7 +47,7 @@ export function BorrowFirstPositionFlow({ token, onSend, buttonText }: Props) {
     ),
     [Step.Deposit]: firstDepositToken && secondDepositToken && (
       <LendStepModal
-        onClose={handleClose}
+        onClose={close}
         onPrev={() => setStep(Step.Borrow)}
         debtValue={debtValue}
         debtToken={token}
@@ -57,18 +57,11 @@ export function BorrowFirstPositionFlow({ token, onSend, buttonText }: Props) {
     ),
   }
 
-  const handleClick = () => {
+  const modal = step ? modalByStep[step] : null
+
+  const open = () => {
     setStep(Step.Borrow)
   }
 
-  return (
-    <>
-      {!step && (
-        <button type="button" onClick={handleClick}>
-          {buttonText}
-        </button>
-      )}
-      {step && modalByStep[step]}
-    </>
-  )
+  return { modal, open }
 }
