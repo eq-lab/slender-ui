@@ -7,7 +7,10 @@ import { LendDecreaseModal } from '../components/lend-decrease-modal'
 import { useDebtUsd } from './use-debt-usd'
 import { useDepositUsd } from './use-deposit-usd'
 
-export const useLendDecrease = () => {
+export const useLendDecrease = (): {
+  modal: React.ReactNode
+  open: (value: SupportedToken) => void
+} => {
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
   const [modalToken, setModalToken] = useState<SupportedToken | null>(null)

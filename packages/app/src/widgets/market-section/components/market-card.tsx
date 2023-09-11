@@ -1,15 +1,12 @@
-import { Token } from '@/shared/stellar/constants/tokens'
+import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { useLendFirstPosition } from '@/features/borrow-flow/hooks/use-lend-first-position'
+import { useBorrowFirstPosition } from '@/features/borrow-flow/hooks/use-borrow-first-position'
 
-export function MarketCard({
-  token,
-  renderBorrowButton,
-  renderLendButton,
-}: {
-  token: Token
-  renderBorrowButton: (percent: string) => React.ReactNode
-  renderLendButton: (percent: string) => React.ReactNode
-}) {
+export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
+  const token = tokens[tokenName]
+  const { modal: lendModal, open: lendOpen } = useLendFirstPosition(tokenName)
+  const { modal: borrowModal, open: borrowOpen } = useBorrowFirstPosition(tokenName)
   const {
     discount,
     liquidationPenalty,
@@ -36,8 +33,14 @@ export function MarketCard({
       <p>Available to Borrow: {availableToBorrow}</p>
       <p>Discount: {discount}</p>
       <p>Liquidation penalty: &minus;{liquidationPenalty}</p>
-      {renderBorrowButton(borrowInterestRate)}
-      {renderLendButton(lendInterestRate)}
+      <button type="button" onClick={borrowOpen}>
+        {`-${borrowInterestRate} Borrow`}
+      </button>
+      <button type="button" onClick={lendOpen}>
+        {`+${lendInterestRate} Lend`}
+      </button>
+      {lendModal}
+      {borrowModal}
     </div>
   )
 }
