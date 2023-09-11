@@ -10,8 +10,8 @@ export const useDepositUsd = (collaterals?: PositionType['deposits']): number =>
     return 0
   }
 
-  return (collaterals || []).reduce((sum, { token, value }) => {
-    const { discount } = tokensCache[tokens[token].address]
+  return (collaterals ?? []).reduce((sum, { token, value }) => {
+    const { discount } = tokensCache[tokens[token].address] ?? { discount: 0 }
     return sum + value * priceInUsd[token] * discount
   }, 0)
 }
