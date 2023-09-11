@@ -10,12 +10,12 @@ const UPDATE_RATES_INTERVAL_MS = 60_000
 export function CurrencyRatesProvider({ children }: { children: JSX.Element }) {
   const [currencyRates, setCurrencyRates] = useState<CurrencyRates>()
 
-  const updateRates = async () => {
-    const apiRates = await getCryptoCurrencyRates()
-    if (apiRates) setCurrencyRates(apiRates)
-  }
-
   useEffect(() => {
+    const updateRates = async () => {
+      const apiRates = await getCryptoCurrencyRates()
+      if (apiRates) setCurrencyRates(apiRates)
+    }
+
     updateRates()
     const intervalId = setInterval(updateRates, UPDATE_RATES_INTERVAL_MS)
     return () => {

@@ -6,7 +6,7 @@ import { useAvailableToBorrow } from './use-available-to-borrow'
 const makeFormatPercentWithPrecision =
   (multiplier: number) =>
   (value?: number | bigint): string =>
-    value === undefined ? '...' : `${(Number(value) * 100) / multiplier}%`
+    value === undefined ? '...' : `${+Number((Number(value) * 100) / multiplier).toFixed(1)}%`
 
 export function useMarketDataForDisplay(token: Token): {
   discount: string

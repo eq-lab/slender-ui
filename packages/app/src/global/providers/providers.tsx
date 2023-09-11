@@ -6,14 +6,14 @@ import { StyledComponentsRegistry } from './styled-registry'
 
 export function Providers({ children }: { children: JSX.Element }) {
   return (
-    <WalletProvider>
-      <TokenProvider>
-        <PositionProvider>
-          <CurrencyRatesProvider>
+    <CurrencyRatesProvider>
+      <WalletProvider>
+        <TokenProvider>
+          <PositionProvider>
             <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
-          </CurrencyRatesProvider>
-        </PositionProvider>
-      </TokenProvider>
-    </WalletProvider>
+          </PositionProvider>
+        </TokenProvider>
+      </WalletProvider>
+    </CurrencyRatesProvider>
   )
 }
