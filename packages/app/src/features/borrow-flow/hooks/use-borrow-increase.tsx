@@ -3,7 +3,9 @@ import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { BorrowIncreaseModal } from '../components/borrow-increase-modal'
-import { excludeSupportedTokens, getDebtUsd, getDepositUsd, sumObj } from '../utils'
+import { excludeSupportedTokens, sumObj } from '../utils'
+import { useDebtUsd } from './use-debt-usd'
+import { useDepositUsd } from './use-deposit-usd'
 
 export const useBorrowIncrease = (): {
   modal: React.ReactNode
@@ -14,6 +16,9 @@ export const useBorrowIncrease = (): {
   const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
 
   const depositTokens = position?.deposits.map((deposit) => deposit.token) || []
+
+  const depositSumUsd = useDepositUsd(position?.deposits)
+  const debtSumUsd = useDebtUsd(position?.debts)
 
   const open = (value?: SupportedToken) => {
     if (value) {
@@ -57,8 +62,8 @@ export const useBorrowIncrease = (): {
     return (
       <BorrowIncreaseModal
         debtTokens={excludeSupportedTokens(depositTokens)}
-        depositSumUsd={getDepositUsd(position.deposits)}
-        debtSumUsd={getDebtUsd(position.debts)}
+        depositSumUsd={depositSumUsd}
+        debtSumUsd={debtSumUsd}
         token={modalToken}
         onClose={() => setModalToken(null)}
         onSend={handleSend}

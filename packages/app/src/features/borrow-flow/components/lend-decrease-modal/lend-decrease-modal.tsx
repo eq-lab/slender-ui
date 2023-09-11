@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
 import { PositionCell } from '@/entities/position/types'
+import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { PositionSummary } from '../position-summary'
@@ -26,9 +26,10 @@ export function LendDecreaseModal({
 }: Props) {
   const [value, setValue] = useState('')
 
+  const depositTokenInfo = useTokenInfo(token)
+
   const actualDepositUsd = Math.max(
-    depositSumUsd -
-      Number(value) * mockTokenInfoByType[token].usd * mockTokenInfoByType[token].discount,
+    depositSumUsd - Number(value) * depositTokenInfo.priceInUsd * depositTokenInfo.discount,
     0,
   )
 
@@ -46,8 +47,10 @@ export function LendDecreaseModal({
     actualDepositUsd,
   })
 
+  const borrowTokenInfo = useTokenInfo(token)
+
   const max = Math.floor(
-    defaultBorrowCapacity / (mockTokenInfoByType[token].usd * mockTokenInfoByType[token].discount),
+    defaultBorrowCapacity / (borrowTokenInfo.priceInUsd * borrowTokenInfo.discount),
   )
 
   const depositDelta = deposit - Number(value)

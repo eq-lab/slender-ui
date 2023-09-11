@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { tokens, SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
 import { useGetBalance, SorobanTokenRecord } from '@/entities/token/hooks/use-get-balance'
 import { WalletContext } from '@/entities/wallet/context/context'
@@ -10,18 +10,16 @@ import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
-import {
-  useGetCryptocurrencyUsdRates,
-  SupportedTokenRates,
-} from '@/entities/currency-rates/hooks/use-get-cryptocurrency-usd-rates'
+import { usePriceInUsd, SupportedTokenRates } from '@/entities/currency-rates/context/hooks'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
 
 const sorobanTokenRecordToPositionCell = (
   tokenRecord: SorobanTokenRecord,
-  cryptocurrencyUsdRates?: SupportedTokenRates,
+  index: number,
+  cryptocurrencyUsdRates: SupportedTokenRates,
 ): PositionCellType => {
   const value = Number(tokenRecord.balance) / 10 ** tokenRecord.decimals
-  const token = tokenRecord.symbol.substring(1).toLowerCase() as PositionCellType['token']
+  const token = SUPPORTED_TOKENS[index]!
   const usdRate = cryptocurrencyUsdRates?.[token]
 
   return {
@@ -35,38 +33,51 @@ export function PositionSection() {
   const userAddress = useContextSelector(WalletContext, (state) => state.address)
   const position = useContextSelector(PositionContext, (state) => state.position)
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
-  const cryptocurrencyUsdRates = useGetCryptocurrencyUsdRates()
-  const debtSupportedTokensArray = useMemo(
-    () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].debtAddress),
-    [],
+  const cryptocurrencyUsdRates = usePriceInUsd()
+
+  const debtBalances = useGetBalance(
+    SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].debtAddress),
+    userAddress,
   )
-  const lendSupportedTokensArray = useMemo(
-    () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].sAddress),
-    [],
+  const lendBalances = useGetBalance(
+    SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].sAddress),
+    userAddress,
   )
 
-  const debtBalances = useGetBalance(debtSupportedTokensArray, userAddress)
-  const lendBalances = useGetBalance(lendSupportedTokensArray, userAddress)
-
+  // TODO move to provider
   useEffect(() => {
-    const debtPositions = debtBalances?.reduce((resultArr: PositionCellType[], currentItem) => {
-      if (currentItem && Number(currentItem.balance))
-        resultArr.push(sorobanTokenRecordToPositionCell(currentItem, cryptocurrencyUsdRates))
-      return resultArr
-    }, [])
+    const debtPositions = debtBalances?.reduce(
+      (resultArr: PositionCellType[], currentItem, currentIndex) => {
+        if (currentItem && Number(currentItem.balance)) {
+          resultArr.push(
+            sorobanTokenRecordToPositionCell(currentItem, currentIndex, cryptocurrencyUsdRates),
+          )
+        }
+        return resultArr
+      },
+      [],
+    )
 
-    const lendPositions = lendBalances?.reduce((resultArr: PositionCellType[], currentItem) => {
-      if (currentItem && Number(currentItem.balance))
-        resultArr.push(sorobanTokenRecordToPositionCell(currentItem, cryptocurrencyUsdRates))
-      return resultArr
-    }, [])
+    const lendPositions = lendBalances?.reduce(
+      (resultArr: PositionCellType[], currentItem, currentIndex) => {
+        if (currentItem && Number(currentItem.balance)) {
+          resultArr.push(
+            sorobanTokenRecordToPositionCell(currentItem, currentIndex, cryptocurrencyUsdRates),
+          )
+        }
+        return resultArr
+      },
+      [],
+    )
 
-    if (debtPositions?.length || lendPositions?.length)
+    // TODO remove if, don't render empty lists
+    if (debtPositions?.length || lendPositions?.length) {
       setPosition({
         deposits: [...lendPositions] as [PositionCellType, ...PositionCellType[]],
         debts: debtPositions || [],
       })
-  }, [setPosition, debtBalances, lendBalances, cryptocurrencyUsdRates])
+    }
+  }, [userAddress, setPosition, debtBalances, lendBalances])
 
   const depositsSum = position?.deposits.reduce(
     (sum, currentCell) => sum + (currentCell.valueInUsd || 0),
@@ -161,7 +172,7 @@ export function PositionSection() {
           </div>
         </div>
       ) : (
-        <>empty</>
+        'No positions'
       )}
       {borrowDecreaseModal}
       {borrowIncreaseModal}

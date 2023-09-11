@@ -1,27 +1,39 @@
 import { Token } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
-import { useMarketData } from '../context/context'
 import { useTokenData } from './use-token-data'
+import { useMarketData, useTokenCache } from '../context/hooks'
 
 const makeFormatPercentWithPrecision =
   (multiplier: number) =>
   (value?: number | bigint): string =>
     value === undefined ? '...' : `${(Number(value) * 100) / multiplier}%`
 
-export function useMarketDataForDisplay(token: Token) {
+export function useMarketDataForDisplay(token: Token): {
+  discount: string
+  liquidationPenalty: string
+  borrowInterestRate: string
+  lendInterestRate: string
+  totalSupplied: number
+  totalBorrowed: number
+  reserved: number
+  availableToBorrow: number
+} {
   const {
-    discount,
-    liquidationPenalty,
     percentMultiplier,
     borrowInterestRate,
     lendInterestRate,
     contractMultiplier,
     collateralCoefficient = 0n,
     debtCoefficient = 0n,
-    utilizationCapacity = 0,
   } = usePoolData(token.address)
+  const marketData = useMarketData()
+  const {
+    discount,
+    liquidationPenalty,
+    utilizationCapacity = 0,
+  } = marketData?.[token.address] ?? {}
 
-  const tokenCache = useMarketData()?.[token.address]
+  const tokenCache = useTokenCache()?.[token.address]
   const decimals = tokenCache?.decimals ?? 0
 
   const { totalSupply: sTotalSupply } = useTokenData(token.sAddress)

@@ -1,6 +1,4 @@
 import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tokens'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
-import { Position as PositionType } from '@/entities/position/types'
 
 export const excludeSupportedTokens = (token: SupportedToken[]): SupportedToken[] =>
   SUPPORTED_TOKENS.filter((element) => !token.includes(element)) as SupportedToken[]
@@ -52,22 +50,6 @@ export const getPositionInfo = (positionInput: PositionInput) => {
   const borrowCapacityInfo = getBorrowCapacity(positionInput)
   return { ...heathInfo, ...borrowCapacityInfo }
 }
-
-export const getDepositUsd = (collateral: PositionType['deposits']) =>
-  collateral.reduce((acc, elem) => {
-    if (!elem) return acc
-    const { token, value } = elem
-    const coinInfo = mockTokenInfoByType[token]
-    return acc + value * coinInfo.usd * coinInfo.discount
-  }, 0)
-
-export const getDebtUsd = (debt: PositionType['debts']) =>
-  debt.reduce((acc, elem) => {
-    if (!elem) return acc
-    const { token, value } = elem
-    const coinInfo = mockTokenInfoByType[token]
-    return acc + value * coinInfo.usd
-  }, 0)
 
 export const sumObj = <T extends string>(
   obj1: { [K in T]?: number },

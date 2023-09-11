@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
+import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
+import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { PositionSummary } from '../position-summary'
@@ -34,11 +35,13 @@ export function BorrowIncreaseModal({
   }, [token])
 
   const extraDebtToken = debtTokens[0] === coreDebtToken ? debtTokens[1] : debtTokens[0]
+  const coreDebtInfo = useTokenInfo(coreDebtToken)
+  const extraDebtInfo = useTokenInfo(extraDebtToken ?? coreDebtToken)
 
   const actualDebtUsd =
     debtSumUsd +
-    Number(value) * mockTokenInfoByType[coreDebtToken].usd +
-    (extraDebtToken ? Number(extraValue) * mockTokenInfoByType[extraDebtToken].usd : 0)
+    Number(value) * coreDebtInfo.priceInUsd +
+    (extraDebtToken ? Number(extraValue) * extraDebtInfo.priceInUsd : 0)
 
   const {
     borrowCapacityDelta,
@@ -58,9 +61,11 @@ export function BorrowIncreaseModal({
 
   const hasExtraDeptToken = Boolean(debtTokens[1])
 
-  const coreInputMax = Math.floor(defaultBorrowCapacity / mockTokenInfoByType[coreDebtToken].usd)
+  const coreInputMax = Math.floor(defaultBorrowCapacity / coreDebtInfo.priceInUsd)
   const extraInputMax =
-    extraDebtToken && Math.floor(defaultBorrowCapacity / mockTokenInfoByType[extraDebtToken].usd)
+    extraDebtToken && Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd)
+
+  const depositBalances = useGetBalance(debtTokens.map((tokenName) => tokens[tokenName].address))
 
   const secondInputError = false
 
@@ -108,13 +113,13 @@ export function BorrowIncreaseModal({
       )}
       {isDebtListOpen && !showExtraInput && (
         <div>
-          {debtTokens.map((debtToken) => {
+          {debtTokens.map((debtToken, index) => {
             if (!debtToken) {
               return null
             }
             return (
               <button key={debtToken} type="button" onClick={() => setCoreDebtToken(debtToken)}>
-                {mockTokenInfoByType[debtToken].userValue} {debtToken}{' '}
+                {depositBalances[index]?.balance ?? 0} {debtToken}{' '}
                 {debtToken === coreDebtToken && '✓'}
               </button>
             )
