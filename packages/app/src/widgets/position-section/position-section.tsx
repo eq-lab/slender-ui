@@ -8,6 +8,7 @@ import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-incre
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
 import { formatUsd } from '@/features/borrow-flow/formatters'
+import { SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
 import { PositionCell } from './components/position-cell'
 
 export function PositionSection() {
@@ -17,6 +18,13 @@ export function PositionSection() {
     (sum, currentCell) => sum + (currentCell.valueInUsd || 0),
     0,
   )
+
+  const isFullPosition =
+    (position?.debts.length || 0) + (position?.deposits.length || 0) === SUPPORTED_TOKENS.length
+  const isFullDeposits = position?.deposits.length === SUPPORTED_TOKENS.length
+
+  const showLendMore = !isFullPosition
+  const showDebtMore = !isFullDeposits
 
   const debtsSumUsd =
     position?.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
@@ -59,9 +67,11 @@ export function PositionSection() {
                   />
                 )
               })}
-              <button type="button" onClick={() => openLendIncreaseModal()}>
-                + lend more
-              </button>
+              {showLendMore && (
+                <button type="button" onClick={() => openLendIncreaseModal()}>
+                  + lend more
+                </button>
+              )}
             </div>
             <div>
               {debtsSumUsd && <h2>{formatUsd(debtsSumUsd)}</h2>}
@@ -84,6 +94,11 @@ export function PositionSection() {
                     />
                   )
                 })}
+                {showDebtMore && (
+                  <button type="button" onClick={() => openBorrowIncreaseModal()}>
+                    + lend more
+                  </button>
+                )}
               </div>
             </div>
           </div>
