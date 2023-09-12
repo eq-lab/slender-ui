@@ -8,9 +8,8 @@ import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-incre
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
 import { formatUsd } from '@/features/borrow-flow/formatters'
+import { SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
 import { PositionCell } from './components/position-cell'
-
-const FULL_POSITION_SIZE = 3
 
 export function PositionSection() {
   const position = useContextSelector(PositionContext, (state) => state.position)
@@ -21,8 +20,8 @@ export function PositionSection() {
   )
 
   const isFullPosition =
-    (position?.debts.length || 0) + (position?.deposits.length || 0) === FULL_POSITION_SIZE
-  const isFullDeposits = position?.deposits.length === FULL_POSITION_SIZE
+    (position?.debts.length || 0) + (position?.deposits.length || 0) === SUPPORTED_TOKENS.length
+  const isFullDeposits = position?.deposits.length === SUPPORTED_TOKENS.length
 
   const showLendMore = !isFullPosition
   const showDebtMore = !isFullDeposits
