@@ -1,40 +1,29 @@
-import { Token } from '@/shared/stellar/constants/tokens'
+import { TokenContracts } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
-import { useMarketData } from '../context/context'
-import { useTokenData } from './use-token-data'
+import { useMarketData } from '../context/hooks'
+import { useAvailableToBorrow } from './use-available-to-borrow'
 
 const makeFormatPercentWithPrecision =
   (multiplier: number) =>
   (value?: number | bigint): string =>
-    value === undefined ? '...' : `${(Number(value) * 100) / multiplier}%`
+    value === undefined ? '...' : `${+Number((Number(value) * 100) / multiplier).toFixed(1)}%`
 
-export function useMarketDataForDisplay(token: Token) {
-  const {
-    discount,
-    liquidationPenalty,
-    percentMultiplier,
-    borrowInterestRate,
-    lendInterestRate,
-    contractMultiplier,
-    collateralCoefficient = 0n,
-    debtCoefficient = 0n,
-    utilizationCapacity = 0,
-  } = usePoolData(token.address)
+export function useMarketDataForDisplay(token: TokenContracts): {
+  discount: string
+  liquidationPenalty: string
+  borrowInterestRate: string
+  lendInterestRate: string
+  totalSupplied: number
+  totalBorrowed: number
+  reserved: number
+  availableToBorrow: number
+} {
+  const { percentMultiplier, borrowInterestRate, lendInterestRate, contractMultiplier } =
+    usePoolData(token.address)
+  const marketData = useMarketData()
+  const { discount, liquidationPenalty } = marketData?.[token.address] ?? {}
 
-  const tokenCache = useMarketData()?.[token.address]
-  const decimals = tokenCache?.decimals ?? 0
-
-  const { totalSupply: sTotalSupply } = useTokenData(token.sAddress)
-  const totalSupplied =
-    ((Number(sTotalSupply) / contractMultiplier) * Number(collateralCoefficient)) / 10 ** decimals
-
-  const { totalSupply: debtTotalSupply } = useTokenData(token.debtAddress)
-  const totalBorrowed =
-    ((Number(debtTotalSupply) / contractMultiplier) * Number(debtCoefficient)) / 10 ** decimals
-
-  const reserved = totalSupplied * (1 - utilizationCapacity / percentMultiplier)
-
-  const availableToBorrow = totalSupplied - totalBorrowed - reserved
+  const { availableToBorrow, reserved, totalBorrowed, totalSupplied } = useAvailableToBorrow(token)
 
   const formatPercentage = makeFormatPercentWithPrecision(percentMultiplier)
   const formatInterestRate = makeFormatPercentWithPrecision(contractMultiplier)

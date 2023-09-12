@@ -1,60 +1,37 @@
 'use client'
 
-import React, { useMemo, useEffect } from 'react'
-import { tokens, SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
-import { useGetBalance, SorobanTokenRecord } from '@/entities/token/hooks/use-get-balance'
-import { WalletContext } from '@/entities/wallet/context/context'
+import React from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
-import { PositionCell } from '@/entities/position/types'
 import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decrease'
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
-import { useGetCryptocurrencyUsdRates } from '@/entities/currency-rates/hooks/use-get-cryptocurrency-usd-rates'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
-
-const sorobanTokenRecordToPositionCell = (tokenRecord: SorobanTokenRecord): PositionCell => ({
-  value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
-  token: tokenRecord.symbol.substring(1).toLowerCase() as PositionCell['token'],
-})
+import { formatUsd } from '@/features/borrow-flow/formatters'
+import { SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
+import { PositionCell } from './components/position-cell'
 
 export function PositionSection() {
-  const userAddress = useContextSelector(WalletContext, (state) => state.address)
   const position = useContextSelector(PositionContext, (state) => state.position)
-  const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
-  const rates = useGetCryptocurrencyUsdRates()
 
-  const debtSupportedTokensArray = useMemo(
-    () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].debtAddress),
-    [],
-  )
-  const lendSupportedTokensArray = useMemo(
-    () => SUPPORTED_TOKENS.map((tokenName) => tokens[tokenName].sAddress),
-    [],
+  const depositsSumUsd = position?.deposits.reduce(
+    (sum, currentCell) => sum + (currentCell.valueInUsd || 0),
+    0,
   )
 
-  const debtBalances = useGetBalance(debtSupportedTokensArray, userAddress)
-  const lendBalances = useGetBalance(lendSupportedTokensArray, userAddress)
+  const isFullPosition =
+    (position?.debts.length || 0) + (position?.deposits.length || 0) === SUPPORTED_TOKENS.length
+  const isFullDeposits = position?.deposits.length === SUPPORTED_TOKENS.length
 
-  useEffect(() => {
-    const debtPositions = debtBalances?.reduce((resultArr: PositionCell[], currentItem) => {
-      if (currentItem && Number(currentItem.balance))
-        resultArr.push(sorobanTokenRecordToPositionCell(currentItem))
-      return resultArr
-    }, [])
+  const showLendMore = !isFullPosition
+  const showDebtMore = !isFullDeposits
 
-    const lendPositions = lendBalances?.reduce((resultArr: PositionCell[], currentItem) => {
-      if (currentItem && Number(currentItem.balance))
-        resultArr.push(sorobanTokenRecordToPositionCell(currentItem))
-      return resultArr
-    }, [])
+  const debtsSumUsd =
+    position?.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
 
-    if (debtPositions?.length || lendPositions?.length)
-      setPosition({
-        deposits: lendPositions as [PositionCell, ...PositionCell[]],
-        debts: debtPositions || [],
-      })
-  }, [setPosition, debtBalances, lendBalances])
+  const positionHealth =
+    depositsSumUsd &&
+    Math.max(Math.round(depositsSumUsd && (1 - debtsSumUsd / depositsSumUsd) * 100), 0)
 
   const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
   const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
@@ -63,56 +40,71 @@ export function PositionSection() {
 
   return (
     <div>
-      <h2>Positions</h2>
-      {position ? (
-        <div style={{ display: 'flex', gap: 8 }}>
+      <h2>Position</h2>
+      {position?.deposits.length || position?.debts.length ? (
+        <>
           <div>
-            <h4>lend</h4>
-            {position.deposits.map((deposit) => {
-              if (!deposit) return null
-              const { token, value } = deposit
-              return (
-                <div key={token}>
-                  {value} {token}{' '}
-                  <button type="button" onClick={() => openLendDecreaseModal(token)}>
-                    -
-                  </button>
-                  <button type="button" onClick={() => openLendIncreaseModal(token)}>
-                    +
-                  </button>
-                </div>
-              )
-            })}
-            <button type="button" onClick={() => openLendIncreaseModal()}>
-              + lend more
-            </button>
+            <em>Health: {positionHealth}%</em>
           </div>
-          <div>
-            <h4>borrowed</h4>
+          <div style={{ display: 'flex', gap: 8 }}>
             <div>
-              {position.debts.map((debt) => {
-                if (!debt) return null
-                const { token, value } = debt
+              {depositsSumUsd && <h2>{formatUsd(depositsSumUsd)}</h2>}
+              <h4>Lent</h4>
+              {position.deposits.map((deposit) => {
+                const { token, valueInUsd } = deposit
+                const depositPersentage =
+                  valueInUsd && depositsSumUsd
+                    ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
+                    : undefined
                 return (
-                  <div key={token}>
-                    {value} {token}{' '}
-                    <button type="button" onClick={() => openBorrowDecreaseModal(token)}>
-                      -
-                    </button>
-                    <button type="button" onClick={() => openBorrowIncreaseModal(token)}>
-                      +
-                    </button>
-                  </div>
+                  <PositionCell
+                    key={token}
+                    position={deposit}
+                    percentage={depositPersentage}
+                    openDecreaseModal={() => openLendDecreaseModal(token)}
+                    openIncreaseModal={() => openLendIncreaseModal(token)}
+                    isLendPosition
+                  />
                 )
               })}
-              <button type="button" onClick={() => openBorrowIncreaseModal()}>
-                + debt more
-              </button>
+              {showLendMore && (
+                <button type="button" onClick={() => openLendIncreaseModal()}>
+                  + lend more
+                </button>
+              )}
+            </div>
+            <div>
+              {debtsSumUsd && <h2>{formatUsd(debtsSumUsd)}</h2>}
+              <h4>Borrowed</h4>
+              <div>
+                {position.debts.map((debt) => {
+                  const { token, valueInUsd } = debt
+                  const debtPersentage =
+                    valueInUsd && debtsSumUsd
+                      ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)
+                      : undefined
+
+                  return (
+                    <PositionCell
+                      key={token}
+                      position={debt}
+                      percentage={debtPersentage}
+                      openDecreaseModal={() => openBorrowDecreaseModal(token)}
+                      openIncreaseModal={() => openBorrowIncreaseModal(token)}
+                    />
+                  )
+                })}
+                {showDebtMore && (
+                  <button type="button" onClick={() => openBorrowIncreaseModal()}>
+                    + lend more
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       ) : (
-        <>empty</>
+        'No positions'
       )}
       {borrowDecreaseModal}
       {borrowIncreaseModal}

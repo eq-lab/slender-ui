@@ -1,7 +1,8 @@
 import React from 'react'
-import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
-import { mockTokenInfoByType } from '@/shared/stellar/constants/mock-tokens-info'
+import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { useTokenCache } from '@/entities/token/context/hooks'
+import { useTokenInfo } from '../../../hooks/use-token-info'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
 
@@ -22,18 +23,27 @@ export function BorrowStepModal({
   debtToken,
   depositToken,
 }: Props) {
-  const borrowCoinInfo = mockTokenInfoByType[debtToken]
-  const { discount, usd, userValue } = mockTokenInfoByType[depositToken]
+  const borrowCoinInfo = useTokenInfo(debtToken)
+  const { discount, priceInUsd, userBalance } = useTokenInfo(depositToken)
 
-  const max = Math.floor((userValue * discount * usd * DEFAULT_HEALTH_VALUE) / borrowCoinInfo.usd)
-  const { borrowInterestRate, availableToBorrow } = useMarketDataForDisplay(tokens[debtToken])
+  const { borrowInterestRate, availableToBorrow } = useMarketDataForDisplay(
+    tokenContracts[debtToken],
+  )
+  const tokenCache = useTokenCache()?.[tokenContracts[debtToken].address]
+
+  const max = Math.min(
+    Math.floor(
+      (userBalance * discount * priceInUsd * DEFAULT_HEALTH_VALUE) / borrowCoinInfo.priceInUsd,
+    ),
+    availableToBorrow,
+  )
 
   const infoSlot = (
     <div>
       <h4>{debtToken} Coin</h4>
       <div>Borrow APR {borrowInterestRate}</div>
       <div>
-        Available {availableToBorrow} {tokens[debtToken].code}
+        Available {availableToBorrow} {tokenCache?.symbol}
       </div>
     </div>
   )
@@ -55,7 +65,7 @@ export function BorrowStepModal({
         </button>
       </div>
       <div>
-        <button onClick={onContinue} type="button" disabled={!value || Number(value) > max}>
+        <button onClick={onContinue} type="button" disabled={!Number(value) || Number(value) > max}>
           Continue
         </button>
       </div>

@@ -1,20 +1,16 @@
 import { useEffect, useState } from 'react'
-import { getReserve, collatCoeff, debtCoeff } from '@bindings/pool'
-
-const PERCENT_PRECISION = 1e4
-const CONTRACT_MATH_PRECISION = 1e9
+import { collatCoeff, debtCoeff, getReserve } from '@bindings/pool'
+import { TokenAddress } from '@/shared/stellar/constants/tokens'
+import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../contract-constants'
 
 type PoolData = {
   borrowInterestRate?: bigint
   lendInterestRate?: bigint
-  discount?: number
-  liquidationPenalty?: number
-  utilizationCapacity?: number
   collateralCoefficient?: bigint
   debtCoefficient?: bigint
 }
 
-export function usePoolData(tokenAddress: string): PoolData & {
+export function usePoolData(tokenAddress: TokenAddress): PoolData & {
   percentMultiplier: number
   contractMultiplier: number
 } {
@@ -34,12 +30,6 @@ export function usePoolData(tokenAddress: string): PoolData & {
       setData({
         borrowInterestRate: poolReserve.borrower_ir,
         lendInterestRate: poolReserve.lender_ir,
-        // @ts-ignore
-        discount: poolReserve.configuration.get('discount'),
-        // @ts-ignore
-        liquidationPenalty: poolReserve.configuration.get('liq_bonus') - PERCENT_PRECISION,
-        // @ts-ignore
-        utilizationCapacity: poolReserve.configuration.get('util_cap'),
         collateralCoefficient: rawCollateralCoefficient.isOk()
           ? rawCollateralCoefficient.unwrap()
           : undefined,
