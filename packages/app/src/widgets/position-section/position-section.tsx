@@ -10,6 +10,8 @@ import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
 import { formatUsd } from '@/features/borrow-flow/formatters'
 import { PositionCell } from './components/position-cell'
 
+const FULL_POSITION_SIZE = 3
+
 export function PositionSection() {
   const position = useContextSelector(PositionContext, (state) => state.position)
 
@@ -17,6 +19,13 @@ export function PositionSection() {
     (sum, currentCell) => sum + (currentCell.valueInUsd || 0),
     0,
   )
+
+  const isFullPosition =
+    (position?.debts.length || 0) + (position?.deposits.length || 0) === FULL_POSITION_SIZE
+  const isFullDeposits = position?.deposits.length === FULL_POSITION_SIZE
+
+  const showLendMore = !isFullPosition
+  const showDebtMore = !isFullDeposits
 
   const debtsSumUsd =
     position?.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
@@ -59,9 +68,11 @@ export function PositionSection() {
                   />
                 )
               })}
-              <button type="button" onClick={() => openLendIncreaseModal()}>
-                + lend more
-              </button>
+              {showLendMore && (
+                <button type="button" onClick={() => openLendIncreaseModal()}>
+                  + lend more
+                </button>
+              )}
             </div>
             <div>
               {debtsSumUsd && <h2>{formatUsd(debtsSumUsd)}</h2>}
@@ -84,6 +95,11 @@ export function PositionSection() {
                     />
                   )
                 })}
+                {showDebtMore && (
+                  <button type="button" onClick={() => openBorrowIncreaseModal()}>
+                    + lend more
+                  </button>
+                )}
               </div>
             </div>
           </div>
