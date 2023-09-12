@@ -4,7 +4,7 @@ import React from 'react'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
-import { formatUsd } from '@/features/borrow-flow/formatters'
+import { formatUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 
 export function PositionCell({

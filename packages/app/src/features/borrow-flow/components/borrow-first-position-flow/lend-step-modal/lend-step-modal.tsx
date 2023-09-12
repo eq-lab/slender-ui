@@ -3,28 +3,20 @@ import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/token
 import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { PositionSummary } from '@/entities/position/components/position-summary'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
-import { formatUsd } from '../../../formatters'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 
 interface Props {
   onClose: () => void
-  onPrev?: () => void
   debtValue: string
   debtToken: SupportedToken
   depositTokens: [SupportedToken, SupportedToken]
   onSend: (value: Position) => void
 }
 
-export function LendStepModal({
-  onClose,
-  onPrev,
-  debtValue,
-  debtToken,
-  depositTokens,
-  onSend,
-}: Props) {
+export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, onSend }: Props) {
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
@@ -78,17 +70,19 @@ export function LendStepModal({
 
   const error = borrowCapacityError || firstInputError || secondInputError
 
-  const infoSlot = (
-    <div>
-      <h4>Position summary</h4>
-      <div>{health}%</div>
-      <div>Debt {formatUsd(debtValueInUSD)}</div>
-      <div style={{ color: borrowCapacityError ? 'red' : '' }}>Collateral {formatUsd(deposit)}</div>
-      <div>Borrow capacity {formatUsd(borrowCapacity)}</div>
-    </div>
-  )
   return (
-    <ModalLayout onClose={onClose} onPrev={onPrev} infoSlot={infoSlot}>
+    <ModalLayout
+      onClose={onClose}
+      infoSlot={
+        <PositionSummary
+          health={health}
+          borrowCapacity={borrowCapacity}
+          depositSumUsd={deposit}
+          debtUsd={debtValueInUSD}
+          collateralError={borrowCapacityError}
+        />
+      }
+    >
       <h3>Add collateral</h3>
       <div>
         <input

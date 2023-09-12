@@ -7,7 +7,7 @@ import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decre
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
-import { formatUsd } from '@/features/borrow-flow/formatters'
+import { formatUsd } from '@/shared/formatters'
 import { PositionCell } from './components/position-cell'
 
 export function PositionSection() {

@@ -8,6 +8,7 @@ export const primaryFont = PlusJakartaSans({ subsets: ['latin'] })
 export const GlobalStyle = createGlobalStyle`
 :root {
   --primary-font: ${primaryFont.style.fontFamily};
+  --fill-secondary: rgba(204, 187, 184, 0.16);
 }
 
 * {
@@ -19,7 +20,6 @@ export const GlobalStyle = createGlobalStyle`
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
   font-family: var(--primary-font);
   font-weight: 500;
   text-shadow: 0 0 0;
