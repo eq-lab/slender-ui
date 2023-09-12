@@ -6,7 +6,7 @@ import { ModalLayout } from '../modal-layout'
 
 interface Props {
   onClose: () => void
-  onSend: (value: number) => void
+  onSend: (value: string) => void
   depositToken: SupportedToken
 }
 
@@ -47,7 +47,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props)
       </div>
       <div>
         <button
-          onClick={() => onSend(Number(value))}
+          onClick={() => onSend(value)}
           type="button"
           disabled={!value || Number(value) > max}
         >

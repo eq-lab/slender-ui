@@ -11,7 +11,7 @@ interface Props {
   depositSumUsd: number
   onClose: () => void
   token: SupportedToken
-  onSend: (value: Partial<Record<SupportedToken, number>>) => void
+  onSend: (value: Partial<Record<SupportedToken, bigint>>) => void
   depositTokens: SupportedToken[]
 }
 
@@ -65,13 +65,13 @@ export function LendIncreaseModal({
   const coreInputError = Number(value) > coreDepositInfo.userBalance
   const extraInputError = Number(extraValue) > (extraDepositInfo?.userBalance || 0)
 
-  const getSaveData = (): Partial<Record<SupportedToken, number>> => {
-    const core = { [coreDepositToken]: Number(value) }
+  const getSaveData = (): Partial<Record<SupportedToken, bigint>> => {
+    const core = { [coreDepositToken]: BigInt(value) }
 
     if (showExtraInput && extraDebtToken) {
       return {
         ...core,
-        [extraDebtToken]: Number(extraValue),
+        [extraDebtToken]: BigInt(extraValue),
       }
     }
 

@@ -5,7 +5,7 @@ export const useDebtUsd = (debts: PositionType['debts'] = []): number => {
   const priceInUsd = usePriceInUsd()
 
   return debts.reduce(
-    (sum, { token, value }) => (priceInUsd[token] ? sum + value * priceInUsd[token] : sum),
+    (sum, { token, value }) => (priceInUsd[token] ? sum + Number(value) * priceInUsd[token] : sum),
     0,
   )
 }
