@@ -44,12 +44,12 @@ export function PositionSection() {
       {position?.deposits.length || position?.debts.length ? (
         <>
           <div>
-            <em>Health - {positionHealth}</em>
+            <em>Health: {positionHealth}%</em>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <div>
               {depositsSumUsd && <h2>{formatUsd(depositsSumUsd)}</h2>}
-              <h4>Lend</h4>
+              <h4>Lent</h4>
               {position.deposits.map((deposit) => {
                 const { token, valueInUsd } = deposit
                 const depositPersentage =
@@ -60,7 +60,7 @@ export function PositionSection() {
                   <PositionCell
                     key={token}
                     position={deposit}
-                    persentage={depositPersentage}
+                    percentage={depositPersentage}
                     openDecreaseModal={() => openLendDecreaseModal(token)}
                     openIncreaseModal={() => openLendIncreaseModal(token)}
                     isLendPosition
@@ -88,7 +88,7 @@ export function PositionSection() {
                     <PositionCell
                       key={token}
                       position={debt}
-                      persentage={debtPersentage}
+                      percentage={debtPersentage}
                       openDecreaseModal={() => openBorrowDecreaseModal(token)}
                       openIncreaseModal={() => openBorrowIncreaseModal(token)}
                     />
