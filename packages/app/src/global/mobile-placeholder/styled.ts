@@ -73,11 +73,7 @@ export const Wrapper = styled.div`
 
 export const Logo = styled.img`
   display: block;
-  margin: 192px 0;
-
-  @media (min-width: 768px) {
-    margin: 282px 0;
-  }
+  margin: auto;
 `
 
 export const Container = styled.div`

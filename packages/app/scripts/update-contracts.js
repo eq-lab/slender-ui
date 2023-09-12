@@ -11,7 +11,6 @@ const OUTPUT = '../src/shared/stellar/constants/contracts.ts'
   const response = await fetch(CONTRACTS_URL)
   const text = await response.text()
   const parsed = dotenv.parse(text)
-  // convert parsed to a file with constants
   const constants = Object.entries(parsed).reduce(
     (output, [key, value]) => `${output}export const ${key} = ${JSON.stringify(value)}\n`,
     `// ${COMMENT}

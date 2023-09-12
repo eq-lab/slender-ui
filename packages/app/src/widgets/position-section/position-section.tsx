@@ -8,6 +8,7 @@ import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-incre
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
 import { formatUsd } from '@/shared/formatters'
+import { SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
 import { PositionCell } from './components/position-cell'
 
 export function PositionSection() {
@@ -17,6 +18,13 @@ export function PositionSection() {
     (sum, currentCell) => sum + (currentCell.valueInUsd || 0),
     0,
   )
+
+  const isFullPosition =
+    (position?.debts.length || 0) + (position?.deposits.length || 0) === SUPPORTED_TOKENS.length
+  const isFullDeposits = position?.deposits.length === SUPPORTED_TOKENS.length
+
+  const showLendMore = !isFullPosition
+  const showDebtMore = !isFullDeposits
 
   const debtsSumUsd =
     position?.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
@@ -36,12 +44,12 @@ export function PositionSection() {
       {position?.deposits.length || position?.debts.length ? (
         <>
           <div>
-            <em>Health - {positionHealth}</em>
+            <em>Health: {positionHealth}%</em>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <div>
               {depositsSumUsd && <h2>{formatUsd(depositsSumUsd)}</h2>}
-              <h4>Lend</h4>
+              <h4>Lent</h4>
               {position.deposits.map((deposit) => {
                 const { token, valueInUsd } = deposit
                 const depositPersentage =
@@ -52,16 +60,18 @@ export function PositionSection() {
                   <PositionCell
                     key={token}
                     position={deposit}
-                    persentage={depositPersentage}
+                    percentage={depositPersentage}
                     openDecreaseModal={() => openLendDecreaseModal(token)}
                     openIncreaseModal={() => openLendIncreaseModal(token)}
                     isLendPosition
                   />
                 )
               })}
-              <button type="button" onClick={() => openLendIncreaseModal()}>
-                + lend more
-              </button>
+              {showLendMore && (
+                <button type="button" onClick={() => openLendIncreaseModal()}>
+                  + lend more
+                </button>
+              )}
             </div>
             <div>
               {debtsSumUsd && <h2>{formatUsd(debtsSumUsd)}</h2>}
@@ -78,12 +88,17 @@ export function PositionSection() {
                     <PositionCell
                       key={token}
                       position={debt}
-                      persentage={debtPersentage}
+                      percentage={debtPersentage}
                       openDecreaseModal={() => openBorrowDecreaseModal(token)}
                       openIncreaseModal={() => openBorrowIncreaseModal(token)}
                     />
                   )
                 })}
+                {showDebtMore && (
+                  <button type="button" onClick={() => openBorrowIncreaseModal()}>
+                    + lend more
+                  </button>
+                )}
               </div>
             </div>
           </div>

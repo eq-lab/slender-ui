@@ -9,6 +9,10 @@ import { getReserve, ReserveData } from '@bindings/pool'
 import { CachedTokens, MarketContext, PoolData } from './context'
 import { PERCENT_PRECISION } from '../contract-constants'
 
+const NATIVE_ID = 'native'
+const NATIVE_NAME = 'Lumen'
+const NATIVE_SYMBOL = 'XLM'
+
 type Rest = [string, string, number]
 
 const CACHED_TOKEN_ADDRESSES = [
@@ -46,7 +50,11 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
         const name = restValues.shift() as string
         const symbol = restValues.shift() as string
         const decimals = restValues.shift() as number
-        cached[tokenAddress] = { name, symbol, decimals }
+        cached[tokenAddress] = {
+          name: name === NATIVE_ID ? NATIVE_NAME : name,
+          symbol: symbol === NATIVE_ID ? NATIVE_SYMBOL : symbol,
+          decimals,
+        }
         return cached
       }, {} as CachedTokens)
       setCachedTokens(newCachedTokens)

@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
@@ -9,13 +7,13 @@ import { useTokenCache } from '@/entities/token/context/hooks'
 
 export function PositionCell({
   position,
-  persentage,
+  percentage,
   openDecreaseModal,
   openIncreaseModal,
   isLendPosition,
 }: {
   position: PositionCellType
-  persentage?: number
+  percentage?: number
   openDecreaseModal: () => void
   openIncreaseModal: () => void
   isLendPosition?: boolean
@@ -31,19 +29,19 @@ export function PositionCell({
     <div key={token}>
       <em>
         {tokenCache?.name}
-        {persentage && persentage !== 100 ? ` - ${persentage}%` : null}
+        {percentage && percentage !== 100 ? `: ${percentage}%` : null}
       </em>
       <br />
       {value} {token.toUpperCase()}{' '}
       {isLendPosition && (
         <div>
-          <em>{discount}% discount</em>
+          <em>{discount} discount</em>
         </div>
       )}
       {borrowInterestRate && <div>{isLendPosition ? lendInterestRate : borrowInterestRate}</div>}
       {valueInUsd && value !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
       <button type="button" onClick={openDecreaseModal}>
-        -
+        &minus;
       </button>
       <button type="button" onClick={openIncreaseModal}>
         +
