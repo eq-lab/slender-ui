@@ -29,7 +29,7 @@ export const useActionModal = ({
   const { modal: firstPositionModal, open: firstPositionOpen } = useFirstPosition(tokenName)
   const { modal: increaseModal, open: increaseOpen } = useIncrease()
 
-  const hasSameDeposit = Boolean(
+  const disabled = Boolean(
     position?.[type === 'borrow' ? 'deposits' : 'debts']
       .map((cell) => cell.token)
       .includes(tokenName),
@@ -47,6 +47,6 @@ export const useActionModal = ({
   return {
     modal,
     open,
-    disabled: hasSameDeposit,
+    disabled,
   }
 }
