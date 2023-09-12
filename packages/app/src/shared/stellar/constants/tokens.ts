@@ -37,7 +37,7 @@ export type SToken = (typeof sToken)[keyof typeof sToken]
 export type DebtToken = (typeof debtToken)[keyof typeof debtToken]
 export type TokenAddress = Underlying | SToken | DebtToken
 
-export interface TokenAddresses {
+export interface TokenContracts {
   address: Underlying
   sAddress: SToken
   debtAddress: DebtToken
@@ -52,5 +52,5 @@ export const tokenContracts = SUPPORTED_TOKENS.reduce(
     }
     return acc
   },
-  {} as Record<SupportedToken, TokenAddresses>,
+  {} as Record<SupportedToken, TokenContracts>,
 )

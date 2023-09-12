@@ -1,4 +1,4 @@
-import { TokenAddresses } from '@/shared/stellar/constants/tokens'
+import { TokenContracts } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
 import { useMarketData } from '../context/hooks'
 import { useAvailableToBorrow } from './use-available-to-borrow'
@@ -8,7 +8,7 @@ const makeFormatPercentWithPrecision =
   (value?: number | bigint): string =>
     value === undefined ? '...' : `${+Number((Number(value) * 100) / multiplier).toFixed(1)}%`
 
-export function useMarketDataForDisplay(token: TokenAddresses): {
+export function useMarketDataForDisplay(token: TokenContracts): {
   discount: string
   liquidationPenalty: string
   borrowInterestRate: string
