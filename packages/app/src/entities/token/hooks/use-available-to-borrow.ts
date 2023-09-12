@@ -1,9 +1,9 @@
-import { Token } from '@/shared/stellar/constants/tokens'
+import { TokenContracts } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
 import { useTokenData } from './use-token-data'
 import { useMarketData, useTokenCache } from '../context/hooks'
 
-export function useAvailableToBorrow(token: Token): {
+export function useAvailableToBorrow(token: TokenContracts): {
   totalSupplied: number
   totalBorrowed: number
   reserved: number

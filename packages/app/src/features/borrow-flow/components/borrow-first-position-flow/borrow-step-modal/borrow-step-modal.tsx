@@ -1,6 +1,7 @@
 import React from 'react'
-import { SupportedToken, tokens } from '@/shared/stellar/constants/tokens'
+import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { useTokenCache } from '@/entities/token/context/hooks'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
@@ -25,7 +26,10 @@ export function BorrowStepModal({
   const borrowCoinInfo = useTokenInfo(debtToken)
   const { discount, priceInUsd, userBalance } = useTokenInfo(depositToken)
 
-  const { borrowInterestRate, availableToBorrow } = useMarketDataForDisplay(tokens[debtToken])
+  const { borrowInterestRate, availableToBorrow } = useMarketDataForDisplay(
+    tokenContracts[debtToken],
+  )
+  const tokenCache = useTokenCache()?.[tokenContracts[debtToken].address]
 
   const max = Math.min(
     Math.floor(
@@ -39,7 +43,7 @@ export function BorrowStepModal({
       <h4>{debtToken} Coin</h4>
       <div>Borrow APR {borrowInterestRate}</div>
       <div>
-        Available {availableToBorrow} {tokens[debtToken].code}
+        Available {availableToBorrow} {tokenCache?.symbol}
       </div>
     </div>
   )

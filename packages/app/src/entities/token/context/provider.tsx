@@ -4,16 +4,20 @@ import React, { useEffect, useState } from 'react'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
 import { decodeStr, decodeU32 } from '@/shared/stellar/decoders'
 
-import {
-  CACHED_TOKEN_ADDRESSES,
-  CACHED_MARKET_ADDRESSES,
-  Underlying,
-} from '@/shared/stellar/constants/tokens'
-import { ReserveData, getReserve } from '@bindings/pool'
+import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens'
+import { getReserve, ReserveData } from '@bindings/pool'
 import { CachedTokens, MarketContext, PoolData } from './context'
 import { PERCENT_PRECISION } from '../contract-constants'
 
 type Rest = [string, string, number]
+
+const CACHED_TOKEN_ADDRESSES = [
+  ...Object.values(underlying),
+  ...Object.values(sToken),
+  ...Object.values(debtToken),
+] as const
+
+const CACHED_POOL_ADDRESSES = [...Object.values(underlying)]
 
 export function TokenProvider({ children }: { children: JSX.Element }) {
   const [cachedTokens, setCachedTokens] = useState<CachedTokens>()
@@ -32,26 +36,23 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
           invoke('decimals', decodeU32),
         ]
       }, [])
-      const marketTxs = CACHED_MARKET_ADDRESSES.map((asset) => getReserve({ asset }))
+      const marketTxs = CACHED_POOL_ADDRESSES.map((asset) => getReserve({ asset }))
       const [restValues, marketValues] = (await Promise.all([
         Promise.all(cacheTxs),
         Promise.all(marketTxs),
       ])) as [[...Rest, ...Rest[]], ReserveData[]]
 
-      const newCachedTokens = CACHED_TOKEN_ADDRESSES.reduce<CachedTokens>(
-        (cached, tokenAddress) => {
-          const name = restValues.shift() as string
-          const symbol = restValues.shift() as string
-          const decimals = restValues.shift() as number
-          cached[tokenAddress] = { name, symbol, decimals }
-          return cached
-        },
-        {} as CachedTokens,
-      )
+      const newCachedTokens = CACHED_POOL_ADDRESSES.reduce<CachedTokens>((cached, tokenAddress) => {
+        const name = restValues.shift() as string
+        const symbol = restValues.shift() as string
+        const decimals = restValues.shift() as number
+        cached[tokenAddress] = { name, symbol, decimals }
+        return cached
+      }, {} as CachedTokens)
       setCachedTokens(newCachedTokens)
 
       const newMarketData = marketValues.reduce<PoolData>((cached, poolReserve, currentIndex) => {
-        cached[CACHED_MARKET_ADDRESSES[currentIndex] as Underlying] = {
+        cached[CACHED_TOKEN_ADDRESSES[currentIndex]!] = {
           // @ts-ignore
           discount: poolReserve.configuration.get('discount'),
           // @ts-ignore

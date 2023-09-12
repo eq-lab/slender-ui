@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import * as SorobanClient from 'soroban-client';
 import { Buffer } from "buffer";
 import { ResponseTypes } from './method-options.js';

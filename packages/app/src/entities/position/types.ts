@@ -7,6 +7,6 @@ export interface PositionCell {
 }
 
 export interface Position {
-  deposits: [PositionCell, ...PositionCell[]]
+  deposits: PositionCell[]
   debts: PositionCell[]
 }
