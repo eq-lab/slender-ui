@@ -8,7 +8,7 @@ import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 
 interface Props {
-  debt: number
+  debt: bigint
   depositSumUsd: number
   onClose: () => void
   token: SupportedToken
@@ -36,7 +36,7 @@ export function BorrowDecreaseModal({
     actualDepositUsd: depositSumUsd,
   })
 
-  const debtDelta = debt - Number(value)
+  const debtDelta = debt - BigInt(value)
   const debtError = debtDelta < 0
 
   return (
@@ -58,11 +58,11 @@ export function BorrowDecreaseModal({
       <h3>How much to pay off</h3>
       <input onChange={(e) => setValue(e.target.value)} type="number" value={value} />
       <button type="button" onClick={() => setValue(String(debt))}>
-        max {debt}
+        max {debt.toString(10)}
       </button>
       <div>
         <button
-          onClick={() => onSend({ value: Number(value), token })}
+          onClick={() => onSend({ value: BigInt(value), token })}
           type="button"
           disabled={debtError}
         >

@@ -13,9 +13,9 @@ export const useLendFirstPosition = (
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
   const [isModalOpen, setModalOpenStatus] = useState(false)
 
-  const handleSend = (value: number) => {
+  const handleSend = (value: string) => {
+    setPosition({ debts: [], deposits: [{ token, value: BigInt(value) }] })
     setModalOpenStatus(false)
-    setPosition({ debts: [], deposits: [{ token, value }] })
   }
 
   const modal = isModalOpen ? (

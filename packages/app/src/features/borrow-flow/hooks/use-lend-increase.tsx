@@ -35,7 +35,7 @@ export const useLendIncrease = (): {
   const renderModal = () => {
     if (!position || !modalToken) return null
 
-    const handleSend = (sendValue: Partial<Record<'usdc' | 'xlm' | 'xrp', number>>) => {
+    const handleSend = (sendValue: Partial<Record<SupportedToken, bigint>>) => {
       const prevDepositsObj = position.deposits.reduce(
         (acc, el) => ({
           ...acc,
@@ -46,7 +46,7 @@ export const useLendIncrease = (): {
       const finalDebtsObj = sumObj(prevDepositsObj, sendValue)
 
       const arr = Object.entries(finalDebtsObj).map((entry) => {
-        const [key, value] = entry as [SupportedToken, number]
+        const [key, value] = entry as [SupportedToken, bigint]
         return {
           token: key,
           value,
