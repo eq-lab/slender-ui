@@ -9,7 +9,7 @@ import { LendIncreaseModal } from '../components/lend-increase-modal'
 import { excludeSupportedTokens, sumObj } from '../utils'
 
 export const useLendIncrease = (): {
-  modal: React.ReactNode
+  modal: JSX.Element | null
   open: (value?: SupportedToken) => void
 } => {
   const position = useContextSelector(PositionContext, (state) => state.position)
