@@ -28,9 +28,9 @@ export function LendIncreaseModal({
   depositTokens,
   debtSumUsd,
 }: Props) {
+  const getSymbolByToken = useGetSymbolByToken()
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
-  const getSymbolByToken = useGetSymbolByToken()
 
   const [coreDepositToken, setCoreDepositToken] = useState<SupportedToken>(token)
   const [isDepositListOpen, setIsDepositListOpen] = useState(false)
