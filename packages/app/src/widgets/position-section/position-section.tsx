@@ -138,10 +138,6 @@ export function PositionSection() {
       ) : (
         'No positions'
       )}
-      {borrowDecreaseModal}
-      {borrowIncreaseModal}
-      {lendDecreaseModal}
-      {lendIncreaseModal}
     </PositionWrapper>
   )
 }
