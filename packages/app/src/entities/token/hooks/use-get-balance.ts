@@ -1,8 +1,8 @@
-import * as SorobanClient from 'soroban-client'
 import { useEffect, useRef, useState } from 'react'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
 import { decodeI128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
+import { addressToScVal } from '@/shared/stellar/encoders'
 import { CachedTokens } from '../context/context'
 import { useTokenCache } from '../context/hooks'
 
@@ -14,8 +14,6 @@ export interface SorobanTokenRecord {
 }
 
 const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
-
-const encodeAddress = (account: string) => new SorobanClient.Address(account).toScVal()
 
 const isArraysEqual = <T>(a?: T[], b?: T[]) =>
   a?.length === b?.length && a?.every((value, index) => value === b?.[index])
@@ -38,7 +36,7 @@ export const useGetBalance = (
         setBalanceInfo([])
         return
       }
-      const balanceTxParams = [encodeAddress(userAddress)]
+      const balanceTxParams = [addressToScVal(userAddress)]
 
       const balances: SorobanTokenRecord[] = (
         await Promise.all(
