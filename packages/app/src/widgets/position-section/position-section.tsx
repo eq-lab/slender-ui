@@ -5,9 +5,9 @@ import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decre
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
-import { formatUsd } from '@/shared/formatters'
+import { formatUsd, formatPercent } from '@/shared/formatters'
 import { SUPPORTED_TOKENS, tokenContracts } from '@/shared/stellar/constants/tokens'
-import { Typography, H1, H2 } from '@/shared/ui/typography'
+import Typography from '@marginly/ui/components/typography'
 import { useMarketData } from '@/entities/token/context/hooks'
 import { PositionCell } from './components/position-cell'
 import {
@@ -39,23 +39,27 @@ export function PositionSection() {
     depositsSumUsd &&
     Math.max(Math.round(depositsSumUsd && (1 - debtsSumUsd / depositsSumUsd) * 100), 0)
 
-  const debtSumInterestRate = position?.debts?.reduce((sum, currentDebt) => {
-    const { valueInUsd, token } = currentDebt
-    if (!marketData) return sum
-    const { debtAddress, sAddress } = tokenContracts[token]
-    const { borrowInterestRate } = marketData[debtAddress] || {}
-    const interestRatePercentNum = parseInt(borrowInterestRate || '', 10) || 0
-    const fractionInSumUsd = valueInUsd ? valueInUsd / debtsSumUsd : 0
-    return sum + interestRatePercentNum * fractionInSumUsd
-  }, 0)
+  const debtSumInterestRate =
+    position?.debts?.reduce((sum, currentDebt) => {
+      const { valueInUsd, token } = currentDebt
+      if (!marketData) return sum
+      const { address } = tokenContracts[token]
+      const { borrowInterestRate } = marketData[address] || {}
+      const interestRatePercentNum = parseInt(borrowInterestRate || '', 10) || 0
+      const fractionInSumUsd = valueInUsd ? valueInUsd / debtsSumUsd : 0
+      return sum + interestRatePercentNum * fractionInSumUsd
+    }, 0) || 0
 
-  const depositSumInterestRate = position?.deposits?.reduce((sum, currentDeposit) => {
-    const { valueInUsd, token } = currentDeposit
-    const interestRatePercentNum =
-      (marketData && parseInt(marketData[token]?.lendInterestRate || '', 10)) || 0
-    const fractionInSumUsd = valueInUsd ? valueInUsd / depositsSumUsd : 0
-    return sum + interestRatePercentNum * fractionInSumUsd
-  }, 0)
+  const depositSumInterestRate =
+    position?.deposits?.reduce((sum, currentDeposit) => {
+      const { valueInUsd, token } = currentDeposit
+      if (!marketData) return sum
+      const { address } = tokenContracts[token]
+      const { lendInterestRate } = marketData[address] || {}
+      const interestRatePercentNum = parseInt(lendInterestRate || '', 10) || 0
+      const fractionInSumUsd = valueInUsd ? valueInUsd / depositsSumUsd : 0
+      return sum + interestRatePercentNum * fractionInSumUsd
+    }, 0) || 0
 
   const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
   const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
@@ -64,7 +68,7 @@ export function PositionSection() {
 
   return (
     <PositionWrapper>
-      <H1>Position</H1>
+      <Typography>Position</Typography>
       <div>
         <em>Health: {positionHealth}%</em>
       </div>
@@ -72,8 +76,9 @@ export function PositionSection() {
         <PositionContainer>
           <PositionSideContainer>
             <PositionHeadingContainer>
-              {depositsSumUsd && <H2>{formatUsd(depositsSumUsd)}</H2>}
-              <Typography>Lent - {debtSumInterestRate}</Typography>
+              {depositsSumUsd && <Typography>{formatUsd(depositsSumUsd)}</Typography>}
+              <Typography>Lent</Typography>
+              <Typography>+{formatPercent(depositSumInterestRate)} APR</Typography>
             </PositionHeadingContainer>
             {position.deposits.map((deposit) => {
               const { token, valueInUsd } = deposit
@@ -100,8 +105,9 @@ export function PositionSection() {
           </PositionSideContainer>
           <PositionSideContainer>
             <PositionHeadingContainer>
-              {debtsSumUsd && <H2>{formatUsd(debtsSumUsd)}</H2>}
+              {debtsSumUsd && <Typography>{formatUsd(debtsSumUsd)}</Typography>}
               <Typography>Borrowed</Typography>
+              <Typography>-{formatPercent(debtSumInterestRate)} APR</Typography>
             </PositionHeadingContainer>
             <div>
               {position.debts.map((debt) => {
