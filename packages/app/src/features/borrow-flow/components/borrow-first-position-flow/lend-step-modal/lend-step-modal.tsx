@@ -145,10 +145,10 @@ export function LendStepModal({
         disabled={error}
         onClick={() =>
           onSend({
-            debts: [{ token: debtToken, value: Number(debtValue) }],
+            debts: [{ token: debtToken, value: BigInt(debtValue) }],
             deposits: [
-              { token: coreDepositToken, value: Number(coreValue) },
-              ...(showExtraInput ? [{ token: extraDepositToken, value: Number(extraValue) }] : []),
+              { token: coreDepositToken, value: BigInt(coreValue) },
+              ...(showExtraInput ? [{ token: extraDepositToken, value: BigInt(extraValue) }] : []),
             ],
           })
         }

@@ -12,7 +12,7 @@ interface Props {
   depositSumUsd: number
   onClose: () => void
   token: SupportedToken
-  onSend: (value: Partial<Record<SupportedToken, number>>) => void
+  onSend: (value: Partial<Record<SupportedToken, bigint>>) => void
   debtTokens: SupportedToken[]
 }
 
@@ -81,13 +81,13 @@ export function BorrowIncreaseModal({
   const coreInputError = Number(value) > coreInputMax
   const extraInputError = Number(extraValue) > (extraInputMax || 0)
 
-  const getSaveData = (): Partial<Record<SupportedToken, number>> => {
-    const core = { [coreDebtToken]: Number(value) }
+  const getSaveData = (): Partial<Record<SupportedToken, bigint>> => {
+    const core = { [coreDebtToken]: BigInt(value) }
 
     if (showExtraInput && extraDebtToken) {
       return {
         ...core,
-        [extraDebtToken]: Number(extraValue),
+        [extraDebtToken]: BigInt(extraValue),
       }
     }
 
@@ -122,12 +122,12 @@ export function BorrowIncreaseModal({
       {coreDebtToken}
 
       <button type="button" onClick={() => setValue(String(coreInputMax))}>
-        max {coreInputMax}
+        Max {coreInputMax}
       </button>
 
       {!showExtraInput && hasExtraDeptToken && (
         <button onClick={() => setIsDebtListOpen((state) => !state)} type="button">
-          change collateral
+          Change debt asset
         </button>
       )}
       {isDebtListOpen && !showExtraInput && (
@@ -148,7 +148,7 @@ export function BorrowIncreaseModal({
       {!showExtraInput && hasExtraDeptToken && (
         <div>
           <button onClick={() => setShowExtraInput(true)} type="button">
-            add asset
+            Add asset
           </button>
         </div>
       )}
@@ -164,7 +164,7 @@ export function BorrowIncreaseModal({
           />
           {extraDebtToken}
           <button type="button" onClick={() => setExtraValue(String(extraInputMax))}>
-            max {extraInputMax}
+            Max {extraInputMax}
           </button>
         </div>
       )}
