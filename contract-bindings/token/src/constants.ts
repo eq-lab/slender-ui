@@ -3,7 +3,7 @@ import { Contract } from 'soroban-client'
 /**
  * The Soroban contract ID for the @bindings/token contract.
  */
-export const CONTRACT_ID = 'CB64D3G7SM2RTH6JSGG34DDTFTQ5CFDKVDZJZSODMCX4NJ2HV2KN7OHT'
+export const CONTRACT_ID = ''
 
 /**
  * The Soroban contract ID for the @bindings/token contract, in hex.

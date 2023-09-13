@@ -1101,291 +1101,6 @@ function CommonDataKeyFromXdr(base64Xdr: string): CommonDataKey {
     return { tag, values } as CommonDataKey;
 }
 
-export interface ReserveConfiguration {
-  borrowing_enabled: boolean;
-  decimals: u32;
-  /**
- * Specifies what fraction of the underlying asset counts toward
- * the portfolio collateral value [0%, 100%].
- */
-discount: u32;
-  is_active: boolean;
-  is_base_asset: boolean;
-  liq_bonus: u32;
-  liq_cap: i128;
-  util_cap: u32;
-}
-
-function ReserveConfigurationToXdr(reserveConfiguration?: ReserveConfiguration): xdr.ScVal {
-    if (!reserveConfiguration) {
-        return xdr.ScVal.scvVoid();
-    }
-    let arr = [
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("borrowing_enabled"), val: ((i)=>xdr.ScVal.scvBool(i))(reserveConfiguration["borrowing_enabled"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("decimals"), val: ((i)=>xdr.ScVal.scvU32(i))(reserveConfiguration["decimals"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("discount"), val: ((i)=>xdr.ScVal.scvU32(i))(reserveConfiguration["discount"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("is_active"), val: ((i)=>xdr.ScVal.scvBool(i))(reserveConfiguration["is_active"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("is_base_asset"), val: ((i)=>xdr.ScVal.scvBool(i))(reserveConfiguration["is_base_asset"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("liq_bonus"), val: ((i)=>xdr.ScVal.scvU32(i))(reserveConfiguration["liq_bonus"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("liq_cap"), val: ((i)=>i128ToScVal(i))(reserveConfiguration["liq_cap"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("util_cap"), val: ((i)=>xdr.ScVal.scvU32(i))(reserveConfiguration["util_cap"])})
-        ];
-    return xdr.ScVal.scvMap(arr);
-}
-
-
-function ReserveConfigurationFromXdr(base64Xdr: string): ReserveConfiguration {
-    let scVal = strToScVal(base64Xdr);
-    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
-    let map = new Map<string, any>(obj);
-    if (!obj) {
-        throw new Error('Invalid XDR');
-    }
-    return {
-        borrowing_enabled: scValToJs(map.get("borrowing_enabled")) as unknown as boolean,
-        decimals: scValToJs(map.get("decimals")) as unknown as u32,
-        discount: scValToJs(map.get("discount")) as unknown as u32,
-        is_active: scValToJs(map.get("is_active")) as unknown as boolean,
-        is_base_asset: scValToJs(map.get("is_base_asset")) as unknown as boolean,
-        liq_bonus: scValToJs(map.get("liq_bonus")) as unknown as u32,
-        liq_cap: scValToJs(map.get("liq_cap")) as unknown as i128,
-        util_cap: scValToJs(map.get("util_cap")) as unknown as u32
-    };
-}
-
-/**
- * Interest rate parameters
- */
-export interface IRParams {
-  alpha: u32;
-  initial_rate: u32;
-  max_rate: u32;
-  scaling_coeff: u32;
-}
-
-function IRParamsToXdr(irParams?: IRParams): xdr.ScVal {
-    if (!irParams) {
-        return xdr.ScVal.scvVoid();
-    }
-    let arr = [
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("alpha"), val: ((i)=>xdr.ScVal.scvU32(i))(irParams["alpha"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("initial_rate"), val: ((i)=>xdr.ScVal.scvU32(i))(irParams["initial_rate"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("max_rate"), val: ((i)=>xdr.ScVal.scvU32(i))(irParams["max_rate"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("scaling_coeff"), val: ((i)=>xdr.ScVal.scvU32(i))(irParams["scaling_coeff"])})
-        ];
-    return xdr.ScVal.scvMap(arr);
-}
-
-
-function IRParamsFromXdr(base64Xdr: string): IRParams {
-    let scVal = strToScVal(base64Xdr);
-    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
-    let map = new Map<string, any>(obj);
-    if (!obj) {
-        throw new Error('Invalid XDR');
-    }
-    return {
-        alpha: scValToJs(map.get("alpha")) as unknown as u32,
-        initial_rate: scValToJs(map.get("initial_rate")) as unknown as u32,
-        max_rate: scValToJs(map.get("max_rate")) as unknown as u32,
-        scaling_coeff: scValToJs(map.get("scaling_coeff")) as unknown as u32
-    };
-}
-
-export interface ReserveData {
-  borrower_ar: i128;
-  borrower_ir: i128;
-  configuration: ReserveConfiguration;
-  debt_token_address: Address;
-  /**
- * The id of the reserve (position in the list of the active reserves).
- */
-id: Buffer;
-  last_update_timestamp: u64;
-  lender_ar: i128;
-  lender_ir: i128;
-  s_token_address: Address;
-}
-
-function ReserveDataToXdr(reserveData?: ReserveData): xdr.ScVal {
-    if (!reserveData) {
-        return xdr.ScVal.scvVoid();
-    }
-    let arr = [
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("borrower_ar"), val: ((i)=>i128ToScVal(i))(reserveData["borrower_ar"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("borrower_ir"), val: ((i)=>i128ToScVal(i))(reserveData["borrower_ir"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("configuration"), val: ((i)=>ReserveConfigurationToXdr(i))(reserveData["configuration"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("debt_token_address"), val: ((i)=>addressToScVal(i))(reserveData["debt_token_address"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("id"), val: ((i)=>xdr.ScVal.scvBytes(i))(reserveData["id"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("last_update_timestamp"), val: ((i)=>xdr.ScVal.scvU64(xdr.Uint64.fromString(i.toString())))(reserveData["last_update_timestamp"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("lender_ar"), val: ((i)=>i128ToScVal(i))(reserveData["lender_ar"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("lender_ir"), val: ((i)=>i128ToScVal(i))(reserveData["lender_ir"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("s_token_address"), val: ((i)=>addressToScVal(i))(reserveData["s_token_address"])})
-        ];
-    return xdr.ScVal.scvMap(arr);
-}
-
-
-function ReserveDataFromXdr(base64Xdr: string): ReserveData {
-    let scVal = strToScVal(base64Xdr);
-    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
-    let map = new Map<string, any>(obj);
-    if (!obj) {
-        throw new Error('Invalid XDR');
-    }
-    return {
-        borrower_ar: scValToJs(map.get("borrower_ar")) as unknown as i128,
-        borrower_ir: scValToJs(map.get("borrower_ir")) as unknown as i128,
-        configuration: scValToJs(map.get("configuration")) as unknown as ReserveConfiguration,
-        debt_token_address: scValToJs(map.get("debt_token_address")) as unknown as Address,
-        id: scValToJs(map.get("id")) as unknown as Buffer,
-        last_update_timestamp: scValToJs(map.get("last_update_timestamp")) as unknown as u64,
-        lender_ar: scValToJs(map.get("lender_ar")) as unknown as i128,
-        lender_ir: scValToJs(map.get("lender_ir")) as unknown as i128,
-        s_token_address: scValToJs(map.get("s_token_address")) as unknown as Address
-    };
-}
-
-export interface InitReserveInput {
-  debt_token_address: Address;
-  s_token_address: Address;
-}
-
-function InitReserveInputToXdr(initReserveInput?: InitReserveInput): xdr.ScVal {
-    if (!initReserveInput) {
-        return xdr.ScVal.scvVoid();
-    }
-    let arr = [
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("debt_token_address"), val: ((i)=>addressToScVal(i))(initReserveInput["debt_token_address"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("s_token_address"), val: ((i)=>addressToScVal(i))(initReserveInput["s_token_address"])})
-        ];
-    return xdr.ScVal.scvMap(arr);
-}
-
-
-function InitReserveInputFromXdr(base64Xdr: string): InitReserveInput {
-    let scVal = strToScVal(base64Xdr);
-    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
-    let map = new Map<string, any>(obj);
-    if (!obj) {
-        throw new Error('Invalid XDR');
-    }
-    return {
-        debt_token_address: scValToJs(map.get("debt_token_address")) as unknown as Address,
-        s_token_address: scValToJs(map.get("s_token_address")) as unknown as Address
-    };
-}
-
-/**
- * Collateralization parameters
- */
-export interface CollateralParamsInput {
-  /**
- * Specifies what fraction of the underlying asset counts toward
- * the portfolio collateral value [0%, 100%].
- */
-discount: u32;
-  /**
- * The bonus liquidators receive to liquidate this asset. The values is always above 100%. A value of 105% means the liquidator will receive a 5% bonus
- */
-liq_bonus: u32;
-  /**
- * The total amount of an asset the protocol accepts into the market.
- */
-liq_cap: i128;
-  util_cap: u32;
-}
-
-function CollateralParamsInputToXdr(collateralParamsInput?: CollateralParamsInput): xdr.ScVal {
-    if (!collateralParamsInput) {
-        return xdr.ScVal.scvVoid();
-    }
-    let arr = [
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("discount"), val: ((i)=>xdr.ScVal.scvU32(i))(collateralParamsInput["discount"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("liq_bonus"), val: ((i)=>xdr.ScVal.scvU32(i))(collateralParamsInput["liq_bonus"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("liq_cap"), val: ((i)=>i128ToScVal(i))(collateralParamsInput["liq_cap"])}),
-        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("util_cap"), val: ((i)=>xdr.ScVal.scvU32(i))(collateralParamsInput["util_cap"])})
-        ];
-    return xdr.ScVal.scvMap(arr);
-}
-
-
-function CollateralParamsInputFromXdr(base64Xdr: string): CollateralParamsInput {
-    let scVal = strToScVal(base64Xdr);
-    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
-    let map = new Map<string, any>(obj);
-    if (!obj) {
-        throw new Error('Invalid XDR');
-    }
-    return {
-        discount: scValToJs(map.get("discount")) as unknown as u32,
-        liq_bonus: scValToJs(map.get("liq_bonus")) as unknown as u32,
-        liq_cap: scValToJs(map.get("liq_cap")) as unknown as i128,
-        util_cap: scValToJs(map.get("util_cap")) as unknown as u32
-    };
-}
-
-/**
- * Implements the bitmap logic to handle the user configuration.
- * Even positions is collateral flags and uneven is borrowing flags.
- */
-export type UserConfiguration = [u128];
-
-function UserConfigurationToXdr(userConfiguration?: UserConfiguration): xdr.ScVal {
-    if (!userConfiguration) {
-        return xdr.ScVal.scvVoid();
-    }
-    let arr = [
-        (i => u128ToScVal(i))(userConfiguration[0])
-        ];
-    return xdr.ScVal.scvVec(arr);
-}
-
-
-function UserConfigurationFromXdr(base64Xdr: string): UserConfiguration {
-    return scValStrToJs(base64Xdr) as UserConfiguration;
-}
-
-const Errors = [ 
-{message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""},
-  {message:""}
-]
 export interface AccountPosition {
   debt: i128;
   discounted_collateral: i128;
@@ -1449,6 +1164,95 @@ function AssetBalanceFromXdr(base64Xdr: string): AssetBalance {
     };
 }
 
+/**
+ * Collateralization parameters
+ */
+export interface CollateralParamsInput {
+  /**
+ * Specifies what fraction of the underlying asset counts toward
+ * the portfolio collateral value [0%, 100%].
+ */
+discount: u32;
+  /**
+ * The bonus liquidators receive to liquidate this asset. The values is always above 100%. A value of 105% means the liquidator will receive a 5% bonus
+ */
+liq_bonus: u32;
+  /**
+ * The total amount of an asset the protocol accepts into the market.
+ */
+liq_cap: i128;
+  util_cap: u32;
+}
+
+function CollateralParamsInputToXdr(collateralParamsInput?: CollateralParamsInput): xdr.ScVal {
+    if (!collateralParamsInput) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("discount"), val: ((i)=>xdr.ScVal.scvU32(i))(collateralParamsInput["discount"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("liq_bonus"), val: ((i)=>xdr.ScVal.scvU32(i))(collateralParamsInput["liq_bonus"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("liq_cap"), val: ((i)=>i128ToScVal(i))(collateralParamsInput["liq_cap"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("util_cap"), val: ((i)=>xdr.ScVal.scvU32(i))(collateralParamsInput["util_cap"])})
+        ];
+    return xdr.ScVal.scvMap(arr);
+}
+
+
+function CollateralParamsInputFromXdr(base64Xdr: string): CollateralParamsInput {
+    let scVal = strToScVal(base64Xdr);
+    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
+    let map = new Map<string, any>(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        discount: scValToJs(map.get("discount")) as unknown as u32,
+        liq_bonus: scValToJs(map.get("liq_bonus")) as unknown as u32,
+        liq_cap: scValToJs(map.get("liq_cap")) as unknown as i128,
+        util_cap: scValToJs(map.get("util_cap")) as unknown as u32
+    };
+}
+
+const Errors = [ 
+{message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""},
+  {message:""}
+]
 export interface FlashLoanAsset {
   amount: i128;
   asset: Address;
@@ -1479,6 +1283,75 @@ function FlashLoanAssetFromXdr(base64Xdr: string): FlashLoanAsset {
         amount: scValToJs(map.get("amount")) as unknown as i128,
         asset: scValToJs(map.get("asset")) as unknown as Address,
         borrow: scValToJs(map.get("borrow")) as unknown as boolean
+    };
+}
+
+export interface InitReserveInput {
+  debt_token_address: Address;
+  s_token_address: Address;
+}
+
+function InitReserveInputToXdr(initReserveInput?: InitReserveInput): xdr.ScVal {
+    if (!initReserveInput) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("debt_token_address"), val: ((i)=>addressToScVal(i))(initReserveInput["debt_token_address"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("s_token_address"), val: ((i)=>addressToScVal(i))(initReserveInput["s_token_address"])})
+        ];
+    return xdr.ScVal.scvMap(arr);
+}
+
+
+function InitReserveInputFromXdr(base64Xdr: string): InitReserveInput {
+    let scVal = strToScVal(base64Xdr);
+    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
+    let map = new Map<string, any>(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        debt_token_address: scValToJs(map.get("debt_token_address")) as unknown as Address,
+        s_token_address: scValToJs(map.get("s_token_address")) as unknown as Address
+    };
+}
+
+/**
+ * Interest rate parameters
+ */
+export interface IRParams {
+  alpha: u32;
+  initial_rate: u32;
+  max_rate: u32;
+  scaling_coeff: u32;
+}
+
+function IRParamsToXdr(irParams?: IRParams): xdr.ScVal {
+    if (!irParams) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("alpha"), val: ((i)=>xdr.ScVal.scvU32(i))(irParams["alpha"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("initial_rate"), val: ((i)=>xdr.ScVal.scvU32(i))(irParams["initial_rate"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("max_rate"), val: ((i)=>xdr.ScVal.scvU32(i))(irParams["max_rate"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("scaling_coeff"), val: ((i)=>xdr.ScVal.scvU32(i))(irParams["scaling_coeff"])})
+        ];
+    return xdr.ScVal.scvMap(arr);
+}
+
+
+function IRParamsFromXdr(base64Xdr: string): IRParams {
+    let scVal = strToScVal(base64Xdr);
+    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
+    let map = new Map<string, any>(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        alpha: scValToJs(map.get("alpha")) as unknown as u32,
+        initial_rate: scValToJs(map.get("initial_rate")) as unknown as u32,
+        max_rate: scValToJs(map.get("max_rate")) as unknown as u32,
+        scaling_coeff: scValToJs(map.get("scaling_coeff")) as unknown as u32
     };
 }
 
@@ -1513,6 +1386,133 @@ function MintBurnFromXdr(base64Xdr: string): MintBurn {
         mint: scValToJs(map.get("mint")) as unknown as boolean,
         who: scValToJs(map.get("who")) as unknown as Address
     };
+}
+
+export interface ReserveConfiguration {
+  borrowing_enabled: boolean;
+  decimals: u32;
+  /**
+ * Specifies what fraction of the underlying asset counts toward
+ * the portfolio collateral value [0%, 100%].
+ */
+discount: u32;
+  is_active: boolean;
+  is_base_asset: boolean;
+  liq_bonus: u32;
+  liq_cap: i128;
+  util_cap: u32;
+}
+
+function ReserveConfigurationToXdr(reserveConfiguration?: ReserveConfiguration): xdr.ScVal {
+    if (!reserveConfiguration) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("borrowing_enabled"), val: ((i)=>xdr.ScVal.scvBool(i))(reserveConfiguration["borrowing_enabled"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("decimals"), val: ((i)=>xdr.ScVal.scvU32(i))(reserveConfiguration["decimals"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("discount"), val: ((i)=>xdr.ScVal.scvU32(i))(reserveConfiguration["discount"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("is_active"), val: ((i)=>xdr.ScVal.scvBool(i))(reserveConfiguration["is_active"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("is_base_asset"), val: ((i)=>xdr.ScVal.scvBool(i))(reserveConfiguration["is_base_asset"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("liq_bonus"), val: ((i)=>xdr.ScVal.scvU32(i))(reserveConfiguration["liq_bonus"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("liq_cap"), val: ((i)=>i128ToScVal(i))(reserveConfiguration["liq_cap"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("util_cap"), val: ((i)=>xdr.ScVal.scvU32(i))(reserveConfiguration["util_cap"])})
+        ];
+    return xdr.ScVal.scvMap(arr);
+}
+
+
+function ReserveConfigurationFromXdr(base64Xdr: string): ReserveConfiguration {
+    let scVal = strToScVal(base64Xdr);
+    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
+    let map = new Map<string, any>(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        borrowing_enabled: scValToJs(map.get("borrowing_enabled")) as unknown as boolean,
+        decimals: scValToJs(map.get("decimals")) as unknown as u32,
+        discount: scValToJs(map.get("discount")) as unknown as u32,
+        is_active: scValToJs(map.get("is_active")) as unknown as boolean,
+        is_base_asset: scValToJs(map.get("is_base_asset")) as unknown as boolean,
+        liq_bonus: scValToJs(map.get("liq_bonus")) as unknown as u32,
+        liq_cap: scValToJs(map.get("liq_cap")) as unknown as i128,
+        util_cap: scValToJs(map.get("util_cap")) as unknown as u32
+    };
+}
+
+export interface ReserveData {
+  borrower_ar: i128;
+  borrower_ir: i128;
+  configuration: ReserveConfiguration;
+  debt_token_address: Address;
+  /**
+ * The id of the reserve (position in the list of the active reserves).
+ */
+id: Buffer;
+  last_update_timestamp: u64;
+  lender_ar: i128;
+  lender_ir: i128;
+  s_token_address: Address;
+}
+
+function ReserveDataToXdr(reserveData?: ReserveData): xdr.ScVal {
+    if (!reserveData) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("borrower_ar"), val: ((i)=>i128ToScVal(i))(reserveData["borrower_ar"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("borrower_ir"), val: ((i)=>i128ToScVal(i))(reserveData["borrower_ir"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("configuration"), val: ((i)=>ReserveConfigurationToXdr(i))(reserveData["configuration"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("debt_token_address"), val: ((i)=>addressToScVal(i))(reserveData["debt_token_address"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("id"), val: ((i)=>xdr.ScVal.scvBytes(i))(reserveData["id"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("last_update_timestamp"), val: ((i)=>xdr.ScVal.scvU64(xdr.Uint64.fromString(i.toString())))(reserveData["last_update_timestamp"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("lender_ar"), val: ((i)=>i128ToScVal(i))(reserveData["lender_ar"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("lender_ir"), val: ((i)=>i128ToScVal(i))(reserveData["lender_ir"])}),
+        new xdr.ScMapEntry({key: ((i)=>xdr.ScVal.scvSymbol(i))("s_token_address"), val: ((i)=>addressToScVal(i))(reserveData["s_token_address"])})
+        ];
+    return xdr.ScVal.scvMap(arr);
+}
+
+
+function ReserveDataFromXdr(base64Xdr: string): ReserveData {
+    let scVal = strToScVal(base64Xdr);
+    let obj: [string, any][] = scVal.map()!.map(e => [e.key().str() as string, e.val()]);
+    let map = new Map<string, any>(obj);
+    if (!obj) {
+        throw new Error('Invalid XDR');
+    }
+    return {
+        borrower_ar: scValToJs(map.get("borrower_ar")) as unknown as i128,
+        borrower_ir: scValToJs(map.get("borrower_ir")) as unknown as i128,
+        configuration: scValToJs(map.get("configuration")) as unknown as ReserveConfiguration,
+        debt_token_address: scValToJs(map.get("debt_token_address")) as unknown as Address,
+        id: scValToJs(map.get("id")) as unknown as Buffer,
+        last_update_timestamp: scValToJs(map.get("last_update_timestamp")) as unknown as u64,
+        lender_ar: scValToJs(map.get("lender_ar")) as unknown as i128,
+        lender_ir: scValToJs(map.get("lender_ir")) as unknown as i128,
+        s_token_address: scValToJs(map.get("s_token_address")) as unknown as Address
+    };
+}
+
+/**
+ * Implements the bitmap logic to handle the user configuration.
+ * Even positions is collateral flags and uneven is borrowing flags.
+ */
+export type UserConfiguration = [u128];
+
+function UserConfigurationToXdr(userConfiguration?: UserConfiguration): xdr.ScVal {
+    if (!userConfiguration) {
+        return xdr.ScVal.scvVoid();
+    }
+    let arr = [
+        (i => u128ToScVal(i))(userConfiguration[0])
+        ];
+    return xdr.ScVal.scvVec(arr);
+}
+
+
+function UserConfigurationFromXdr(base64Xdr: string): UserConfiguration {
+    return scValStrToJs(base64Xdr) as UserConfiguration;
 }
 
 export interface TokenMetadata {
