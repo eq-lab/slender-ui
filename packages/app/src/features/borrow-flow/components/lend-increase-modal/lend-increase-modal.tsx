@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { PositionSummary } from '@/entities/position/components/position-summary'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
-import { PositionSummary } from '../position-summary'
 
 interface Props {
   debtSumUsd: number

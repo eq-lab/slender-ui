@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { InfoRow } from '@/shared/components/info-row'
+import { InfoLayout } from '@/shared/components/info-layout'
 import { ModalLayout } from '../modal-layout'
 
 interface Props {
@@ -21,13 +23,13 @@ export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props)
   )
 
   const infoSlot = (
-    <div>
-      <h4>{depositToken} Coin</h4>
-      <div>Lend APR {lendInterestRate}</div>
-      <div>Discount {discount}</div>
-      <div>Liquidation penalty {liquidationPenalty}</div>
-    </div>
+    <InfoLayout title={`${depositToken} Coin`} mediaSection={null}>
+      <InfoRow label="Lend APR" value={lendInterestRate} />
+      <InfoRow label="Discount" value={discount} />
+      <InfoRow label="Liquidation penalty" value={liquidationPenalty} />
+    </InfoLayout>
   )
+
   return (
     <ModalLayout onClose={onClose} infoSlot={infoSlot}>
       <h3>How much to lend</h3>

@@ -2,6 +2,8 @@ import React from 'react'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useTokenCache } from '@/entities/token/context/hooks'
+import { InfoRow } from '@/shared/components/info-row'
+import { InfoLayout } from '@/shared/components/info-layout'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
@@ -39,14 +41,12 @@ export function BorrowStepModal({
   )
 
   const infoSlot = (
-    <div>
-      <h4>{debtToken} Coin</h4>
-      <div>Borrow APR {borrowInterestRate}</div>
-      <div>
-        Available {availableToBorrow} {tokenCache?.symbol}
-      </div>
-    </div>
+    <InfoLayout title={`${debtToken} Coin`} mediaSection={null}>
+      <InfoRow label="Borrow APR" value={borrowInterestRate} />
+      <InfoRow label="Available" value={`${availableToBorrow} ${tokenCache?.symbol}`} />
+    </InfoLayout>
   )
+
   return (
     <ModalLayout onClose={onClose} infoSlot={infoSlot}>
       <h3>How much to borrow</h3>
