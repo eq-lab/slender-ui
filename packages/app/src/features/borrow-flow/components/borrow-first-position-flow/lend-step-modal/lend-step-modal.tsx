@@ -35,11 +35,11 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
     depositTokens.map((tokenName) => tokenContracts[tokenName].address),
   )
 
-  const debtValueInUSD = Number(debtValue) * debtCoinInfo.priceInUsd
+  const debtValueInUsd = Number(debtValue) * debtCoinInfo.priceInUsd
 
   useEffect(() => {
     const inputValue = Math.floor(
-      debtValueInUSD /
+      debtValueInUsd /
         (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE),
     )
 
@@ -47,7 +47,7 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
       inputValue > coreDepositInfo.userBalance ? coreDepositInfo.userBalance : inputValue
     setCoreValue(String(finalValue))
   }, [
-    debtValueInUSD,
+    debtValueInUsd,
     coreDepositInfo.discount,
     coreDepositInfo.priceInUsd,
     coreDepositInfo.userBalance,
@@ -61,8 +61,8 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
   const deposit =
     coreDeposit * coreDepositInfo.priceInUsd + extraDeposit * extraDepositInfo.priceInUsd
 
-  const health = Math.max(Math.round(deposit && (1 - debtValueInUSD / deposit) * 100), 0)
-  const borrowCapacity = Math.max(deposit - debtValueInUSD, 0)
+  const health = Math.max(Math.round(deposit && (1 - debtValueInUsd / deposit) * 100), 0)
+  const borrowCapacity = Math.max(deposit - debtValueInUsd, 0)
 
   const firstInputError = Number(coreValue) > coreDepositInfo.userBalance
   const secondInputError = Number(extraValue) > extraDepositInfo.userBalance
@@ -78,7 +78,7 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
           health={health}
           borrowCapacity={borrowCapacity}
           depositSumUsd={deposit}
-          debtUsd={debtValueInUSD}
+          debtUsd={debtValueInUsd}
           collateralError={borrowCapacityError}
         />
       }
