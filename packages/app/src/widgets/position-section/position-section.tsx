@@ -5,7 +5,7 @@ import { useBorrowDecrease } from '@/features/borrow-flow/hooks/use-borrow-decre
 import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
-import { formatUsd } from '@/features/borrow-flow/formatters'
+import { formatUsd } from '@/shared/formatters'
 import { SUPPORTED_TOKENS, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { Typography, H1, H2 } from '@/shared/ui/typography'
 import { useMarketData } from '@/entities/token/context/hooks'

@@ -2,7 +2,7 @@ import React from 'react'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
-import { formatUsd } from '@/features/borrow-flow/formatters'
+import { formatUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 
 export function PositionCell({
@@ -32,16 +32,14 @@ export function PositionCell({
         {percentage && percentage !== 100 ? `: ${percentage}%` : null}
       </em>
       <br />
-      {value} {token.toUpperCase()}{' '}
+      {value.toString(10)} {token.toUpperCase()}{' '}
       {isLendPosition && (
         <div>
           <em>{discount} discount</em>
         </div>
       )}
-      {borrowInterestRate && (
-        <div>{isLendPosition ? `+${lendInterestRate}` : `-${borrowInterestRate}`}</div>
-      )}
-      {valueInUsd && value !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
+      {borrowInterestRate && <div>{isLendPosition ? lendInterestRate : borrowInterestRate}</div>}
+      {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
       <button type="button" onClick={openDecreaseModal}>
         &minus;
       </button>

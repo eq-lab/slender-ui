@@ -3,26 +3,17 @@ import * as S from './styled'
 
 interface Props {
   onClose: () => void
-  onPrev?: () => void
   children: React.ReactNode
   infoSlot: React.ReactNode
 }
 
-export function ModalLayout({ onClose, onPrev, children, infoSlot }: Props) {
+export function ModalLayout({ onClose, children, infoSlot }: Props) {
   return (
-    <div>
-      {onPrev && (
-        <button type="button" onClick={onPrev}>
-          prev
-        </button>
-      )}
-      <button type="button" onClick={onClose}>
-        close
-      </button>
+    <S.Dialog open onClose={onClose} maxWidth="md">
       <S.Inner>
         <div>{children}</div>
         <div>{infoSlot}</div>
       </S.Inner>
-    </div>
+    </S.Dialog>
   )
 }

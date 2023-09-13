@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 
 import { PositionCell } from '@/entities/position/types'
+import { PositionSummary } from '@/entities/position/components/position-summary'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
-import { PositionSummary } from '../position-summary'
 
 interface Props {
-  deposit: number
+  deposit: bigint
   depositSumUsd: number
   onClose: () => void
   token: SupportedToken
@@ -53,7 +53,7 @@ export function LendDecreaseModal({
     defaultBorrowCapacity / (borrowTokenInfo.priceInUsd * borrowTokenInfo.discount),
   )
 
-  const depositDelta = deposit - Number(value)
+  const depositDelta = deposit - BigInt(value)
   const depositError = depositDelta < 0
 
   return (
@@ -79,7 +79,7 @@ export function LendDecreaseModal({
       </button>
       <div>
         <button
-          onClick={() => onSend({ value: Number(value), token })}
+          onClick={() => onSend({ value: BigInt(value), token })}
           type="button"
           disabled={depositError || borrowCapacityError}
         >

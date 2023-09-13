@@ -19,7 +19,7 @@ const sorobanTokenRecordToPositionCell = (
   const usdRate = cryptocurrencyUsdRates?.[token]
 
   return {
-    value: Number(tokenRecord.balance) / 10 ** tokenRecord.decimals,
+    value: BigInt(tokenRecord.balance) / 10n ** BigInt(tokenRecord.decimals),
     valueInUsd: usdRate && value * usdRate,
     token,
   }
@@ -65,10 +65,12 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
       [],
     )
 
-    setPosition({
-      deposits: [...lendPositions] as [PositionCell, ...PositionCell[]],
-      debts: debtPositions || [],
-    })
+    if (lendPositions.length || debtPositions.length) {
+      setPosition({
+        deposits: [...lendPositions] as [PositionCell, ...PositionCell[]],
+        debts: debtPositions || [],
+      })
+    }
   }, [userAddress, setPosition, debtBalances, lendBalances, cryptocurrencyUsdRates])
 
   return (

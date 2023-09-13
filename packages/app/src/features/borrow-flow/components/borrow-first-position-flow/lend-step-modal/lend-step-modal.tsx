@@ -3,28 +3,20 @@ import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/token
 import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { PositionSummary } from '@/entities/position/components/position-summary'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
-import { formatUsd } from '../../../formatters'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 
 interface Props {
   onClose: () => void
-  onPrev?: () => void
   debtValue: string
   debtToken: SupportedToken
   depositTokens: [SupportedToken, SupportedToken]
   onSend: (value: Position) => void
 }
 
-export function LendStepModal({
-  onClose,
-  onPrev,
-  debtValue,
-  debtToken,
-  depositTokens,
-  onSend,
-}: Props) {
+export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, onSend }: Props) {
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
@@ -43,11 +35,11 @@ export function LendStepModal({
     depositTokens.map((tokenName) => tokenContracts[tokenName].address),
   )
 
-  const debtValueInUSD = Number(debtValue) * debtCoinInfo.priceInUsd
+  const debtValueInUsd = Number(debtValue) * debtCoinInfo.priceInUsd
 
   useEffect(() => {
     const inputValue = Math.floor(
-      debtValueInUSD /
+      debtValueInUsd /
         (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE),
     )
 
@@ -55,7 +47,7 @@ export function LendStepModal({
       inputValue > coreDepositInfo.userBalance ? coreDepositInfo.userBalance : inputValue
     setCoreValue(String(finalValue))
   }, [
-    debtValueInUSD,
+    debtValueInUsd,
     coreDepositInfo.discount,
     coreDepositInfo.priceInUsd,
     coreDepositInfo.userBalance,
@@ -69,8 +61,8 @@ export function LendStepModal({
   const deposit =
     coreDeposit * coreDepositInfo.priceInUsd + extraDeposit * extraDepositInfo.priceInUsd
 
-  const health = Math.max(Math.round(deposit && (1 - debtValueInUSD / deposit) * 100), 0)
-  const borrowCapacity = Math.max(deposit - debtValueInUSD, 0)
+  const health = Math.max(Math.round(deposit && (1 - debtValueInUsd / deposit) * 100), 0)
+  const borrowCapacity = Math.max(deposit - debtValueInUsd, 0)
 
   const firstInputError = Number(coreValue) > coreDepositInfo.userBalance
   const secondInputError = Number(extraValue) > extraDepositInfo.userBalance
@@ -78,17 +70,19 @@ export function LendStepModal({
 
   const error = borrowCapacityError || firstInputError || secondInputError
 
-  const infoSlot = (
-    <div>
-      <h4>Position summary</h4>
-      <div>{health}%</div>
-      <div>Debt {formatUsd(debtValueInUSD)}</div>
-      <div style={{ color: borrowCapacityError ? 'red' : '' }}>Collateral {formatUsd(deposit)}</div>
-      <div>Borrow capacity {formatUsd(borrowCapacity)}</div>
-    </div>
-  )
   return (
-    <ModalLayout onClose={onClose} onPrev={onPrev} infoSlot={infoSlot}>
+    <ModalLayout
+      onClose={onClose}
+      infoSlot={
+        <PositionSummary
+          health={health}
+          borrowCapacity={borrowCapacity}
+          depositSumUsd={deposit}
+          debtUsd={debtValueInUsd}
+          collateralError={borrowCapacityError}
+        />
+      }
+    >
       <h3>Add collateral</h3>
       <div>
         <input
@@ -145,10 +139,10 @@ export function LendStepModal({
         disabled={error}
         onClick={() =>
           onSend({
-            debts: [{ token: debtToken, value: Number(debtValue) }],
+            debts: [{ token: debtToken, value: BigInt(debtValue) }],
             deposits: [
-              { token: coreDepositToken, value: Number(coreValue) },
-              ...(showExtraInput ? [{ token: extraDepositToken, value: Number(extraValue) }] : []),
+              { token: coreDepositToken, value: BigInt(coreValue) },
+              ...(showExtraInput ? [{ token: extraDepositToken, value: BigInt(extraValue) }] : []),
             ],
           })
         }
