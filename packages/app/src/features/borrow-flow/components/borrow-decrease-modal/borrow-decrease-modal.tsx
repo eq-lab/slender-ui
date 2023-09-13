@@ -3,9 +3,12 @@ import { SupportedToken } from '@/shared/stellar/constants/tokens'
 
 import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
+import { SuperField } from '@marginly/ui/components/input/super-field'
+import { useGetSymbolByToken } from '@/entities/token/hooks/use-get-symbol-by-token'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
+import { FormLayout } from '../form-layout'
 
 interface Props {
   debt: bigint
@@ -25,6 +28,7 @@ export function BorrowDecreaseModal({
   debtSumUsd,
 }: Props) {
   const [value, setValue] = useState('')
+  const getSymbolByToken = useGetSymbolByToken()
 
   const tokenInfo = useTokenInfo(token)
   const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * tokenInfo.priceInUsd, 0)
@@ -55,20 +59,24 @@ export function BorrowDecreaseModal({
       }
       onClose={onClose}
     >
-      <h3>How much to pay off</h3>
-      <input onChange={(e) => setValue(e.target.value)} type="number" value={value} />
-      <button type="button" onClick={() => setValue(String(debt))}>
-        max {debt.toString(10)}
-      </button>
-      <div>
-        <button
-          onClick={() => onSend({ value: BigInt(value), token })}
-          type="button"
-          disabled={debtError}
-        >
-          pay off {value} {token}
+      <FormLayout
+        title="How much to pay off"
+        buttonProps={{
+          label: `pay off ${value} ${getSymbolByToken(token)}`,
+          onClick: () => onSend({ value: BigInt(value), token }),
+          disabled: debtError,
+        }}
+      >
+        <SuperField
+          onChange={(e) => setValue(e.target.value)}
+          value={value}
+          title="To pay off"
+          placeholder={`${getSymbolByToken(token)} amount`}
+        />
+        <button type="button" onClick={() => setValue(String(debt))}>
+          max {debt.toString(10)}
         </button>
-      </div>
+      </FormLayout>
     </ModalLayout>
   )
 }

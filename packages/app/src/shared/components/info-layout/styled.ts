@@ -6,9 +6,11 @@ export const Wrapper = styled.div`
   border-radius: 24px;
   display: grid;
   gap: 24px;
+  justify-items: center;
 `
 
 export const Title = styled.p`
+  font-variation-settings: 'wght' 700;
   font-size: 20px;
   text-align: center;
 `
