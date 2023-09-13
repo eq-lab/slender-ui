@@ -26,7 +26,7 @@ export function PositionCell({
   const tokenCache = useTokenCache()?.[tokenContracts[token].address]
 
   return (
-    <div key={token}>
+    <div>
       <em>
         {tokenCache?.name}
         {percentage && percentage !== 100 ? `: ${percentage}%` : null}
@@ -38,7 +38,9 @@ export function PositionCell({
           <em>{discount} discount</em>
         </div>
       )}
-      {borrowInterestRate && <div>{isLendPosition ? lendInterestRate : borrowInterestRate}</div>}
+      {borrowInterestRate && (
+        <div>{isLendPosition ? `+${lendInterestRate}` : `-${borrowInterestRate}`}</div>
+      )}
       {valueInUsd && value !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
       <button type="button" onClick={openDecreaseModal}>
         &minus;

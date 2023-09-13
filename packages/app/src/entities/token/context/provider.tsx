@@ -7,7 +7,8 @@ import { decodeStr, decodeU32 } from '@/shared/stellar/decoders'
 import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens'
 import { getReserve, ReserveData } from '@bindings/pool'
 import { CachedTokens, MarketContext, PoolData } from './context'
-import { PERCENT_PRECISION } from '../contract-constants'
+import { PERCENT_PRECISION, CONTRACT_MATH_PRECISION } from '../contract-constants'
+import { makeFormatPercentWithPrecision } from '../utils'
 
 const NATIVE_ID = 'native'
 const NATIVE_NAME = 'Lumen'
@@ -22,6 +23,8 @@ const CACHED_TOKEN_ADDRESSES = [
 ] as const
 
 const CACHED_POOL_ADDRESSES = [...Object.values(underlying)]
+
+const formatInterestRate = makeFormatPercentWithPrecision(CONTRACT_MATH_PRECISION)
 
 export function TokenProvider({ children }: { children: JSX.Element }) {
   const [cachedTokens, setCachedTokens] = useState<CachedTokens>()
@@ -67,6 +70,8 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
           liquidationPenalty: poolReserve.configuration.get('liq_bonus') - PERCENT_PRECISION,
           // @ts-ignore
           utilizationCapacity: poolReserve.configuration.get('util_cap'),
+          borrowInterestRate: formatInterestRate(poolReserve.borrower_ir),
+          lendInterestRate: formatInterestRate(poolReserve.lender_ir),
         }
         return cached
       }, {} as PoolData)

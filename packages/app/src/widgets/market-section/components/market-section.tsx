@@ -1,5 +1,3 @@
-'use client'
-
 import { MarketCard } from '@/widgets/market-section/components/market-card'
 import { SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
 
