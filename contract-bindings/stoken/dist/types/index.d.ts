@@ -787,46 +787,14 @@ export type CommonDataKey = {
     tag: "TotalSupply";
     values: void;
 };
-export interface ReserveConfiguration {
-    borrowing_enabled: boolean;
-    decimals: u32;
-    /**
-   * Specifies what fraction of the underlying asset counts toward
-   * the portfolio collateral value [0%, 100%].
-   */
-    discount: u32;
-    is_active: boolean;
-    is_base_asset: boolean;
-    liq_bonus: u32;
-    liq_cap: i128;
-    util_cap: u32;
+export interface AccountPosition {
+    debt: i128;
+    discounted_collateral: i128;
+    npv: i128;
 }
-/**
- * Interest rate parameters
- */
-export interface IRParams {
-    alpha: u32;
-    initial_rate: u32;
-    max_rate: u32;
-    scaling_coeff: u32;
-}
-export interface ReserveData {
-    borrower_ar: i128;
-    borrower_ir: i128;
-    configuration: ReserveConfiguration;
-    debt_token_address: Address;
-    /**
-   * The id of the reserve (position in the list of the active reserves).
-   */
-    id: Buffer;
-    last_update_timestamp: u64;
-    lender_ar: i128;
-    lender_ir: i128;
-    s_token_address: Address;
-}
-export interface InitReserveInput {
-    debt_token_address: Address;
-    s_token_address: Address;
+export interface AssetBalance {
+    asset: Address;
+    balance: i128;
 }
 /**
  * Collateralization parameters
@@ -847,30 +815,62 @@ export interface CollateralParamsInput {
     liq_cap: i128;
     util_cap: u32;
 }
-/**
- * Implements the bitmap logic to handle the user configuration.
- * Even positions is collateral flags and uneven is borrowing flags.
- */
-export type UserConfiguration = [u128];
-export interface AccountPosition {
-    debt: i128;
-    discounted_collateral: i128;
-    npv: i128;
-}
-export interface AssetBalance {
-    asset: Address;
-    balance: i128;
-}
 export interface FlashLoanAsset {
     amount: i128;
     asset: Address;
     borrow: boolean;
+}
+export interface InitReserveInput {
+    debt_token_address: Address;
+    s_token_address: Address;
+}
+/**
+ * Interest rate parameters
+ */
+export interface IRParams {
+    alpha: u32;
+    initial_rate: u32;
+    max_rate: u32;
+    scaling_coeff: u32;
 }
 export interface MintBurn {
     asset_balance: AssetBalance;
     mint: boolean;
     who: Address;
 }
+export interface ReserveConfiguration {
+    borrowing_enabled: boolean;
+    decimals: u32;
+    /**
+   * Specifies what fraction of the underlying asset counts toward
+   * the portfolio collateral value [0%, 100%].
+   */
+    discount: u32;
+    is_active: boolean;
+    is_base_asset: boolean;
+    liq_bonus: u32;
+    liq_cap: i128;
+    util_cap: u32;
+}
+export interface ReserveData {
+    borrower_ar: i128;
+    borrower_ir: i128;
+    configuration: ReserveConfiguration;
+    debt_token_address: Address;
+    /**
+   * The id of the reserve (position in the list of the active reserves).
+   */
+    id: Buffer;
+    last_update_timestamp: u64;
+    lender_ar: i128;
+    lender_ir: i128;
+    s_token_address: Address;
+}
+/**
+ * Implements the bitmap logic to handle the user configuration.
+ * Even positions is collateral flags and uneven is borrowing flags.
+ */
+export type UserConfiguration = [u128];
 export interface TokenMetadata {
     decimal: u32;
     name: string;

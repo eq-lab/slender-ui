@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { useWalletAddress } from '@/entities/wallet/hooks/use-wallet-address'
+import { submitBorrow } from '@/features/borrow-flow/soroban/submit-borrow'
+import { logInfo } from '@/shared/logger'
 import { BorrowIncreaseModal } from '../components/borrow-increase-modal'
 import { excludeSupportedTokens, sumObj } from '../utils'
 import { useDebtUsd } from './use-debt-usd'
@@ -19,6 +22,7 @@ export const useBorrowIncrease = (): {
 
   const depositSumUsd = useDepositUsd(position?.deposits)
   const debtSumUsd = useDebtUsd(position?.debts)
+  const { address } = useWalletAddress()
 
   const open = (value?: SupportedToken) => {
     if (value) {
@@ -34,7 +38,9 @@ export const useBorrowIncrease = (): {
   const renderModal = () => {
     if (!position || !modalToken) return null
 
-    const handleSend = (sendValue: Partial<Record<SupportedToken, bigint>>) => {
+    const handleSend = async (sendValue: Partial<Record<SupportedToken, bigint>>) => {
+      if (!address) return
+
       const prevDebtsObj = position.debts.reduce(
         (acc, el) => ({
           ...acc,
@@ -57,6 +63,7 @@ export const useBorrowIncrease = (): {
         deposits: position.deposits,
       })
       setModalToken(null)
+      logInfo(await submitBorrow(address, sendValue))
     }
 
     return (

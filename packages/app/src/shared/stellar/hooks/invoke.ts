@@ -2,15 +2,12 @@ import * as SorobanClient from 'soroban-client'
 import { useContextSelector } from 'use-context-selector'
 import { WalletContext } from '@/entities/wallet/context/context'
 import { useCallback, useMemo } from 'react'
+import { server } from '@/shared/stellar/server'
 import { FUTURENET_NETWORK_DETAILS } from '../constants/networks'
 
 const FEE = '100'
 const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF'
 const ACCOUNT_SEQUENCE = '0'
-
-const server = new SorobanClient.Server(FUTURENET_NETWORK_DETAILS.rpcUrl, {
-  allowHttp: FUTURENET_NETWORK_DETAILS.networkUrl.startsWith('http://'),
-})
 
 export function useMakeInvoke() {
   const userAddress =

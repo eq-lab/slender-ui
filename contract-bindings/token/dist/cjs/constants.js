@@ -5,7 +5,7 @@ const soroban_client_1 = require("soroban-client");
 /**
  * The Soroban contract ID for the @bindings/token contract.
  */
-exports.CONTRACT_ID = 'CB64D3G7SM2RTH6JSGG34DDTFTQ5CFDKVDZJZSODMCX4NJ2HV2KN7OHT';
+exports.CONTRACT_ID = '';
 /**
  * The Soroban contract ID for the @bindings/token contract, in hex.
  * If {@link CONTRACT_ID} is a new-style `C…` string, you will need this hex
