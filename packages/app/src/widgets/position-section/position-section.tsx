@@ -9,6 +9,7 @@ import { formatUsd, formatPercent } from '@/shared/formatters'
 import { SUPPORTED_TOKENS, tokenContracts } from '@/shared/stellar/constants/tokens'
 import Typography from '@marginly/ui/components/typography'
 import { useMarketData } from '@/entities/token/context/hooks'
+import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { PositionCell } from './components/position-cell'
 import {
   PositionWrapper,
@@ -39,27 +40,23 @@ export function PositionSection() {
     depositsSumUsd &&
     Math.max(Math.round(depositsSumUsd && (1 - debtsSumUsd / depositsSumUsd) * 100), 0)
 
-  const debtSumInterestRate =
-    position?.debts?.reduce((sum, currentDebt) => {
+  const makeSumInterestRateReduce =
+    (isDeposit: boolean) => (sum: number, currentDebt: PositionCellType) => {
       const { valueInUsd, token } = currentDebt
       if (!marketData) return sum
       const { address } = tokenContracts[token]
-      const { borrowInterestRate } = marketData[address] || {}
-      const interestRatePercentNum = parseInt(borrowInterestRate || '', 10) || 0
-      const fractionInSumUsd = valueInUsd ? valueInUsd / debtsSumUsd : 0
+      const { borrowInterestRate, lendInterestRate } = marketData[address] || {}
+      const interestRatePercentNum =
+        parseInt((isDeposit ? lendInterestRate : borrowInterestRate) || '', 10) || 0
+      const fractionInSumUsd = valueInUsd
+        ? valueInUsd / (isDeposit ? depositsSumUsd : debtsSumUsd)
+        : 0
       return sum + interestRatePercentNum * fractionInSumUsd
-    }, 0) || 0
+    }
 
-  const depositSumInterestRate =
-    position?.deposits?.reduce((sum, currentDeposit) => {
-      const { valueInUsd, token } = currentDeposit
-      if (!marketData) return sum
-      const { address } = tokenContracts[token]
-      const { lendInterestRate } = marketData[address] || {}
-      const interestRatePercentNum = parseInt(lendInterestRate || '', 10) || 0
-      const fractionInSumUsd = valueInUsd ? valueInUsd / depositsSumUsd : 0
-      return sum + interestRatePercentNum * fractionInSumUsd
-    }, 0) || 0
+  const debtSumInterestRate = position?.debts?.reduce(makeSumInterestRateReduce(false), 0) || 0
+
+  const depositSumInterestRate = position?.deposits?.reduce(makeSumInterestRateReduce(true), 0) || 0
 
   const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
   const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
