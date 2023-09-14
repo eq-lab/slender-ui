@@ -16,6 +16,8 @@ export type PoolData = Record<
     discount: number
     liquidationPenalty: number
     utilizationCapacity: number
+    borrowInterestRate: string
+    lendInterestRate: string
   }
 >
 

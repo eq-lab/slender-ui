@@ -13,7 +13,7 @@ import { submitBorrow } from '../soroban/submit'
 import { useSetWaitModalIsOpen } from '../context/hooks'
 
 export const useBorrowIncrease = (): {
-  modal: React.ReactNode
+  modal: JSX.Element | null
   open: (value?: SupportedToken) => void
 } => {
   const position = useContextSelector(PositionContext, (state) => state.position)

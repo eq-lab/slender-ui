@@ -10,7 +10,7 @@ import { excludeSupportedTokens, sumObj } from '../utils'
 import { PositionUpdate } from '../types'
 
 export const useLendIncrease = (): {
-  modal: React.ReactNode
+  modal: JSX.Element | null
   open: (value?: SupportedToken) => void
 } => {
   const position = useContextSelector(PositionContext, (state) => state.position)
