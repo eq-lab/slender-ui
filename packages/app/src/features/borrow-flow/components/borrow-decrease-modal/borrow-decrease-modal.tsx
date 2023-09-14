@@ -74,7 +74,7 @@ export function BorrowDecreaseModal({
           placeholder={`${getSymbolByToken(token)} amount`}
         />
         <button type="button" onClick={() => setValue(String(debt))}>
-          max {debt.toString(10)}
+          Max {debt.toString(10)}
         </button>
       </FormLayout>
     </ModalLayout>

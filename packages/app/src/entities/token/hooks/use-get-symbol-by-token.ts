@@ -1,5 +1,5 @@
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
-import { useTokenCache } from '@/entities/token/context/hooks'
+import { useTokenCache } from '../context/hooks'
 
 export const useGetSymbolByToken = () => {
   const tokensCache = useTokenCache()

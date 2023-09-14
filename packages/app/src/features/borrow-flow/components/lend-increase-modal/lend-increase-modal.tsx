@@ -160,7 +160,7 @@ export function LendIncreaseModal({
               className={cn(extraInputError && Error)}
             />
             <button type="button" onClick={() => setExtraValue(String(extraInputMax))}>
-              max {extraInputMax}
+              Max {extraInputMax}
             </button>
           </div>
         )}

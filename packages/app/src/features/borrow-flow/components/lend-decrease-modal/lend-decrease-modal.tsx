@@ -91,7 +91,7 @@ export function LendDecreaseModal({
           placeholder={`${getSymbolByToken(token)} amount`}
         />
         <button type="button" onClick={() => setValue(String(max))}>
-          max {max}
+          Max {max}
         </button>
       </FormLayout>
     </ModalLayout>

@@ -71,7 +71,7 @@ export function BorrowStepModal({
           placeholder={`${getSymbolByToken(debtToken)} amount`}
         />
         <button onClick={() => onBorrowValueChange(String(max))} type="button">
-          max: {max}
+          Max {max}
         </button>
       </FormLayout>
     </ModalLayout>

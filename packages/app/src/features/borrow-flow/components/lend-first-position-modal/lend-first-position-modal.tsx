@@ -56,7 +56,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props)
             placeholder={`${getSymbolByToken(depositToken)} amount`}
           />
           <button onClick={() => setValue(String(max))} type="button">
-            max: {max}
+            Max {max}
           </button>
         </div>
       </FormLayout>
