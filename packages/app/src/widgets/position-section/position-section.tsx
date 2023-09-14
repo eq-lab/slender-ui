@@ -40,7 +40,7 @@ export function PositionSection() {
     depositsSumUsd &&
     Math.max(Math.round(depositsSumUsd && (1 - debtsSumUsd / depositsSumUsd) * 100), 0)
 
-  const makeSumInterestRateReduce =
+  const makeGetSumInterestRate =
     (isDeposit: boolean) => (sum: number, currentDebt: PositionCellType) => {
       const { valueInUsd, token } = currentDebt
       if (!marketData) return sum
@@ -54,9 +54,9 @@ export function PositionSection() {
       return sum + interestRatePercentNum * fractionInSumUsd
     }
 
-  const debtSumInterestRate = position?.debts?.reduce(makeSumInterestRateReduce(false), 0) || 0
+  const debtSumInterestRate = position?.debts?.reduce(makeGetSumInterestRate(false), 0) || 0
 
-  const depositSumInterestRate = position?.deposits?.reduce(makeSumInterestRateReduce(true), 0) || 0
+  const depositSumInterestRate = position?.deposits?.reduce(makeGetSumInterestRate(true), 0) || 0
 
   const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
   const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
