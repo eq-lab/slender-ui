@@ -62,7 +62,7 @@ export function BorrowDecreaseModal({
       <FormLayout
         title="How much to pay off"
         buttonProps={{
-          label: `pay off ${value} ${getSymbolByToken(token)}`,
+          label: `Pay off ${value} ${getSymbolByToken(token)}`,
           onClick: () => onSend({ value: BigInt(value), token }),
           disabled: debtError,
         }}

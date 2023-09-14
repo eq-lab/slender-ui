@@ -116,7 +116,7 @@ export function LendIncreaseModal({
           className={cn(coreInputError && Error)}
         />
         <button type="button" onClick={() => setValue(String(coreInputMax))}>
-          max {coreInputMax}
+          Max {coreInputMax}
         </button>
 
         {!showExtraInput && hasExtraDepositToken && (
