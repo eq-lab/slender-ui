@@ -3,6 +3,12 @@ import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { formatUsd } from '@/shared/formatters'
 
+const getSubValue = (value?: number) => {
+  if (!value) return undefined
+  if (value < 0) return String(value)
+  return `+${value}`
+}
+
 interface Props {
   health: number
   healthDelta?: number
@@ -42,19 +48,19 @@ export function PositionSummary({
       <InfoRow
         label="Debt"
         value={formatUsd(debtUsd)}
-        subValue={debtUsdDelta ? String(debtUsdDelta) : undefined}
+        subValue={getSubValue(debtUsdDelta)}
         error={debtError}
       />
       <InfoRow
         label="Collateral"
         value={formatUsd(depositSumUsd)}
-        subValue={depositSumUsdDelta ? String(depositSumUsdDelta) : undefined}
+        subValue={getSubValue(depositSumUsdDelta)}
         error={collateralError}
       />
       <InfoRow
         label="Borrow capacity"
         value={formatUsd(borrowCapacity)}
-        subValue={borrowCapacityDelta ? String(borrowCapacityDelta) : undefined}
+        subValue={getSubValue(borrowCapacityDelta)}
         error={borrowCapacityError}
       />
     </InfoLayout>

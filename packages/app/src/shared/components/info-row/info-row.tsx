@@ -12,10 +12,12 @@ export function InfoRow({ label, subValue, value, error }: Props) {
   return (
     <S.Wrapper $error={error}>
       {label}
-      <S.ValueSection>
-        <div>{value}</div>
-        {subValue && <div>{subValue}</div>}
-      </S.ValueSection>
+      <div>
+        <S.ValueSection>
+          <div>{value}</div>
+          {subValue && <S.SubValue>{subValue}</S.SubValue>}
+        </S.ValueSection>
+      </div>
     </S.Wrapper>
   )
 }

@@ -3,9 +3,14 @@ import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/token
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useAvailableToBorrow } from '@/entities/token/hooks/use-available-to-borrow'
 import { PositionSummary } from '@/entities/position/components/position-summary'
+import { SuperField } from '@marginly/ui/components/input/super-field'
+import cn from 'classnames'
+import { Error } from '@marginly/ui/constants/classnames'
+import { useGetSymbolByToken } from '@/entities/token/hooks/use-get-symbol-by-token'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
+import { FormLayout } from '../form-layout'
 
 interface Props {
   debtSumUsd: number
@@ -24,6 +29,8 @@ export function BorrowIncreaseModal({
   debtTokens,
   debtSumUsd,
 }: Props) {
+  const getSymbolByToken = useGetSymbolByToken()
+
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
@@ -112,67 +119,69 @@ export function BorrowIncreaseModal({
       }
       onClose={onClose}
     >
-      <h3>How much to borrow</h3>
-      <input
-        onChange={(e) => setValue(e.target.value)}
-        type="number"
-        value={value}
-        style={{ border: coreInputError ? '1px solid red' : '' }}
-      />
-      {coreDebtToken}
-
-      <button type="button" onClick={() => setValue(String(coreInputMax))}>
-        Max {coreInputMax}
-      </button>
-
-      {!showExtraInput && hasExtraDeptToken && (
-        <button onClick={() => setIsDebtListOpen((state) => !state)} type="button">
-          Change debt asset
+      <FormLayout
+        title="How much to borrow"
+        buttonProps={{
+          label: `Borrow`,
+          onClick: () => onSend(getSaveData()),
+          disabled: sendButtonDisable,
+        }}
+      >
+        <SuperField
+          onChange={(e) => setValue(e.target.value)}
+          value={value}
+          title="To borrow"
+          placeholder={`${getSymbolByToken(coreDebtToken)} amount`}
+          className={cn(coreInputError && Error)}
+        />
+        <button type="button" onClick={() => setValue(String(coreInputMax))}>
+          Max {coreInputMax}
         </button>
-      )}
-      {isDebtListOpen && !showExtraInput && (
-        <div>
-          {debtTokens.map((debtToken, index) => {
-            if (!debtToken) {
-              return null
-            }
-            return (
-              <button key={debtToken} type="button" onClick={() => setCoreDebtToken(debtToken)}>
-                {depositBalances[index]?.balance ?? 0} {debtToken}{' '}
-                {debtToken === coreDebtToken && '✓'}
-              </button>
-            )
-          })}
-        </div>
-      )}
-      {!showExtraInput && hasExtraDeptToken && (
-        <div>
-          <button onClick={() => setShowExtraInput(true)} type="button">
-            Add asset
+
+        {!showExtraInput && hasExtraDeptToken && (
+          <button onClick={() => setIsDebtListOpen((state) => !state)} type="button">
+            Change debt asset
           </button>
-        </div>
-      )}
-      {showExtraInput && (
-        <div>
-          <input
-            style={{ border: extraInputError ? '1px solid red' : '' }}
-            type="number"
-            value={extraValue}
-            onChange={(e) => {
-              setExtraValue(e.target.value)
-            }}
-          />
-          {extraDebtToken}
-          <button type="button" onClick={() => setExtraValue(String(extraInputMax))}>
-            Max {extraInputMax}
-          </button>
-        </div>
-      )}
-      <div>
-        <button onClick={() => onSend(getSaveData())} type="button" disabled={sendButtonDisable}>
-          Borrow
-        </button>
-      </div>
+        )}
+        {isDebtListOpen && !showExtraInput && (
+          <div>
+            {debtTokens.map((debtToken, index) => {
+              if (!debtToken) {
+                return null
+              }
+              return (
+                <button key={debtToken} type="button" onClick={() => setCoreDebtToken(debtToken)}>
+                  {depositBalances[index]?.balance ?? 0} {debtToken}{' '}
+                  {debtToken === coreDebtToken && '✓'}
+                </button>
+              )
+            })}
+          </div>
+        )}
+        {!showExtraInput && hasExtraDeptToken && (
+          <div>
+            <button onClick={() => setShowExtraInput(true)} type="button">
+              Add asset
+            </button>
+          </div>
+        )}
+        {showExtraInput && (
+          <>
+            <SuperField
+              onChange={(e) => {
+                setExtraValue(e.target.value)
+              }}
+              value={extraValue}
+              title="To borrow"
+              placeholder={`${getSymbolByToken(extraDebtToken)} amount`}
+              className={cn(extraInputError && Error)}
+            />
+            <button type="button" onClick={() => setExtraValue(String(extraInputMax))}>
+              Max {extraInputMax}
+            </button>
+          </>
+        )}
+      </FormLayout>
     </ModalLayout>
   )
 }

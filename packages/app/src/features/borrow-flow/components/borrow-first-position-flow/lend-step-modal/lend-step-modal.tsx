@@ -4,9 +4,14 @@ import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { PositionSummary } from '@/entities/position/components/position-summary'
+import { SuperField } from '@marginly/ui/components/input/super-field'
+import { Error } from '@marginly/ui/constants/classnames'
+import cn from 'classnames'
+import { useGetSymbolByToken } from '@/entities/token/hooks/use-get-symbol-by-token'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
+import { FormLayout } from '../../form-layout'
 
 interface Props {
   onClose: () => void
@@ -17,6 +22,8 @@ interface Props {
 }
 
 export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, onSend }: Props) {
+  const getSymbolByToken = useGetSymbolByToken()
+
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
@@ -83,73 +90,71 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
         />
       }
     >
-      <h3>Add collateral</h3>
-      <div>
-        <input
-          style={{ border: firstInputError ? '1px solid red' : '' }}
-          type="number"
-          value={coreValue}
+      <FormLayout
+        title="Add collateral"
+        description={`with apr ${borrowInterestRate}`}
+        buttonProps={{
+          label: `borrow ${debtValue} ${getSymbolByToken(debtToken)}`,
+          onClick: () =>
+            onSend({
+              debts: [{ token: debtToken, value: BigInt(debtValue) }],
+              deposits: [
+                { token: coreDepositToken, value: BigInt(coreValue) },
+                ...(showExtraInput
+                  ? [{ token: extraDepositToken, value: BigInt(extraValue) }]
+                  : []),
+              ],
+            }),
+          disabled: error,
+        }}
+      >
+        <SuperField
           onChange={(e) => {
             setCoreValue(e.target.value)
           }}
+          value={coreValue}
+          title="To deposit"
+          placeholder={`${getSymbolByToken(coreDepositToken)} amount`}
+          className={cn(firstInputError && Error)}
         />
-        {coreDepositToken}
         {!showExtraInput && (
           <button onClick={() => setIsDepositListOpen((state) => !state)} type="button">
             change collateral
           </button>
         )}
-      </div>
-      {isDepositListOpen && !showExtraInput && (
-        <div>
-          {depositTokens.map((depositToken, index) => (
-            <button
-              key={depositToken}
-              type="button"
-              onClick={() => setCoreDepositToken(depositToken)}
-            >
-              {depositBalances[index]?.balance ?? 0} {depositToken}{' '}
-              {depositToken === coreDepositToken && '✓'}
+        {isDepositListOpen && !showExtraInput && (
+          <div>
+            {depositTokens.map((depositToken, index) => (
+              <button
+                key={depositToken}
+                type="button"
+                onClick={() => setCoreDepositToken(depositToken)}
+              >
+                {depositBalances[index]?.balance ?? 0} {depositToken}{' '}
+                {depositToken === coreDepositToken && '✓'}
+              </button>
+            ))}
+          </div>
+        )}
+        {!showExtraInput && (
+          <div>
+            <button onClick={() => setShowExtraInput(true)} type="button">
+              add asset
             </button>
-          ))}
-        </div>
-      )}
-      {!showExtraInput && (
-        <div>
-          <button onClick={() => setShowExtraInput(true)} type="button">
-            add asset
-          </button>
-        </div>
-      )}
-      {showExtraInput && (
-        <div>
-          <input
-            style={{ border: secondInputError ? '1px solid red' : '' }}
-            type="number"
-            value={extraValue}
+          </div>
+        )}
+        {showExtraInput && (
+          <SuperField
             onChange={(e) => {
               setExtraValue(e.target.value)
             }}
+            value={extraValue}
+            title="To deposit"
+            placeholder={`${getSymbolByToken(extraDepositToken)} amount`}
+            className={cn(secondInputError && Error)}
           />
-          {extraDepositToken}
-        </div>
-      )}
-      <button
-        type="button"
-        disabled={error}
-        onClick={() =>
-          onSend({
-            debts: [{ token: debtToken, value: BigInt(debtValue) }],
-            deposits: [
-              { token: coreDepositToken, value: BigInt(coreValue) },
-              ...(showExtraInput ? [{ token: extraDepositToken, value: BigInt(extraValue) }] : []),
-            ],
-          })
-        }
-      >
-        borrow {debtValue} {debtToken}
-      </button>
-      <div>with apr {borrowInterestRate}</div>
+        )}
+      </FormLayout>
     </ModalLayout>
   )
 }
