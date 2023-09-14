@@ -4,11 +4,12 @@ import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
-import { useGetSymbolByToken } from '@/entities/token/hooks/use-get-symbol-by-token'
+import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { FormLayout } from '../form-layout'
+import { MaxButton } from '../../styled'
 
 interface Props {
   debt: bigint
@@ -28,7 +29,7 @@ export function BorrowDecreaseModal({
   debtSumUsd,
 }: Props) {
   const [value, setValue] = useState('')
-  const getSymbolByToken = useGetSymbolByToken()
+  const getInfoByTokenName = useGetInfoByTokenName()
 
   const tokenInfo = useTokenInfo(token)
   const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * tokenInfo.priceInUsd, 0)
@@ -62,7 +63,7 @@ export function BorrowDecreaseModal({
       <FormLayout
         title="How much to pay off"
         buttonProps={{
-          label: `Pay off ${value} ${getSymbolByToken(token)}`,
+          label: `Pay off ${value} ${getInfoByTokenName(token)?.symbol}`,
           onClick: () => onSend({ value: BigInt(value), token }),
           disabled: debtError,
         }}
@@ -71,11 +72,9 @@ export function BorrowDecreaseModal({
           onChange={(e) => setValue(e.target.value)}
           value={value}
           title="To pay off"
-          placeholder={`${getSymbolByToken(token)} amount`}
+          placeholder={`${getInfoByTokenName(token)?.symbol} amount`}
         />
-        <button type="button" onClick={() => setValue(String(debt))}>
-          Max {debt.toString(10)}
-        </button>
+        <MaxButton onClick={() => setValue(String(debt))}>Max {debt.toString(10)}</MaxButton>
       </FormLayout>
     </ModalLayout>
   )

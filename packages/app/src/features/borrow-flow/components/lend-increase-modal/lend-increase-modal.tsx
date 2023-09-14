@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
-import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
+import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
-import { useGetSymbolByToken } from '@/entities/token/hooks/use-get-symbol-by-token'
+import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { FormLayout } from '../form-layout'
 import { PositionUpdate } from '../../types'
+import { AddAssetButton } from '../add-asset-button'
+import { AssetSelect } from '../asset-select'
+import { InputLayout, MaxButton } from '../../styled'
 
 interface Props {
   debtSumUsd: number
@@ -29,12 +31,11 @@ export function LendIncreaseModal({
   depositTokens,
   debtSumUsd,
 }: Props) {
-  const getSymbolByToken = useGetSymbolByToken()
+  const getInfoByTokenName = useGetInfoByTokenName()
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
   const [coreDepositToken, setCoreDepositToken] = useState<SupportedToken>(token)
-  const [isDepositListOpen, setIsDepositListOpen] = useState(false)
   const [showExtraInput, setShowExtraInput] = useState(false)
 
   useEffect(() => {
@@ -46,10 +47,6 @@ export function LendIncreaseModal({
   const coreDepositInfo = useTokenInfo(coreDepositToken)
   const possibleDepositInfo = useTokenInfo(extraDebtToken ?? coreDepositToken)
   const extraDepositInfo = extraDebtToken ? possibleDepositInfo : undefined
-
-  const depositBalances = useGetBalance(
-    depositTokens.map((tokenName) => tokenContracts[tokenName].address),
-  )
 
   const actualDepositUsd =
     depositSumUsd +
@@ -109,47 +106,28 @@ export function LendIncreaseModal({
           disabled: borrowCapacityError || coreInputError || extraInputError,
         }}
       >
-        <SuperField
-          onChange={(e) => setValue(e.target.value)}
-          value={value}
-          title="To deposit"
-          placeholder={`${getSymbolByToken(coreDepositToken)} amount`}
-          className={cn(coreInputError && Error)}
-        />
-        <button type="button" onClick={() => setValue(String(coreInputMax))}>
-          Max {coreInputMax}
-        </button>
+        <InputLayout>
+          <SuperField
+            onChange={(e) => setValue(e.target.value)}
+            value={value}
+            title="To deposit"
+            placeholder={`${getInfoByTokenName(coreDepositToken)?.symbol} amount`}
+            className={cn(coreInputError && Error)}
+          />
+          {!showExtraInput && hasExtraDepositToken && (
+            <AssetSelect
+              onChange={setCoreDepositToken}
+              tokens={depositTokens}
+              value={coreDepositToken}
+            />
+          )}
+        </InputLayout>
+        <div>
+          <MaxButton onClick={() => setValue(String(coreInputMax))}>Max {coreInputMax}</MaxButton>
+        </div>
 
         {!showExtraInput && hasExtraDepositToken && (
-          <button onClick={() => setIsDepositListOpen((state) => !state)} type="button">
-            change collateral
-          </button>
-        )}
-        {isDepositListOpen && !showExtraInput && (
-          <div>
-            {depositTokens.map((depositToken, index) => {
-              if (!depositToken) {
-                return null
-              }
-              return (
-                <button
-                  key={depositToken}
-                  type="button"
-                  onClick={() => setCoreDepositToken(depositToken)}
-                >
-                  {depositBalances[index]?.balance ?? 0} {depositToken}{' '}
-                  {depositToken === coreDepositToken && '✓'}
-                </button>
-              )
-            })}
-          </div>
-        )}
-        {!showExtraInput && hasExtraDepositToken && (
-          <div>
-            <button onClick={() => setShowExtraInput(true)} type="button">
-              add asset
-            </button>
-          </div>
+          <AddAssetButton onClick={() => setShowExtraInput(true)} />
         )}
         {showExtraInput && (
           <div>
@@ -157,12 +135,12 @@ export function LendIncreaseModal({
               onChange={(e) => setExtraValue(e.target.value)}
               value={extraValue}
               title="To deposit"
-              placeholder={`${getSymbolByToken(extraDebtToken)} amount`}
+              placeholder={`${getInfoByTokenName(extraDebtToken)?.symbol} amount`}
               className={cn(extraInputError && Error)}
             />
-            <button type="button" onClick={() => setExtraValue(String(extraInputMax))}>
+            <MaxButton onClick={() => setExtraValue(String(extraInputMax))}>
               Max {extraInputMax}
-            </button>
+            </MaxButton>
           </div>
         )}
       </FormLayout>
