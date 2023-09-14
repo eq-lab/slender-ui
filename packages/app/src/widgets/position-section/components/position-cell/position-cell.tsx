@@ -26,7 +26,7 @@ export function PositionCell({
   const tokenCache = useTokenCache()?.[tokenContracts[token].address]
 
   return (
-    <div key={token}>
+    <div>
       <em>
         {tokenCache?.name}
         {percentage && percentage !== 100 ? `: ${percentage}%` : null}

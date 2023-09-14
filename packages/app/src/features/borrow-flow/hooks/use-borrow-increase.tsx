@@ -11,7 +11,7 @@ import { useDebtUsd } from './use-debt-usd'
 import { useDepositUsd } from './use-deposit-usd'
 
 export const useBorrowIncrease = (): {
-  modal: React.ReactNode
+  modal: JSX.Element | null
   open: (value?: SupportedToken) => void
 } => {
   const position = useContextSelector(PositionContext, (state) => state.position)
