@@ -1,12 +1,13 @@
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { logError, logInfo } from '@/shared/logger'
 import { borrow } from './binding/borrow'
+import { PositionUpdate } from '../types'
 
 const USER_DECLINED_ERROR = 'User declined access'
 
 export async function submitBorrow(
   address: string,
-  sendValue: Partial<Record<SupportedToken, bigint>>,
+  sendValue: PositionUpdate,
 ): Promise<'fulfilled' | 'rejected' | 'error'> {
   // we have to sign and send transactions one by one
   // eslint-disable-next-line no-restricted-syntax

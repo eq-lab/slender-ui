@@ -9,6 +9,7 @@ import { BorrowIncreaseModal } from '../components/borrow-increase-modal'
 import { excludeSupportedTokens, sumObj } from '../utils'
 import { useDebtUsd } from './use-debt-usd'
 import { useDepositUsd } from './use-deposit-usd'
+import { PositionUpdate } from '../types'
 
 export const useBorrowIncrease = (): {
   modal: React.ReactNode
@@ -38,7 +39,7 @@ export const useBorrowIncrease = (): {
   const renderModal = () => {
     if (!position || !modalToken) return null
 
-    const handleSend = async (sendValue: Partial<Record<SupportedToken, bigint>>) => {
+    const handleSend = async (sendValue: PositionUpdate) => {
       if (!address) return
 
       const prevDebtsObj = position.debts.reduce(
