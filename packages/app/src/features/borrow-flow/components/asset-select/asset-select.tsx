@@ -10,7 +10,7 @@ import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
 import * as S from './styled'
 
-const iconByToken: Record<SupportedToken, React.ReactNode> = {
+const iconByToken: Record<SupportedToken, JSX.Element> = {
   usdc: <UsdcIcon />,
   xlm: <LumenIcon />,
   xrp: <RippleIcon />,
