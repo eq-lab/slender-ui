@@ -1,5 +1,5 @@
 import { useContextSelector } from 'use-context-selector'
-import { WalletContext } from '../context/context'
+import { WalletContext } from './wallet'
 
 export const useWalletAddress = () => {
   const address = useContextSelector(WalletContext, (state) => state.address)

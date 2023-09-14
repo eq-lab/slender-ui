@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { getUserInfo, isConnected as getIsConnected } from '@stellar/freighter-api'
-import { WalletContext } from './context'
+import { WalletContext } from '@/shared/contexts/wallet'
 
 export function WalletProvider({ children }: { children: JSX.Element }) {
   const [address, setAddress] = useState<string>()
