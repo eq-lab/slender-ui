@@ -55,7 +55,7 @@ export function SubscriptionSection() {
           <InputBox
             onFocus={() => setEmailIsFocused(true)}
             onBlur={() => setEmailIsFocused(false)}
-            className={cn({ focused: !!email || emailIsFocused, error: emailHasError })}
+            className={cn({ focused: email || emailIsFocused, error: emailHasError })}
           >
             <InputLabel>Your email</InputLabel>
             <input value={email} className="input" onChange={handleEmailChange} />

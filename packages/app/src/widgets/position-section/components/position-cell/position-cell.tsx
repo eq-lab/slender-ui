@@ -32,7 +32,7 @@ export function PositionCell({
         {percentage && percentage !== 100 ? `: ${percentage}%` : null}
       </em>
       <br />
-      {value.toString(10)} {token.toUpperCase()}{' '}
+      {value.toString(10)} {tokenCache?.symbol}{' '}
       {isLendPosition && (
         <div>
           <em>{discount} discount</em>
