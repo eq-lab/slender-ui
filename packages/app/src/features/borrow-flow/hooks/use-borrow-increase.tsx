@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { useWalletAddress } from '@/entities/wallet/hooks/use-wallet-address'
-import { submitBorrow } from '@/features/borrow-flow/soroban/submit-borrow'
+import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { logInfo } from '@/shared/logger'
 import { BorrowIncreaseModal } from '../components/borrow-increase-modal'
 import { excludeSupportedTokens, sumObj } from '../utils'
 import { useDebtUsd } from './use-debt-usd'
 import { useDepositUsd } from './use-deposit-usd'
 import { PositionUpdate } from '../types'
+import { submitBorrow } from '../soroban/submit'
 
 export const useBorrowIncrease = (): {
   modal: React.ReactNode
