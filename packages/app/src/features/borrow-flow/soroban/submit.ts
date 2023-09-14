@@ -1,6 +1,6 @@
 import { PositionUpdate } from '@/features/borrow-flow/types'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
-import { logError, logInfo } from '@/shared/logger'
+import { logInfo } from '@/shared/logger'
 import { borrow } from './binding/borrow'
 import { deposit } from './binding/deposit'
 
@@ -8,10 +8,7 @@ const USER_DECLINED_ERROR = 'User declined access'
 
 const makeSubmit =
   (submitFunction: typeof borrow) =>
-  async (
-    address: string,
-    sendValue: PositionUpdate,
-  ): Promise<'fulfilled' | 'rejected' | 'error'> => {
+  async (address: string, sendValue: PositionUpdate): Promise<'fulfilled' | never> => {
     // we have to sign and send transactions one by one
     // eslint-disable-next-line no-restricted-syntax
     for (const [tokenName, value] of Object.entries(sendValue) as [SupportedToken, bigint][]) {
@@ -26,10 +23,9 @@ const makeSubmit =
         logInfo('Tx result:', result)
       } catch (e) {
         if (e === USER_DECLINED_ERROR) {
-          return 'rejected'
+          throw Error('rejected')
         }
-        logError(e)
-        return 'error'
+        throw e
       }
     }
     return 'fulfilled'
