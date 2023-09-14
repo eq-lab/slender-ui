@@ -4,7 +4,7 @@ import * as S from './styled'
 interface Props {
   onClose: () => void
   children: React.ReactNode
-  infoSlot: React.ReactNode
+  infoSlot?: React.ReactNode
 }
 
 export function ModalLayout({ onClose, children, infoSlot }: Props) {
@@ -12,7 +12,7 @@ export function ModalLayout({ onClose, children, infoSlot }: Props) {
     <S.Dialog open onClose={onClose} maxWidth="md">
       <S.Inner>
         <div>{children}</div>
-        <div>{infoSlot}</div>
+        {infoSlot && <div>{infoSlot}</div>}
       </S.Inner>
     </S.Dialog>
   )

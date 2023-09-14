@@ -16,6 +16,5 @@ export function logInfo(...args: unknown[]) {
 }
 
 export function logError(...args: unknown[]) {
-  console.log('caught'.toUpperCase(), ...args)
   writeToDevConsole('error', ...args)
 }

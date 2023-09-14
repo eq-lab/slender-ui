@@ -79,7 +79,7 @@ export function LendDecreaseModal({
       <FormLayout
         title="Withdraw collateral"
         buttonProps={{
-          label: `pay off ${value} ${getSymbolByToken(token)}`,
+          label: `Pay off ${value} ${getSymbolByToken(token)}`,
           onClick: () => onSend({ value: BigInt(value), token }),
           disabled: depositError || borrowCapacityError,
         }}

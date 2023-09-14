@@ -1,6 +1,6 @@
 import * as SorobanClient from 'soroban-client'
 import { useContextSelector } from 'use-context-selector'
-import { WalletContext } from '@/entities/wallet/context/context'
+import { WalletContext } from '@/shared/contexts/wallet'
 import { useCallback, useMemo } from 'react'
 import { server } from '@/shared/stellar/server'
 import { FUTURENET_NETWORK_DETAILS } from '../constants/networks'

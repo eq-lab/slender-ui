@@ -2,19 +2,15 @@
 import { Address, i128 } from '@bindings/pool'
 import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders'
 import { ResponseTypes } from './types'
-import { invoke } from './invoke'
 import { parseResultXdr } from './parse-result-xdr'
+import { invoke } from './invoke'
 
-export const borrow = async <R extends ResponseTypes = undefined>(
+export const deposit = async <R extends ResponseTypes = undefined>(
   { who, asset, amount }: { who: Address; asset: Address; amount: i128 },
-  options: {
-    fee?: number
-    responseType?: R
-    secondsToWait?: number
-  } = {},
+  options: { fee?: number; responseType?: R; secondsToWait?: number } = {},
 ) =>
   invoke({
-    method: 'borrow',
+    method: 'deposit',
     args: [addressToScVal(who), addressToScVal(asset), bigintToScVal(amount)],
     ...options,
     parseResultXdr,

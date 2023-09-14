@@ -94,7 +94,7 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
         title="Add collateral"
         description={`with apr ${borrowInterestRate}`}
         buttonProps={{
-          label: `borrow ${debtValue} ${getSymbolByToken(debtToken)}`,
+          label: `Borrow ${debtValue} ${getSymbolByToken(debtToken)}`,
           onClick: () =>
             onSend({
               debts: [{ token: debtToken, value: BigInt(debtValue) }],

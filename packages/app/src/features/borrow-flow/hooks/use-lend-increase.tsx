@@ -7,6 +7,7 @@ import { useDepositUsd } from './use-deposit-usd'
 import { useDebtUsd } from './use-debt-usd'
 import { LendIncreaseModal } from '../components/lend-increase-modal'
 import { excludeSupportedTokens, sumObj } from '../utils'
+import { PositionUpdate } from '../types'
 
 export const useLendIncrease = (): {
   modal: JSX.Element | null
@@ -35,7 +36,7 @@ export const useLendIncrease = (): {
   const renderModal = () => {
     if (!position || !modalToken) return null
 
-    const handleSend = (sendValue: Partial<Record<SupportedToken, bigint>>) => {
+    const handleSend = (sendValue: PositionUpdate) => {
       const prevDepositsObj = position.deposits.reduce(
         (acc, el) => ({
           ...acc,

@@ -10,13 +10,14 @@ import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { FormLayout } from '../form-layout'
+import { PositionUpdate } from '../../types'
 
 interface Props {
   debtSumUsd: number
   depositSumUsd: number
   onClose: () => void
   token: SupportedToken
-  onSend: (value: Partial<Record<SupportedToken, bigint>>) => void
+  onSend: (value: PositionUpdate) => void
   depositTokens: SupportedToken[]
 }
 
@@ -71,7 +72,7 @@ export function LendIncreaseModal({
   const coreInputError = Number(value) > coreDepositInfo.userBalance
   const extraInputError = Number(extraValue) > (extraDepositInfo?.userBalance || 0)
 
-  const getSaveData = (): Partial<Record<SupportedToken, bigint>> => {
+  const getSaveData = (): PositionUpdate => {
     const core = { [coreDepositToken]: BigInt(value) }
 
     if (showExtraInput && extraDebtToken) {
@@ -116,7 +117,7 @@ export function LendIncreaseModal({
           className={cn(coreInputError && Error)}
         />
         <button type="button" onClick={() => setValue(String(coreInputMax))}>
-          max {coreInputMax}
+          Max {coreInputMax}
         </button>
 
         {!showExtraInput && hasExtraDepositToken && (

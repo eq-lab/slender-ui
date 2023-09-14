@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { getPublicKey } from '@stellar/freighter-api'
-import { useWalletAddress } from '../../hooks/use-wallet-address'
+import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { FREIGHTER_WALLET_URL } from '../../constants/wallet'
 
 const SHORT_ADDRESS_SIZE = 6

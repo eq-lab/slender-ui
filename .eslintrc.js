@@ -25,7 +25,6 @@ module.exports = {
     ],
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': 'error',
-    'jsx-a11y/anchor-is-valid': 'off',
     'react/require-default-props': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
     'react/jsx-key': 'error',

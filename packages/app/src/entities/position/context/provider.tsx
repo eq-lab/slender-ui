@@ -1,11 +1,10 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useContextSelector } from 'use-context-selector'
-import { WalletContext } from '@/entities/wallet/context/context'
 import { useGetBalance, SorobanTokenRecord } from '@/entities/token/hooks/use-get-balance'
 import { tokenContracts, SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
 import { usePriceInUsd, SupportedTokenRates } from '@/entities/currency-rates/context/hooks'
+import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { Position, PositionCell } from '../types'
 import { PositionContext } from './context'
 
@@ -27,17 +26,15 @@ const sorobanTokenRecordToPositionCell = (
 
 export function PositionProvider({ children }: { children: JSX.Element }) {
   const [position, setPosition] = useState<Position>()
-  const userAddress = useContextSelector(WalletContext, (state) => state.address)
+  const { address: userAddress } = useWalletAddress()
 
   const cryptocurrencyUsdRates = usePriceInUsd()
 
   const debtBalances = useGetBalance(
     SUPPORTED_TOKENS.map((tokenName) => tokenContracts[tokenName].debtAddress),
-    userAddress,
   )
   const lendBalances = useGetBalance(
     SUPPORTED_TOKENS.map((tokenName) => tokenContracts[tokenName].sAddress),
-    userAddress,
   )
 
   useEffect(() => {
