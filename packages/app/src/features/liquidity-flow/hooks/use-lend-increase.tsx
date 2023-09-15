@@ -2,12 +2,16 @@ import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { PositionCell } from '@/entities/position/types'
+import { logError, logInfo } from '@/shared/logger'
+import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
+import { submitDeposit } from '../soroban/submit'
+import { useSetWaitModalIsOpen } from '../context/hooks'
 import { useDepositUsd } from './use-deposit-usd'
 import { useDebtUsd } from './use-debt-usd'
 import { LendIncreaseModal } from '../components/lend-increase-modal'
 import { excludeSupportedTokens, sumObj } from '../utils'
 import { PositionUpdate } from '../types'
+import { getPositionUpdateByCells } from '../soroban/get-position-update-by-cells'
 
 export const useLendIncrease = (): {
   modal: JSX.Element | null
@@ -32,11 +36,13 @@ export const useLendIncrease = (): {
 
   const depositSumUsd = useDepositUsd(position?.deposits)
   const debtSumUsd = useDebtUsd(position?.debts)
+  const setWaitModalIsOpen = useSetWaitModalIsOpen()
+  const { address } = useWalletAddress()
 
   const renderModal = () => {
     if (!position || !modalToken) return null
 
-    const handleSend = (sendValue: PositionUpdate) => {
+    const handleSend = async (sendValue: PositionUpdate) => {
       const prevDepositsObj = position.deposits.reduce(
         (acc, el) => ({
           ...acc,
@@ -54,11 +60,24 @@ export const useLendIncrease = (): {
         }
       })
 
-      setPosition({
-        debts: position.debts,
-        deposits: arr as [PositionCell, ...PositionCell[]],
-      })
+      if (!address) return
       setModalToken(null)
+
+      try {
+        setWaitModalIsOpen(true)
+
+        const deposits = getPositionUpdateByCells(arr)
+
+        logInfo(await submitDeposit(address, deposits))
+        setPosition({
+          debts: position.debts,
+          deposits: arr,
+        })
+      } catch (e) {
+        logError(e)
+      } finally {
+        setWaitModalIsOpen(false)
+      }
     }
 
     return (
