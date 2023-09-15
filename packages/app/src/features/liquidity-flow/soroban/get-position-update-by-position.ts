@@ -1,5 +1,5 @@
 import { Position, PositionCell } from '@/entities/position/types'
-import { PositionUpdate } from '@/features/borrow-flow/types'
+import { PositionUpdate } from '@/features/liquidity-flow/types'
 
 const reducePosition = (positionCells: PositionCell[]) =>
   positionCells.reduce((positionUpdate: PositionUpdate, item: PositionCell): PositionUpdate => {
