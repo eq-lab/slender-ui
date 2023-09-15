@@ -46,7 +46,12 @@ export function BorrowIncreaseModal({
 
   const extraDebtToken = debtTokens[0] === coreDebtToken ? debtTokens[1] : debtTokens[0]
 
-  const { availableToBorrow } = useAvailableToBorrow(tokenContracts[coreDebtToken])
+  const { availableToBorrow: coreAvailableToBorrow } = useAvailableToBorrow(
+    tokenContracts[coreDebtToken],
+  )
+  const { availableToBorrow: extraAvailableToBorrow } = useAvailableToBorrow(
+    tokenContracts[extraDebtToken ?? coreDebtToken],
+  )
 
   const coreDebtInfo = useTokenInfo(coreDebtToken)
   const extraDebtInfo = useTokenInfo(extraDebtToken ?? coreDebtToken)
@@ -75,14 +80,15 @@ export function BorrowIncreaseModal({
   const hasExtraDeptToken = Boolean(debtTokens[1])
 
   const coreInputMax = Math.min(
-    availableToBorrow,
+    coreAvailableToBorrow,
     Math.floor(defaultBorrowCapacity / coreDebtInfo.priceInUsd),
   )
 
   const extraInputMax =
     extraDebtToken &&
-    Math.min(availableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
+    Math.min(extraAvailableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
 
+  console.log(extraDebtToken, 'extraDebtToken')
   const coreInputError = Number(value) > coreInputMax
   const extraInputError = Number(extraValue) > (extraInputMax || 0)
 
