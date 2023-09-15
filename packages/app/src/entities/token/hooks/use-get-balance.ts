@@ -3,6 +3,7 @@ import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
 import { decodeI128 } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
 import { addressToScVal } from '@/shared/stellar/encoders'
+import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { CachedTokens } from '../context/context'
 import { useTokenCache } from '../context/hooks'
 
@@ -18,13 +19,11 @@ const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
 const isArraysEqual = <T>(a?: T[], b?: T[]) =>
   a?.length === b?.length && a?.every((value, index) => value === b?.[index])
 
-export const useGetBalance = (
-  tokenAddresses: TokenAddress[],
-  userAddress?: string,
-): SorobanTokenRecord[] => {
+export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecord[] => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
   const makeInvoke = useMakeInvoke()
   const tokensCache = useTokenCache()
+  const { address: userAddress } = useWalletAddress()
 
   const previousTokenAddresses = useRef<TokenAddress[]>()
   const previousUserAddress = useRef<string>()
