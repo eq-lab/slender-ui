@@ -1,10 +1,10 @@
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useTokenCache } from '@/entities/token/context/hooks'
-import { useLendFirstPosition } from '@/features/borrow-flow/hooks/use-lend-first-position'
-import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
-import { useBorrowFirstPosition } from '@/features/borrow-flow/hooks/use-borrow-first-position'
-import { useBorrowIncrease } from '@/features/borrow-flow/hooks/use-borrow-increase'
+import { useLendFirstPosition } from '@/features/liquidity-flow/hooks/use-lend-first-position'
+import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
+import { useBorrowFirstPosition } from '@/features/liquidity-flow/hooks/use-borrow-first-position'
+import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
 import { useActionModal } from '../hooks/use-action-modal'
 
 export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {

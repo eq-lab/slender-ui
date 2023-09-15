@@ -1,4 +1,4 @@
-import { PositionUpdate } from '@/features/borrow-flow/types'
+import { PositionUpdate } from '@/features/liquidity-flow/types'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { logInfo } from '@/shared/logger'
 import { borrow } from './binding/borrow'
