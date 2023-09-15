@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
-import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useAvailableToBorrow } from '@/entities/token/hooks/use-available-to-borrow'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
-import { useGetSymbolByToken } from '@/entities/token/hooks/use-get-symbol-by-token'
+import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { FormLayout } from '../form-layout'
 import { PositionUpdate } from '../../types'
+import { AddAssetButton } from '../add-asset-button'
+import { AssetSelect } from '../asset-select'
+import { InputLayout, MaxButton } from '../../styled'
 
 interface Props {
   debtSumUsd: number
@@ -30,13 +32,12 @@ export function BorrowIncreaseModal({
   debtTokens,
   debtSumUsd,
 }: Props) {
-  const getSymbolByToken = useGetSymbolByToken()
+  const getInfoByTokenName = useGetInfoByTokenName()
 
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
   const [coreDebtToken, setCoreDebtToken] = useState<SupportedToken>(token)
-  const [isDebtListOpen, setIsDebtListOpen] = useState(false)
   const [showExtraInput, setShowExtraInput] = useState(false)
 
   useEffect(() => {
@@ -45,7 +46,12 @@ export function BorrowIncreaseModal({
 
   const extraDebtToken = debtTokens[0] === coreDebtToken ? debtTokens[1] : debtTokens[0]
 
-  const { availableToBorrow } = useAvailableToBorrow(tokenContracts[coreDebtToken])
+  const { availableToBorrow: coreAvailableToBorrow } = useAvailableToBorrow(
+    tokenContracts[coreDebtToken],
+  )
+  const { availableToBorrow: extraAvailableToBorrow } = useAvailableToBorrow(
+    tokenContracts[extraDebtToken ?? coreDebtToken],
+  )
 
   const coreDebtInfo = useTokenInfo(coreDebtToken)
   const extraDebtInfo = useTokenInfo(extraDebtToken ?? coreDebtToken)
@@ -74,17 +80,13 @@ export function BorrowIncreaseModal({
   const hasExtraDeptToken = Boolean(debtTokens[1])
 
   const coreInputMax = Math.min(
-    availableToBorrow,
+    coreAvailableToBorrow,
     Math.floor(defaultBorrowCapacity / coreDebtInfo.priceInUsd),
   )
 
   const extraInputMax =
     extraDebtToken &&
-    Math.min(availableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
-
-  const depositBalances = useGetBalance(
-    debtTokens.map((tokenName) => tokenContracts[tokenName].address),
-  )
+    Math.min(extraAvailableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
 
   const coreInputError = Number(value) > coreInputMax
   const extraInputError = Number(extraValue) > (extraInputMax || 0)
@@ -128,44 +130,26 @@ export function BorrowIncreaseModal({
           disabled: sendButtonDisable,
         }}
       >
-        <SuperField
-          onChange={(e) => setValue(e.target.value)}
-          value={value}
-          title="To borrow"
-          placeholder={`${getSymbolByToken(coreDebtToken)} amount`}
-          className={cn(coreInputError && Error)}
-        />
-        <button type="button" onClick={() => setValue(String(coreInputMax))}>
-          Max {coreInputMax}
-        </button>
+        <InputLayout>
+          <SuperField
+            onChange={(e) => setValue(e.target.value)}
+            value={value}
+            title="To borrow"
+            placeholder={`${getInfoByTokenName(coreDebtToken)?.symbol} amount`}
+            className={cn(coreInputError && Error)}
+          />
+          {!showExtraInput && hasExtraDeptToken && (
+            <AssetSelect onChange={setCoreDebtToken} tokens={debtTokens} value={coreDebtToken} />
+          )}
+        </InputLayout>
+        <div>
+          <MaxButton onClick={() => setValue(String(coreInputMax))}>Max {coreInputMax}</MaxButton>
+        </div>
 
         {!showExtraInput && hasExtraDeptToken && (
-          <button onClick={() => setIsDebtListOpen((state) => !state)} type="button">
-            Change debt asset
-          </button>
+          <AddAssetButton onClick={() => setShowExtraInput(true)} />
         )}
-        {isDebtListOpen && !showExtraInput && (
-          <div>
-            {debtTokens.map((debtToken, index) => {
-              if (!debtToken) {
-                return null
-              }
-              return (
-                <button key={debtToken} type="button" onClick={() => setCoreDebtToken(debtToken)}>
-                  {depositBalances[index]?.balance ?? 0} {debtToken}{' '}
-                  {debtToken === coreDebtToken && '✓'}
-                </button>
-              )
-            })}
-          </div>
-        )}
-        {!showExtraInput && hasExtraDeptToken && (
-          <div>
-            <button onClick={() => setShowExtraInput(true)} type="button">
-              Add asset
-            </button>
-          </div>
-        )}
+
         {showExtraInput && (
           <>
             <SuperField
@@ -174,12 +158,12 @@ export function BorrowIncreaseModal({
               }}
               value={extraValue}
               title="To borrow"
-              placeholder={`${getSymbolByToken(extraDebtToken)} amount`}
+              placeholder={`${getInfoByTokenName(extraDebtToken)?.symbol} amount`}
               className={cn(extraInputError && Error)}
             />
-            <button type="button" onClick={() => setExtraValue(String(extraInputMax))}>
+            <MaxButton onClick={() => setExtraValue(String(extraInputMax))}>
               Max {extraInputMax}
-            </button>
+            </MaxButton>
           </>
         )}
       </FormLayout>

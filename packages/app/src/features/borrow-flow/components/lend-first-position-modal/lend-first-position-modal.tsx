@@ -5,9 +5,10 @@ import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
-import { useGetSymbolByToken } from '@/entities/token/hooks/use-get-symbol-by-token'
+import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
 import { ModalLayout } from '../modal-layout'
 import { FormLayout } from '../form-layout'
+import { MaxButton } from '../../styled'
 
 interface Props {
   onClose: () => void
@@ -18,7 +19,7 @@ interface Props {
 export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props) {
   const [value, setValue] = useState('')
 
-  const getSymbolByToken = useGetSymbolByToken()
+  const getInfoByTokenName = useGetInfoByTokenName()
 
   const { balance = '0', decimals = 0 } =
     useGetBalance([tokenContracts[depositToken].address])[0] || {}
@@ -53,11 +54,9 @@ export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props)
             }}
             value={value}
             title="To deposit"
-            placeholder={`${getSymbolByToken(depositToken)} amount`}
+            placeholder={`${getInfoByTokenName(depositToken)?.symbol} amount`}
           />
-          <button onClick={() => setValue(String(max))} type="button">
-            Max {max}
-          </button>
+          <MaxButton onClick={() => setValue(String(max))}>Max {max}</MaxButton>
         </div>
       </FormLayout>
     </ModalLayout>
