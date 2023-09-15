@@ -12,7 +12,7 @@ import { FormLayout } from '../form-layout'
 import { PositionUpdate } from '../../types'
 import { AddAssetButton } from '../add-asset-button'
 import { AssetSelect } from '../asset-select'
-import { InputLayout, MaxButton } from '../../styled'
+import { InputLayout } from '../../styled'
 
 interface Props {
   debtSumUsd: number
@@ -42,11 +42,12 @@ export function LendIncreaseModal({
     setCoreDepositToken(token)
   }, [token])
 
-  const extraDebtToken = depositTokens[0] === coreDepositToken ? depositTokens[1] : depositTokens[0]
+  const extraDepositToken =
+    depositTokens[0] === coreDepositToken ? depositTokens[1] : depositTokens[0]
 
   const coreDepositInfo = useTokenInfo(coreDepositToken)
-  const possibleDepositInfo = useTokenInfo(extraDebtToken ?? coreDepositToken)
-  const extraDepositInfo = extraDebtToken ? possibleDepositInfo : undefined
+  const possibleDepositInfo = useTokenInfo(extraDepositToken ?? coreDepositToken)
+  const extraDepositInfo = extraDepositToken ? possibleDepositInfo : undefined
 
   const actualDepositUsd =
     depositSumUsd +
@@ -69,13 +70,16 @@ export function LendIncreaseModal({
   const coreInputError = Number(value) > coreDepositInfo.userBalance
   const extraInputError = Number(extraValue) > (extraDepositInfo?.userBalance || 0)
 
+  const extraTokenSymbol = getInfoByTokenName(extraDepositToken)?.symbol
+  const coreTokenSymbol = getInfoByTokenName(coreDepositToken)?.symbol
+
   const getSaveData = (): PositionUpdate => {
     const core = { [coreDepositToken]: BigInt(value) }
 
-    if (showExtraInput && extraDebtToken) {
+    if (showExtraInput && extraDepositToken) {
       return {
         ...core,
-        [extraDebtToken]: BigInt(extraValue),
+        [extraDepositToken]: BigInt(extraValue),
       }
     }
 
@@ -111,8 +115,9 @@ export function LendIncreaseModal({
             onChange={(e) => setValue(e.target.value)}
             value={value}
             title="To deposit"
-            placeholder={`${getInfoByTokenName(coreDepositToken)?.symbol} amount`}
+            placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
             className={cn(coreInputError && Error)}
+            postfix={coreTokenSymbol}
           />
           {!showExtraInput && hasExtraDepositToken && (
             <AssetSelect
@@ -122,26 +127,19 @@ export function LendIncreaseModal({
             />
           )}
         </InputLayout>
-        <div>
-          <MaxButton onClick={() => setValue(String(coreInputMax))}>Max {coreInputMax}</MaxButton>
-        </div>
 
         {!showExtraInput && hasExtraDepositToken && (
           <AddAssetButton onClick={() => setShowExtraInput(true)} />
         )}
         {showExtraInput && (
-          <div>
-            <SuperField
-              onChange={(e) => setExtraValue(e.target.value)}
-              value={extraValue}
-              title="To deposit"
-              placeholder={`${getInfoByTokenName(extraDebtToken)?.symbol} amount`}
-              className={cn(extraInputError && Error)}
-            />
-            <MaxButton onClick={() => setExtraValue(String(extraInputMax))}>
-              Max {extraInputMax}
-            </MaxButton>
-          </div>
+          <SuperField
+            onChange={(e) => setExtraValue(e.target.value)}
+            value={extraValue}
+            title="To deposit"
+            placeholder={`Max ${extraInputMax} ${extraTokenSymbol}`}
+            className={cn(extraInputError && Error)}
+            postfix={extraTokenSymbol}
+          />
         )}
       </FormLayout>
     </ModalLayout>

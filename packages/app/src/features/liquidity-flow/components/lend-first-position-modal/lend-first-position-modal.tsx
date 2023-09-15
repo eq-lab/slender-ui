@@ -6,9 +6,9 @@ import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
+import { getIconByToken } from '@/entities/token/utils/get-icon-by-token'
 import { ModalLayout } from '../modal-layout'
 import { FormLayout } from '../form-layout'
-import { MaxButton } from '../../styled'
 
 interface Props {
   onClose: () => void
@@ -24,12 +24,16 @@ export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props)
   const { balance = '0', decimals = 0 } =
     useGetBalance([tokenContracts[depositToken].address])[0] || {}
   const max = Number(balance) / 10 ** decimals
+
   const { lendInterestRate, discount, liquidationPenalty } = useMarketDataForDisplay(
     tokenContracts[depositToken],
   )
 
+  const tokenSymbol = getInfoByTokenName(depositToken)?.symbol
+  const Icon = getIconByToken(depositToken)
+
   const infoSlot = (
-    <InfoLayout title={`${depositToken} Coin`} mediaSection={null}>
+    <InfoLayout title={`${depositToken} Coin`} mediaSection={<Icon width={48} />}>
       <InfoRow label="Lend APR" value={lendInterestRate} />
       <InfoRow label="Discount" value={discount} />
       <InfoRow label="Liquidation penalty" value={liquidationPenalty} />
@@ -47,17 +51,15 @@ export function LendFirstPositionModal({ onClose, onSend, depositToken }: Props)
           disabled: !value || Number(value) > max,
         }}
       >
-        <div>
-          <SuperField
-            onChange={(e) => {
-              setValue(e.target.value)
-            }}
-            value={value}
-            title="To deposit"
-            placeholder={`${getInfoByTokenName(depositToken)?.symbol} amount`}
-          />
-          <MaxButton onClick={() => setValue(String(max))}>Max {max}</MaxButton>
-        </div>
+        <SuperField
+          onChange={(e) => {
+            setValue(e.target.value)
+          }}
+          value={value}
+          title="To deposit"
+          placeholder={`Max ${max} ${tokenSymbol}`}
+          postfix={tokenSymbol}
+        />
       </FormLayout>
     </ModalLayout>
   )
