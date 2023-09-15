@@ -1,6 +1,6 @@
 import React from 'react'
 import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
-import { ThumbnailWrapper } from '@marginly/ui/components/thumbnail/thumbnail.styled'
+import { ThumbnailWrapper } from '@marginly/ui/components/thumbnail/styled'
 import * as uiClassNames from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import * as S from './styled'
