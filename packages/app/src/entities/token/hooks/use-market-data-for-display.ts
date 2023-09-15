@@ -2,7 +2,7 @@ import { TokenContracts } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
 import { useMarketData } from '../context/hooks'
 import { useAvailableToBorrow } from './use-available-to-borrow'
-import { makeFormatPercentWithPrecision } from '../utils'
+import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision'
 
 export function useMarketDataForDisplay(token: TokenContracts): {
   discount: string

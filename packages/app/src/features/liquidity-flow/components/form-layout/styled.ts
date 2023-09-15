@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 export const Wrapper = styled.div`
+  min-width: 352px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -11,6 +12,11 @@ export const Title = styled.span`
   font-size: 32px;
   font-variation-settings: 'wght' 700;
   line-height: 40px;
+`
+
+export const Inner = styled.div`
+  display: grid;
+  gap: 32px;
 `
 
 export const Button = styled.button`

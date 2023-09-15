@@ -7,7 +7,7 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
-import { InputLayout } from '@/features/liquidity-flow/styled'
+import { InputLayout } from '../../../styled'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
@@ -74,6 +74,9 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
 
   const error = borrowCapacityError || firstInputError || secondInputError
 
+  const extraTokenSymbol = getInfoByTokenName(extraDepositToken)?.symbol
+  const coreTokenSymbol = getInfoByTokenName(coreDepositToken)?.symbol
+
   return (
     <ModalLayout
       onClose={onClose}
@@ -112,8 +115,9 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
             }}
             value={coreValue}
             title="To deposit"
-            placeholder={`${getInfoByTokenName(coreDepositToken)?.symbol} amount`}
+            placeholder={`${coreTokenSymbol} amount`}
             className={cn(firstInputError && Error)}
+            postfix={coreTokenSymbol}
           />
           {!showExtraInput && (
             <AssetSelect
@@ -132,8 +136,9 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
             }}
             value={extraValue}
             title="To deposit"
-            placeholder={`${getInfoByTokenName(extraDepositToken)?.symbol} amount`}
+            placeholder={`${extraTokenSymbol} amount`}
             className={cn(secondInputError && Error)}
+            postfix={extraTokenSymbol}
           />
         )}
       </FormLayout>

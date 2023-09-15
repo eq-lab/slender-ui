@@ -9,7 +9,6 @@ import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { FormLayout } from '../form-layout'
-import { MaxButton } from '../../styled'
 
 interface Props {
   debt: bigint
@@ -44,6 +43,7 @@ export function BorrowDecreaseModal({
   const debtDelta = debt - BigInt(value)
   const debtError = debtDelta < 0
 
+  const tokenSymbol = getInfoByTokenName(token)?.symbol
   return (
     <ModalLayout
       infoSlot={
@@ -63,7 +63,7 @@ export function BorrowDecreaseModal({
       <FormLayout
         title="How much to pay off"
         buttonProps={{
-          label: `Pay off ${value} ${getInfoByTokenName(token)?.symbol}`,
+          label: `Pay off ${value} ${tokenSymbol}`,
           onClick: () => onSend({ value: BigInt(value), token }),
           disabled: debtError,
         }}
@@ -72,9 +72,9 @@ export function BorrowDecreaseModal({
           onChange={(e) => setValue(e.target.value)}
           value={value}
           title="To pay off"
-          placeholder={`${getInfoByTokenName(token)?.symbol} amount`}
+          placeholder={`Max ${debt.toString(10)} ${tokenSymbol}`}
+          postfix={tokenSymbol}
         />
-        <MaxButton onClick={() => setValue(String(debt))}>Max {debt.toString(10)}</MaxButton>
       </FormLayout>
     </ModalLayout>
   )

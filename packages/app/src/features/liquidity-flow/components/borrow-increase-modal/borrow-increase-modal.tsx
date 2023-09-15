@@ -13,7 +13,7 @@ import { FormLayout } from '../form-layout'
 import { PositionUpdate } from '../../types'
 import { AddAssetButton } from '../add-asset-button'
 import { AssetSelect } from '../asset-select'
-import { InputLayout, MaxButton } from '../../styled'
+import { InputLayout } from '../../styled'
 
 interface Props {
   debtSumUsd: number
@@ -106,6 +106,9 @@ export function BorrowIncreaseModal({
 
   const sendButtonDisable = borrowCapacityError || coreInputError || extraInputError
 
+  const extraTokenSymbol = getInfoByTokenName(extraDebtToken)?.symbol
+  const coreTokenSymbol = getInfoByTokenName(coreDebtToken)?.symbol
+
   return (
     <ModalLayout
       infoSlot={
@@ -135,36 +138,30 @@ export function BorrowIncreaseModal({
             onChange={(e) => setValue(e.target.value)}
             value={value}
             title="To borrow"
-            placeholder={`${getInfoByTokenName(coreDebtToken)?.symbol} amount`}
+            placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
             className={cn(coreInputError && Error)}
+            postfix={coreTokenSymbol}
           />
           {!showExtraInput && hasExtraDeptToken && (
             <AssetSelect onChange={setCoreDebtToken} tokens={debtTokens} value={coreDebtToken} />
           )}
         </InputLayout>
-        <div>
-          <MaxButton onClick={() => setValue(String(coreInputMax))}>Max {coreInputMax}</MaxButton>
-        </div>
 
         {!showExtraInput && hasExtraDeptToken && (
           <AddAssetButton onClick={() => setShowExtraInput(true)} />
         )}
 
         {showExtraInput && (
-          <>
-            <SuperField
-              onChange={(e) => {
-                setExtraValue(e.target.value)
-              }}
-              value={extraValue}
-              title="To borrow"
-              placeholder={`${getInfoByTokenName(extraDebtToken)?.symbol} amount`}
-              className={cn(extraInputError && Error)}
-            />
-            <MaxButton onClick={() => setExtraValue(String(extraInputMax))}>
-              Max {extraInputMax}
-            </MaxButton>
-          </>
+          <SuperField
+            onChange={(e) => {
+              setExtraValue(e.target.value)
+            }}
+            value={extraValue}
+            title="To borrow"
+            placeholder={`Max ${extraInputMax} ${extraTokenSymbol}`}
+            className={cn(extraInputError && Error)}
+            postfix={extraTokenSymbol}
+          />
         )}
       </FormLayout>
     </ModalLayout>

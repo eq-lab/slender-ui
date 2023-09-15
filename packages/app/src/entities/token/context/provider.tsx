@@ -8,7 +8,7 @@ import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens
 import { getReserve, ReserveData } from '@bindings/pool'
 import { CachedTokens, MarketContext, PoolData } from './context'
 import { PERCENT_PRECISION, CONTRACT_MATH_PRECISION } from '../contract-constants'
-import { makeFormatPercentWithPrecision } from '../utils'
+import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision'
 
 const NATIVE_ID = 'native'
 const NATIVE_NAME = 'Lumen'
