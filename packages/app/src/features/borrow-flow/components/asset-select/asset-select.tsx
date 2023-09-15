@@ -8,6 +8,8 @@ import { ReactComponent as UsdcIcon } from '@/shared/icons/tokens/usdc.svg'
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
+import * as uiClassNames from '@marginly/ui/constants/classnames'
+import cn from 'classnames'
 import * as S from './styled'
 
 const iconByToken: Record<SupportedToken, JSX.Element> = {
@@ -42,14 +44,21 @@ export function AssetSelect({ tokens, onChange, value }: Props) {
 
   return (
     <div>
-      <S.IconWrapper onClick={handleClick}>{iconByToken[value]}</S.IconWrapper>
+      <S.ThumbnailWrapper
+        className={cn(uiClassNames.M, uiClassNames.Rectangle)}
+        onClick={handleClick}
+      >
+        {iconByToken[value]}
+      </S.ThumbnailWrapper>
       <Menu anchorEl={anchorEl} open={open} onClose={close}>
         {tokens.map((token, index) => {
           const tokenInfo = getInfoByTokenName(token)
           return (
             <MenuItem onClick={handleItemClick(token)} key={token}>
               <S.MenuItemInner>
-                <S.IconWrapper>{iconByToken[token]}</S.IconWrapper>
+                <S.ThumbnailWrapper className={cn(uiClassNames.M, uiClassNames.Rectangle)}>
+                  {iconByToken[token]}
+                </S.ThumbnailWrapper>
                 <div>
                   <div>{tokenInfo?.name}</div>
                   {depositBalances[index]?.balance ?? 0} {tokenInfo?.symbol}

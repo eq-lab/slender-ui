@@ -49,6 +49,14 @@ export const GlobalStyle = createGlobalStyle`
   --border-negative: #E54796;
 
   --svg-invert: 0;
+
+  --rounding-radius-m: 16px;
+  --rounding-radius-xs: 8px;
+  --rounding-radius-s: 16px;
+  --rounding-radius-m: 24px;
+  --rounding-radius-xl: 24px;
+  --rounding-radius-xxl: 32px;
+  --rounding-radius-xxxl: 48px;
 }
 
 * {
