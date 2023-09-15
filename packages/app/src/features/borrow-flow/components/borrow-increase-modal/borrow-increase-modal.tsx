@@ -88,7 +88,6 @@ export function BorrowIncreaseModal({
     extraDebtToken &&
     Math.min(extraAvailableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
 
-  console.log(extraDebtToken, 'extraDebtToken')
   const coreInputError = Number(value) > coreInputMax
   const extraInputError = Number(extraValue) > (extraInputMax || 0)
 
