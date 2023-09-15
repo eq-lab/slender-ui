@@ -1,7 +1,10 @@
 import React from 'react'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
+import { supportedTokensIconStyles } from '@/shared/stellar/ui/supported-tokens-icon-styles'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import Thumbnail from '@marginly/ui/components/thumbnail'
+import Typography from '@marginly/ui/components/typography'
 import { formatUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 
@@ -19,6 +22,7 @@ export function PositionCell({
   isLendPosition?: boolean
 }) {
   const { token, value, valueInUsd } = position
+  const { color, Icon } = supportedTokensIconStyles[token]
 
   const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
     tokenContracts[token],
@@ -27,6 +31,9 @@ export function PositionCell({
 
   return (
     <div>
+      <Thumbnail md>
+        <Icon />
+      </Thumbnail>
       <em>
         {tokenCache?.name}
         {percentage && percentage !== 100 ? `: ${percentage}%` : null}
@@ -34,9 +41,9 @@ export function PositionCell({
       <br />
       {value.toString(10)} {token.toUpperCase()}{' '}
       {isLendPosition && (
-        <div>
+        <Typography caption>
           <em>{discount} discount</em>
-        </div>
+        </Typography>
       )}
       {borrowInterestRate && <div>{isLendPosition ? lendInterestRate : borrowInterestRate}</div>}
       {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}

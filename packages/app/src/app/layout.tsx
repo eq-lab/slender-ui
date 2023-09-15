@@ -3,6 +3,7 @@ import React from 'react'
 import { Providers } from '@/global/providers'
 import { MobilePlaceholder } from '@/global/mobile-placeholder/mobile-placeholder'
 import { LayoutSwitcher } from '@/global/mobile-placeholder/layout-switcher'
+import '@marginly/ui/styles/theme.css'
 import { GlobalStyle } from '@/global/styles'
 
 export const metadata: Metadata = {

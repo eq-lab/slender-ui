@@ -7,16 +7,19 @@ import { useLendDecrease } from '@/features/borrow-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/borrow-flow/hooks/use-lend-increase'
 import { formatUsd, formatPercent } from '@/shared/formatters'
 import { SUPPORTED_TOKENS, tokenContracts } from '@/shared/stellar/constants/tokens'
+import Label from '@marginly/ui/components/label'
 import Typography from '@marginly/ui/components/typography'
 import { useMarketData } from '@/entities/token/context/hooks'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { PositionCell } from './components/position-cell'
 import {
   PositionWrapper,
+  PositionHeaderWrapper,
+  PositionSumWrapper,
   PositionContainer,
   PositionSideContainer,
   PositionHeadingContainer,
-} from './position.styled'
+} from './position-section.styled'
 
 export function PositionSection() {
   const position = useContextSelector(PositionContext, (state) => state.position)
@@ -65,17 +68,23 @@ export function PositionSection() {
 
   return (
     <PositionWrapper>
-      <Typography>Position</Typography>
-      <div>
-        <em>Health: {positionHealth}%</em>
-      </div>
+      <PositionHeaderWrapper>
+        <Typography title>Position</Typography>
+        <div>
+          <em>Health: {positionHealth}%</em>
+        </div>
+      </PositionHeaderWrapper>
       {position?.deposits.length || position?.debts.length ? (
         <PositionContainer>
           <PositionSideContainer>
             <PositionHeadingContainer>
-              {depositsSumUsd && <Typography>{formatUsd(depositsSumUsd)}</Typography>}
-              <Typography>Lent</Typography>
-              <Typography>+{formatPercent(depositSumInterestRate)} APR</Typography>
+              <PositionSumWrapper>
+                {depositsSumUsd && <Typography headerL>{formatUsd(depositsSumUsd)}</Typography>}
+                <Typography secondary>Lent</Typography>
+              </PositionSumWrapper>
+              <Label positive lg>
+                +{formatPercent(depositSumInterestRate)} APR
+              </Label>
             </PositionHeadingContainer>
             {position.deposits.map((deposit) => {
               const { token, valueInUsd } = deposit
@@ -102,9 +111,24 @@ export function PositionSection() {
           </PositionSideContainer>
           <PositionSideContainer>
             <PositionHeadingContainer>
-              {debtsSumUsd && <Typography>{formatUsd(debtsSumUsd)}</Typography>}
-              <Typography>Borrowed</Typography>
-              <Typography>-{formatPercent(debtSumInterestRate)} APR</Typography>
+              {showDebtMore ? (
+                <>
+                  <PositionSumWrapper>
+                    {debtsSumUsd && <Typography headerL>{formatUsd(debtsSumUsd)}</Typography>}
+                    <Typography>Borrowed</Typography>
+                  </PositionSumWrapper>
+                  <Label negative lg>
+                    -{formatPercent(debtSumInterestRate)} APR
+                  </Label>
+                </>
+              ) : (
+                <PositionSumWrapper>
+                  <Typography headerL>You can’t borrow</Typography>
+                  <Typography secondary>
+                    Withdraw any collateral asset to be able to borrow
+                  </Typography>
+                </PositionSumWrapper>
+              )}
             </PositionHeadingContainer>
             <div>
               {position.debts.map((debt) => {
