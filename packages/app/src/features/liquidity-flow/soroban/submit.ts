@@ -1,9 +1,30 @@
-import { PositionUpdate } from '@/features/liquidity-flow/types'
+import { Address, i128 } from '@bindings/pool'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { logInfo } from '@/shared/logger'
-import { makeLiquidityBinding } from './binding/make-liquidity-binding'
+import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders'
+import { PositionUpdate } from '../types'
+import { ResponseTypes } from './binding/types'
+import { invoke } from './binding/invoke'
+import { parseResultXdr } from './binding/parse-result-xdr'
 
 const USER_DECLINED_ERROR = 'User declined access'
+
+const makeLiquidityBinding =
+  (methodName: 'borrow' | 'deposit' | 'repay' | 'withdraw') =>
+  async <R extends ResponseTypes = undefined>(
+    { who, asset, amount }: { who: Address; asset: Address; amount: i128 },
+    options: {
+      fee?: number
+      responseType?: R
+      secondsToWait?: number
+    } = {},
+  ) =>
+    invoke({
+      method: methodName,
+      args: [addressToScVal(who), addressToScVal(asset), bigintToScVal(amount)],
+      ...options,
+      parseResultXdr,
+    })
 
 const makeSubmit =
   (methodName: Parameters<typeof makeLiquidityBinding>[0]) =>
@@ -33,3 +54,4 @@ const makeSubmit =
 export const submitBorrow = makeSubmit('borrow')
 export const submitDeposit = makeSubmit('deposit')
 export const submitRepay = makeSubmit('repay')
+export const submitWithdraw = makeSubmit('withdraw')
