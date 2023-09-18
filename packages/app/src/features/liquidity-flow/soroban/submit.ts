@@ -1,13 +1,33 @@
-import { PositionUpdate } from '@/features/liquidity-flow/types'
+import { Address, i128 } from '@bindings/pool'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { logInfo } from '@/shared/logger'
-import { borrow } from './binding/borrow'
-import { deposit } from './binding/deposit'
+import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders'
+import { PositionUpdate } from '../types'
+import { ResponseTypes } from './binding/types'
+import { invoke } from './binding/invoke'
+import { parseResultXdr } from './binding/parse-result-xdr'
 
 const USER_DECLINED_ERROR = 'User declined access'
 
+const makeLiquidityBinding =
+  (methodName: 'borrow' | 'deposit' | 'repay' | 'withdraw') =>
+  async <R extends ResponseTypes = undefined>(
+    { who, asset, amount }: { who: Address; asset: Address; amount: i128 },
+    options: {
+      fee?: number
+      responseType?: R
+      secondsToWait?: number
+    } = {},
+  ) =>
+    invoke({
+      method: methodName,
+      args: [addressToScVal(who), addressToScVal(asset), bigintToScVal(amount)],
+      ...options,
+      parseResultXdr,
+    })
+
 const makeSubmit =
-  (submitFunction: typeof borrow) =>
+  (methodName: Parameters<typeof makeLiquidityBinding>[0]) =>
   async (address: string, sendValue: PositionUpdate): Promise<'fulfilled' | never> => {
     // we have to sign and send transactions one by one
     // eslint-disable-next-line no-restricted-syntax
@@ -15,7 +35,7 @@ const makeSubmit =
       try {
         // that's exactly what we want
         // eslint-disable-next-line no-await-in-loop
-        const result = await submitFunction({
+        const result = await makeLiquidityBinding(methodName)({
           who: address,
           asset: tokenContracts[tokenName].address,
           amount: value,
@@ -31,5 +51,7 @@ const makeSubmit =
     return 'fulfilled'
   }
 
-export const submitBorrow = makeSubmit(borrow)
-export const submitDeposit = makeSubmit(deposit)
+export const submitBorrow = makeSubmit('borrow')
+export const submitDeposit = makeSubmit('deposit')
+export const submitRepay = makeSubmit('repay')
+export const submitWithdraw = makeSubmit('withdraw')

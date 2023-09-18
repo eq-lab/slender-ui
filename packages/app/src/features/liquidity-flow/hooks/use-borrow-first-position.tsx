@@ -5,7 +5,7 @@ import { useContextSelector } from 'use-context-selector'
 import { PositionContext } from '@/entities/position/context/context'
 import { logError, logInfo } from '@/shared/logger'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
-import { getPositionUpdateByPosition } from '../soroban/get-position-update-by-position'
+import { getPositionUpdateByCells } from '../soroban/get-position-update-by-cells'
 import { BorrowStepModal } from '../components/borrow-first-position-flow/borrow-step-modal'
 import { LendStepModal } from '../components/borrow-first-position-flow/lend-step-modal'
 import { excludeSupportedTokens } from '../utils'
@@ -40,9 +40,13 @@ export const useBorrowFirstPosition = (
 
     try {
       setWaitModalIsOpen(true)
-      const { deposits, debts } = getPositionUpdateByPosition(value)
+
+      const deposits = getPositionUpdateByCells(value.deposits)
       logInfo(await submitDeposit(address, deposits))
+
+      const debts = getPositionUpdateByCells(value.debts)
       logInfo(await submitBorrow(address, debts))
+
       setPosition(value)
     } catch (e) {
       logError(e)

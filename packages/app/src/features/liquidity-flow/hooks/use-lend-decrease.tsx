@@ -3,9 +3,14 @@ import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { PositionCell } from '@/entities/position/types'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
-import { LendDecreaseModal } from '../components/lend-decrease-modal'
-import { useDebtUsd } from './use-debt-usd'
+import { logError, logInfo } from '@/shared/logger'
+import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
+import { submitWithdraw } from '../soroban/submit'
+import { getPositionUpdateByCells } from '../soroban/get-position-update-by-cells'
+import { useSetWaitModalIsOpen } from '../context/hooks'
 import { useDepositUsd } from './use-deposit-usd'
+import { useDebtUsd } from './use-debt-usd'
+import { LendDecreaseModal } from '../components/lend-decrease-modal'
 
 export const useLendDecrease = (): {
   modal: JSX.Element | null
@@ -17,24 +22,38 @@ export const useLendDecrease = (): {
 
   const debtSumUsd = useDebtUsd(position?.debts)
   const depositSumUsd = useDepositUsd(position?.deposits)
+  const setWaitModalIsOpen = useSetWaitModalIsOpen()
+  const { address } = useWalletAddress()
 
   const renderModal = () => {
     if (!position || !modalToken) return null
     const deposit = position.deposits.find((depositItem) => depositItem.token === modalToken)
     if (!deposit) return null
 
-    const handleSend = ({ token, value }: PositionCell) => {
+    const handleSend = async ({ token, value }: PositionCell) => {
       const newDeposits = position.deposits.map((el) => {
         if (el.token === token) {
           return { value: el.value - value, token }
         }
         return el
       })
-      setPosition({
-        debts: position.debts,
-        deposits: newDeposits as [PositionCell, ...PositionCell[]],
-      })
+
+      if (!address) return
       setModalToken(null)
+
+      try {
+        setWaitModalIsOpen(true)
+
+        logInfo(await submitWithdraw(address, getPositionUpdateByCells(newDeposits)))
+        setPosition({
+          debts: position.debts,
+          deposits: newDeposits,
+        })
+      } catch (e) {
+        logError(e)
+      } finally {
+        setWaitModalIsOpen(false)
+      }
     }
 
     return (
