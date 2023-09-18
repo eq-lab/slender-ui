@@ -42,7 +42,7 @@ export const useLendFirstPosition = (
     <LendFirstPositionModal
       onClose={() => setModalOpenStatus(false)}
       onSend={handleSend}
-      depositToken={token}
+      depositTokenName={token}
     />
   ) : null
 

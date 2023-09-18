@@ -6,7 +6,7 @@ import { PositionSummary } from '@/entities/position/components/position-summary
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
-import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
+import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { InputLayout } from '../../../styled'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
@@ -18,26 +18,34 @@ import { AssetSelect } from '../../asset-select'
 interface Props {
   onClose: () => void
   debtValue: string
-  debtToken: SupportedToken
-  depositTokens: [SupportedToken, SupportedToken]
+  debtTokenName: SupportedToken
+  depositTokenNames: [SupportedToken, SupportedToken]
   onSend: (value: Position) => void
 }
 
-export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, onSend }: Props) {
-  const getInfoByTokenName = useGetInfoByTokenName()
+export function LendStepModal({
+  onClose,
+  debtValue,
+  debtTokenName,
+  depositTokenNames,
+  onSend,
+}: Props) {
+  const getTokenByTokenName = useGetTokenByTokenName()
 
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDepositToken, setCoreDepositToken] = useState<SupportedToken>(depositTokens[0])
+  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedToken>(
+    depositTokenNames[0],
+  )
 
   const [showExtraInput, setShowExtraInput] = useState(false)
 
-  const debtCoinInfo = useTokenInfo(debtToken)
-  const coreDepositInfo = useTokenInfo(coreDepositToken)
-  const extraDepositToken =
-    depositTokens[0] === coreDepositToken ? depositTokens[1] : depositTokens[0]
-  const extraDepositInfo = useTokenInfo(extraDepositToken)
+  const debtCoinInfo = useTokenInfo(debtTokenName)
+  const coreDepositInfo = useTokenInfo(coreDepositTokenName)
+  const extraDepositTokenName =
+    depositTokenNames[0] === coreDepositTokenName ? depositTokenNames[1] : depositTokenNames[0]
+  const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 
   const debtValueInUsd = Number(debtValue) * debtCoinInfo.priceInUsd
 
@@ -57,7 +65,7 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
     coreDepositInfo.userBalance,
   ])
 
-  const { borrowInterestRate } = useMarketDataForDisplay(tokenContracts[debtToken])
+  const { borrowInterestRate } = useMarketDataForDisplay(tokenContracts[debtTokenName])
 
   const coreDeposit = Number(coreValue) * coreDepositInfo.discount
   const extraDeposit = Number(extraValue) * extraDepositInfo.discount
@@ -74,8 +82,8 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
 
   const error = borrowCapacityError || firstInputError || secondInputError
 
-  const extraTokenSymbol = getInfoByTokenName(extraDepositToken)?.symbol
-  const coreTokenSymbol = getInfoByTokenName(coreDepositToken)?.symbol
+  const extraTokenSymbol = getTokenByTokenName(extraDepositTokenName)?.symbol
+  const coreTokenSymbol = getTokenByTokenName(coreDepositTokenName)?.symbol
 
   return (
     <ModalLayout
@@ -92,16 +100,16 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
     >
       <FormLayout
         title="Add collateral"
-        description={`with apr ${borrowInterestRate}`}
+        description={`With APR ${borrowInterestRate}`}
         buttonProps={{
-          label: `Borrow ${debtValue} ${getInfoByTokenName(debtToken)?.symbol}`,
+          label: `Borrow ${debtValue} ${getTokenByTokenName(debtTokenName)?.symbol}`,
           onClick: () =>
             onSend({
-              debts: [{ token: debtToken, value: BigInt(debtValue) }],
+              debts: [{ token: debtTokenName, value: BigInt(debtValue) }],
               deposits: [
-                { token: coreDepositToken, value: BigInt(coreValue) },
+                { token: coreDepositTokenName, value: BigInt(coreValue) },
                 ...(showExtraInput
-                  ? [{ token: extraDepositToken, value: BigInt(extraValue) }]
+                  ? [{ token: extraDepositTokenName, value: BigInt(extraValue) }]
                   : []),
               ],
             }),
@@ -121,9 +129,9 @@ export function LendStepModal({ onClose, debtValue, debtToken, depositTokens, on
           />
           {!showExtraInput && (
             <AssetSelect
-              onChange={setCoreDepositToken}
-              tokens={depositTokens}
-              value={coreDepositToken}
+              onChange={setCoreDepositTokenName}
+              tokenNames={depositTokenNames}
+              value={coreDepositTokenName}
             />
           )}
         </InputLayout>

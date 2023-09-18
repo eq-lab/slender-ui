@@ -4,7 +4,7 @@ import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
-import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
+import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
@@ -14,7 +14,7 @@ interface Props {
   debt: bigint
   depositSumUsd: number
   onClose: () => void
-  token: SupportedToken
+  tokenName: SupportedToken
   onSend: (value: PositionCell) => void
   debtSumUsd: number
 }
@@ -23,14 +23,14 @@ export function BorrowDecreaseModal({
   depositSumUsd,
   debt,
   onClose,
-  token,
+  tokenName,
   onSend,
   debtSumUsd,
 }: Props) {
   const [value, setValue] = useState('')
-  const getInfoByTokenName = useGetInfoByTokenName()
+  const getTokenByTokenName = useGetTokenByTokenName()
 
-  const tokenInfo = useTokenInfo(token)
+  const tokenInfo = useTokenInfo(tokenName)
   const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * tokenInfo.priceInUsd, 0)
 
   const { health, healthDelta, borrowCapacityInterface, borrowCapacityDelta } = getPositionInfo({
@@ -43,7 +43,7 @@ export function BorrowDecreaseModal({
   const debtDelta = debt - BigInt(value)
   const debtError = debtDelta < 0
 
-  const tokenSymbol = getInfoByTokenName(token)?.symbol
+  const tokenSymbol = getTokenByTokenName(tokenName)?.symbol
   return (
     <ModalLayout
       infoSlot={
@@ -64,7 +64,7 @@ export function BorrowDecreaseModal({
         title="How much to pay off"
         buttonProps={{
           label: `Pay off ${value} ${tokenSymbol}`,
-          onClick: () => onSend({ value: BigInt(value), token }),
+          onClick: () => onSend({ value: BigInt(value), token: tokenName }),
           disabled: debtError,
         }}
       >

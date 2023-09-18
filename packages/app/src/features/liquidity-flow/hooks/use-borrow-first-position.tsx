@@ -64,16 +64,16 @@ export const useBorrowFirstPosition = (
         onClose={close}
         onContinue={() => setStep(Step.Deposit)}
         onBorrowValueChange={setDebtValue}
-        debtToken={token}
-        depositToken={firstDepositToken}
+        debtTokenName={token}
+        depositTokenName={firstDepositToken}
       />
     ),
     [Step.Deposit]: firstDepositToken && secondDepositToken && (
       <LendStepModal
         onClose={close}
         debtValue={debtValue}
-        debtToken={token}
-        depositTokens={[firstDepositToken, secondDepositToken]}
+        debtTokenName={token}
+        depositTokenNames={[firstDepositToken, secondDepositToken]}
         onSend={handleSend}
       />
     ),

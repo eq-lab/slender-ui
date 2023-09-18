@@ -5,7 +5,7 @@ import { PositionSummary } from '@/entities/position/components/position-summary
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
-import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
+import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
@@ -19,47 +19,48 @@ interface Props {
   debtSumUsd: number
   depositSumUsd: number
   onClose: () => void
-  token: SupportedToken
+  tokenName: SupportedToken
   onSend: (value: PositionUpdate) => void
-  debtTokens: SupportedToken[]
+  debtTokenNames: SupportedToken[]
 }
 
 export function BorrowIncreaseModal({
   depositSumUsd,
   onClose,
-  token,
+  tokenName,
   onSend,
-  debtTokens,
+  debtTokenNames,
   debtSumUsd,
 }: Props) {
-  const getInfoByTokenName = useGetInfoByTokenName()
+  const getTokenByTokenName = useGetTokenByTokenName()
 
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDebtToken, setCoreDebtToken] = useState<SupportedToken>(token)
+  const [coreDebtTokenName, setCoreDebtTokenName] = useState<SupportedToken>(tokenName)
   const [showExtraInput, setShowExtraInput] = useState(false)
 
   useEffect(() => {
-    setCoreDebtToken(token)
-  }, [token])
+    setCoreDebtTokenName(tokenName)
+  }, [tokenName])
 
-  const extraDebtToken = debtTokens[0] === coreDebtToken ? debtTokens[1] : debtTokens[0]
+  const extraDebtTokenName =
+    debtTokenNames[0] === coreDebtTokenName ? debtTokenNames[1] : debtTokenNames[0]
 
   const { availableToBorrow: coreAvailableToBorrow } = useAvailableToBorrow(
-    tokenContracts[coreDebtToken],
+    tokenContracts[coreDebtTokenName],
   )
   const { availableToBorrow: extraAvailableToBorrow } = useAvailableToBorrow(
-    tokenContracts[extraDebtToken ?? coreDebtToken],
+    tokenContracts[extraDebtTokenName ?? coreDebtTokenName],
   )
 
-  const coreDebtInfo = useTokenInfo(coreDebtToken)
-  const extraDebtInfo = useTokenInfo(extraDebtToken ?? coreDebtToken)
+  const coreDebtInfo = useTokenInfo(coreDebtTokenName)
+  const extraDebtInfo = useTokenInfo(extraDebtTokenName ?? coreDebtTokenName)
 
   const actualDebtUsd =
     debtSumUsd +
     Number(value) * coreDebtInfo.priceInUsd +
-    (extraDebtToken ? Number(extraValue) * extraDebtInfo.priceInUsd : 0)
+    (extraDebtTokenName ? Number(extraValue) * extraDebtInfo.priceInUsd : 0)
 
   const {
     borrowCapacityDelta,
@@ -77,7 +78,7 @@ export function BorrowIncreaseModal({
 
   const debtUsdDelta = actualDebtUsd - debtSumUsd
 
-  const hasExtraDeptToken = Boolean(debtTokens[1])
+  const hasExtraDeptToken = Boolean(debtTokenNames[1])
 
   const coreInputMax = Math.min(
     coreAvailableToBorrow,
@@ -85,19 +86,19 @@ export function BorrowIncreaseModal({
   )
 
   const extraInputMax =
-    extraDebtToken &&
+    extraDebtTokenName &&
     Math.min(extraAvailableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
 
   const coreInputError = Number(value) > coreInputMax
   const extraInputError = Number(extraValue) > (extraInputMax || 0)
 
   const getSaveData = (): PositionUpdate => {
-    const core = { [coreDebtToken]: BigInt(value) }
+    const core = { [coreDebtTokenName]: BigInt(value) }
 
-    if (showExtraInput && extraDebtToken) {
+    if (showExtraInput && extraDebtTokenName) {
       return {
         ...core,
-        [extraDebtToken]: BigInt(extraValue),
+        [extraDebtTokenName]: BigInt(extraValue),
       }
     }
 
@@ -106,8 +107,8 @@ export function BorrowIncreaseModal({
 
   const sendButtonDisable = borrowCapacityError || coreInputError || extraInputError
 
-  const extraTokenSymbol = getInfoByTokenName(extraDebtToken)?.symbol
-  const coreTokenSymbol = getInfoByTokenName(coreDebtToken)?.symbol
+  const extraTokenSymbol = getTokenByTokenName(extraDebtTokenName)?.symbol
+  const coreTokenSymbol = getTokenByTokenName(coreDebtTokenName)?.symbol
 
   return (
     <ModalLayout
@@ -143,7 +144,11 @@ export function BorrowIncreaseModal({
             postfix={coreTokenSymbol}
           />
           {!showExtraInput && hasExtraDeptToken && (
-            <AssetSelect onChange={setCoreDebtToken} tokens={debtTokens} value={coreDebtToken} />
+            <AssetSelect
+              onChange={setCoreDebtTokenName}
+              tokenNames={debtTokenNames}
+              value={coreDebtTokenName}
+            />
           )}
         </InputLayout>
 

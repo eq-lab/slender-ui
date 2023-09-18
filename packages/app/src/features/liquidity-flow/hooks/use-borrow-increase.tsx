@@ -77,10 +77,10 @@ export const useBorrowIncrease = (): {
 
     return (
       <BorrowIncreaseModal
-        debtTokens={excludeSupportedTokens(depositTokens)}
+        debtTokenNames={excludeSupportedTokens(depositTokens)}
         depositSumUsd={depositSumUsd}
         debtSumUsd={debtSumUsd}
-        token={modalToken}
+        tokenName={modalToken}
         onClose={() => setModalToken(null)}
         onSend={handleSend}
       />

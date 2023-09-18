@@ -61,7 +61,7 @@ export const useLendDecrease = (): {
         deposit={deposit.value}
         debtSumUsd={debtSumUsd}
         depositSumUsd={depositSumUsd}
-        token={deposit.token}
+        tokenName={deposit.token}
         onClose={() => setModalToken(null)}
         onSend={handleSend}
       />

@@ -82,10 +82,10 @@ export const useLendIncrease = (): {
 
     return (
       <LendIncreaseModal
-        depositTokens={excludeSupportedTokens(debtsTokens)}
+        depositTokenNames={excludeSupportedTokens(debtsTokens)}
         depositSumUsd={depositSumUsd}
         debtSumUsd={debtSumUsd}
-        token={modalToken}
+        tokenName={modalToken}
         onClose={() => setModalToken(null)}
         onSend={handleSend}
       />
