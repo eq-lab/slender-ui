@@ -5,6 +5,7 @@ import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import Thumbnail from '@marginly/ui/components/thumbnail'
 import Typography from '@marginly/ui/components/typography'
+import Label from '@marginly/ui/components/label'
 import { formatUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 
@@ -34,10 +35,9 @@ export function PositionCell({
       <Thumbnail md>
         <Icon />
       </Thumbnail>
-      <em>
-        {tokenCache?.name}
-        {percentage && percentage !== 100 ? `: ${percentage}%` : null}
-      </em>
+      <Typography caption>
+        {tokenCache?.name} · {percentage && percentage !== 100 ? `: ${percentage}%` : null}
+      </Typography>
       <br />
       {value.toString(10)} {tokenCache?.symbol}{' '}
       {isLendPosition && (
@@ -45,7 +45,9 @@ export function PositionCell({
           <em>{discount} discount</em>
         </Typography>
       )}
-      {borrowInterestRate && <div>{isLendPosition ? lendInterestRate : borrowInterestRate}</div>}
+      {borrowInterestRate && (
+        <Label>{isLendPosition ? lendInterestRate : borrowInterestRate}</Label>
+      )}
       {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
       <button type="button" onClick={openDecreaseModal}>
         &minus;
