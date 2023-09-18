@@ -64,7 +64,7 @@ export function BorrowDecreaseModal({
         title="How much to pay off"
         buttonProps={{
           label: `Pay off ${value} ${tokenSymbol}`,
-          onClick: () => onSend({ value: BigInt(value), token: tokenName }),
+          onClick: () => onSend({ value: BigInt(value), tokenName }),
           disabled: debtError,
         }}
       >

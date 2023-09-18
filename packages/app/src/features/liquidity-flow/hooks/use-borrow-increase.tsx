@@ -20,7 +20,7 @@ export const useBorrowIncrease = (): {
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
   const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
 
-  const depositTokens = position?.deposits.map((deposit) => deposit.token) || []
+  const depositTokens = position?.deposits.map((deposit) => deposit.tokenName) || []
 
   const depositSumUsd = useDepositUsd(position?.deposits)
   const debtSumUsd = useDebtUsd(position?.debts)
@@ -52,15 +52,15 @@ export const useBorrowIncrease = (): {
         const prevDebtsObj = position.debts.reduce(
           (acc, el) => ({
             ...acc,
-            [el.token]: el.value,
+            [el.tokenName]: el.value,
           }),
           {},
         )
         const finalDebtsObj = sumObj(prevDebtsObj, sendValue)
         const debts = Object.entries(finalDebtsObj).map((entry) => {
-          const [token, value] = entry as [SupportedToken, bigint]
+          const [tokenName, value] = entry as [SupportedToken, bigint]
           return {
-            token,
+            tokenName,
             value,
           }
         })

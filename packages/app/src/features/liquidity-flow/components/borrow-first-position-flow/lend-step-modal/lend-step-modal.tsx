@@ -105,11 +105,11 @@ export function LendStepModal({
           label: `Borrow ${debtValue} ${getTokenByTokenName(debtTokenName)?.symbol}`,
           onClick: () =>
             onSend({
-              debts: [{ token: debtTokenName, value: BigInt(debtValue) }],
+              debts: [{ tokenName: debtTokenName, value: BigInt(debtValue) }],
               deposits: [
-                { token: coreDepositTokenName, value: BigInt(coreValue) },
+                { tokenName: coreDepositTokenName, value: BigInt(coreValue) },
                 ...(showExtraInput
-                  ? [{ token: extraDepositTokenName, value: BigInt(extraValue) }]
+                  ? [{ tokenName: extraDepositTokenName, value: BigInt(extraValue) }]
                   : []),
               ],
             }),

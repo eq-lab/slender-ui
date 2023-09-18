@@ -42,9 +42,9 @@ export function PositionSection() {
 
   const makeGetSumInterestRate =
     (isDeposit: boolean) => (sum: number, currentDebt: PositionCellType) => {
-      const { valueInUsd, token } = currentDebt
+      const { valueInUsd, tokenName } = currentDebt
       if (!marketData) return sum
-      const { address } = tokenContracts[token]
+      const { address } = tokenContracts[tokenName]
       const { borrowInterestRate, lendInterestRate } = marketData[address] || {}
       const interestRatePercentNum =
         parseInt((isDeposit ? lendInterestRate : borrowInterestRate) || '', 10) || 0
@@ -78,7 +78,7 @@ export function PositionSection() {
               <Typography>+{formatPercent(depositSumInterestRate)} APR</Typography>
             </PositionHeadingContainer>
             {position.deposits.map((deposit) => {
-              const { token, valueInUsd } = deposit
+              const { tokenName: token, valueInUsd } = deposit
               const depositPersentage =
                 valueInUsd && !!depositsSumUsd
                   ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
@@ -108,7 +108,7 @@ export function PositionSection() {
             </PositionHeadingContainer>
             <div>
               {position.debts.map((debt) => {
-                const { token, valueInUsd } = debt
+                const { tokenName: token, valueInUsd } = debt
                 const debtPersentage =
                   valueInUsd && debtsSumUsd
                     ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)

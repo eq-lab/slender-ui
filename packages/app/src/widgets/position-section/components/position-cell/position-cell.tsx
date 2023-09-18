@@ -18,12 +18,12 @@ export function PositionCell({
   openIncreaseModal: () => void
   isLendPosition?: boolean
 }) {
-  const { token, value, valueInUsd } = position
+  const { tokenName, value, valueInUsd } = position
 
   const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
-    tokenContracts[token],
+    tokenContracts[tokenName],
   )
-  const tokenCache = useTokenCache()?.[tokenContracts[token].address]
+  const tokenCache = useTokenCache()?.[tokenContracts[tokenName].address]
 
   return (
     <div>
