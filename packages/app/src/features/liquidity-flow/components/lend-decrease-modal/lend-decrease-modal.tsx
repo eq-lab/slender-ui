@@ -4,7 +4,7 @@ import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
-import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
+import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
@@ -14,7 +14,7 @@ interface Props {
   deposit: bigint
   depositSumUsd: number
   onClose: () => void
-  token: SupportedToken
+  tokenName: SupportedToken
   onSend: (value: PositionCell) => void
   debtSumUsd: number
 }
@@ -23,14 +23,14 @@ export function LendDecreaseModal({
   depositSumUsd,
   deposit,
   onClose,
-  token,
+  tokenName,
   onSend,
   debtSumUsd,
 }: Props) {
   const [value, setValue] = useState('')
 
-  const depositTokenInfo = useTokenInfo(token)
-  const getInfoByTokenName = useGetInfoByTokenName()
+  const depositTokenInfo = useTokenInfo(tokenName)
+  const getTokenByTokenName = useGetTokenByTokenName()
 
   const actualDepositUsd = Math.max(
     depositSumUsd - Number(value) * depositTokenInfo.priceInUsd * depositTokenInfo.discount,
@@ -51,7 +51,7 @@ export function LendDecreaseModal({
     actualDepositUsd,
   })
 
-  const borrowTokenInfo = useTokenInfo(token)
+  const borrowTokenInfo = useTokenInfo(tokenName)
 
   const max = Math.floor(
     defaultBorrowCapacity / (borrowTokenInfo.priceInUsd * borrowTokenInfo.discount),
@@ -60,7 +60,7 @@ export function LendDecreaseModal({
   const depositDelta = deposit - BigInt(value)
   const depositError = depositDelta < 0
 
-  const tokenSymbol = getInfoByTokenName(token)?.symbol
+  const tokenSymbol = getTokenByTokenName(tokenName)?.symbol
 
   return (
     <ModalLayout
@@ -82,7 +82,7 @@ export function LendDecreaseModal({
         title="Withdraw collateral"
         buttonProps={{
           label: `Pay off ${value} ${tokenSymbol}`,
-          onClick: () => onSend({ value: BigInt(value), token }),
+          onClick: () => onSend({ value: BigInt(value), tokenName }),
           disabled: depositError || borrowCapacityError,
         }}
       >

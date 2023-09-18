@@ -1,7 +1,11 @@
 import React from 'react'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
+import { supportedTokensIconStyles } from '@/shared/stellar/ui/supported-tokens-icon-styles'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import Thumbnail from '@marginly/ui/components/thumbnail'
+import Typography from '@marginly/ui/components/typography'
+import Label from '@marginly/ui/components/label'
 import { formatUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 
@@ -18,27 +22,32 @@ export function PositionCell({
   openIncreaseModal: () => void
   isLendPosition?: boolean
 }) {
-  const { token, value, valueInUsd } = position
+  const { tokenName, value, valueInUsd } = position
+  const { Icon } = supportedTokensIconStyles[tokenName]
 
   const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
-    tokenContracts[token],
+    tokenContracts[tokenName],
   )
-  const tokenCache = useTokenCache()?.[tokenContracts[token].address]
+  const tokenCache = useTokenCache()?.[tokenContracts[tokenName].address]
 
   return (
     <div>
-      <em>
-        {tokenCache?.name}
-        {percentage && percentage !== 100 ? `: ${percentage}%` : null}
-      </em>
+      <Thumbnail md>
+        <Icon />
+      </Thumbnail>
+      <Typography caption>
+        {tokenCache?.name} · {percentage && percentage !== 100 ? `: ${percentage}%` : null}
+      </Typography>
       <br />
       {value.toString(10)} {tokenCache?.symbol}{' '}
       {isLendPosition && (
-        <div>
+        <Typography caption>
           <em>{discount} discount</em>
-        </div>
+        </Typography>
       )}
-      {borrowInterestRate && <div>{isLendPosition ? lendInterestRate : borrowInterestRate}</div>}
+      {borrowInterestRate && (
+        <Label>{isLendPosition ? lendInterestRate : borrowInterestRate}</Label>
+      )}
       {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
       <button type="button" onClick={openDecreaseModal}>
         &minus;

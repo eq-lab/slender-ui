@@ -1,7 +1,7 @@
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 
 export interface PositionCell {
-  token: SupportedToken
+  tokenName: SupportedToken
   value: bigint
   valueInUsd?: number
 }

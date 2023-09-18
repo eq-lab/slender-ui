@@ -4,7 +4,7 @@ import { PositionSummary } from '@/entities/position/components/position-summary
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
-import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
+import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
@@ -18,36 +18,36 @@ interface Props {
   debtSumUsd: number
   depositSumUsd: number
   onClose: () => void
-  token: SupportedToken
+  tokenName: SupportedToken
   onSend: (value: PositionUpdate) => void
-  depositTokens: SupportedToken[]
+  depositTokenNames: SupportedToken[]
 }
 
 export function LendIncreaseModal({
   depositSumUsd,
   onClose,
-  token,
+  tokenName,
   onSend,
-  depositTokens,
+  depositTokenNames,
   debtSumUsd,
 }: Props) {
-  const getInfoByTokenName = useGetInfoByTokenName()
+  const getTokenByTokenName = useGetTokenByTokenName()
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDepositToken, setCoreDepositToken] = useState<SupportedToken>(token)
+  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedToken>(tokenName)
   const [showExtraInput, setShowExtraInput] = useState(false)
 
   useEffect(() => {
-    setCoreDepositToken(token)
-  }, [token])
+    setCoreDepositTokenName(tokenName)
+  }, [tokenName])
 
-  const extraDepositToken =
-    depositTokens[0] === coreDepositToken ? depositTokens[1] : depositTokens[0]
+  const extraDepositTokenName =
+    depositTokenNames[0] === coreDepositTokenName ? depositTokenNames[1] : depositTokenNames[0]
 
-  const coreDepositInfo = useTokenInfo(coreDepositToken)
-  const possibleDepositInfo = useTokenInfo(extraDepositToken ?? coreDepositToken)
-  const extraDepositInfo = extraDepositToken ? possibleDepositInfo : undefined
+  const coreDepositInfo = useTokenInfo(coreDepositTokenName)
+  const possibleDepositInfo = useTokenInfo(extraDepositTokenName ?? coreDepositTokenName)
+  const extraDepositInfo = extraDepositTokenName ? possibleDepositInfo : undefined
 
   const actualDepositUsd =
     depositSumUsd +
@@ -62,7 +62,7 @@ export function LendIncreaseModal({
       actualDepositUsd,
     })
 
-  const hasExtraDepositToken = Boolean(depositTokens[1])
+  const hasExtraDepositToken = Boolean(depositTokenNames[1])
 
   const coreInputMax = coreDepositInfo.userBalance
   const extraInputMax = extraDepositInfo?.userBalance || 0
@@ -70,16 +70,16 @@ export function LendIncreaseModal({
   const coreInputError = Number(value) > coreDepositInfo.userBalance
   const extraInputError = Number(extraValue) > (extraDepositInfo?.userBalance || 0)
 
-  const extraTokenSymbol = getInfoByTokenName(extraDepositToken)?.symbol
-  const coreTokenSymbol = getInfoByTokenName(coreDepositToken)?.symbol
+  const extraTokenSymbol = getTokenByTokenName(extraDepositTokenName)?.symbol
+  const coreTokenSymbol = getTokenByTokenName(coreDepositTokenName)?.symbol
 
   const getSaveData = (): PositionUpdate => {
-    const core = { [coreDepositToken]: BigInt(value) }
+    const core = { [coreDepositTokenName]: BigInt(value) }
 
-    if (showExtraInput && extraDepositToken) {
+    if (showExtraInput && extraDepositTokenName) {
       return {
         ...core,
-        [extraDepositToken]: BigInt(extraValue),
+        [extraDepositTokenName]: BigInt(extraValue),
       }
     }
 
@@ -121,9 +121,9 @@ export function LendIncreaseModal({
           />
           {!showExtraInput && hasExtraDepositToken && (
             <AssetSelect
-              onChange={setCoreDepositToken}
-              tokens={depositTokens}
-              value={coreDepositToken}
+              onChange={setCoreDepositTokenName}
+              tokenNames={depositTokenNames}
+              value={coreDepositTokenName}
             />
           )}
         </InputLayout>

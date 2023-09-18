@@ -1,8 +1,6 @@
 import React from 'react'
 import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
-import { ThumbnailWrapper } from '@marginly/ui/components/thumbnail/styled'
-import * as uiClassNames from '@marginly/ui/constants/classnames'
-import cn from 'classnames'
+import Thumbnail from '@marginly/ui/components/thumbnail'
 import * as S from './styled'
 
 interface Props {
@@ -12,9 +10,9 @@ interface Props {
 export function AddAssetButton({ onClick }: Props) {
   return (
     <S.Wrapper onClick={onClick}>
-      <ThumbnailWrapper className={cn(uiClassNames.M, uiClassNames.Rectangle)}>
+      <Thumbnail md rectangle>
         <PlusIcon width={24} />
-      </ThumbnailWrapper>
+      </Thumbnail>
       Add Asset
     </S.Wrapper>
   )

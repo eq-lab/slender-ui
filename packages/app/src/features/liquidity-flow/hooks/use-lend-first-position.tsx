@@ -10,7 +10,7 @@ import { PositionUpdate } from '../types'
 import { useSetWaitModalIsOpen } from '../context/hooks'
 
 export const useLendFirstPosition = (
-  token: SupportedToken,
+  tokenName: SupportedToken,
 ): {
   modal: React.ReactNode
   open: () => void
@@ -27,10 +27,10 @@ export const useLendFirstPosition = (
     try {
       setWaitModalIsOpen(true)
 
-      const deposits: PositionUpdate = { [token]: BigInt(value) }
+      const deposits: PositionUpdate = { [tokenName]: BigInt(value) }
 
       logInfo(await submitDeposit(address, deposits))
-      setPosition({ debts: [], deposits: [{ token, value: BigInt(value) }] })
+      setPosition({ debts: [], deposits: [{ tokenName, value: BigInt(value) }] })
     } catch (e) {
       logError(e)
     } finally {
@@ -42,7 +42,7 @@ export const useLendFirstPosition = (
     <LendFirstPositionModal
       onClose={() => setModalOpenStatus(false)}
       onSend={handleSend}
-      depositToken={token}
+      depositTokenName={tokenName}
     />
   ) : null
 
