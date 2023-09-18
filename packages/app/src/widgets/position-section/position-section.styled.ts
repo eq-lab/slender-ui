@@ -4,6 +4,17 @@ export const PositionWrapper = styled.section`
   margin: 64px 0 128px;
 `
 
+export const PositionHeaderWrapper = styled.section`
+  display: flex;
+  justify-content: space-between;
+`
+
+export const PositionSumWrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`
+
 export const PositionContainer = styled.div`
   margin-top: 48px;
   display: flex;
@@ -19,5 +30,6 @@ export const PositionSideContainer = styled.div`
 
 export const PositionHeadingContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 40px;
 `
