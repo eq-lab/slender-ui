@@ -26,6 +26,10 @@ const sorobanTokenRecordToPositionCell = (
 
 export function PositionProvider({ children }: { children: JSX.Element }) {
   const [position, setPosition] = useState<Position>()
+  const [positionUpdate, setPositionUpdate] = useState(0)
+  const updatePosition = () => {
+    setPositionUpdate((state) => state + 1)
+  }
   const { address: userAddress } = useWalletAddress()
 
   const cryptocurrencyUsdRates = usePriceInUsd()
@@ -64,14 +68,14 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
 
     if (lendPositions.length || debtPositions.length) {
       setPosition({
-        deposits: [...lendPositions] as [PositionCell, ...PositionCell[]],
-        debts: debtPositions || [],
+        deposits: lendPositions,
+        debts: debtPositions,
       })
     }
-  }, [userAddress, setPosition, debtBalances, lendBalances, cryptocurrencyUsdRates])
+  }, [userAddress, setPosition, positionUpdate, debtBalances, lendBalances, cryptocurrencyUsdRates])
 
   return (
-    <PositionContext.Provider value={{ position, setPosition }}>
+    <PositionContext.Provider value={{ position, setPosition, updatePosition }}>
       {children}
     </PositionContext.Provider>
   )

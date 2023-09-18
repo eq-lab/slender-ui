@@ -5,7 +5,7 @@ import { useBorrowDecrease } from '@/features/liquidity-flow/hooks/use-borrow-de
 import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/liquidity-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
-import { formatUsd, formatPercent } from '@/shared/formatters'
+import { formatPercent, formatUsd } from '@/shared/formatters'
 import { SUPPORTED_TOKENS, tokenContracts } from '@/shared/stellar/constants/tokens'
 import Label from '@marginly/ui/components/label'
 import Typography from '@marginly/ui/components/typography'
@@ -13,12 +13,12 @@ import { useMarketData } from '@/entities/token/context/hooks'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { PositionCell } from './components/position-cell'
 import {
-  PositionWrapper,
   PositionHeaderWrapper,
   PositionSumWrapper,
   PositionContainer,
-  PositionSideContainer,
   PositionHeadingContainer,
+  PositionSideContainer,
+  PositionWrapper,
 } from './position-section.styled'
 
 export function PositionSection() {
@@ -29,9 +29,6 @@ export function PositionSection() {
   const isFullPosition =
     (position?.debts.length || 0) + (position?.deposits.length || 0) === SUPPORTED_TOKENS.length
   const isFullDeposits = position?.deposits.length === SUPPORTED_TOKENS.length
-
-  const showLendMore = !isFullPosition
-  const showDebtMore = !isFullDeposits
 
   const depositsSumUsd =
     position?.deposits.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
@@ -89,7 +86,7 @@ export function PositionSection() {
               </PositionHeadingContainer>
               {position.deposits.map((deposit) => {
                 const { tokenName, valueInUsd } = deposit
-                const depositPersentage =
+                const depositPercentage =
                   valueInUsd && !!depositsSumUsd
                     ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
                     : undefined
@@ -97,14 +94,14 @@ export function PositionSection() {
                   <PositionCell
                     key={tokenName}
                     position={deposit}
-                    percentage={depositPersentage}
+                    percentage={depositPercentage}
                     openDecreaseModal={() => openLendDecreaseModal(tokenName)}
                     openIncreaseModal={() => openLendIncreaseModal(tokenName)}
                     isLendPosition
                   />
                 )
               })}
-              {showLendMore && (
+              {!isFullPosition && (
                 <button type="button" onClick={() => openLendIncreaseModal()}>
                   + lend more
                 </button>
@@ -112,7 +109,14 @@ export function PositionSection() {
             </PositionSideContainer>
             <PositionSideContainer>
               <PositionHeadingContainer>
-                {showDebtMore ? (
+                {isFullDeposits ? (
+                  <PositionSumWrapper>
+                    <Typography headerL>You can’t borrow</Typography>
+                    <Typography secondary>
+                      Withdraw any collateral asset to be able to borrow
+                    </Typography>
+                  </PositionSumWrapper>
+                ) : (
                   <>
                     <PositionSumWrapper>
                       {debtsSumUsd && <Typography headerL>{formatUsd(debtsSumUsd)}</Typography>}
@@ -122,19 +126,12 @@ export function PositionSection() {
                       -{formatPercent(debtSumInterestRate)} APR
                     </Label>
                   </>
-                ) : (
-                  <PositionSumWrapper>
-                    <Typography headerL>You can’t borrow</Typography>
-                    <Typography secondary>
-                      Withdraw any collateral asset to be able to borrow
-                    </Typography>
-                  </PositionSumWrapper>
                 )}
               </PositionHeadingContainer>
               <div>
                 {position.debts.map((debt) => {
                   const { tokenName, valueInUsd } = debt
-                  const debtPersentage =
+                  const debtPercentage =
                     valueInUsd && debtsSumUsd
                       ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)
                       : undefined
@@ -143,13 +140,13 @@ export function PositionSection() {
                     <PositionCell
                       key={tokenName}
                       position={debt}
-                      percentage={debtPersentage}
+                      percentage={debtPercentage}
                       openDecreaseModal={() => openBorrowDecreaseModal(tokenName)}
                       openIncreaseModal={() => openBorrowIncreaseModal(tokenName)}
                     />
                   )
                 })}
-                {showDebtMore && (
+                {!isFullDeposits && (
                   <button type="button" onClick={() => openBorrowIncreaseModal()}>
                     + lend more
                   </button>
