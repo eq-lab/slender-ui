@@ -7,16 +7,19 @@ import { useLendDecrease } from '@/features/liquidity-flow/hooks/use-lend-decrea
 import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
 import { formatUsd, formatPercent } from '@/shared/formatters'
 import { SUPPORTED_TOKENS, tokenContracts } from '@/shared/stellar/constants/tokens'
+import Label from '@marginly/ui/components/label'
 import Typography from '@marginly/ui/components/typography'
 import { useMarketData } from '@/entities/token/context/hooks'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { PositionCell } from './components/position-cell'
 import {
   PositionWrapper,
+  PositionHeaderWrapper,
+  PositionSumWrapper,
   PositionContainer,
   PositionSideContainer,
   PositionHeadingContainer,
-} from './position.styled'
+} from './position-section.styled'
 
 export function PositionSection() {
   const position = useContextSelector(PositionContext, (state) => state.position)
@@ -65,73 +68,96 @@ export function PositionSection() {
 
   return (
     <PositionWrapper>
-      <Typography>Position</Typography>
-      <div>
-        <em>Health: {positionHealth}%</em>
-      </div>
+      <PositionHeaderWrapper>
+        <Typography title>Position</Typography>
+      </PositionHeaderWrapper>
       {position?.deposits.length || position?.debts.length ? (
-        <PositionContainer>
-          <PositionSideContainer>
-            <PositionHeadingContainer>
-              {depositsSumUsd && <Typography>{formatUsd(depositsSumUsd)}</Typography>}
-              <Typography>Lent</Typography>
-              <Typography>+{formatPercent(depositSumInterestRate)} APR</Typography>
-            </PositionHeadingContainer>
-            {position.deposits.map((deposit) => {
-              const { tokenName: token, valueInUsd } = deposit
-              const depositPersentage =
-                valueInUsd && !!depositsSumUsd
-                  ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
-                  : undefined
-              return (
-                <PositionCell
-                  key={token}
-                  position={deposit}
-                  percentage={depositPersentage}
-                  openDecreaseModal={() => openLendDecreaseModal(token)}
-                  openIncreaseModal={() => openLendIncreaseModal(token)}
-                  isLendPosition
-                />
-              )
-            })}
-            {showLendMore && (
-              <button type="button" onClick={() => openLendIncreaseModal()}>
-                + lend more
-              </button>
-            )}
-          </PositionSideContainer>
-          <PositionSideContainer>
-            <PositionHeadingContainer>
-              {debtsSumUsd && <Typography>{formatUsd(debtsSumUsd)}</Typography>}
-              <Typography>Borrowed</Typography>
-              <Typography>-{formatPercent(debtSumInterestRate)} APR</Typography>
-            </PositionHeadingContainer>
-            <div>
-              {position.debts.map((debt) => {
-                const { tokenName: token, valueInUsd } = debt
-                const debtPersentage =
-                  valueInUsd && debtsSumUsd
-                    ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)
+        <>
+          <div>
+            <em>Health: {positionHealth}%</em>
+          </div>
+          <PositionContainer>
+            <PositionSideContainer>
+              <PositionHeadingContainer>
+                <PositionSumWrapper>
+                  {depositsSumUsd && <Typography headerL>{formatUsd(depositsSumUsd)}</Typography>}
+                  <Typography secondary>Lent</Typography>
+                </PositionSumWrapper>
+                <Label positive lg>
+                  +{formatPercent(depositSumInterestRate)} APR
+                </Label>
+              </PositionHeadingContainer>
+              {position.deposits.map((deposit) => {
+                const { tokenName, valueInUsd } = deposit
+                const depositPersentage =
+                  valueInUsd && !!depositsSumUsd
+                    ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
                     : undefined
-
                 return (
                   <PositionCell
-                    key={token}
-                    position={debt}
-                    percentage={debtPersentage}
-                    openDecreaseModal={() => openBorrowDecreaseModal(token)}
-                    openIncreaseModal={() => openBorrowIncreaseModal(token)}
+                    key={tokenName}
+                    position={deposit}
+                    percentage={depositPersentage}
+                    openDecreaseModal={() => openLendDecreaseModal(tokenName)}
+                    openIncreaseModal={() => openLendIncreaseModal(tokenName)}
+                    isLendPosition
                   />
                 )
               })}
-              {showDebtMore && (
-                <button type="button" onClick={() => openBorrowIncreaseModal()}>
+              {showLendMore && (
+                <button type="button" onClick={() => openLendIncreaseModal()}>
                   + lend more
                 </button>
               )}
-            </div>
-          </PositionSideContainer>
-        </PositionContainer>
+            </PositionSideContainer>
+            <PositionSideContainer>
+              <PositionHeadingContainer>
+                {showDebtMore ? (
+                  <>
+                    <PositionSumWrapper>
+                      {debtsSumUsd && <Typography headerL>{formatUsd(debtsSumUsd)}</Typography>}
+                      <Typography>Borrowed</Typography>
+                    </PositionSumWrapper>
+                    <Label negative lg>
+                      -{formatPercent(debtSumInterestRate)} APR
+                    </Label>
+                  </>
+                ) : (
+                  <PositionSumWrapper>
+                    <Typography headerL>You can’t borrow</Typography>
+                    <Typography secondary>
+                      Withdraw any collateral asset to be able to borrow
+                    </Typography>
+                  </PositionSumWrapper>
+                )}
+              </PositionHeadingContainer>
+              <div>
+                {position.debts.map((debt) => {
+                  const { tokenName, valueInUsd } = debt
+                  const debtPersentage =
+                    valueInUsd && debtsSumUsd
+                      ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)
+                      : undefined
+
+                  return (
+                    <PositionCell
+                      key={tokenName}
+                      position={debt}
+                      percentage={debtPersentage}
+                      openDecreaseModal={() => openBorrowDecreaseModal(tokenName)}
+                      openIncreaseModal={() => openBorrowIncreaseModal(tokenName)}
+                    />
+                  )
+                })}
+                {showDebtMore && (
+                  <button type="button" onClick={() => openBorrowIncreaseModal()}>
+                    + lend more
+                  </button>
+                )}
+              </div>
+            </PositionSideContainer>
+          </PositionContainer>
+        </>
       ) : (
         'No positions'
       )}

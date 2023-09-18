@@ -5,8 +5,6 @@ import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/token
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
-import * as uiClassNames from '@marginly/ui/constants/classnames'
-import cn from 'classnames'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import * as S from './styled'
 
@@ -37,10 +35,7 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
   const ButtonIcon = getIconByTokenName(value)
   return (
     <div>
-      <S.ThumbnailWrapper
-        className={cn(uiClassNames.M, uiClassNames.Rectangle)}
-        onClick={handleClick}
-      >
+      <S.ThumbnailWrapper md rectangle onClick={handleClick}>
         <ButtonIcon />
       </S.ThumbnailWrapper>
       <Menu anchorEl={anchorEl} open={open} onClose={close}>
@@ -52,7 +47,7 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
           return (
             <MenuItem onClick={handleItemClick(tokenName)} key={tokenName}>
               <S.MenuItemInner>
-                <S.ThumbnailWrapper className={cn(uiClassNames.M, uiClassNames.Rectangle)}>
+                <S.ThumbnailWrapper rectangle md>
                   <Icon />
                 </S.ThumbnailWrapper>
                 <div>
