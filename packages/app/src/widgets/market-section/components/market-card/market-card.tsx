@@ -5,6 +5,9 @@ import { useLendFirstPosition } from '@/features/liquidity-flow/hooks/use-lend-f
 import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
 import { useBorrowFirstPosition } from '@/features/liquidity-flow/hooks/use-borrow-first-position'
 import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
+import { getColorByTokenName } from '@/entities/token/utils/get-color-by-token-name'
+import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
+import { PercentPieChart } from './percent-pie-chart'
 import { useActionModal } from '../../hooks/use-action-modal'
 import * as S from './styled'
 
@@ -45,22 +48,31 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
   } = useMarketDataForDisplay(token)
   const tokenCache = useTokenCache()?.[token.address]
 
+  const tokenBackgroundColor = getColorByTokenName(tokenName)
+  const TokenIcon = getIconByTokenName(tokenName)
+
+  const availablePercent = +Number((availableToBorrow / totalSupplied) * 100).toFixed() || 0
+
   if (discount === undefined) {
     return 'Loading...'
   }
 
   return (
     <S.MarketCardWrapper>
-      <S.MarketCardUpperContainer>
+      <S.MarketCardUpperContainer $backgroundColor={tokenBackgroundColor}>
         <S.MarketCardHeadingContainer>
           <div className="token-name">{tokenCache?.name}</div>
           <div className="token-symbol">{tokenCache?.symbol}</div>
-          <div className="token-icon">$</div>
+          <div className="token-icon">
+            <TokenIcon />
+          </div>
         </S.MarketCardHeadingContainer>
         <S.MarketCardPoolInfoContainer>
-          <div className="piechart-container">{tokenCache?.name}</div>
-          <div className="total-available">{availableToBorrow}</div>
-          <div className="total-supplied">{totalSupplied}</div>
+          <div className="piechart-container">
+            <PercentPieChart percent={availablePercent} />
+          </div>
+          <div className="total-available">{availableToBorrow} available</div>
+          <div className="total-supplied">From {totalSupplied}</div>
         </S.MarketCardPoolInfoContainer>
         {/* <p>Total Borrowed: {totalBorrowed}</p>
         <p>Reserved: {reserved}</p> */}

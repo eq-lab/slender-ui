@@ -3,11 +3,13 @@ import styled from 'styled-components'
 export const MarketCardWrapper = styled.div`
   background-color: var(--fill-secondary);
   border-radius: var(--rounding-radius-xl);
-  padding: 32px 24px 24px 24px;
+  overflow: hidden;
 `
 
-export const MarketCardUpperContainer = styled.div`
-  padding-bottom: 24px;
+export const MarketCardUpperContainer = styled.div<{ $backgroundColor: string }>`
+  color: var(--text-on-dark);
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  padding: 32px 24px 24px 24px;
 `
 
 export const MarketCardHeadingContainer = styled.div`
@@ -24,6 +26,8 @@ export const MarketCardHeadingContainer = styled.div`
     grid-area: 2 / 1 / 3 / 2;
   }
   .token-icon {
+    width: 40px;
+    fill: var(--icon-on-dark);
     grid-area: 1 / 2 / 3 / 3;
   }
 `
@@ -50,7 +54,7 @@ export const MarketCardBottomContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding-top: 24px;
+  padding: 24px;
 `
 
 export const MarketCardBottomInfo = styled.div`
