@@ -20,7 +20,7 @@ enum Step {
 export const useBorrowFirstPosition = (
   token: SupportedToken,
 ): {
-  modal: React.ReactNode
+  modal: JSX.Element | null
   open: () => void
 } => {
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
@@ -79,7 +79,7 @@ export const useBorrowFirstPosition = (
     ),
   }
 
-  const modal = step ? modalByStep[step] : null
+  const modal = step ? modalByStep[step] || null : null
 
   const open = () => {
     setStep(Step.Borrow)

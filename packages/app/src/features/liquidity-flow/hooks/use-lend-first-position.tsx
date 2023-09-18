@@ -12,7 +12,7 @@ import { useSetWaitModalIsOpen } from '../context/hooks'
 export const useLendFirstPosition = (
   tokenName: SupportedToken,
 ): {
-  modal: React.ReactNode
+  modal: JSX.Element | null
   open: () => void
 } => {
   const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
