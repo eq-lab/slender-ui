@@ -7,6 +7,7 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
+import { getExtraTokenName } from '@/features/liquidity-flow/utils/get-extra-token-name'
 import { InputLayout } from '../../../styled'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
@@ -43,8 +44,8 @@ export function LendStepModal({
 
   const debtCoinInfo = useTokenInfo(debtTokenName)
   const coreDepositInfo = useTokenInfo(coreDepositTokenName)
-  const extraDepositTokenName =
-    depositTokenNames[0] === coreDepositTokenName ? depositTokenNames[1] : depositTokenNames[0]
+  const extraDepositTokenName = getExtraTokenName(depositTokenNames, coreDepositTokenName)
+
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 
   const debtValueInUsd = Number(debtValue) * debtCoinInfo.priceInUsd

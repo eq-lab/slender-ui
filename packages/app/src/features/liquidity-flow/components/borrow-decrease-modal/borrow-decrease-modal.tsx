@@ -7,7 +7,7 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
-import { getPositionInfo } from '../../utils'
+import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 
 interface Props {

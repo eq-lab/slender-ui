@@ -1,14 +1,4 @@
-import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tokens'
-
-export const excludeSupportedTokens = (token: SupportedToken[]): SupportedToken[] =>
-  SUPPORTED_TOKENS.filter((element) => !token.includes(element)) as SupportedToken[]
-
-interface PositionInput {
-  depositUsd: number
-  debtUsd: number
-  actualDebtUsd: number
-  actualDepositUsd: number
-}
+import { PositionInput } from '../types'
 
 export const getHealth = ({
   depositUsd,
@@ -49,28 +39,4 @@ export const getPositionInfo = (positionInput: PositionInput) => {
   const heathInfo = getHealth(positionInput)
   const borrowCapacityInfo = getBorrowCapacity(positionInput)
   return { ...heathInfo, ...borrowCapacityInfo }
-}
-
-export const sumObj = <T extends string>(
-  obj1: { [K in T]?: bigint },
-  obj2: { [K in T]?: bigint },
-) => {
-  const result = {} as { [K in T]?: bigint }
-
-  Object.entries(obj1).forEach((entry) => {
-    const [key, value] = entry as [T, bigint]
-    result[key] = value
-    if (key in obj2) {
-      result[key] = (result[key] ?? 0n) + (obj2[key] ?? 0n)
-    }
-  })
-
-  Object.entries(obj2).forEach((entry) => {
-    const [key, value] = entry as [T, bigint]
-    if (!(key in obj1)) {
-      result[key] = value
-    }
-  })
-
-  return result
 }

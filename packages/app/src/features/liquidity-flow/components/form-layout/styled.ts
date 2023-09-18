@@ -8,12 +8,6 @@ export const Wrapper = styled.div`
   height: 100%;
 `
 
-export const Title = styled.span`
-  font-size: 32px;
-  font-variation-settings: 'wght' 700;
-  line-height: 40px;
-`
-
 export const Inner = styled.div`
   display: grid;
   gap: 32px;
@@ -42,10 +36,4 @@ export const BottomSection = styled.div`
   gap: 16px;
   margin-top: auto;
   justify-items: center;
-`
-
-export const Description = styled.span`
-  color: var(--text-secondary);
-  font-size: 12px;
-  line-height: normal;
 `

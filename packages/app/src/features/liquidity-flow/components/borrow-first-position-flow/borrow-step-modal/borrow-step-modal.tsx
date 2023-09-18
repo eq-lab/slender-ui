@@ -6,6 +6,7 @@ import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
+import { getMaxDebt } from '@/features/liquidity-flow/utils/get-max-debt'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
@@ -37,12 +38,9 @@ export function BorrowStepModal({
     tokenContracts[debtTokenName],
   )
 
-  const max = Math.min(
-    Math.floor(
-      (userBalance * discount * priceInUsd * DEFAULT_HEALTH_VALUE) / borrowCoinInfo.priceInUsd,
-    ),
-    availableToBorrow,
-  )
+  const defaultBorrowCapacity = userBalance * discount * priceInUsd * DEFAULT_HEALTH_VALUE
+
+  const max = getMaxDebt(availableToBorrow, defaultBorrowCapacity, borrowCoinInfo.priceInUsd)
 
   const debtToken = getTokenByTokenName(debtTokenName)
   const debtTokenSymbol = debtToken?.symbol
