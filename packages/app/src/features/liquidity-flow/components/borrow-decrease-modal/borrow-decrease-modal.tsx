@@ -30,8 +30,8 @@ export function BorrowDecreaseModal({
   const [value, setValue] = useState('')
   const getTokenByTokenName = useGetTokenByTokenName()
 
-  const token = useTokenInfo(tokenName)
-  const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * token.priceInUsd, 0)
+  const tokenInfo = useTokenInfo(tokenName)
+  const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * tokenInfo.priceInUsd, 0)
 
   const { health, healthDelta, borrowCapacityInterface, borrowCapacityDelta } = getPositionInfo({
     depositUsd: depositSumUsd,
