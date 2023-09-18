@@ -8,7 +8,7 @@ export function MobilePlaceholder() {
     <Wrapper>
       <img src="/img/bg.png" alt="" className="bg" />
       <Container>
-        <Logo src="/img/logo.svg" alt="" />
+        <Logo />
 
         <div>
           <div className="picture">

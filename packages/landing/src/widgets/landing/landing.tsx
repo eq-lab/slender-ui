@@ -1,6 +1,15 @@
 import React from 'react'
 import Image from 'next/image'
 import { SubscriptionSection } from '@/widgets/landing/subscription-section'
+import { ReactComponent as LogoIcon } from './images/logo.svg'
+import { ReactComponent as StellarIcon } from './images/stellar.svg'
+import { ReactComponent as FundIcon } from './images/fund.svg'
+import { ReactComponent as SugarIcon } from './images/sugar.svg'
+import { ReactComponent as NoSugarIcon } from './images/nosugar.svg'
+import { ReactComponent as BarcodeIcon } from './images/barcode.svg'
+import decorImage from './images/decor.png'
+import bagImage from './images/bag.png'
+import endImage from './images/end.png'
 import {
   Container,
   Fund,
@@ -33,7 +42,7 @@ export function Landing() {
       <Wrapper>
         <Pluses>
           <Image
-            src="/img/decor.png"
+            src={decorImage}
             alt=""
             fill
             style={{
@@ -45,8 +54,7 @@ export function Landing() {
         <Header>
           <Container>
             <LogoLink href="#top-anchor">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/logo.svg" alt="Slender logo" />
+              <LogoIcon />
             </LogoLink>
             <a href={`#${LAUNCH_ANCHOR}`}>
               <HeaderButton className="md">Subscribe</HeaderButton>
@@ -68,12 +76,10 @@ export function Landing() {
 
           <ProtocolRow>
             <Protocol>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              #1 lending protocol on <img src="/img/stellar.svg" alt="Stellar" />
+              #1 lending protocol on <StellarIcon />
             </Protocol>
             <Fund>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/fund.svg" alt="" /> <span>Supported by Stellar Community Fund</span>
+              <FundIcon /> <span>Supported by Stellar Community Fund</span>
             </Fund>
           </ProtocolRow>
 
@@ -82,7 +88,7 @@ export function Landing() {
           <RatesBox>
             <RatesPack>
               <Image
-                src="/img/bag.png"
+                src={bagImage}
                 alt=""
                 fill
                 style={{
@@ -117,13 +123,10 @@ export function Landing() {
 
               <SugarBlock>
                 <SugarInner>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/img/sugar.svg" alt="" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/img/nosugar.svg" alt="No added sugar" />
+                  <SugarIcon />
+                  <NoSugarIcon />
                 </SugarInner>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/img/barcode.svg" alt="Barcode" />
+                <BarcodeIcon />
               </SugarBlock>
             </RatesAside>
           </RatesBox>
@@ -132,7 +135,7 @@ export function Landing() {
         <Launch id={LAUNCH_ANCHOR}>
           <LaunchBg>
             <Image
-              src="/img/end.png"
+              src={endImage}
               alt=""
               fill
               style={{
