@@ -11,13 +11,8 @@ export const Wrapper = styled.div`
   justify-items: center;
 `
 
-export const Title = styled.p`
-  font-variation-settings: 'wght' 700;
-  font-size: 20px;
-  text-align: center;
-`
-
 export const List = styled.div`
+  width: 100%;
   display: grid;
   gap: 16px;
 `

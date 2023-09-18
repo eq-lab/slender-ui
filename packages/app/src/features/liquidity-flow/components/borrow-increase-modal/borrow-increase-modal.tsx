@@ -8,12 +8,14 @@ import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
-import { getPositionInfo } from '../../utils'
+import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { PositionUpdate } from '../../types'
 import { AddAssetButton } from '../add-asset-button'
 import { AssetSelect } from '../asset-select'
 import { InputLayout } from '../../styled'
+import { getMaxDebt } from '../../utils/get-max-debt'
+import { getExtraTokenName } from '../../utils/get-extra-token-name'
 
 interface Props {
   debtSumUsd: number
@@ -44,8 +46,7 @@ export function BorrowIncreaseModal({
     setCoreDebtTokenName(tokenName)
   }, [tokenName])
 
-  const extraDebtTokenName =
-    debtTokenNames[0] === coreDebtTokenName ? debtTokenNames[1] : debtTokenNames[0]
+  const extraDebtTokenName = getExtraTokenName(debtTokenNames, coreDebtTokenName)
 
   const { availableToBorrow: coreAvailableToBorrow } = useAvailableToBorrow(
     tokenContracts[coreDebtTokenName],
@@ -55,12 +56,12 @@ export function BorrowIncreaseModal({
   )
 
   const coreDebtInfo = useTokenInfo(coreDebtTokenName)
-  const extraDebtInfo = useTokenInfo(extraDebtTokenName ?? coreDebtTokenName)
+  const extraDebtInfo = useTokenInfo(extraDebtTokenName as SupportedToken)
 
   const actualDebtUsd =
     debtSumUsd +
     Number(value) * coreDebtInfo.priceInUsd +
-    (extraDebtTokenName ? Number(extraValue) * extraDebtInfo.priceInUsd : 0)
+    Number(extraValue) * extraDebtInfo.priceInUsd
 
   const {
     borrowCapacityDelta,
@@ -80,16 +81,17 @@ export function BorrowIncreaseModal({
 
   const hasExtraDeptToken = Boolean(debtTokenNames[1])
 
-  const coreInputMax = Math.min(
+  const coreMaxDebt = getMaxDebt(
     coreAvailableToBorrow,
-    Math.floor(defaultBorrowCapacity / coreDebtInfo.priceInUsd),
+    defaultBorrowCapacity,
+    coreDebtInfo.priceInUsd,
   )
 
   const extraInputMax =
     extraDebtTokenName &&
-    Math.min(extraAvailableToBorrow, Math.floor(defaultBorrowCapacity / extraDebtInfo.priceInUsd))
+    getMaxDebt(extraAvailableToBorrow, defaultBorrowCapacity, extraDebtInfo.priceInUsd)
 
-  const coreInputError = Number(value) > coreInputMax
+  const coreInputError = Number(value) > coreMaxDebt
   const extraInputError = Number(extraValue) > (extraInputMax || 0)
 
   const getSaveData = (): PositionUpdate => {
@@ -139,7 +141,7 @@ export function BorrowIncreaseModal({
             onChange={(e) => setValue(e.target.value)}
             value={value}
             title="To borrow"
-            placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
+            placeholder={`Max ${coreMaxDebt} ${coreTokenSymbol}`}
             className={cn(coreInputError && Error)}
             postfix={coreTokenSymbol}
           />

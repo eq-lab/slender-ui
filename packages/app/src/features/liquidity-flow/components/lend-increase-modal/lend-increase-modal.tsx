@@ -7,12 +7,14 @@ import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
-import { getPositionInfo } from '../../utils'
+import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { PositionUpdate } from '../../types'
 import { AddAssetButton } from '../add-asset-button'
 import { AssetSelect } from '../asset-select'
 import { InputLayout } from '../../styled'
+import { getExtraTokenName } from '../../utils/get-extra-token-name'
+import { getDepositUsd } from '../../utils/get-deposit-usd'
 
 interface Props {
   debtSumUsd: number
@@ -42,17 +44,15 @@ export function LendIncreaseModal({
     setCoreDepositTokenName(tokenName)
   }, [tokenName])
 
-  const extraDepositTokenName =
-    depositTokenNames[0] === coreDepositTokenName ? depositTokenNames[1] : depositTokenNames[0]
+  const extraDepositTokenName = getExtraTokenName(depositTokenNames, coreDepositTokenName)
 
   const coreDepositInfo = useTokenInfo(coreDepositTokenName)
-  const possibleDepositInfo = useTokenInfo(extraDepositTokenName ?? coreDepositTokenName)
-  const extraDepositInfo = extraDepositTokenName ? possibleDepositInfo : undefined
+  const extraDepositInfo = useTokenInfo(extraDepositTokenName as SupportedToken)
 
   const actualDepositUsd =
     depositSumUsd +
-    Number(value) * coreDepositInfo.userBalance * coreDepositInfo.discount +
-    Number(extraValue) * (extraDepositInfo?.priceInUsd || 0) * (extraDepositInfo?.discount || 0)
+    getDepositUsd(value, coreDepositInfo.priceInUsd, coreDepositInfo.discount) +
+    getDepositUsd(extraValue, extraDepositInfo.priceInUsd, extraDepositInfo.discount)
 
   const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError, health, healthDelta } =
     getPositionInfo({
@@ -65,10 +65,10 @@ export function LendIncreaseModal({
   const hasExtraDepositToken = Boolean(depositTokenNames[1])
 
   const coreInputMax = coreDepositInfo.userBalance
-  const extraInputMax = extraDepositInfo?.userBalance || 0
+  const extraInputMax = extraDepositInfo.userBalance
 
   const coreInputError = Number(value) > coreDepositInfo.userBalance
-  const extraInputError = Number(extraValue) > (extraDepositInfo?.userBalance || 0)
+  const extraInputError = Number(extraValue) > extraDepositInfo.userBalance
 
   const extraTokenSymbol = getTokenByTokenName(extraDepositTokenName)?.symbol
   const coreTokenSymbol = getTokenByTokenName(coreDepositTokenName)?.symbol

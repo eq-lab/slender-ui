@@ -7,8 +7,9 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
-import { getPositionInfo } from '../../utils'
+import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
+import { getDepositUsd } from '../../utils/get-deposit-usd'
 
 interface Props {
   deposit: bigint
@@ -33,7 +34,7 @@ export function LendDecreaseModal({
   const getTokenByTokenName = useGetTokenByTokenName()
 
   const actualDepositUsd = Math.max(
-    depositSumUsd - Number(value) * depositTokenInfo.priceInUsd * depositTokenInfo.discount,
+    depositSumUsd - getDepositUsd(value, depositTokenInfo.priceInUsd, depositTokenInfo.discount),
     0,
   )
 

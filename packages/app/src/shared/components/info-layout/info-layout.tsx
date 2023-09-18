@@ -1,4 +1,5 @@
 import React from 'react'
+import Typography from '@marginly/ui/components/typography'
 import * as S from './styled'
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
 export function InfoLayout({ title, mediaSection, children }: Props) {
   return (
     <S.Wrapper>
-      <S.Title>{title}</S.Title>
+      <Typography headerS>{title}</Typography>
       {mediaSection}
       <S.List>{children}</S.List>
     </S.Wrapper>

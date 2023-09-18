@@ -7,6 +7,8 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
+import { getExtraTokenName } from '@/features/liquidity-flow/utils/get-extra-token-name'
+import { getDepositUsd } from '@/features/liquidity-flow/utils/get-deposit-usd'
 import { InputLayout } from '../../../styled'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
@@ -43,8 +45,12 @@ export function LendStepModal({
 
   const debtCoinInfo = useTokenInfo(debtTokenName)
   const coreDepositInfo = useTokenInfo(coreDepositTokenName)
-  const extraDepositTokenName =
-    depositTokenNames[0] === coreDepositTokenName ? depositTokenNames[1] : depositTokenNames[0]
+
+  const extraDepositTokenName = getExtraTokenName(
+    depositTokenNames,
+    coreDepositTokenName,
+  ) as SupportedToken
+
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 
   const debtValueInUsd = Number(debtValue) * debtCoinInfo.priceInUsd
@@ -67,11 +73,9 @@ export function LendStepModal({
 
   const { borrowInterestRate } = useMarketDataForDisplay(tokenContracts[debtTokenName])
 
-  const coreDeposit = Number(coreValue) * coreDepositInfo.discount
-  const extraDeposit = Number(extraValue) * extraDepositInfo.discount
-
   const deposit =
-    coreDeposit * coreDepositInfo.priceInUsd + extraDeposit * extraDepositInfo.priceInUsd
+    getDepositUsd(coreValue, coreDepositInfo.priceInUsd, coreDepositInfo.discount) +
+    getDepositUsd(extraValue, extraDepositInfo.priceInUsd, extraDepositInfo.discount)
 
   const health = Math.max(Math.round(deposit && (1 - debtValueInUsd / deposit) * 100), 0)
   const borrowCapacity = Math.max(deposit - debtValueInUsd, 0)
