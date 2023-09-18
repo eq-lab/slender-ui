@@ -1,4 +1,4 @@
-import { MarketCard } from '@/widgets/market-section/components/market-card'
+import { MarketCard } from '@/widgets/market-section/components/market-card/market-card'
 import { SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
 
 export function MarketSection() {
