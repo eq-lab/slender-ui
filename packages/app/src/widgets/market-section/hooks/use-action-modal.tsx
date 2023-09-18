@@ -31,7 +31,7 @@ export const useActionModal = ({
 
   const disabled = Boolean(
     position?.[type === 'borrow' ? 'deposits' : 'debts']
-      .map((cell) => cell.token)
+      .map((cell) => cell.tokenName)
       .includes(tokenName),
   )
 

@@ -14,13 +14,13 @@ const sorobanTokenRecordToPositionCell = (
   cryptocurrencyUsdRates: SupportedTokenRates,
 ): PositionCell => {
   const value = Number(tokenRecord.balance) / 10 ** tokenRecord.decimals
-  const token = SUPPORTED_TOKENS[index]!
-  const usdRate = cryptocurrencyUsdRates?.[token]
+  const tokenName = SUPPORTED_TOKENS[index]!
+  const usdRate = cryptocurrencyUsdRates?.[tokenName]
 
   return {
     value: BigInt(tokenRecord.balance) / 10n ** BigInt(tokenRecord.decimals),
     valueInUsd: usdRate && value * usdRate,
-    token,
+    tokenName,
   }
 }
 

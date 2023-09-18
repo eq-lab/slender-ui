@@ -22,13 +22,13 @@ export function PositionCell({
   openIncreaseModal: () => void
   isLendPosition?: boolean
 }) {
-  const { token, value, valueInUsd } = position
-  const { color, Icon } = supportedTokensIconStyles[token]
+  const { tokenName, value, valueInUsd } = position
+  const { Icon } = supportedTokensIconStyles[tokenName]
 
   const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
-    tokenContracts[token],
+    tokenContracts[tokenName],
   )
-  const tokenCache = useTokenCache()?.[tokenContracts[token].address]
+  const tokenCache = useTokenCache()?.[tokenContracts[tokenName].address]
 
   return (
     <div>

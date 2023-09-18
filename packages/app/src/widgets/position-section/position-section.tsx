@@ -45,9 +45,9 @@ export function PositionSection() {
 
   const makeGetSumInterestRate =
     (isDeposit: boolean) => (sum: number, currentDebt: PositionCellType) => {
-      const { valueInUsd, token } = currentDebt
+      const { valueInUsd, tokenName } = currentDebt
       if (!marketData) return sum
-      const { address } = tokenContracts[token]
+      const { address } = tokenContracts[tokenName]
       const { borrowInterestRate, lendInterestRate } = marketData[address] || {}
       const interestRatePercentNum =
         parseInt((isDeposit ? lendInterestRate : borrowInterestRate) || '', 10) || 0
@@ -88,18 +88,18 @@ export function PositionSection() {
                 </Label>
               </PositionHeadingContainer>
               {position.deposits.map((deposit) => {
-                const { token, valueInUsd } = deposit
+                const { tokenName, valueInUsd } = deposit
                 const depositPersentage =
                   valueInUsd && !!depositsSumUsd
                     ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
                     : undefined
                 return (
                   <PositionCell
-                    key={token}
+                    key={tokenName}
                     position={deposit}
                     percentage={depositPersentage}
-                    openDecreaseModal={() => openLendDecreaseModal(token)}
-                    openIncreaseModal={() => openLendIncreaseModal(token)}
+                    openDecreaseModal={() => openLendDecreaseModal(tokenName)}
+                    openIncreaseModal={() => openLendIncreaseModal(tokenName)}
                     isLendPosition
                   />
                 )
@@ -133,7 +133,7 @@ export function PositionSection() {
               </PositionHeadingContainer>
               <div>
                 {position.debts.map((debt) => {
-                  const { token, valueInUsd } = debt
+                  const { tokenName, valueInUsd } = debt
                   const debtPersentage =
                     valueInUsd && debtsSumUsd
                       ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)
@@ -141,11 +141,11 @@ export function PositionSection() {
 
                   return (
                     <PositionCell
-                      key={token}
+                      key={tokenName}
                       position={debt}
                       percentage={debtPersentage}
-                      openDecreaseModal={() => openBorrowDecreaseModal(token)}
-                      openIncreaseModal={() => openBorrowIncreaseModal(token)}
+                      openDecreaseModal={() => openBorrowDecreaseModal(tokenName)}
+                      openIncreaseModal={() => openBorrowIncreaseModal(tokenName)}
                     />
                   )
                 })}
