@@ -5,12 +5,13 @@ interface Props {
   onClose: () => void
   children: React.ReactNode
   infoSlot?: React.ReactNode
+  clean?: boolean
 }
 
-export function ModalLayout({ onClose, children, infoSlot }: Props) {
+export function ModalLayout({ onClose, children, infoSlot, clean = false }: Props) {
   return (
-    <S.Dialog open onClose={onClose} maxWidth="md">
-      <S.Inner>
+    <S.Dialog open onClose={onClose} maxWidth={clean ? undefined : 'md'} $clean={clean}>
+      <S.Inner $clean={clean}>
         <div>{children}</div>
         {infoSlot && <div>{infoSlot}</div>}
       </S.Inner>

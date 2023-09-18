@@ -9,7 +9,6 @@ import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils'
 import { FormLayout } from '../form-layout'
-import { MaxButton } from '../../styled'
 
 interface Props {
   deposit: bigint
@@ -61,6 +60,8 @@ export function LendDecreaseModal({
   const depositDelta = deposit - BigInt(value)
   const depositError = depositDelta < 0
 
+  const tokenSymbol = getInfoByTokenName(token)?.symbol
+
   return (
     <ModalLayout
       infoSlot={
@@ -80,7 +81,7 @@ export function LendDecreaseModal({
       <FormLayout
         title="Withdraw collateral"
         buttonProps={{
-          label: `Pay off ${value} ${getInfoByTokenName(token)?.symbol}`,
+          label: `Pay off ${value} ${tokenSymbol}`,
           onClick: () => onSend({ value: BigInt(value), token }),
           disabled: depositError || borrowCapacityError,
         }}
@@ -89,9 +90,9 @@ export function LendDecreaseModal({
           onChange={(e) => setValue(e.target.value)}
           value={value}
           title="To withdraw"
-          placeholder={`${getInfoByTokenName(token)?.symbol} amount`}
+          placeholder={`Max ${max} ${tokenSymbol}`}
+          postfix={tokenSymbol}
         />
-        <MaxButton onClick={() => setValue(String(max))}>Max {max}</MaxButton>
       </FormLayout>
     </ModalLayout>
   )

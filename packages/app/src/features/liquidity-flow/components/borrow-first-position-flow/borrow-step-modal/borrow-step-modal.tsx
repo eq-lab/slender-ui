@@ -6,7 +6,7 @@ import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
-import { MaxButton } from '@/features/liquidity-flow/styled'
+import { getIconByToken } from '@/entities/token/utils/get-icon-by-token'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
@@ -46,8 +46,10 @@ export function BorrowStepModal({
     availableToBorrow,
   )
 
+  const debtTokenSymbol = getInfoByTokenName(debtToken)?.symbol
+  const Icon = getIconByToken(debtToken)
   const infoSlot = (
-    <InfoLayout title={`${debtToken} Coin`} mediaSection={null}>
+    <InfoLayout title={`${debtToken} Coin`} mediaSection={<Icon width={48} />}>
       <InfoRow label="Borrow APR" value={borrowInterestRate} />
       <InfoRow label="Available" value={`${availableToBorrow} ${tokenCache?.symbol}`} />
     </InfoLayout>
@@ -69,9 +71,9 @@ export function BorrowStepModal({
           }}
           value={value}
           title="To borrow"
-          placeholder={`${getInfoByTokenName(debtToken)?.symbol} amount`}
+          placeholder={`Max ${max} ${debtTokenSymbol}`}
+          postfix={debtTokenSymbol}
         />
-        <MaxButton onClick={() => onBorrowValueChange(String(max))}>Max {max}</MaxButton>
       </FormLayout>
     </ModalLayout>
   )

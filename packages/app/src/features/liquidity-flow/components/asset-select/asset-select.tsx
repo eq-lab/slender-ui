@@ -2,19 +2,11 @@ import { useState } from 'react'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
-import { ReactComponent as RippleIcon } from '@/shared/icons/tokens/ripple.svg'
-import { ReactComponent as LumenIcon } from '@/shared/icons/tokens/lumen.svg'
-import { ReactComponent as UsdcIcon } from '@/shared/icons/tokens/usdc.svg'
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useGetInfoByTokenName } from '@/entities/token/hooks/use-get-info-by-token-name'
+import { getIconByToken } from '@/entities/token/utils/get-icon-by-token'
 import * as S from './styled'
-
-const iconByToken: Record<SupportedToken, JSX.Element> = {
-  usdc: <UsdcIcon />,
-  xlm: <LumenIcon />,
-  xrp: <RippleIcon />,
-}
 
 interface Props {
   tokens: SupportedToken[]
@@ -40,23 +32,27 @@ export function AssetSelect({ tokens, onChange, value }: Props) {
     close()
   }
 
+  const ButtonIcon = getIconByToken(value)
   return (
     <div>
       <S.ThumbnailWrapper md rectangle onClick={handleClick}>
-        {iconByToken[value]}
+        <ButtonIcon />
       </S.ThumbnailWrapper>
       <Menu anchorEl={anchorEl} open={open} onClose={close}>
         {tokens.map((token, index) => {
           const tokenInfo = getInfoByTokenName(token)
+          if (!tokenInfo) return null
+          const { name, symbol, decimals } = tokenInfo
+          const Icon = getIconByToken(token)
           return (
             <MenuItem onClick={handleItemClick(token)} key={token}>
               <S.MenuItemInner>
                 <S.ThumbnailWrapper rectangle md>
-                  {iconByToken[token]}
+                  <Icon />
                 </S.ThumbnailWrapper>
                 <div>
-                  <div>{tokenInfo?.name}</div>
-                  {depositBalances[index]?.balance ?? 0} {tokenInfo?.symbol}
+                  <div>{name}</div>
+                  {Number(depositBalances[index]?.balance ?? 0) / 10 ** decimals} {symbol}
                 </div>
                 {token === value && <CheckIcon width={24} />}
               </S.MenuItemInner>

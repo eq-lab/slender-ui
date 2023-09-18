@@ -16,7 +16,7 @@ export function FormLayout({ title, children, buttonProps, description }: Props)
   return (
     <S.Wrapper>
       <S.Title>{title}</S.Title>
-      <div>{children}</div>
+      <S.Inner>{children}</S.Inner>
       <S.BottomSection>
         <S.Button onClick={buttonProps.onClick} type="button" disabled={buttonProps.disabled}>
           {buttonProps.label}

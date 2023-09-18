@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const PositionWrapper = styled.section`
-  margin: 64px 0px 128px;
+  margin: 64px 0 128px;
 `
 
 export const PositionHeaderWrapper = styled.section`
