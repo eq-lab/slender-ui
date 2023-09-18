@@ -7,6 +7,7 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { getMaxDebt } from '@/features/liquidity-flow/utils/get-max-debt'
+import { getDepositUsd } from '@/features/liquidity-flow/utils/get-deposit-usd'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
@@ -38,9 +39,10 @@ export function BorrowStepModal({
     tokenContracts[debtTokenName],
   )
 
-  const defaultBorrowCapacity = userBalance * discount * priceInUsd * DEFAULT_HEALTH_VALUE
+  const defaultBorrowCapacity =
+    getDepositUsd(userBalance, priceInUsd, discount) * DEFAULT_HEALTH_VALUE
 
-  const max = getMaxDebt(availableToBorrow, defaultBorrowCapacity, borrowCoinInfo.priceInUsd)
+  const maxDebt = getMaxDebt(availableToBorrow, defaultBorrowCapacity, borrowCoinInfo.priceInUsd)
 
   const debtToken = getTokenByTokenName(debtTokenName)
   const debtTokenSymbol = debtToken?.symbol
@@ -61,7 +63,7 @@ export function BorrowStepModal({
         buttonProps={{
           label: `Continue`,
           onClick: onContinue,
-          disabled: !Number(value) || Number(value) > max,
+          disabled: !Number(value) || Number(value) > maxDebt,
         }}
       >
         <SuperField
@@ -70,7 +72,7 @@ export function BorrowStepModal({
           }}
           value={value}
           title="To borrow"
-          placeholder={`Max ${max} ${debtTokenSymbol}`}
+          placeholder={`Max ${maxDebt} ${debtTokenSymbol}`}
           postfix={debtTokenSymbol}
         />
       </FormLayout>
