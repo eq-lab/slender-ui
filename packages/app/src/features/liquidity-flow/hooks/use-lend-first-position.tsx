@@ -11,7 +11,7 @@ export const useLendFirstPosition = (
   open: () => void
 } => {
   const [isModalOpen, setModalOpenStatus] = useState(false)
-  const { send } = useLiquidity()
+  const send = useLiquidity()
 
   const handleSend = async (value: string) => {
     setModalOpenStatus(false)
