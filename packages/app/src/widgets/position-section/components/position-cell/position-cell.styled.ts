@@ -1,12 +1,13 @@
 import styled from 'styled-components'
 
-export const ThumbnailWrapper = styled.div<{ backgroundColor: string }>`
-  background: red;
-`
-
-export const PositionCellWrapper = styled.div`
+export const PositionCellWrapper = styled.div<{ $backgroundColor: string }>`
   display: flex;
   gap: 16px;
+
+  .token-thumnail {
+    background: ${({ $backgroundColor }) => $backgroundColor};
+    fill: var(--icon-on-dark);
+  }
 `
 
 export const PositionCellInfo = styled.div`

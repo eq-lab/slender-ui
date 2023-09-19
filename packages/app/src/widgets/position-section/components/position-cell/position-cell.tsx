@@ -3,6 +3,7 @@ import { tokenContracts } from '@/shared/stellar/constants/tokens'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { colorByToken } from '@/entities/token/constants/token-colors'
 import Thumbnail from '@marginly/ui/components/thumbnail'
 import Typography from '@marginly/ui/components/typography'
 import Label from '@marginly/ui/components/label'
@@ -26,6 +27,8 @@ export function PositionCell({
   const { tokenName, value, valueInUsd } = position
   const Icon = getIconByTokenName(tokenName)
 
+  const tokenColor = colorByToken[tokenName]
+
   const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
     tokenContracts[tokenName],
   )
@@ -34,8 +37,8 @@ export function PositionCell({
   const interestRate = isLendPosition ? lendInterestRate : borrowInterestRate
 
   return (
-    <S.PositionCellWrapper>
-      <Thumbnail md>
+    <S.PositionCellWrapper $backgroundColor={tokenColor}>
+      <Thumbnail md className="token-thumnail">
         <Icon />
       </Thumbnail>
       <S.PositionCellInfo>
