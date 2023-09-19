@@ -8,6 +8,7 @@ import Typography from '@marginly/ui/components/typography'
 import Label from '@marginly/ui/components/label'
 import { formatUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
+import * as S from './position-cell.styled'
 
 export function PositionCell({
   position,
@@ -30,31 +31,47 @@ export function PositionCell({
   )
   const tokenCache = useTokenCache()?.[tokenContracts[tokenName].address]
 
+  const interestRate = isLendPosition ? lendInterestRate : borrowInterestRate
+
   return (
-    <div>
+    <S.PositionCellWrapper>
       <Thumbnail md>
         <Icon />
       </Thumbnail>
-      <Typography caption>
-        {tokenCache?.name} · {percentage && percentage !== 100 ? `: ${percentage}%` : null}
-      </Typography>
-      <br />
-      {value.toString(10)} {tokenCache?.symbol}{' '}
-      {isLendPosition && (
-        <Typography caption>
-          <em>{discount} discount</em>
-        </Typography>
-      )}
-      {borrowInterestRate && (
-        <Label>{isLendPosition ? lendInterestRate : borrowInterestRate}</Label>
-      )}
-      {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
-      <button type="button" onClick={openDecreaseModal}>
-        &minus;
-      </button>
-      <button type="button" onClick={openIncreaseModal}>
-        +
-      </button>
-    </div>
+      <S.PositionCellInfo>
+        <S.PositionCellInfoItem>
+          <Typography caption>
+            {tokenCache?.name} {percentage && percentage !== 100 ? `· ${percentage}%` : null}
+          </Typography>
+          <S.PositionCellTokenAmount>
+            <Typography>
+              {value.toString(10)} {tokenCache?.symbol}{' '}
+            </Typography>
+            {interestRate && (
+              <Label positive={isLendPosition} negative={!isLendPosition} sm>
+                {isLendPosition ? '+' : '-'}
+                {interestRate}
+              </Label>
+            )}
+          </S.PositionCellTokenAmount>
+        </S.PositionCellInfoItem>
+        <S.PositionCellInfoItem>
+          {isLendPosition && (
+            <Typography caption>
+              <em>{discount} discount</em>
+            </Typography>
+          )}
+          {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
+        </S.PositionCellInfoItem>
+      </S.PositionCellInfo>
+      <S.PositionCellButtons>
+        <button type="button" onClick={openDecreaseModal}>
+          &minus;
+        </button>
+        <button type="button" onClick={openIncreaseModal}>
+          +
+        </button>
+      </S.PositionCellButtons>
+    </S.PositionCellWrapper>
   )
 }
