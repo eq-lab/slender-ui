@@ -5,7 +5,7 @@ import { useLendFirstPosition } from '@/features/liquidity-flow/hooks/use-lend-f
 import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
 import { useBorrowFirstPosition } from '@/features/liquidity-flow/hooks/use-borrow-first-position'
 import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
-import { getColorByTokenName } from '@/entities/token/utils/get-color-by-token-name'
+import { colorByToken } from '@/entities/token/constants/token-colors'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { PercentPieChart } from './percent-pie-chart'
 import { useActionModal } from '../../hooks/use-action-modal'
@@ -48,7 +48,7 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
   } = useMarketDataForDisplay(token)
   const tokenCache = useTokenCache()?.[token.address]
 
-  const tokenBackgroundColor = getColorByTokenName(tokenName)
+  const tokenBackgroundColor = colorByToken[tokenName]
   const TokenIcon = getIconByTokenName(tokenName)
 
   const availablePercent = +Number((availableToBorrow / totalSupplied) * 100).toFixed() || 0
@@ -74,8 +74,6 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
           <div className="total-available">{availableToBorrow} available</div>
           <div className="total-supplied">From {totalSupplied}</div>
         </S.MarketCardPoolInfoContainer>
-        {/* <p>Total Borrowed: {totalBorrowed}</p>
-        <p>Reserved: {reserved}</p> */}
       </S.MarketCardUpperContainer>
       <S.MarketCardBottomContainer>
         <S.MarketCardBottomInfo>

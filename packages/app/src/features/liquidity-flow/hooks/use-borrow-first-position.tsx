@@ -79,7 +79,7 @@ export const useBorrowFirstPosition = (
     ),
   }
 
-  const modal = step ? modalByStep[step] || null : null
+  const modal = (step && modalByStep[step]) || null
 
   const open = () => {
     setStep(Step.Borrow)
