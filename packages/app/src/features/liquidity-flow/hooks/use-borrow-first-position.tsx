@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
-import { useLiquidity } from '@/features/liquidity-flow/hooks/use-liquidity'
+import { useLiquidity } from './use-liquidity'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
 import { BorrowStepModal } from '../components/borrow-first-position-flow/borrow-step-modal'
 import { LendStepModal } from '../components/borrow-first-position-flow/lend-step-modal'
