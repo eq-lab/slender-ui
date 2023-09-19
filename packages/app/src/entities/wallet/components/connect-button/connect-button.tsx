@@ -37,11 +37,9 @@ export function ConnectButton() {
     return <Button onClick={handleConnectClick}>Connect</Button>
   }
 
-  if (address) {
-    return (
-      <Button inactive icon={<WalletIcon width={24} />}>
-        ·{address.slice(-SHORT_ADDRESS_SIZE)}
-      </Button>
-    )
-  }
+  return (
+    <Button inactive icon={<WalletIcon width={24} />}>
+      ·{address.slice(-SHORT_ADDRESS_SIZE)}
+    </Button>
+  )
 }
