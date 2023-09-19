@@ -1,18 +1,17 @@
 import React from 'react'
 import Typography from '@marginly/ui/components/typography'
-import cn from 'classnames'
 import * as S from './styled'
 
 interface Props {
   children: React.ReactNode
   icon?: React.ReactNode
-  inactive?: boolean
+  disabled?: boolean
   onClick?: () => void
 }
 
-export function Button({ children, icon, inactive, onClick }: Props) {
+export function Button({ children, icon, disabled, onClick }: Props) {
   return (
-    <S.Wrapper onClick={onClick} className={cn(inactive && 'inactive')}>
+    <S.Wrapper onClick={onClick} disabled={disabled}>
       {icon}
       <Typography action>{children}</Typography>
     </S.Wrapper>

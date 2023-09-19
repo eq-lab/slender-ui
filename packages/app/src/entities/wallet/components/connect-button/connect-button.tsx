@@ -38,7 +38,7 @@ export function ConnectButton() {
   }
 
   return (
-    <Button inactive icon={<WalletIcon width={24} />}>
+    <Button disabled icon={<WalletIcon width={24} />}>
       ·{address.slice(-SHORT_ADDRESS_SIZE)}
     </Button>
   )
