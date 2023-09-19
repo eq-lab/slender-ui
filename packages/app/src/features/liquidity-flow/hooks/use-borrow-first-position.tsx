@@ -1,16 +1,11 @@
 import { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
-import { useContextSelector } from 'use-context-selector'
-import { PositionContext } from '@/entities/position/context/context'
-import { logError, logInfo } from '@/shared/logger'
-import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
+import { useLiquidity } from './use-liquidity'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
-import { getPositionUpdateByCells } from '../soroban/get-position-update-by-cells'
 import { BorrowStepModal } from '../components/borrow-first-position-flow/borrow-step-modal'
 import { LendStepModal } from '../components/borrow-first-position-flow/lend-step-modal'
 import { submitBorrow, submitDeposit } from '../soroban/submit'
-import { useSetWaitModalIsOpen } from '../context/hooks'
 
 enum Step {
   Borrow = 'Borrow',
@@ -23,11 +18,9 @@ export const useBorrowFirstPosition = (
   modal: React.ReactNode
   open: () => void
 } => {
-  const setPosition = useContextSelector(PositionContext, (state) => state.setPosition)
   const [step, setStep] = useState<Step | null>(null)
   const [debtValue, setDebtValue] = useState('')
-  const { address } = useWalletAddress()
-  const setWaitModalIsOpen = useSetWaitModalIsOpen()
+  const send = useLiquidity()
 
   const close = () => {
     setStep(null)
@@ -35,23 +28,16 @@ export const useBorrowFirstPosition = (
   }
 
   const handleSend = async (value: Position) => {
-    if (!address) return
     close()
-
-    try {
-      setWaitModalIsOpen(true)
-
-      const deposits = getPositionUpdateByCells(value.deposits)
-      logInfo(await submitDeposit(address, deposits))
-
-      const debts = getPositionUpdateByCells(value.debts)
-      logInfo(await submitBorrow(address, debts))
-
-      setPosition(value)
-    } catch (e) {
-      logError(e)
-    } finally {
-      setWaitModalIsOpen(false)
+    const depositResult = await send({
+      submitFunc: submitDeposit,
+      deposits: value.deposits,
+    })
+    if (depositResult) {
+      await send({
+        submitFunc: submitBorrow,
+        debts: value.debts,
+      })
     }
   }
 
