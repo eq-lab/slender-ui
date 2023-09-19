@@ -34,7 +34,7 @@ export const useLendDecrease = (): {
       })
 
       setModalToken(null)
-      send({
+      await send({
         submitFunc: submitWithdraw,
         additionalDeposits: [{ tokenName, value }],
         deposits: newDeposits,

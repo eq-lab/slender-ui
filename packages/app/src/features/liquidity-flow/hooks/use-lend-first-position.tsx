@@ -15,7 +15,7 @@ export const useLendFirstPosition = (
 
   const handleSend = async (value: string) => {
     setModalOpenStatus(false)
-    send({ submitFunc: submitDeposit, deposits: [{ tokenName, value: BigInt(value) }] })
+    await send({ submitFunc: submitDeposit, deposits: [{ tokenName, value: BigInt(value) }] })
   }
 
   const modal = isModalOpen ? (

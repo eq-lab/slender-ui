@@ -34,7 +34,11 @@ export const useBorrowDecrease = (): {
       })
 
       setModalToken(null)
-      send({ submitFunc: submitRepay, additionalDebts: [{ tokenName, value }], debts: newDebts })
+      await send({
+        submitFunc: submitRepay,
+        additionalDebts: [{ tokenName, value }],
+        debts: newDebts,
+      })
     }
 
     return (

@@ -57,7 +57,11 @@ export const useBorrowIncrease = (): {
       })
 
       setModalToken(null)
-      send({ submitFunc: submitBorrow, additionalDebts: getCellByPositionUpdate(sendValue), debts })
+      await send({
+        submitFunc: submitBorrow,
+        additionalDebts: getCellByPositionUpdate(sendValue),
+        debts,
+      })
     }
 
     return (

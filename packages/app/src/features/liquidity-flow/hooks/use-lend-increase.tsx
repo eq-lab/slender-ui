@@ -39,7 +39,7 @@ export const useLendIncrease = (): {
   const renderModal = () => {
     if (!position || !modalToken) return null
 
-    const handleSend = (sendValue: PositionUpdate) => {
+    const handleSend = async (sendValue: PositionUpdate) => {
       const prevDepositsObj = position.deposits.reduce(
         (acc, el) => ({
           ...acc,
@@ -52,7 +52,7 @@ export const useLendIncrease = (): {
       const newDeposits = getCellByPositionUpdate(finalDebtsObj)
 
       setModalToken(null)
-      send({
+      await send({
         submitFunc: submitDeposit,
         additionalDeposits: getCellByPositionUpdate(sendValue),
         deposits: newDeposits,
