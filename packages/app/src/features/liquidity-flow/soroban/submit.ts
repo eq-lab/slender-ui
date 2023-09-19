@@ -1,4 +1,4 @@
-import { Address, i128 } from '@bindings/pool'
+import { i128 } from '@bindings/pool'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { logInfo } from '@/shared/logger'
 import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders'
@@ -12,7 +12,7 @@ const USER_DECLINED_ERROR = 'User declined access'
 const makeLiquidityBinding =
   (methodName: 'borrow' | 'deposit' | 'repay' | 'withdraw') =>
   async <R extends ResponseTypes = undefined>(
-    { who, asset, amount }: { who: Address; asset: Address; amount: i128 },
+    { who, asset, amount }: { who: string; asset: string; amount: i128 },
     options: {
       fee?: number
       responseType?: R

@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { Contract, networks, Address, ReserveData } from '@bindings/pool'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
 import { decodeStr, decodeU32 } from '@/shared/stellar/decoders'
-
 import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens'
-import { getReserve, ReserveData } from '@bindings/pool'
+import { FUTURENET_NETWORK_DETAILS } from '@/shared/stellar/constants/networks'
 import { CachedTokens, MarketContext, PoolData } from './context'
 import { PERCENT_PRECISION, CONTRACT_MATH_PRECISION } from '../constants/contract-constants'
 import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision'
@@ -43,7 +43,13 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
           invoke('decimals', decodeU32),
         ]
       }, [])
-      const marketTxs = CACHED_POOL_ADDRESSES.map((asset) => getReserve({ asset }))
+      const contract = new Contract({
+        ...networks.futurenet,
+        rpcUrl: FUTURENET_NETWORK_DETAILS.rpcUrl,
+      })
+      const marketTxs = CACHED_POOL_ADDRESSES.map((asset) =>
+        contract.getReserve({ asset: Address.fromString(asset) }),
+      )
       const [restValues, marketValues] = (await Promise.all([
         Promise.all(cacheTxs),
         Promise.all(marketTxs),

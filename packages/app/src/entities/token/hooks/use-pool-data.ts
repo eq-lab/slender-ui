@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { collatCoeff, debtCoeff, getReserve } from '@bindings/pool'
+import { Contract, networks, Address } from '@bindings/pool'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
+import { FUTURENET_NETWORK_DETAILS } from '@/shared/stellar/constants/networks'
 import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../constants/contract-constants'
 
 type PoolData = {
@@ -18,13 +19,17 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
 
   useEffect(() => {
     ;(async () => {
+      const contract = new Contract({
+        ...networks.futurenet,
+        rpcUrl: FUTURENET_NETWORK_DETAILS.rpcUrl,
+      })
       const assetArg = {
-        asset: tokenAddress,
+        asset: Address.fromString(tokenAddress),
       }
       const [poolReserve, rawCollateralCoefficient, rawDebtCoefficient] = await Promise.all([
-        getReserve(assetArg),
-        collatCoeff(assetArg),
-        debtCoeff(assetArg),
+        contract.getReserve(assetArg),
+        contract.collatCoeff(assetArg),
+        contract.debtCoeff(assetArg),
       ])
 
       setData({
