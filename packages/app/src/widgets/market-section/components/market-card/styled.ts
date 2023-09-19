@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 export const MarketCardWrapper = styled.div`
+  width: 100%;
   background-color: var(--fill-secondary);
   border-radius: var(--rounding-radius-xl);
   overflow: hidden;
@@ -20,9 +21,11 @@ export const MarketCardHeadingContainer = styled.div`
   padding-bottom: 24px;
 
   .token-name {
+    color: var(--text-on-dark);
     grid-area: 1 / 1 / 2 / 2;
   }
   .token-symbol {
+    color: var(--text-on-dark);
     grid-area: 2 / 1 / 3 / 2;
   }
   .token-icon {
@@ -43,9 +46,11 @@ export const MarketCardPoolInfoContainer = styled.div`
     grid-area: 1 / 1 / 3 / 2;
   }
   .total-available {
+    color: var(--text-on-dark);
     grid-area: 1 / 2 / 2 / 3;
   }
   .total-supplied {
+    color: var(--text-on-dark);
     grid-area: 2 / 2 / 3 / 3;
   }
 `
@@ -75,6 +80,7 @@ export const MarketCardTextCell = styled.div`
     grid-area: 1 / 2 / 2 / 3;
   }
   .bottom-text-container {
+    color: var(--text-on-dark);
     grid-area: 2 / 2 / 3 / 3;
   }
 `

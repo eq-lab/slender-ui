@@ -1,6 +1,7 @@
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useTokenCache } from '@/entities/token/context/hooks'
+import Typography from '@marginly/ui/components/typography'
 import { useLendFirstPosition } from '@/features/liquidity-flow/hooks/use-lend-first-position'
 import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
 import { useBorrowFirstPosition } from '@/features/liquidity-flow/hooks/use-borrow-first-position'
@@ -61,8 +62,8 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
     <S.MarketCardWrapper>
       <S.MarketCardUpperContainer $backgroundColor={tokenBackgroundColor}>
         <S.MarketCardHeadingContainer>
-          <div className="token-name">{tokenCache?.name}</div>
-          <div className="token-symbol">{tokenCache?.symbol}</div>
+          <Typography className="token-name">{tokenCache?.name}</Typography>
+          <Typography className="token-symbol">{tokenCache?.symbol}</Typography>
           <div className="token-icon">
             <TokenIcon />
           </div>
@@ -71,21 +72,25 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
           <div className="piechart-container">
             <PercentPieChart percent={availablePercent} />
           </div>
-          <div className="total-available">{availableToBorrow} available</div>
-          <div className="total-supplied">From {totalSupplied}</div>
+          <Typography className="total-available">{availableToBorrow} available</Typography>
+          <Typography className="total-supplied">From {totalSupplied}</Typography>
         </S.MarketCardPoolInfoContainer>
       </S.MarketCardUpperContainer>
       <S.MarketCardBottomContainer>
         <S.MarketCardBottomInfo>
           <S.MarketCardTextCell>
             <div className="tooltip-container">i</div>
-            <div className="upper-text-container">Discount:</div>
-            <div className="bottom-text-container">{discount}</div>
+            <Typography className="upper-text-container" caption secondary>
+              Discount:
+            </Typography>
+            <Typography className="bottom-text-container">{discount}</Typography>
           </S.MarketCardTextCell>
           <S.MarketCardTextCell>
             <div className="tooltip-container">i</div>
-            <div className="upper-text-container">Liquidation penalty:</div>
-            <div className="bottom-text-container">{liquidationPenalty}</div>
+            <Typography className="upper-text-container" caption secondary>
+              Liquidation penalty:
+            </Typography>
+            <Typography className="bottom-text-container">{liquidationPenalty}</Typography>
           </S.MarketCardTextCell>
         </S.MarketCardBottomInfo>
         <S.MarketCardButtonsContainer>
