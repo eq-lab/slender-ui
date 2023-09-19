@@ -1,6 +1,6 @@
 import React from 'react'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
-import { supportedTokensIconStyles } from '@/shared/stellar/ui/supported-tokens-icon-styles'
+import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import Thumbnail from '@marginly/ui/components/thumbnail'
@@ -23,7 +23,7 @@ export function PositionCell({
   isLendPosition?: boolean
 }) {
   const { tokenName, value, valueInUsd } = position
-  const { Icon } = supportedTokensIconStyles[tokenName]
+  const Icon = getIconByTokenName(tokenName)
 
   const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
     tokenContracts[tokenName],

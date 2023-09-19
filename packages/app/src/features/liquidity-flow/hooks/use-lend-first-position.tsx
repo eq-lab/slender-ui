@@ -7,7 +7,7 @@ import { useLiquidity } from './use-liquidity'
 export const useLendFirstPosition = (
   tokenName: SupportedToken,
 ): {
-  modal: React.ReactNode
+  modal: JSX.Element | null
   open: () => void
 } => {
   const [isModalOpen, setModalOpenStatus] = useState(false)

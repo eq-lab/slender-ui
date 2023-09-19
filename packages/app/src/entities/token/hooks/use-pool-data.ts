@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { collatCoeff, debtCoeff, getReserve } from '@bindings/pool'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../contract-constants'
+import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../constants/contract-constants'
 
 type PoolData = {
   borrowInterestRate?: bigint
