@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
-import { scValToJs } from '@/shared/stellar/decoders'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
 import { addressToScVal } from '@/shared/stellar/encoders'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
@@ -41,7 +40,7 @@ export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecor
         await Promise.all(
           tokenAddresses.map((tokenAddress) => {
             const invoke = makeInvoke(tokenAddress)
-            return invoke<string>('balance', scValToJs, balanceTxParams)
+            return invoke<string>('balance', balanceTxParams)
           }),
         )
       ).map((balance, index) => ({

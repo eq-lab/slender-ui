@@ -4,6 +4,7 @@ import { useContextSelector } from 'use-context-selector'
 import { WalletContext } from '@/shared/contexts/wallet'
 import { useCallback, useMemo } from 'react'
 import { server } from '@/shared/stellar/server'
+import { scValToJs } from '@/shared/stellar/decoders'
 import { FUTURENET_NETWORK_DETAILS } from '../constants/networks'
 
 const FEE = '100'
@@ -32,7 +33,6 @@ export function useMakeInvoke() {
       const contract = new SorobanClient.Contract(contractAddress)
       return async <T>(
         methodName: string,
-        decoder: (xdr: SorobanClient.xdr.ScVal) => T,
         txParams: SorobanClient.xdr.ScVal[] = [],
       ): Promise<T> => {
         const tx = newTxBuilder()
@@ -47,7 +47,7 @@ export function useMakeInvoke() {
           throw new Error(`invalid simulation: no result in ${simulated}`)
         }
 
-        return decoder(simulated.result.retval)
+        return scValToJs(simulated.result.retval)
       }
     },
     [newTxBuilder],

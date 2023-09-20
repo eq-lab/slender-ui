@@ -3,7 +3,6 @@ import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/token
 import { logInfo } from '@/shared/logger'
 import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
-import { scValToJs } from '@/shared/stellar/decoders'
 import { PositionUpdate } from '../types'
 
 const USER_DECLINED_ERROR = 'User declined access'
@@ -20,12 +19,7 @@ export const useSubmit = (methodName: PoolMethodName) => {
     who: string
     asset: string
     amount: i128
-  }) =>
-    invoke(methodName, scValToJs, [
-      addressToScVal(who),
-      addressToScVal(asset),
-      bigintToScVal(amount),
-    ])
+  }) => invoke(methodName, [addressToScVal(who), addressToScVal(asset), bigintToScVal(amount)])
 
   return async (address: string, sendValue: PositionUpdate): Promise<'fulfilled' | never> => {
     // we have to sign and send transactions one by one
