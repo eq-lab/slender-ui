@@ -5,6 +5,7 @@ import { Button, Container, Form, InputBox, InputLabel, Title } from '@/widgets/
 import cn from 'classnames'
 import { sendEmail } from '@/widgets/landing/api'
 import { Space } from '@/widgets/landing/space'
+import { ReactComponent as EmailIcon } from './images/email.svg'
 
 export function SubscriptionSection() {
   const [email, setEmail] = useState('')
@@ -47,15 +48,14 @@ export function SubscriptionSection() {
       <Space $height={80} $heightMobile={68} />
       {emailIsSent ? (
         <Form>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/img/email.svg" alt="" className="email" />
+          <EmailIcon className="email" />
         </Form>
       ) : (
         <Form onSubmit={handleSubscribe}>
           <InputBox
             onFocus={() => setEmailIsFocused(true)}
             onBlur={() => setEmailIsFocused(false)}
-            className={cn({ focused: !!email || emailIsFocused, error: emailHasError })}
+            className={cn({ focused: email || emailIsFocused, error: emailHasError })}
           >
             <InputLabel>Your email</InputLabel>
             <input value={email} className="input" onChange={handleEmailChange} />

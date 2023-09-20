@@ -2,11 +2,7 @@ import { TokenContracts } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
 import { useMarketData } from '../context/hooks'
 import { useAvailableToBorrow } from './use-available-to-borrow'
-
-const makeFormatPercentWithPrecision =
-  (multiplier: number) =>
-  (value?: number | bigint): string =>
-    value === undefined ? '...' : `${+Number((Number(value) * 100) / multiplier).toFixed(1)}%`
+import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision'
 
 export function useMarketDataForDisplay(token: TokenContracts): {
   discount: string

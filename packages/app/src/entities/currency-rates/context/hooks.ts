@@ -9,12 +9,10 @@ export type SupportedTokenRates = {
 export const usePriceInUsd = (): SupportedTokenRates => {
   const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates)
 
-  const pricesInUsd = useMemo(() => {
+  return useMemo(() => {
     const supportedTokenEntries =
       currencyRates &&
       SUPPORTED_TOKENS.map((token) => [token, currencyRates[token.toUpperCase()] as number])
     return supportedTokenEntries && Object.fromEntries(supportedTokenEntries)
   }, [currencyRates])
-
-  return pricesInUsd
 }

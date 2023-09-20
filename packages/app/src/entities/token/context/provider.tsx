@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { networks, ReserveData, u32 } from '@bindings/pool'
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
-import { decodeStr, decodeU32 } from '@/shared/stellar/decoders'
-
 import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens'
-import { getReserve, ReserveData } from '@bindings/pool'
+import { addressToScVal } from '@/shared/stellar/encoders'
 import { CachedTokens, MarketContext, PoolData } from './context'
-import { PERCENT_PRECISION } from '../contract-constants'
+import { PERCENT_PRECISION, CONTRACT_MATH_PRECISION } from '../constants/contract-constants'
+import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision'
 
 const NATIVE_ID = 'native'
 const NATIVE_NAME = 'Lumen'
@@ -23,6 +23,8 @@ const CACHED_TOKEN_ADDRESSES = [
 
 const CACHED_POOL_ADDRESSES = [...Object.values(underlying)]
 
+const formatInterestRate = makeFormatPercentWithPrecision(CONTRACT_MATH_PRECISION)
+
 export function TokenProvider({ children }: { children: JSX.Element }) {
   const [cachedTokens, setCachedTokens] = useState<CachedTokens>()
   const [marketData, setMarketData] = useState<PoolData>()
@@ -35,12 +37,15 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
         const invoke = makeInvoke(tokenAddress)
         return [
           ...allTxs,
-          invoke('name', decodeStr),
-          invoke('symbol', decodeStr),
-          invoke('decimals', decodeU32),
+          invoke<string>('name'),
+          invoke<string>('symbol'),
+          invoke<u32>('decimals'),
         ]
       }, [])
-      const marketTxs = CACHED_POOL_ADDRESSES.map((asset) => getReserve({ asset }))
+      const poolInvoke = makeInvoke(networks.futurenet.contractId)
+      const marketTxs = CACHED_POOL_ADDRESSES.map((asset) =>
+        poolInvoke<ReserveData>('get_reserve', [addressToScVal(asset)]),
+      )
       const [restValues, marketValues] = (await Promise.all([
         Promise.all(cacheTxs),
         Promise.all(marketTxs),
@@ -67,6 +72,8 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
           liquidationPenalty: poolReserve.configuration.get('liq_bonus') - PERCENT_PRECISION,
           // @ts-ignore
           utilizationCapacity: poolReserve.configuration.get('util_cap'),
+          borrowInterestRate: formatInterestRate(poolReserve.borrower_ir),
+          lendInterestRate: formatInterestRate(poolReserve.lender_ir),
         }
         return cached
       }, {} as PoolData)

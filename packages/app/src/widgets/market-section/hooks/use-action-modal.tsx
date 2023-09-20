@@ -5,11 +5,11 @@ import { useContextSelector } from 'use-context-selector'
 interface Props {
   tokenName: SupportedToken
   useFirstPosition: (token: SupportedToken) => {
-    modal: React.ReactNode
+    modal: JSX.Element | null
     open: () => void
   }
   useIncrease: () => {
-    modal: React.ReactNode
+    modal: JSX.Element | null
     open: (token: SupportedToken) => void
   }
   type: 'borrow' | 'lend'
@@ -21,7 +21,7 @@ export const useActionModal = ({
   useIncrease,
   type,
 }: Props): {
-  modal: React.ReactNode
+  modal: JSX.Element | null
   open: () => void
   disabled: boolean
 } => {
@@ -31,7 +31,7 @@ export const useActionModal = ({
 
   const disabled = Boolean(
     position?.[type === 'borrow' ? 'deposits' : 'debts']
-      .map((cell) => cell.token)
+      .map((cell) => cell.tokenName)
       .includes(tokenName),
   )
 

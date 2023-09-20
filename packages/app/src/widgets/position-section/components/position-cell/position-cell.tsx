@@ -1,8 +1,12 @@
 import React from 'react'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
+import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
-import { formatUsd } from '@/features/borrow-flow/formatters'
+import Thumbnail from '@marginly/ui/components/thumbnail'
+import Typography from '@marginly/ui/components/typography'
+import Label from '@marginly/ui/components/label'
+import { formatUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 
 export function PositionCell({
@@ -18,28 +22,33 @@ export function PositionCell({
   openIncreaseModal: () => void
   isLendPosition?: boolean
 }) {
-  const { token, value, valueInUsd } = position
+  const { tokenName, value, valueInUsd } = position
+  const Icon = getIconByTokenName(tokenName)
 
   const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
-    tokenContracts[token],
+    tokenContracts[tokenName],
   )
-  const tokenCache = useTokenCache()?.[tokenContracts[token].address]
+  const tokenCache = useTokenCache()?.[tokenContracts[tokenName].address]
 
   return (
-    <div key={token}>
-      <em>
-        {tokenCache?.name}
-        {percentage && percentage !== 100 ? `: ${percentage}%` : null}
-      </em>
+    <div>
+      <Thumbnail md>
+        <Icon />
+      </Thumbnail>
+      <Typography caption>
+        {tokenCache?.name} · {percentage && percentage !== 100 ? `: ${percentage}%` : null}
+      </Typography>
       <br />
-      {value} {token.toUpperCase()}{' '}
+      {value.toString(10)} {tokenCache?.symbol}{' '}
       {isLendPosition && (
-        <div>
+        <Typography caption>
           <em>{discount} discount</em>
-        </div>
+        </Typography>
       )}
-      {borrowInterestRate && <div>{isLendPosition ? lendInterestRate : borrowInterestRate}</div>}
-      {valueInUsd && value !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
+      {borrowInterestRate && (
+        <Label>{isLendPosition ? lendInterestRate : borrowInterestRate}</Label>
+      )}
+      {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
       <button type="button" onClick={openDecreaseModal}>
         &minus;
       </button>

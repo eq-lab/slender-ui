@@ -1,1 +1,1 @@
-export { MarketSection } from './components/market-section'
+export { MarketSection } from './components/market-section/market-section'

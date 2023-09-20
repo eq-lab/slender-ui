@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    unit-tests:
+    all-tests:
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v3
@@ -34,11 +34,11 @@ jobs:
             submodules: recursive
         - name: Set up Docker Buildx
           uses: docker/setup-buildx-action@v2
-        - name: Build image ${{ matrix.apps }} 
+        - name: Build image ${{ matrix.apps }}
           uses: docker/build-push-action@v4
           with:
             build-args: |
-              BUILD_CONTEXT=${{ matrix.apps }} 
+              BUILD_CONTEXT=${{ matrix.apps }}
               NEXT_PUBLIC_BUILD_NUMBER_ARG=${{ github.sha }}
             context: .
             push: false
