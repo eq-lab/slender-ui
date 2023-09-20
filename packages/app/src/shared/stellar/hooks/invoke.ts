@@ -1,4 +1,5 @@
 import * as SorobanClient from 'soroban-client'
+import { SorobanRpc } from 'soroban-client'
 import { useContextSelector } from 'use-context-selector'
 import { WalletContext } from '@/shared/contexts/wallet'
 import { useCallback, useMemo } from 'react'
@@ -31,16 +32,22 @@ export function useMakeInvoke() {
       const contract = new SorobanClient.Contract(contractAddress)
       return async <T>(
         methodName: string,
-        decoder: (xdr: string) => T,
+        decoder: (xdr: SorobanClient.xdr.ScVal) => T,
         txParams: SorobanClient.xdr.ScVal[] = [],
       ): Promise<T> => {
         const tx = newTxBuilder()
           .addOperation(contract.call(methodName, ...txParams))
           .setTimeout(SorobanClient.TimeoutInfinite)
           .build()
-        const { results } = await server.simulateTransaction(tx)
-        const [result] = results ?? []
-        return decoder(result?.xdr ?? '')
+        const simulated = await server.simulateTransaction(tx)
+
+        if (SorobanRpc.isSimulationError(simulated)) {
+          throw new Error(simulated.error)
+        } else if (!simulated.result) {
+          throw new Error(`invalid simulation: no result in ${simulated}`)
+        }
+
+        return decoder(simulated.result.retval)
       }
     },
     [newTxBuilder],

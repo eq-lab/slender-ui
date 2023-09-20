@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Contract, networks, Address } from '@bindings/pool'
+import { networks, i128, ReserveData } from '@bindings/pool'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { FUTURENET_NETWORK_DETAILS } from '@/shared/stellar/constants/networks'
+import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
+import { scValToJs } from '@/shared/stellar/decoders'
+import { addressToScVal } from '@/shared/stellar/encoders'
 import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../constants/contract-constants'
 
 type PoolData = {
@@ -16,29 +18,23 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
   contractMultiplier: number
 } {
   const [data, setData] = useState<PoolData>({})
+  const makeInvoke = useMakeInvoke()
 
   useEffect(() => {
     ;(async () => {
-      const contract = new Contract({
-        ...networks.futurenet,
-        rpcUrl: FUTURENET_NETWORK_DETAILS.rpcUrl,
-      })
-      const assetArg = {
-        asset: Address.fromString(tokenAddress),
-      }
-      const [poolReserve, rawCollateralCoefficient, rawDebtCoefficient] = await Promise.all([
-        contract.getReserve(assetArg),
-        contract.collatCoeff(assetArg),
-        contract.debtCoeff(assetArg),
+      const invoke = makeInvoke(networks.futurenet.contractId)
+      const assetArg = [addressToScVal(tokenAddress)]
+      const [poolReserve, collateralCoefficient, debtCoefficient] = await Promise.all([
+        invoke<ReserveData>('get_reserve', scValToJs, assetArg),
+        invoke<i128>('collat_coeff', scValToJs, assetArg),
+        invoke<i128>('debt_coeff', scValToJs, assetArg),
       ])
 
       setData({
         borrowInterestRate: poolReserve.borrower_ir,
         lendInterestRate: poolReserve.lender_ir,
-        collateralCoefficient: rawCollateralCoefficient.isOk()
-          ? rawCollateralCoefficient.unwrap()
-          : undefined,
-        debtCoefficient: rawDebtCoefficient.isOk() ? rawDebtCoefficient.unwrap() : undefined,
+        collateralCoefficient,
+        debtCoefficient,
       })
     })()
   }, [tokenAddress])

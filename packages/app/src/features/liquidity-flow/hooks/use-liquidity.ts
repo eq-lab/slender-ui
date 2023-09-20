@@ -7,6 +7,7 @@ import { useTokenCache } from '@/entities/token/context/hooks'
 import { CachedTokens } from '@/entities/token/context/context'
 import { useSetWaitModalIsOpen } from '../context/hooks'
 import { PositionUpdate } from '../types'
+import { useSubmit, PoolMethodName } from '../soroban/submit'
 
 export const getPositionUpdateByCells = (
   positionCells: PositionCell[],
@@ -17,8 +18,9 @@ export const getPositionUpdateByCells = (
     return positionUpdate
   }, {} as PositionUpdate)
 
-export function useLiquidity(): (args: {
-  submitFunc: (address: string, sendValue: PositionUpdate) => Promise<'fulfilled' | never>
+export function useLiquidity(
+  methodName: PoolMethodName,
+): (args: {
   deposits?: PositionCell[]
   additionalDeposits?: PositionCell[]
   debts?: PositionCell[]
@@ -30,6 +32,7 @@ export function useLiquidity(): (args: {
   const { address } = useWalletAddress()
   const position = useContextSelector(PositionContext, (state) => state.position)
   const tokenInfo = useTokenCache()
+  const submitFunc = useSubmit(methodName)
 
   return async (args) => {
     if (!address) return false
@@ -41,7 +44,7 @@ export function useLiquidity(): (args: {
         args.additionalDeposits ?? args.additionalDebts ?? args.deposits ?? args.debts ?? [],
         tokenInfo,
       )
-      const result = await args.submitFunc(address, positionUpdate)
+      const result = await submitFunc(address, positionUpdate)
       logInfo(result)
 
       const deposits = args.deposits ?? args.additionalDeposits ?? position?.deposits ?? []

@@ -4,7 +4,6 @@ import { useContextSelector } from 'use-context-selector'
 import { PositionCell } from '@/entities/position/types'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { useLiquidity } from './use-liquidity'
-import { submitWithdraw } from '../soroban/submit'
 import { useDepositUsd } from './use-deposit-usd'
 import { useDebtUsd } from './use-debt-usd'
 import { LendDecreaseModal } from '../components/lend-decrease-modal'
@@ -18,7 +17,7 @@ export const useLendDecrease = (): {
 
   const debtSumUsd = useDebtUsd(position?.debts)
   const depositSumUsd = useDepositUsd(position?.deposits)
-  const send = useLiquidity()
+  const send = useLiquidity('withdraw')
 
   const renderModal = () => {
     if (!position || !modalToken) return null
@@ -35,7 +34,6 @@ export const useLendDecrease = (): {
 
       setModalToken(null)
       await send({
-        submitFunc: submitWithdraw,
         additionalDeposits: [{ tokenName, value }],
         deposits: newDeposits,
       })

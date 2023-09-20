@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { LendFirstPositionModal } from '../components/lend-first-position-modal'
-import { submitDeposit } from '../soroban/submit'
 import { useLiquidity } from './use-liquidity'
 
 export const useLendFirstPosition = (
@@ -11,11 +10,11 @@ export const useLendFirstPosition = (
   open: () => void
 } => {
   const [isModalOpen, setModalOpenStatus] = useState(false)
-  const send = useLiquidity()
+  const send = useLiquidity('deposit')
 
   const handleSend = async (value: string) => {
     setModalOpenStatus(false)
-    await send({ submitFunc: submitDeposit, deposits: [{ tokenName, value: BigInt(value) }] })
+    await send({ deposits: [{ tokenName, value: BigInt(value) }] })
   }
 
   const modal = isModalOpen ? (

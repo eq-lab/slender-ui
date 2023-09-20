@@ -7,7 +7,6 @@ import { useLiquidity } from './use-liquidity'
 import { BorrowDecreaseModal } from '../components/borrow-decrease-modal'
 import { useDebtUsd } from './use-debt-usd'
 import { useDepositUsd } from './use-deposit-usd'
-import { submitRepay } from '../soroban/submit'
 
 export const useBorrowDecrease = (): {
   modal: JSX.Element | null
@@ -18,7 +17,7 @@ export const useBorrowDecrease = (): {
 
   const debtSumUsd = useDebtUsd(position?.debts)
   const depositSumUsd = useDepositUsd(position?.deposits)
-  const send = useLiquidity()
+  const send = useLiquidity('repay')
 
   const renderModal = () => {
     if (!position || !modalToken) return null
@@ -35,7 +34,6 @@ export const useBorrowDecrease = (): {
 
       setModalToken(null)
       await send({
-        submitFunc: submitRepay,
         additionalDebts: [{ tokenName, value }],
         debts: newDebts,
       })
