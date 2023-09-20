@@ -10,6 +10,7 @@ import { colorByToken } from '@/entities/token/constants/token-colors'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { PercentPieChart } from './percent-pie-chart'
 import { useActionModal } from '../../hooks/use-action-modal'
+import { Tooltip } from './tooltip'
 import * as S from './styled'
 
 export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
@@ -60,31 +61,42 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
     <S.MarketCardWrapper>
       <S.MarketCardUpperContainer $backgroundColor={tokenBackgroundColor}>
         <S.MarketCardHeadingContainer>
-          <Typography className="token-name">{tokenCache?.name}</Typography>
+          <Typography headerS className="token-name">
+            {tokenCache?.name}
+          </Typography>
           <Typography className="token-symbol">{tokenCache?.symbol}</Typography>
           <div className="token-icon">
             <TokenIcon />
           </div>
         </S.MarketCardHeadingContainer>
         <S.MarketCardPoolInfoContainer>
-          <div className="piechart-container">
-            <PercentPieChart percent={availablePercent} />
+          <div className="piechart-with-tooltip-wrapper">
+            <div className="piechart-with-tooltip-container">
+              <PercentPieChart percent={availablePercent} />
+              <Tooltip withThumbnail />
+            </div>
           </div>
-          <Typography className="total-available">{availableToBorrow} available</Typography>
-          <Typography className="total-supplied">From {totalSupplied}</Typography>
+          <Typography className="total-available">
+            {Math.floor(availableToBorrow)} available
+          </Typography>
+          <Typography className="total-supplied">From {Math.floor(totalSupplied)}</Typography>
         </S.MarketCardPoolInfoContainer>
       </S.MarketCardUpperContainer>
       <S.MarketCardBottomContainer>
         <S.MarketCardBottomInfo>
           <S.MarketCardTextCell>
-            <div className="tooltip-container">i</div>
+            <div className="tooltip-container">
+              <Tooltip />
+            </div>
             <Typography className="upper-text-container" caption secondary>
               Discount:
             </Typography>
             <Typography className="bottom-text-container">{discount}</Typography>
           </S.MarketCardTextCell>
           <S.MarketCardTextCell>
-            <div className="tooltip-container">i</div>
+            <div className="tooltip-container">
+              <Tooltip />
+            </div>
             <Typography className="upper-text-container" caption secondary>
               Liquidation penalty:
             </Typography>

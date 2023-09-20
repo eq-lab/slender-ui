@@ -66,12 +66,10 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
       [],
     )
 
-    if (lendPositions.length || debtPositions.length) {
-      setPosition({
-        deposits: lendPositions,
-        debts: debtPositions,
-      })
-    }
+    setPosition({
+      deposits: lendPositions,
+      debts: debtPositions,
+    })
   }, [userAddress, setPosition, positionUpdate, debtBalances, lendBalances, cryptocurrencyUsdRates])
 
   return (

@@ -60,99 +60,93 @@ export function PositionSection() {
     <S.PositionWrapper>
       <S.PositionHeaderWrapper>
         <Typography title>Position</Typography>
+        <div>
+          <em>Health: {positionHealth}%</em>
+        </div>
       </S.PositionHeaderWrapper>
-      {position?.deposits.length || position?.debts.length ? (
-        <>
-          <div>
-            <em>Health: {positionHealth}%</em>
-          </div>
-          <S.PositionContainer>
-            <S.PositionSideContainer>
-              <S.PositionHeadingContainer>
+      <S.PositionContainer>
+        <S.PositionSideContainer>
+          <S.PositionHeadingContainer>
+            <S.PositionSumWrapper>
+              {depositsSumUsd && <Typography headerL>{formatUsd(depositsSumUsd)}</Typography>}
+              <Typography secondary>Lent</Typography>
+            </S.PositionSumWrapper>
+            <Label positive lg>
+              +{formatPercent(depositSumInterestRate)} APR
+            </Label>
+          </S.PositionHeadingContainer>
+          <S.PositionCellContainer>
+            {position?.deposits.map((deposit) => {
+              const { tokenName, valueInUsd } = deposit
+              const depositPercentage =
+                valueInUsd && !!depositsSumUsd
+                  ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
+                  : undefined
+              return (
+                <PositionCell
+                  key={tokenName}
+                  position={deposit}
+                  percentage={depositPercentage}
+                  openDecreaseModal={() => openLendDecreaseModal(tokenName)}
+                  openIncreaseModal={() => openLendIncreaseModal(tokenName)}
+                  isLendPosition
+                />
+              )
+            })}
+            {!isFullPosition && (
+              <button type="button" onClick={() => openLendIncreaseModal()}>
+                + lend more
+              </button>
+            )}
+          </S.PositionCellContainer>
+        </S.PositionSideContainer>
+        <S.PositionSideContainer>
+          <S.PositionHeadingContainer>
+            {isFullDeposits ? (
+              <S.PositionSumWrapper>
+                <Typography headerL>You can’t borrow</Typography>
+                <Typography secondary>
+                  Withdraw any collateral asset to be able to borrow
+                </Typography>
+              </S.PositionSumWrapper>
+            ) : (
+              <>
                 <S.PositionSumWrapper>
-                  {depositsSumUsd && <Typography headerL>{formatUsd(depositsSumUsd)}</Typography>}
-                  <Typography secondary>Lent</Typography>
+                  {debtsSumUsd && <Typography headerL>{formatUsd(debtsSumUsd)}</Typography>}
+                  <Typography>Borrowed</Typography>
                 </S.PositionSumWrapper>
-                <Label positive lg>
-                  +{formatPercent(depositSumInterestRate)} APR
+                <Label negative lg>
+                  -{formatPercent(debtSumInterestRate)} APR
                 </Label>
-              </S.PositionHeadingContainer>
-              <S.PositionCellContainer>
-                {position.deposits.map((deposit) => {
-                  const { tokenName, valueInUsd } = deposit
-                  const depositPercentage =
-                    valueInUsd && !!depositsSumUsd
-                      ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
-                      : undefined
-                  return (
-                    <PositionCell
-                      key={tokenName}
-                      position={deposit}
-                      percentage={depositPercentage}
-                      openDecreaseModal={() => openLendDecreaseModal(tokenName)}
-                      openIncreaseModal={() => openLendIncreaseModal(tokenName)}
-                      isLendPosition
-                    />
-                  )
-                })}
-                {!isFullPosition && (
-                  <button type="button" onClick={() => openLendIncreaseModal()}>
-                    + lend more
-                  </button>
-                )}
-              </S.PositionCellContainer>
-            </S.PositionSideContainer>
-            <S.PositionSideContainer>
-              <S.PositionHeadingContainer>
-                {isFullDeposits ? (
-                  <S.PositionSumWrapper>
-                    <Typography headerL>You can’t borrow</Typography>
-                    <Typography secondary>
-                      Withdraw any collateral asset to be able to borrow
-                    </Typography>
-                  </S.PositionSumWrapper>
-                ) : (
-                  <>
-                    <S.PositionSumWrapper>
-                      {debtsSumUsd && <Typography headerL>{formatUsd(debtsSumUsd)}</Typography>}
-                      <Typography>Borrowed</Typography>
-                    </S.PositionSumWrapper>
-                    <Label negative lg>
-                      -{formatPercent(debtSumInterestRate)} APR
-                    </Label>
-                  </>
-                )}
-              </S.PositionHeadingContainer>
-              <S.PositionCellContainer>
-                {position.debts.map((debt) => {
-                  const { tokenName, valueInUsd } = debt
-                  const debtPercentage =
-                    valueInUsd && debtsSumUsd
-                      ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)
-                      : undefined
+              </>
+            )}
+          </S.PositionHeadingContainer>
+          <S.PositionCellContainer>
+            {position?.debts.map((debt) => {
+              const { tokenName, valueInUsd } = debt
+              const debtPercentage =
+                valueInUsd && debtsSumUsd
+                  ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)
+                  : undefined
 
-                  return (
-                    <PositionCell
-                      key={tokenName}
-                      position={debt}
-                      percentage={debtPercentage}
-                      openDecreaseModal={() => openBorrowDecreaseModal(tokenName)}
-                      openIncreaseModal={() => openBorrowIncreaseModal(tokenName)}
-                    />
-                  )
-                })}
-                {!isFullDeposits && (
-                  <button type="button" onClick={() => openBorrowIncreaseModal()}>
-                    + lend more
-                  </button>
-                )}
-              </S.PositionCellContainer>
-            </S.PositionSideContainer>
-          </S.PositionContainer>
-        </>
-      ) : (
-        'No positions'
-      )}
+              return (
+                <PositionCell
+                  key={tokenName}
+                  position={debt}
+                  percentage={debtPercentage}
+                  openDecreaseModal={() => openBorrowDecreaseModal(tokenName)}
+                  openIncreaseModal={() => openBorrowIncreaseModal(tokenName)}
+                />
+              )
+            })}
+            {!isFullDeposits && (
+              <button type="button" onClick={() => openBorrowIncreaseModal()}>
+                + lend more
+              </button>
+            )}
+          </S.PositionCellContainer>
+        </S.PositionSideContainer>
+      </S.PositionContainer>
       {borrowDecreaseModal}
       {borrowIncreaseModal}
       {lendDecreaseModal}

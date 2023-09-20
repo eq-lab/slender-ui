@@ -38,7 +38,7 @@ export function PositionCell({
 
   return (
     <S.PositionCellWrapper $backgroundColor={tokenColor}>
-      <Thumbnail md className="token-thumnail">
+      <Thumbnail md rectangle darkbg className="token-thumnail">
         <Icon />
       </Thumbnail>
       <S.PositionCellInfo>
@@ -58,14 +58,14 @@ export function PositionCell({
             )}
           </S.PositionCellTokenAmount>
         </S.PositionCellInfoItem>
-        <S.PositionCellInfoItem>
-          {isLendPosition && (
+        {isLendPosition && (
+          <S.PositionCellInfoItem>
             <Typography caption>
               <em>{discount} discount</em>
             </Typography>
-          )}
-          {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
-        </S.PositionCellInfoItem>
+            {valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
+          </S.PositionCellInfoItem>
+        )}
       </S.PositionCellInfo>
       <S.PositionCellButtons>
         <button type="button" onClick={openDecreaseModal}>
