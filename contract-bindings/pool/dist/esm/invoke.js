@@ -1,59 +1,59 @@
-import freighter from "@stellar/freighter-api";
-// working around ESM compatibility issues
-const { isConnected, isAllowed, getUserInfo, signTransaction, } = freighter;
-import * as SorobanClient from 'soroban-client';
-import { NETWORK_PASSPHRASE, CONTRACT_ID } from './constants.js';
-import { Server } from './server.js';
+import * as SorobanClient from "soroban-client";
+import { SorobanRpc } from "soroban-client";
 /**
  * Get account details from the Soroban network for the publicKey currently
  * selected in Freighter. If not connected to Freighter, return null.
  */
-async function getAccount() {
-    if (!await isConnected() || !await isAllowed()) {
+async function getAccount(wallet, server) {
+    if (!(await wallet.isConnected()) || !(await wallet.isAllowed())) {
         return null;
     }
-    const { publicKey } = await getUserInfo();
+    const { publicKey } = await wallet.getUserInfo();
     if (!publicKey) {
         return null;
     }
-    return await Server.getAccount(publicKey);
+    return await server.getAccount(publicKey);
 }
 export class NotImplementedError extends Error {
 }
 // defined this way so typeahead shows full union, not named alias
 let someRpcResponse;
-export async function invoke({ method, args = [], fee = 100, responseType, parseResultXdr, secondsToWait = 10, }) {
-    const freighterAccount = await getAccount();
+export async function invoke({ method, args = [], fee = 100, responseType, parseResultXdr, secondsToWait = 10, rpcUrl, networkPassphrase, contractId, wallet, }) {
+    wallet = wallet ?? (await import("@stellar/freighter-api"));
+    let parse = parseResultXdr;
+    const server = new SorobanClient.Server(rpcUrl, {
+        allowHttp: rpcUrl.startsWith("http://"),
+    });
+    const walletAccount = await getAccount(wallet, server);
     // use a placeholder null account if not yet connected to Freighter so that view calls can still work
-    const account = freighterAccount ?? new SorobanClient.Account('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', '0');
-    const contract = new SorobanClient.Contract(CONTRACT_ID);
+    const account = walletAccount ??
+        new SorobanClient.Account("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF", "0");
+    const contract = new SorobanClient.Contract(contractId);
     let tx = new SorobanClient.TransactionBuilder(account, {
         fee: fee.toString(10),
-        networkPassphrase: NETWORK_PASSPHRASE,
+        networkPassphrase,
     })
         .addOperation(contract.call(method, ...args))
         .setTimeout(SorobanClient.TimeoutInfinite)
         .build();
-    const simulated = await Server.simulateTransaction(tx);
-    if (responseType === 'simulated')
+    const simulated = await server.simulateTransaction(tx);
+    if (SorobanRpc.isSimulationError(simulated)) {
+        throw new Error(simulated.error);
+    }
+    else if (responseType === "simulated") {
         return simulated;
-    // is it possible for `auths` to be present but empty? Probably not, but let's be safe.
-    const auths = simulated.results?.[0]?.auth;
-    let authsCount = auths?.length ?? 0;
-    const writeLength = SorobanClient.xdr.SorobanTransactionData.fromXDR(simulated.transactionData, 'base64').resources().footprint().readWrite().length;
-    const parse = parseResultXdr ?? (xdr => xdr);
-    const isViewCall = authsCount === 0 && writeLength === 0;
+    }
+    else if (!simulated.result) {
+        throw new Error(`invalid simulation: no result in ${simulated}`);
+    }
+    let authsCount = simulated.result.auth.length;
+    const writeLength = simulated.transactionData.getReadWrite().length;
+    const isViewCall = (authsCount === 0) && (writeLength === 0);
     if (isViewCall) {
-        if (responseType === 'full')
+        if (responseType === "full") {
             return simulated;
-        const { results } = simulated;
-        if (!results || results[0] === undefined) {
-            if (simulated.error) {
-                throw new Error(simulated.error);
-            }
-            throw new Error(`Invalid response from simulateTransaction:\n{simulated}`);
         }
-        return parse(results[0].xdr);
+        return parseResultXdr(simulated.result.retval);
     }
     if (authsCount > 1) {
         throw new NotImplementedError("Multiple auths not yet supported");
@@ -68,20 +68,29 @@ export async function invoke({ method, args = [], fee = 100, responseType, parse
         //   )
         // }
     }
-    if (!freighterAccount) {
-        throw new Error('Not connected to Freighter');
+    if (!walletAccount) {
+        throw new Error("Not connected to Freighter");
     }
-    tx = await signTx(SorobanClient.assembleTransaction(tx, NETWORK_PASSPHRASE, simulated));
-    const raw = await sendTx(tx, secondsToWait);
-    if (responseType === 'full')
+    tx = await signTx(wallet, SorobanClient.assembleTransaction(tx, networkPassphrase, simulated).build(), networkPassphrase);
+    const raw = await sendTx(tx, secondsToWait, server);
+    if (responseType === "full") {
         return raw;
+    }
     // if `sendTx` awaited the inclusion of the tx in the ledger, it used
     // `getTransaction`, which has a `resultXdr` field
-    if ('resultXdr' in raw)
-        return parse(raw.resultXdr);
+    if ("resultXdr" in raw) {
+        const getResult = raw;
+        if (getResult.status !== SorobanRpc.GetTransactionStatus.SUCCESS) {
+            console.error('Transaction submission failed! Returning full RPC response.');
+            return raw;
+        }
+        return parse(raw.resultXdr.result().toXDR("base64"));
+    }
     // otherwise, it returned the result of `sendTransaction`
-    if ('errorResultXdr' in raw)
-        return parse(raw.errorResultXdr);
+    if ("errorResultXdr" in raw) {
+        const sendResult = raw;
+        return parse(sendResult.errorResultXdr);
+    }
     // if neither of these are present, something went wrong
     console.error("Don't know how to parse result! Returning full RPC response.");
     return raw;
@@ -94,11 +103,11 @@ export async function invoke({ method, args = [], fee = 100, responseType, parse
  * or one of the exported contract methods, you may want to use this function
  * to sign the transaction with Freighter.
  */
-export async function signTx(tx) {
-    const signed = await signTransaction(tx.toXDR(), {
-        networkPassphrase: NETWORK_PASSPHRASE,
+export async function signTx(wallet, tx, networkPassphrase) {
+    const signed = await wallet.signTransaction(tx.toXDR(), {
+        networkPassphrase,
     });
-    return SorobanClient.TransactionBuilder.fromXDR(signed, NETWORK_PASSPHRASE);
+    return SorobanClient.TransactionBuilder.fromXDR(signed, networkPassphrase);
 }
 /**
  * Send a transaction to the Soroban network.
@@ -110,25 +119,28 @@ export async function signTx(tx) {
  * function for its timeout/`secondsToWait` logic, rather than implementing
  * your own.
  */
-export async function sendTx(tx, secondsToWait) {
-    const sendTransactionResponse = await Server.sendTransaction(tx);
+export async function sendTx(tx, secondsToWait, server) {
+    const sendTransactionResponse = await server.sendTransaction(tx);
     if (sendTransactionResponse.status !== "PENDING" || secondsToWait === 0) {
         return sendTransactionResponse;
     }
-    let getTransactionResponse = await Server.getTransaction(sendTransactionResponse.hash);
-    const waitUntil = new Date((Date.now() + secondsToWait * 1000)).valueOf();
+    let getTransactionResponse = await server.getTransaction(sendTransactionResponse.hash);
+    const waitUntil = new Date(Date.now() + secondsToWait * 1000).valueOf();
     let waitTime = 1000;
     let exponentialFactor = 1.5;
-    while ((Date.now() < waitUntil) && getTransactionResponse.status === "NOT_FOUND") {
+    while (Date.now() < waitUntil &&
+        getTransactionResponse.status === SorobanRpc.GetTransactionStatus.NOT_FOUND) {
         // Wait a beat
-        await new Promise(resolve => setTimeout(resolve, waitTime));
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
         /// Exponential backoff
         waitTime = waitTime * exponentialFactor;
         // See if the transaction is complete
-        getTransactionResponse = await Server.getTransaction(sendTransactionResponse.hash);
+        getTransactionResponse = await server.getTransaction(sendTransactionResponse.hash);
     }
-    if (getTransactionResponse.status === "NOT_FOUND") {
-        console.log(`Waited ${secondsToWait} seconds for transaction to complete, but it did not. Returning anyway. Check the transaction status manually. Info: ${JSON.stringify(sendTransactionResponse, null, 2)}`);
+    if (getTransactionResponse.status === SorobanRpc.GetTransactionStatus.NOT_FOUND) {
+        console.error(`Waited ${secondsToWait} seconds for transaction to complete, but it did not. ` +
+            `Returning anyway. Check the transaction status manually. ` +
+            `Info: ${JSON.stringify(sendTransactionResponse, null, 2)}`);
     }
     return getTransactionResponse;
 }

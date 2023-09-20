@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { collatCoeff, debtCoeff, getReserve } from '@bindings/pool'
+import { networks, i128, ReserveData } from '@bindings/pool'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
+import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
+import { addressToScVal } from '@/shared/stellar/encoders'
 import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../constants/contract-constants'
 
 type PoolData = {
@@ -15,28 +17,26 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
   contractMultiplier: number
 } {
   const [data, setData] = useState<PoolData>({})
+  const makeInvoke = useMakeInvoke()
 
   useEffect(() => {
     ;(async () => {
-      const assetArg = {
-        asset: tokenAddress,
-      }
-      const [poolReserve, rawCollateralCoefficient, rawDebtCoefficient] = await Promise.all([
-        getReserve(assetArg),
-        collatCoeff(assetArg),
-        debtCoeff(assetArg),
+      const invoke = makeInvoke(networks.futurenet.contractId)
+      const assetArg = [addressToScVal(tokenAddress)]
+      const [poolReserve, collateralCoefficient, debtCoefficient] = await Promise.all([
+        invoke<ReserveData>('get_reserve', assetArg),
+        invoke<i128>('collat_coeff', assetArg),
+        invoke<i128>('debt_coeff', assetArg),
       ])
 
       setData({
         borrowInterestRate: poolReserve.borrower_ir,
         lendInterestRate: poolReserve.lender_ir,
-        collateralCoefficient: rawCollateralCoefficient.isOk()
-          ? rawCollateralCoefficient.unwrap()
-          : undefined,
-        debtCoefficient: rawDebtCoefficient.isOk() ? rawDebtCoefficient.unwrap() : undefined,
+        collateralCoefficient,
+        debtCoefficient,
       })
     })()
-  }, [tokenAddress])
+  }, [tokenAddress, makeInvoke])
 
   return {
     ...data,

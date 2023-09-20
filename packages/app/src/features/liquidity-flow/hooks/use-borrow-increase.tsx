@@ -8,7 +8,6 @@ import { sumObj } from '../utils/sum-obj'
 import { useDebtUsd } from './use-debt-usd'
 import { useDepositUsd } from './use-deposit-usd'
 import { PositionUpdate } from '../types'
-import { submitBorrow } from '../soroban/submit'
 import { useLiquidity } from './use-liquidity'
 import { getCellByPositionUpdate } from '../soroban/get-cell-by-position-update'
 
@@ -23,7 +22,7 @@ export const useBorrowIncrease = (): {
 
   const depositSumUsd = useDepositUsd(position?.deposits)
   const debtSumUsd = useDebtUsd(position?.debts)
-  const send = useLiquidity()
+  const send = useLiquidity('borrow')
 
   const open = (value?: SupportedToken) => {
     if (value) {
@@ -58,7 +57,6 @@ export const useBorrowIncrease = (): {
 
       setModalToken(null)
       await send({
-        submitFunc: submitBorrow,
         additionalDebts: getCellByPositionUpdate(sendValue),
         debts,
       })

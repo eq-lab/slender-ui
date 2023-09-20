@@ -1,6 +1,38 @@
 declare let responseTypes: 'simulated' | 'full' | undefined;
 export type ResponseTypes = typeof responseTypes;
-export type Options<R extends ResponseTypes> = {
+export type XDR_BASE64 = string;
+export interface Wallet {
+    isConnected: () => Promise<boolean>;
+    isAllowed: () => Promise<boolean>;
+    getUserInfo: () => Promise<{
+        publicKey?: string;
+    }>;
+    signTransaction: (tx: XDR_BASE64, opts?: {
+        network?: string;
+        networkPassphrase?: string;
+        accountToSign?: string;
+    }) => Promise<XDR_BASE64>;
+}
+export type ClassOptions = {
+    contractId: string;
+    networkPassphrase: string;
+    rpcUrl: string;
+    /**
+     * A Wallet interface, such as Freighter, that has the methods `isConnected`, `isAllowed`, `getUserInfo`, and `signTransaction`. If not provided, will attempt to import and use Freighter. Example:
+     *
+     * @example
+     * ```ts
+     * import freighter from "@stellar/freighter-api";
+     * import { Contract } from "stoken";
+     * const contract = new Contract({
+     *   …,
+     *   wallet: freighter,
+     * })
+     * ```
+     */
+    wallet?: Wallet;
+};
+export type MethodOptions<R extends ResponseTypes> = {
     /**
      * The fee to pay for the transaction. Default: 100.
      */

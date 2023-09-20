@@ -1,5 +1,4 @@
 import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
-import { decodeI128 } from '@/shared/stellar/decoders'
 import { useEffect, useMemo, useState } from 'react'
 
 interface TokenData {
@@ -15,7 +14,7 @@ export function useTokenData(sTokenAddress: string): TokenData {
 
   useEffect(() => {
     ;(async () => {
-      const totalSupply = await invokeSToken('total_supply', decodeI128)
+      const totalSupply = await invokeSToken<string>('total_supply')
       setData({ totalSupply })
     })()
   }, [invokeSToken])

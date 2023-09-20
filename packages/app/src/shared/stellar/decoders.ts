@@ -1,24 +1,4 @@
 import * as SorobanClient from 'soroban-client'
-import { logInfo } from '@/shared/logger'
-
-const valueToI128String = (value: SorobanClient.xdr.ScVal): string =>
-  SorobanClient.scValToBigInt(value).toString()
-
-export const decodeI128 = (b64: string) => {
-  const value = SorobanClient.xdr.ScVal.fromXDR(b64, 'base64')
-  try {
-    return valueToI128String(value)
-  } catch (error) {
-    logInfo('Replaced with a default value because of', error)
-    return ''
-  }
-}
-
-export const decodeStr = (b64: string): string =>
-  SorobanClient.xdr.ScVal.fromXDR(b64, 'base64').str().toString()
-
-export const decodeU32 = (b64: string): number =>
-  SorobanClient.xdr.ScVal.fromXDR(b64, 'base64').u32()
 
 type ElementType<T> = T extends Array<infer U> ? U : never
 type KeyType<T> = T extends Map<infer K, any> ? K : never
@@ -92,13 +72,10 @@ export function scValToJs<T>(val: SorobanClient.xdr.ScVal): T {
       return res as unknown as T
     }
     case SorobanClient.xdr.ScValType.scvContractInstance():
-      return val.instance() as unknown as T
     case SorobanClient.xdr.ScValType.scvLedgerKeyNonce():
-      return val.nonceKey() as unknown as T
     case SorobanClient.xdr.ScValType.scvTimepoint():
-      return val.timepoint() as unknown as T
     case SorobanClient.xdr.ScValType.scvDuration():
-      return val.duration() as unknown as T
+      return val.value() as unknown as T
     default: {
       throw new Error(`type not implemented yet: ${val?.switch().name}`)
     }

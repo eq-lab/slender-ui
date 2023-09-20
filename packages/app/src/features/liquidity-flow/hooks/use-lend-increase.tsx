@@ -4,7 +4,6 @@ import { useContextSelector } from 'use-context-selector'
 import { SupportedToken } from '@/shared/stellar/constants/tokens'
 import { useLiquidity } from './use-liquidity'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
-import { submitDeposit } from '../soroban/submit'
 import { useDepositUsd } from './use-deposit-usd'
 import { useDebtUsd } from './use-debt-usd'
 import { LendIncreaseModal } from '../components/lend-increase-modal'
@@ -34,7 +33,7 @@ export const useLendIncrease = (): {
 
   const depositSumUsd = useDepositUsd(position?.deposits)
   const debtSumUsd = useDebtUsd(position?.debts)
-  const send = useLiquidity()
+  const send = useLiquidity('deposit')
 
   const renderModal = () => {
     if (!position || !modalToken) return null
@@ -53,7 +52,6 @@ export const useLendIncrease = (): {
 
       setModalToken(null)
       await send({
-        submitFunc: submitDeposit,
         additionalDeposits: getCellByPositionUpdate(sendValue),
         deposits: newDeposits,
       })

@@ -5,7 +5,6 @@ import { useLiquidity } from './use-liquidity'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
 import { BorrowStepModal } from '../components/borrow-first-position-flow/borrow-step-modal'
 import { LendStepModal } from '../components/borrow-first-position-flow/lend-step-modal'
-import { submitBorrow, submitDeposit } from '../soroban/submit'
 
 enum Step {
   Borrow = 'Borrow',
@@ -20,7 +19,8 @@ export const useBorrowFirstPosition = (
 } => {
   const [step, setStep] = useState<Step | null>(null)
   const [debtValue, setDebtValue] = useState('')
-  const send = useLiquidity()
+  const sendDeposit = useLiquidity('deposit')
+  const sendBorrow = useLiquidity('borrow')
 
   const close = () => {
     setStep(null)
@@ -29,13 +29,11 @@ export const useBorrowFirstPosition = (
 
   const handleSend = async (value: Position) => {
     close()
-    const depositResult = await send({
-      submitFunc: submitDeposit,
+    const depositResult = await sendDeposit({
       deposits: value.deposits,
     })
     if (depositResult) {
-      await send({
-        submitFunc: submitBorrow,
+      await sendBorrow({
         debts: value.debts,
       })
     }
