@@ -36,7 +36,7 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
         debtCoefficient,
       })
     })()
-  }, [tokenAddress])
+  }, [tokenAddress, makeInvoke])
 
   return {
     ...data,
