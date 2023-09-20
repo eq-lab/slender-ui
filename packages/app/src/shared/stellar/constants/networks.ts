@@ -34,7 +34,7 @@ interface NetworkDetails {
   rpcUrl: string
 }
 
-export const FUTURENET_NETWORK_DETAILS: NetworkDetails = {
+export const NETWORK_DETAILS: NetworkDetails = {
   network: NETWORKS.FUTURENET,
   networkName: NETWORK_NAMES.FUTURENET,
   networkUrl: NETWORK_URLS.FUTURENET,

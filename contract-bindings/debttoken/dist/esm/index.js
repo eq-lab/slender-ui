@@ -1,10 +1,9 @@
-import { xdr } from 'soroban-client';
+import { ContractSpec, Address } from 'soroban-client';
 import { Buffer } from "buffer";
-import { scValStrToJs, scValToJs, addressToScVal, i128ToScVal, strToScVal } from './convert.js';
 import { invoke } from './invoke.js';
-export * from './constants.js';
-export * from './server.js';
 export * from './invoke.js';
+export * from './method-options.js';
+export { Address };
 ;
 ;
 export class Ok {
@@ -47,23 +46,55 @@ if (typeof window !== 'undefined') {
     //@ts-ignore Buffer exists
     window.Buffer = window.Buffer || Buffer;
 }
-const regex = /ContractError\((\d+)\)/;
-function getError(err) {
-    const match = err.match(regex);
+const regex = /Error\(Contract, #(\d+)\)/;
+function parseError(message) {
+    const match = message.match(regex);
     if (!match) {
         return undefined;
     }
-    if (Errors == undefined) {
+    if (Errors === undefined) {
         return undefined;
     }
-    // @ts-ignore
     let i = parseInt(match[1], 10);
-    if (i < Errors.length) {
-        return new Err(Errors[i]);
+    let err = Errors[i];
+    if (err) {
+        return new Err(err);
     }
     return undefined;
 }
-/**
+export const networks = {
+    futurenet: {
+        networkPassphrase: "Test SDF Future Network ; October 2022",
+        contractId: "",
+    }
+};
+const Errors = {};
+export class Contract {
+    options;
+    spec;
+    constructor(options) {
+        this.options = options;
+        this.spec = new ContractSpec([
+            "AAAAAAAAAZ9Jbml0aWFsaXplcyB0aGUgRGVidCB0b2tlbiBjb250cmFjdC4KCiMgQXJndW1lbnRzCgotIG5hbWUgLSBUaGUgbmFtZSBvZiB0aGUgdG9rZW4uCi0gc3ltYm9sIC0gVGhlIHN5bWJvbCBvZiB0aGUgdG9rZW4uCi0gcG9vbCAtIFRoZSBhZGRyZXNzIG9mIHRoZSBwb29sIGNvbnRyYWN0LgotIHVuZGVybHlpbmdfYXNzZXQgLSBUaGUgYWRkcmVzcyBvZiB0aGUgdW5kZXJseWluZyBhc3NldCBhc3NvY2lhdGVkIHdpdGggdGhlIHRva2VuLgoKIyBQYW5pY3MKClBhbmljcyBpZiB0aGUgc3BlY2lmaWVkIGRlY2ltYWwgdmFsdWUgZXhjZWVkcyB0aGUgbWF4aW11bSB2YWx1ZSBvZiB1OC4KUGFuaWNzIGlmIHRoZSBjb250cmFjdCBoYXMgYWxyZWFkeSBiZWVuIGluaXRpYWxpemVkLgpQYW5pY3MgaWYgbmFtZSBvciBzeW1ib2wgaXMgZW1wdHkKAAAAAAppbml0aWFsaXplAAAAAAAEAAAAAAAAAARuYW1lAAAAEAAAAAAAAAAGc3ltYm9sAAAAAAAQAAAAAAAAAARwb29sAAAAEwAAAAAAAAAQdW5kZXJseWluZ19hc3NldAAAABMAAAAA",
+            "AAAAAAAAAM5VcGdyYWRlcyB0aGUgZGVwbG95ZWQgY29udHJhY3Qgd2FzbSBwcmVzZXJ2aW5nIHRoZSBjb250cmFjdCBpZC4KCiMgQXJndW1lbnRzCgotIG5ld193YXNtX2hhc2ggLSBUaGUgbmV3IHZlcnNpb24gb2YgdGhlIFdBU00gaGFzaC4KCiMgUGFuaWNzCgpQYW5pY3MgaWYgdGhlIGNhbGxlciBpcyBub3QgdGhlIHBvb2wgYXNzb2NpYXRlZCB3aXRoIHRoaXMgdG9rZW4uCgAAAAAAB3VwZ3JhZGUAAAAAAQAAAAAAAAANbmV3X3dhc21faGFzaAAAAAAAA+4AAAAgAAAAAA==",
+            "AAAAAAAAACxSZXR1cm5zIHRoZSBjdXJyZW50IHZlcnNpb24gb2YgdGhlIGNvbnRyYWN0LgAAAAd2ZXJzaW9uAAAAAAAAAAABAAAABA==",
+            "AAAAAAAAAJ9SZXR1cm5zIHRoZSBiYWxhbmNlIG9mIHRva2VucyBmb3IgYSBzcGVjaWZpZWQgYGlkYC4KCiMgQXJndW1lbnRzCgotIGlkIC0gVGhlIGFkZHJlc3Mgb2YgdGhlIGFjY291bnQuCgojIFJldHVybnMKClRoZSBiYWxhbmNlIG9mIHRva2VucyBmb3IgdGhlIHNwZWNpZmllZCBgaWRgLgoAAAAAB2JhbGFuY2UAAAAAAQAAAAAAAAACaWQAAAAAABMAAAABAAAACw==",
+            "AAAAAAAAAJcKIyBBcmd1bWVudHMKCi0gaWQgLSBUaGUgYWRkcmVzcyBvZiB0aGUgYWNjb3VudC4KCiMgUmV0dXJucwoKVGhlIHNwZW5kYWJsZSBiYWxhbmNlIG9mIHRva2VucyBmb3IgdGhlIHNwZWNpZmllZCBpZC4KCkN1cnJlbnRseSB0aGUgc2FtZSBhcyBgYmFsYW5jZShpZClgAAAAABFzcGVuZGFibGVfYmFsYW5jZQAAAAAAAAEAAAAAAAAAAmlkAAAAAAATAAAAAQAAAAs=",
+            "AAAAAAAAALVDaGVja3Mgd2hldGhlciBhIHNwZWNpZmllZCBgaWRgIGlzIGF1dGhvcml6ZWQuCgojIEFyZ3VtZW50cwoKLSBpZCAtIFRoZSBhZGRyZXNzIHRvIGNoZWNrIGZvciBhdXRob3JpemF0aW9uLgoKIyBSZXR1cm5zCgpSZXR1cm5zIHRydWUgaWYgdGhlIGlkIGlzIGF1dGhvcml6ZWQsIG90aGVyd2lzZSByZXR1cm5zIGZhbHNlAAAAAAAACmF1dGhvcml6ZWQAAAAAAAEAAAAAAAAAAmlkAAAAAAATAAAAAQAAAAE=",
+            "AAAAAAAAAThCdXJucyBhIHNwZWNpZmllZCBhbW91bnQgb2YgdG9rZW5zIGZyb20gdGhlIGZyb20gYWNjb3VudC4KCiMgQXJndW1lbnRzCgotIGZyb20gLSBUaGUgYWRkcmVzcyBvZiB0aGUgdG9rZW4gaG9sZGVyIHRvIGJ1cm4gdG9rZW5zIGZyb20uCi0gYW1vdW50IC0gVGhlIGFtb3VudCBvZiB0b2tlbnMgdG8gYnVybi4KCiMgUGFuaWNzCgpQYW5pY3MgaWYgdGhlIGFtb3VudCBpcyBuZWdhdGl2ZS4KUGFuaWNzIGlmIHRoZSBjYWxsZXIgaXMgbm90IHRoZSBwb29sIGFzc29jaWF0ZWQgd2l0aCB0aGlzIHRva2VuLgpQYW5pY3MgaWYgb3ZlcmZsb3cgaGFwcGVucwoAAAAEYnVybgAAAAIAAAAAAAAABGZyb20AAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAA",
+            "AAAAAAAAAAAAAAAJYnVybl9mcm9tAAAAAAAAAwAAAAAAAAAIX3NwZW5kZXIAAAATAAAAAAAAAAVfZnJvbQAAAAAAABMAAAAAAAAAB19hbW91bnQAAAAACwAAAAA=",
+            "AAAAAAAAASpTZXRzIHRoZSBhdXRob3JpemF0aW9uIHN0YXR1cyBmb3IgYSBzcGVjaWZpZWQgYGlkYC4KCiMgQXJndW1lbnRzCgotIGlkIC0gVGhlIGFkZHJlc3MgdG8gc2V0IHRoZSBhdXRob3JpemF0aW9uIHN0YXR1cyBmb3IuCi0gYXV0aG9yaXplIC0gQSBib29sZWFuIHZhbHVlIGluZGljYXRpbmcgd2hldGhlciB0byBhdXRob3JpemUgKHRydWUpIG9yIGRlYXV0aG9yaXplIChmYWxzZSkgdGhlIGlkLgoKIyBQYW5pY3MKClBhbmljcyBpZiB0aGUgY2FsbGVyIGlzIG5vdCB0aGUgcG9vbCBhc3NvY2lhdGVkIHdpdGggdGhpcyB0b2tlbi4KAAAAAAAOc2V0X2F1dGhvcml6ZWQAAAAAAAIAAAAAAAAAAmlkAAAAAAATAAAAAAAAAAlhdXRob3JpemUAAAAAAAABAAAAAA==",
+            "AAAAAAAAAQ1NaW50cyBhIHNwZWNpZmllZCBhbW91bnQgb2YgdG9rZW5zIGZvciBhIGdpdmVuIGBpZGAuCgojIEFyZ3VtZW50cwoKLSBpZCAtIFRoZSBhZGRyZXNzIG9mIHRoZSB1c2VyIHRvIG1pbnQgdG9rZW5zIGZvci4KLSBhbW91bnQgLSBUaGUgYW1vdW50IG9mIHRva2VucyB0byBtaW50LgoKIyBQYW5pY3MKClBhbmljcyBpZiB0aGUgYW1vdW50IGlzIG5lZ2F0aXZlLgpQYW5pY3MgaWYgdGhlIGNhbGxlciBpcyBub3QgdGhlIHBvb2wgYXNzb2NpYXRlZCB3aXRoIHRoaXMgdG9rZW4uCgAAAAAAAARtaW50AAAAAgAAAAAAAAACdG8AAAAAABMAAAAAAAAABmFtb3VudAAAAAAACwAAAAA=",
+            "AAAAAAAAAURDbGF3YmFja3MgYSBzcGVjaWZpZWQgYW1vdW50IG9mIHRva2VucyBmcm9tIHRoZSBmcm9tIGFjY291bnQuCgojIEFyZ3VtZW50cwoKLSBmcm9tIC0gVGhlIGFkZHJlc3Mgb2YgdGhlIHRva2VuIGhvbGRlciB0byBjbGF3YmFjayB0b2tlbnMgZnJvbS4KLSBhbW91bnQgLSBUaGUgYW1vdW50IG9mIHRva2VucyB0byBjbGF3YmFjay4KCiMgUGFuaWNzCgpQYW5pY3MgaWYgdGhlIGFtb3VudCBpcyBuZWdhdGl2ZS4KUGFuaWNzIGlmIHRoZSBjYWxsZXIgaXMgbm90IHRoZSBwb29sIGFzc29jaWF0ZWQgd2l0aCB0aGlzIHRva2VuLgpQYW5pY3MgaWYgb3ZlcmZsb3cgaGFwcGVucwoAAAAIY2xhd2JhY2sAAAACAAAAAAAAAARmcm9tAAAAEwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAA==",
+            "AAAAAAAAAFBSZXR1cm5zIHRoZSBudW1iZXIgb2YgZGVjaW1hbCBwbGFjZXMgdXNlZCBieSB0aGUgdG9rZW4uCgojIFJldHVybnMKClRoZSBudW1iZXIgbwAAAAhkZWNpbWFscwAAAAAAAAABAAAABA==",
+            "AAAAAAAAAGJSZXR1cm5zIHRoZSBuYW1lIG9mIHRoZSB0b2tlbi4KCiMgUmV0dXJucwoKVGhlIG5hbWUgb2YgdGhlIHRva2VuIGFzIGEgYHNvcm9iYW5fc2RrOjpCeXRlc2AgdmFsdWUuCgAAAAAABG5hbWUAAAAAAAAAAQAAABA=",
+            "AAAAAAAAAGZSZXR1cm5zIHRoZSBzeW1ib2wgb2YgdGhlIHRva2VuLgoKIyBSZXR1cm5zCgpUaGUgc3ltYm9sIG9mIHRoZSB0b2tlbiBhcyBhIGBzb3JvYmFuX3Nkazo6Qnl0ZXNgIHZhbHVlLgoAAAAAAAZzeW1ib2wAAAAAAAAAAAABAAAAEA==",
+            "AAAAAAAAAExSZXR1cm5zIHRoZSB0b3RhbCBzdXBwbHkgb2YgdG9rZW5zLgoKIyBSZXR1cm5zCgpUaGUgdG90YWwgc3VwcGx5IG9mIHRva2Vucy4KAAAADHRvdGFsX3N1cHBseQAAAAAAAAABAAAACw==",
+            "AAAAAgAAAAAAAAAAAAAADUNvbW1vbkRhdGFLZXkAAAAAAAAEAAAAAQAAAAAAAAAHQmFsYW5jZQAAAAABAAAAEwAAAAEAAAAAAAAABVN0YXRlAAAAAAAAAQAAABMAAAAAAAAAAAAAAARQb29sAAAAAAAAAAAAAAALVG90YWxTdXBwbHkA",
+            "AAAAAQAAAAAAAAAAAAAADVRva2VuTWV0YWRhdGEAAAAAAAADAAAAAAAAAAdkZWNpbWFsAAAAAAQAAAAAAAAABG5hbWUAAAAQAAAAAAAAAAZzeW1ib2wAAAAAABA="
+        ]);
+    }
+    /**
  * Initializes the Debt token contract.
  *
  * # Arguments
@@ -80,18 +111,16 @@ function getError(err) {
  * Panics if name or symbol is empty
  *
  */
-export async function initialize({ name, symbol, pool, underlying_asset }, options = {}) {
-    return await invoke({
-        method: 'initialize',
-        args: [((i) => xdr.ScVal.scvString(i))(name),
-            ((i) => xdr.ScVal.scvString(i))(symbol),
-            ((i) => addressToScVal(i))(pool),
-            ((i) => addressToScVal(i))(underlying_asset)],
-        ...options,
-        parseResultXdr: () => { },
-    });
-}
-/**
+    async initialize({ name, symbol, pool, underlying_asset }, options = {}) {
+        return await invoke({
+            method: 'initialize',
+            args: this.spec.funcArgsToScVals("initialize", { name, symbol, pool, underlying_asset }),
+            ...options,
+            ...this.options,
+            parseResultXdr: () => { },
+        });
+    }
+    /**
  * Upgrades the deployed contract wasm preserving the contract id.
  *
  * # Arguments
@@ -103,27 +132,30 @@ export async function initialize({ name, symbol, pool, underlying_asset }, optio
  * Panics if the caller is not the pool associated with this token.
  *
  */
-export async function upgrade({ new_wasm_hash }, options = {}) {
-    return await invoke({
-        method: 'upgrade',
-        args: [((i) => xdr.ScVal.scvBytes(i))(new_wasm_hash)],
-        ...options,
-        parseResultXdr: () => { },
-    });
-}
-/**
+    async upgrade({ new_wasm_hash }, options = {}) {
+        return await invoke({
+            method: 'upgrade',
+            args: this.spec.funcArgsToScVals("upgrade", { new_wasm_hash }),
+            ...options,
+            ...this.options,
+            parseResultXdr: () => { },
+        });
+    }
+    /**
  * Returns the current version of the contract.
  */
-export async function version(options = {}) {
-    return await invoke({
-        method: 'version',
-        ...options,
-        parseResultXdr: (xdr) => {
-            return scValStrToJs(xdr);
-        },
-    });
-}
-/**
+    async version(options = {}) {
+        return await invoke({
+            method: 'version',
+            args: this.spec.funcArgsToScVals("version", {}),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr) => {
+                return this.spec.funcResToNative("version", xdr);
+            },
+        });
+    }
+    /**
  * Returns the balance of tokens for a specified `id`.
  *
  * # Arguments
@@ -135,17 +167,18 @@ export async function version(options = {}) {
  * The balance of tokens for the specified `id`.
  *
  */
-export async function balance({ id }, options = {}) {
-    return await invoke({
-        method: 'balance',
-        args: [((i) => addressToScVal(i))(id)],
-        ...options,
-        parseResultXdr: (xdr) => {
-            return scValStrToJs(xdr);
-        },
-    });
-}
-/**
+    async balance({ id }, options = {}) {
+        return await invoke({
+            method: 'balance',
+            args: this.spec.funcArgsToScVals("balance", { id }),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr) => {
+                return this.spec.funcResToNative("balance", xdr);
+            },
+        });
+    }
+    /**
  *
  * # Arguments
  *
@@ -157,17 +190,18 @@ export async function balance({ id }, options = {}) {
  *
  * Currently the same as `balance(id)`
  */
-export async function spendableBalance({ id }, options = {}) {
-    return await invoke({
-        method: 'spendable_balance',
-        args: [((i) => addressToScVal(i))(id)],
-        ...options,
-        parseResultXdr: (xdr) => {
-            return scValStrToJs(xdr);
-        },
-    });
-}
-/**
+    async spendableBalance({ id }, options = {}) {
+        return await invoke({
+            method: 'spendable_balance',
+            args: this.spec.funcArgsToScVals("spendable_balance", { id }),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr) => {
+                return this.spec.funcResToNative("spendable_balance", xdr);
+            },
+        });
+    }
+    /**
  * Checks whether a specified `id` is authorized.
  *
  * # Arguments
@@ -178,17 +212,18 @@ export async function spendableBalance({ id }, options = {}) {
  *
  * Returns true if the id is authorized, otherwise returns false
  */
-export async function authorized({ id }, options = {}) {
-    return await invoke({
-        method: 'authorized',
-        args: [((i) => addressToScVal(i))(id)],
-        ...options,
-        parseResultXdr: (xdr) => {
-            return scValStrToJs(xdr);
-        },
-    });
-}
-/**
+    async authorized({ id }, options = {}) {
+        return await invoke({
+            method: 'authorized',
+            args: this.spec.funcArgsToScVals("authorized", { id }),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr) => {
+                return this.spec.funcResToNative("authorized", xdr);
+            },
+        });
+    }
+    /**
  * Burns a specified amount of tokens from the from account.
  *
  * # Arguments
@@ -203,26 +238,25 @@ export async function authorized({ id }, options = {}) {
  * Panics if overflow happens
  *
  */
-export async function burn({ from, amount }, options = {}) {
-    return await invoke({
-        method: 'burn',
-        args: [((i) => addressToScVal(i))(from),
-            ((i) => i128ToScVal(i))(amount)],
-        ...options,
-        parseResultXdr: () => { },
-    });
-}
-export async function burnFrom({ _spender, _from, _amount }, options = {}) {
-    return await invoke({
-        method: 'burn_from',
-        args: [((i) => addressToScVal(i))(_spender),
-            ((i) => addressToScVal(i))(_from),
-            ((i) => i128ToScVal(i))(_amount)],
-        ...options,
-        parseResultXdr: () => { },
-    });
-}
-/**
+    async burn({ from, amount }, options = {}) {
+        return await invoke({
+            method: 'burn',
+            args: this.spec.funcArgsToScVals("burn", { from, amount }),
+            ...options,
+            ...this.options,
+            parseResultXdr: () => { },
+        });
+    }
+    async burnFrom({ _spender, _from, _amount }, options = {}) {
+        return await invoke({
+            method: 'burn_from',
+            args: this.spec.funcArgsToScVals("burn_from", { _spender, _from, _amount }),
+            ...options,
+            ...this.options,
+            parseResultXdr: () => { },
+        });
+    }
+    /**
  * Sets the authorization status for a specified `id`.
  *
  * # Arguments
@@ -235,16 +269,16 @@ export async function burnFrom({ _spender, _from, _amount }, options = {}) {
  * Panics if the caller is not the pool associated with this token.
  *
  */
-export async function setAuthorized({ id, authorize }, options = {}) {
-    return await invoke({
-        method: 'set_authorized',
-        args: [((i) => addressToScVal(i))(id),
-            ((i) => xdr.ScVal.scvBool(i))(authorize)],
-        ...options,
-        parseResultXdr: () => { },
-    });
-}
-/**
+    async setAuthorized({ id, authorize }, options = {}) {
+        return await invoke({
+            method: 'set_authorized',
+            args: this.spec.funcArgsToScVals("set_authorized", { id, authorize }),
+            ...options,
+            ...this.options,
+            parseResultXdr: () => { },
+        });
+    }
+    /**
  * Mints a specified amount of tokens for a given `id`.
  *
  * # Arguments
@@ -258,16 +292,16 @@ export async function setAuthorized({ id, authorize }, options = {}) {
  * Panics if the caller is not the pool associated with this token.
  *
  */
-export async function mint({ to, amount }, options = {}) {
-    return await invoke({
-        method: 'mint',
-        args: [((i) => addressToScVal(i))(to),
-            ((i) => i128ToScVal(i))(amount)],
-        ...options,
-        parseResultXdr: () => { },
-    });
-}
-/**
+    async mint({ to, amount }, options = {}) {
+        return await invoke({
+            method: 'mint',
+            args: this.spec.funcArgsToScVals("mint", { to, amount }),
+            ...options,
+            ...this.options,
+            parseResultXdr: () => { },
+        });
+    }
+    /**
  * Clawbacks a specified amount of tokens from the from account.
  *
  * # Arguments
@@ -282,32 +316,34 @@ export async function mint({ to, amount }, options = {}) {
  * Panics if overflow happens
  *
  */
-export async function clawback({ from, amount }, options = {}) {
-    return await invoke({
-        method: 'clawback',
-        args: [((i) => addressToScVal(i))(from),
-            ((i) => i128ToScVal(i))(amount)],
-        ...options,
-        parseResultXdr: () => { },
-    });
-}
-/**
+    async clawback({ from, amount }, options = {}) {
+        return await invoke({
+            method: 'clawback',
+            args: this.spec.funcArgsToScVals("clawback", { from, amount }),
+            ...options,
+            ...this.options,
+            parseResultXdr: () => { },
+        });
+    }
+    /**
  * Returns the number of decimal places used by the token.
  *
  * # Returns
  *
  * The number o
  */
-export async function decimals(options = {}) {
-    return await invoke({
-        method: 'decimals',
-        ...options,
-        parseResultXdr: (xdr) => {
-            return scValStrToJs(xdr);
-        },
-    });
-}
-/**
+    async decimals(options = {}) {
+        return await invoke({
+            method: 'decimals',
+            args: this.spec.funcArgsToScVals("decimals", {}),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr) => {
+                return this.spec.funcResToNative("decimals", xdr);
+            },
+        });
+    }
+    /**
  * Returns the name of the token.
  *
  * # Returns
@@ -315,16 +351,18 @@ export async function decimals(options = {}) {
  * The name of the token as a `soroban_sdk::Bytes` value.
  *
  */
-export async function name(options = {}) {
-    return await invoke({
-        method: 'name',
-        ...options,
-        parseResultXdr: (xdr) => {
-            return scValStrToJs(xdr);
-        },
-    });
-}
-/**
+    async name(options = {}) {
+        return await invoke({
+            method: 'name',
+            args: this.spec.funcArgsToScVals("name", {}),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr) => {
+                return this.spec.funcResToNative("name", xdr);
+            },
+        });
+    }
+    /**
  * Returns the symbol of the token.
  *
  * # Returns
@@ -332,16 +370,18 @@ export async function name(options = {}) {
  * The symbol of the token as a `soroban_sdk::Bytes` value.
  *
  */
-export async function symbol(options = {}) {
-    return await invoke({
-        method: 'symbol',
-        ...options,
-        parseResultXdr: (xdr) => {
-            return scValStrToJs(xdr);
-        },
-    });
-}
-/**
+    async symbol(options = {}) {
+        return await invoke({
+            method: 'symbol',
+            args: this.spec.funcArgsToScVals("symbol", {}),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr) => {
+                return this.spec.funcResToNative("symbol", xdr);
+            },
+        });
+    }
+    /**
  * Returns the total supply of tokens.
  *
  * # Returns
@@ -349,67 +389,15 @@ export async function symbol(options = {}) {
  * The total supply of tokens.
  *
  */
-export async function totalSupply(options = {}) {
-    return await invoke({
-        method: 'total_supply',
-        ...options,
-        parseResultXdr: (xdr) => {
-            return scValStrToJs(xdr);
-        },
-    });
-}
-function CommonDataKeyToXdr(commonDataKey) {
-    if (!commonDataKey) {
-        return xdr.ScVal.scvVoid();
+    async totalSupply(options = {}) {
+        return await invoke({
+            method: 'total_supply',
+            args: this.spec.funcArgsToScVals("total_supply", {}),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr) => {
+                return this.spec.funcResToNative("total_supply", xdr);
+            },
+        });
     }
-    let res = [];
-    switch (commonDataKey.tag) {
-        case "Balance":
-            res.push(((i) => xdr.ScVal.scvSymbol(i))("Balance"));
-            res.push(((i) => addressToScVal(i))(commonDataKey.values[0]));
-            break;
-        case "State":
-            res.push(((i) => xdr.ScVal.scvSymbol(i))("State"));
-            res.push(((i) => addressToScVal(i))(commonDataKey.values[0]));
-            break;
-        case "Pool":
-            res.push(((i) => xdr.ScVal.scvSymbol(i))("Pool"));
-            break;
-        case "TotalSupply":
-            res.push(((i) => xdr.ScVal.scvSymbol(i))("TotalSupply"));
-            break;
-    }
-    return xdr.ScVal.scvVec(res);
 }
-function CommonDataKeyFromXdr(base64Xdr) {
-    let [tag, values] = strToScVal(base64Xdr).vec().map(scValToJs);
-    if (!tag) {
-        throw new Error('Missing enum tag when decoding CommonDataKey from XDR');
-    }
-    return { tag, values };
-}
-function TokenMetadataToXdr(tokenMetadata) {
-    if (!tokenMetadata) {
-        return xdr.ScVal.scvVoid();
-    }
-    let arr = [
-        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("decimal"), val: ((i) => xdr.ScVal.scvU32(i))(tokenMetadata["decimal"]) }),
-        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("name"), val: ((i) => xdr.ScVal.scvString(i))(tokenMetadata["name"]) }),
-        new xdr.ScMapEntry({ key: ((i) => xdr.ScVal.scvSymbol(i))("symbol"), val: ((i) => xdr.ScVal.scvString(i))(tokenMetadata["symbol"]) })
-    ];
-    return xdr.ScVal.scvMap(arr);
-}
-function TokenMetadataFromXdr(base64Xdr) {
-    let scVal = strToScVal(base64Xdr);
-    let obj = scVal.map().map(e => [e.key().str(), e.val()]);
-    let map = new Map(obj);
-    if (!obj) {
-        throw new Error('Invalid XDR');
-    }
-    return {
-        decimal: scValToJs(map.get("decimal")),
-        name: scValToJs(map.get("name")),
-        symbol: scValToJs(map.get("symbol"))
-    };
-}
-const Errors = [];

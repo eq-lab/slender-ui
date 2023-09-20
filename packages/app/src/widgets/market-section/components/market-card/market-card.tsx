@@ -43,8 +43,6 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
     borrowInterestRate,
     lendInterestRate,
     totalSupplied,
-    totalBorrowed,
-    reserved,
     availableToBorrow,
   } = useMarketDataForDisplay(token)
   const tokenCache = useTokenCache()?.[token.address]
