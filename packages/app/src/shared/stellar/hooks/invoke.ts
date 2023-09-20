@@ -5,7 +5,7 @@ import { WalletContext } from '@/shared/contexts/wallet'
 import { useCallback, useMemo } from 'react'
 import { server } from '@/shared/stellar/server'
 import { scValToJs } from '@/shared/stellar/decoders'
-import { FUTURENET_NETWORK_DETAILS } from '../constants/networks'
+import { NETWORK_DETAILS } from '../constants/networks'
 
 const FEE = '100'
 const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF'
@@ -23,7 +23,7 @@ export function useMakeInvoke() {
     () =>
       new SorobanClient.TransactionBuilder(sourceAccount, {
         fee: FEE,
-        networkPassphrase: FUTURENET_NETWORK_DETAILS.networkPassphrase,
+        networkPassphrase: NETWORK_DETAILS.networkPassphrase,
       }),
     [sourceAccount],
   )
