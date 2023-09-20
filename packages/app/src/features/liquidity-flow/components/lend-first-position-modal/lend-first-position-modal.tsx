@@ -7,8 +7,12 @@ import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
+import { formatUsd } from '@/shared/formatters'
 import { ModalLayout } from '../modal-layout'
 import { FormLayout } from '../form-layout'
+import { useTokenInfo } from '../../hooks/use-token-info'
+import { getDepositUsd } from '../../utils/get-deposit-usd'
+import { getRequiredError } from '../../utils/get-required-error'
 
 interface Props {
   onClose: () => void
@@ -19,8 +23,6 @@ interface Props {
 export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Props) {
   const [value, setValue] = useState('')
 
-  const getTokenByTokenName = useGetTokenByTokenName()
-
   const { balance = '0', decimals = 0 } =
     useGetBalance([tokenContracts[depositTokenName].address])[0] || {}
   const max = Number(balance) / 10 ** decimals
@@ -28,7 +30,9 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   const { lendInterestRate, discount, liquidationPenalty } = useMarketDataForDisplay(
     tokenContracts[depositTokenName],
   )
+  const tokenInfo = useTokenInfo(depositTokenName)
 
+  const getTokenByTokenName = useGetTokenByTokenName()
   const token = getTokenByTokenName(depositTokenName)
   const tokenSymbol = token?.symbol
   const Icon = getIconByTokenName(depositTokenName)
@@ -41,18 +45,31 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
     </InfoLayout>
   )
 
+  const requiredError = getRequiredError(value)
+  const notEnoughFoundsError = Number(value) > max
+
+  const formError = requiredError || notEnoughFoundsError
+
+  const renderDescription = () => {
+    if (requiredError) return 'Add deposit amount first'
+    if (notEnoughFoundsError) return 'You don’t have enough funds'
+    const depositUsd = getDepositUsd(value, tokenInfo.priceInUsd, tokenInfo.discount)
+    return `${formatUsd(depositUsd)} will be counted as collateral`
+  }
+
   return (
     <ModalLayout onClose={onClose} infoSlot={infoSlot}>
       <FormLayout
-        description="Add collateral on the next step"
+        description={renderDescription()}
         title="How much to lend"
         buttonProps={{
           label: `Continue`,
           onClick: () => onSend(value),
-          disabled: !value || Number(value) > max,
+          disabled: formError,
         }}
       >
         <SuperField
+          type="number"
           onChange={(e) => {
             setValue(e.target.value)
           }}

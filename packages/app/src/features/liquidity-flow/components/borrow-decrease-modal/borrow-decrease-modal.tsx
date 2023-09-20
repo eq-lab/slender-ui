@@ -9,6 +9,7 @@ import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
+import { getRequiredError } from '../../utils/get-required-error'
 
 interface Props {
   debt: bigint
@@ -28,34 +29,37 @@ export function BorrowDecreaseModal({
   debtSumUsd,
 }: Props) {
   const [value, setValue] = useState('')
-  const getTokenByTokenName = useGetTokenByTokenName()
 
   const tokenInfo = useTokenInfo(tokenName)
-  const debtDeltaUsd = Math.max(debtSumUsd - Number(value) * tokenInfo.priceInUsd, 0)
+  const inputDebtUsd = Number(value) * tokenInfo.priceInUsd
+  const actualDebtUsd = Math.max(debtSumUsd - inputDebtUsd, 0)
 
   const { health, healthDelta, borrowCapacityInterface, borrowCapacityDelta } = getPositionInfo({
     depositUsd: depositSumUsd,
-    actualDebtUsd: debtDeltaUsd,
-    debtUsd: debtSumUsd,
     actualDepositUsd: depositSumUsd,
+    debtUsd: debtSumUsd,
+    actualDebtUsd,
   })
 
   const debtDelta = debt - BigInt(value)
   const debtError = debtDelta < 0
 
+  const formError = debtError || getRequiredError(value)
+
+  const getTokenByTokenName = useGetTokenByTokenName()
   const tokenSymbol = getTokenByTokenName(tokenName)?.symbol
   return (
     <ModalLayout
       infoSlot={
         <PositionSummary
-          debtUsd={debtDeltaUsd}
+          debtUsd={actualDebtUsd}
           borrowCapacityDelta={borrowCapacityDelta}
           borrowCapacity={borrowCapacityInterface}
           depositSumUsd={depositSumUsd}
           health={health}
-          debtUsdDelta={debtDeltaUsd - debtSumUsd}
+          debtUsdDelta={inputDebtUsd}
           healthDelta={healthDelta}
-          debtError={debtDelta < 0}
+          debtError={debtError}
         />
       }
       onClose={onClose}
@@ -65,10 +69,11 @@ export function BorrowDecreaseModal({
         buttonProps={{
           label: `Pay off ${value} ${tokenSymbol}`,
           onClick: () => onSend({ value: BigInt(value), tokenName }),
-          disabled: debtError,
+          disabled: formError,
         }}
       >
         <SuperField
+          type="number"
           onChange={(e) => setValue(e.target.value)}
           value={value}
           title="To pay off"

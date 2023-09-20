@@ -1,4 +1,9 @@
-import { PositionInput } from '../types'
+export interface PositionInput {
+  depositUsd: number
+  debtUsd: number
+  actualDebtUsd: number
+  actualDepositUsd: number
+}
 
 export const getHealth = ({
   depositUsd,

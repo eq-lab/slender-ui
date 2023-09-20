@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const Wrapper = styled.div`
-  min-width: 352px;
+  width: 352px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -10,6 +10,7 @@ export const Wrapper = styled.div`
 
 export const Inner = styled.div`
   display: grid;
+  grid-template-columns: 100%;
   gap: 32px;
 `
 
