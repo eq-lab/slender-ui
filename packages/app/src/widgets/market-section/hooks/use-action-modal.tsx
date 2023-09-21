@@ -29,6 +29,8 @@ export const useActionModal = ({
   const { modal: firstPositionModal, open: firstPositionOpen } = useFirstPosition(tokenName)
   const { modal: increaseModal, open: increaseOpen } = useIncrease()
 
+  const havePosition = Boolean(position.debts.length || position.deposits.length)
+
   const disabled = Boolean(
     position?.[type === 'borrow' ? 'deposits' : 'debts']
       .map((cell) => cell.tokenName)
@@ -36,14 +38,14 @@ export const useActionModal = ({
   )
 
   const open = () => {
-    if (position) {
+    if (havePosition) {
       increaseOpen(tokenName)
       return
     }
     firstPositionOpen()
   }
 
-  const modal = position ? increaseModal : firstPositionModal
+  const modal = havePosition ? increaseModal : firstPositionModal
   return {
     modal,
     open,
