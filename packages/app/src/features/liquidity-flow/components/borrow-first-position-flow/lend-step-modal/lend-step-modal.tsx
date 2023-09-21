@@ -7,6 +7,8 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
+import { getRequiredError } from '../../../utils/get-required-error'
+import { getPositionInfo } from '../../../utils/get-position-info'
 import { getExtraTokenName } from '../../../utils/get-extra-token-name'
 import { getDepositUsd } from '../../../utils/get-deposit-usd'
 import { InputLayout } from '../../../styled'
@@ -32,8 +34,6 @@ export function LendStepModal({
   depositTokenNames,
   onSend,
 }: Props) {
-  const getTokenByTokenName = useGetTokenByTokenName()
-
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
@@ -53,41 +53,47 @@ export function LendStepModal({
 
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 
-  const debtValueInUsd = Number(debtValue) * debtCoinInfo.priceInUsd
+  const debtUsd = Number(debtValue) * debtCoinInfo.priceInUsd
 
   useEffect(() => {
     const inputValue = Math.floor(
-      debtValueInUsd /
-        (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE),
+      debtUsd / (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE),
     )
 
     const finalValue =
       inputValue > coreDepositInfo.userBalance ? coreDepositInfo.userBalance : inputValue
     setCoreValue(String(finalValue))
-  }, [
-    debtValueInUsd,
-    coreDepositInfo.discount,
-    coreDepositInfo.priceInUsd,
-    coreDepositInfo.userBalance,
-  ])
+  }, [debtUsd, coreDepositInfo.discount, coreDepositInfo.priceInUsd, coreDepositInfo.userBalance])
 
   const { borrowInterestRate } = useMarketDataForDisplay(tokenContracts[debtTokenName])
 
-  const deposit =
+  const depositUsd =
     getDepositUsd(coreValue, coreDepositInfo.priceInUsd, coreDepositInfo.discount) +
     getDepositUsd(extraValue, extraDepositInfo.priceInUsd, extraDepositInfo.discount)
 
-  const health = Math.max(Math.round(deposit && (1 - debtValueInUsd / deposit) * 100), 0)
-  const borrowCapacity = Math.max(deposit - debtValueInUsd, 0)
+  const { health, borrowCapacityError, borrowCapacityInterface } = getPositionInfo({
+    depositUsd,
+    actualDepositUsd: depositUsd,
+    debtUsd,
+    actualDebtUsd: debtUsd,
+  })
 
   const firstInputError = Number(coreValue) > coreDepositInfo.userBalance
   const secondInputError = Number(extraValue) > extraDepositInfo.userBalance
-  const borrowCapacityError = borrowCapacity <= 0
+  const requiredError = getRequiredError(coreValue, extraValue, showExtraInput)
 
-  const error = borrowCapacityError || firstInputError || secondInputError
+  const formError = borrowCapacityError || firstInputError || secondInputError || requiredError
 
+  const getTokenByTokenName = useGetTokenByTokenName()
   const extraTokenSymbol = getTokenByTokenName(extraDepositTokenName)?.symbol
   const coreTokenSymbol = getTokenByTokenName(coreDepositTokenName)?.symbol
+
+  const renderDescription = () => {
+    if (requiredError) return 'Enter collateral amount first'
+    if (borrowCapacityError) return 'The amount of collateral is not enough to take the debt'
+    if (firstInputError || secondInputError) return 'You don’t have enough funds'
+    return `With APR ${borrowInterestRate}`
+  }
 
   return (
     <ModalLayout
@@ -95,16 +101,16 @@ export function LendStepModal({
       infoSlot={
         <PositionSummary
           health={health}
-          borrowCapacity={borrowCapacity}
-          depositSumUsd={deposit}
-          debtUsd={debtValueInUsd}
+          borrowCapacity={borrowCapacityInterface}
+          depositSumUsd={depositUsd}
+          debtUsd={debtUsd}
           collateralError={borrowCapacityError}
         />
       }
     >
       <FormLayout
         title="Add collateral"
-        description={`With APR ${borrowInterestRate}`}
+        description={renderDescription()}
         buttonProps={{
           label: `Borrow ${debtValue} ${getTokenByTokenName(debtTokenName)?.symbol}`,
           onClick: () =>
@@ -117,11 +123,12 @@ export function LendStepModal({
                   : []),
               ],
             }),
-          disabled: error,
+          disabled: formError,
         }}
       >
         <InputLayout>
           <SuperField
+            type="number"
             onChange={(e) => {
               setCoreValue(e.target.value)
             }}
@@ -143,6 +150,7 @@ export function LendStepModal({
         {!showExtraInput && <AddAssetButton onClick={() => setShowExtraInput(true)} />}
         {showExtraInput && (
           <SuperField
+            type="number"
             onChange={(e) => {
               setExtraValue(e.target.value)
             }}

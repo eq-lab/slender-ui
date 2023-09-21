@@ -1,5 +1,4 @@
 import React from 'react'
-import Typography from '@marginly/ui/components/typography'
 import * as S from './styled'
 
 interface Props {
@@ -11,12 +10,12 @@ interface Props {
 
 export function InfoRow({ label, subValue, value, error }: Props) {
   return (
-    <S.Wrapper $error={error}>
-      <Typography>{label}</Typography>
+    <S.Wrapper>
+      <S.Typography $error={error}>{label}</S.Typography>
       <div>
         <S.ValueSection>
-          <Typography>{value}</Typography>
-          {subValue && <Typography secondary>{subValue}</Typography>}
+          <S.Typography $error={error}>{value}</S.Typography>
+          {subValue && <S.Typography secondary>{subValue}</S.Typography>}
         </S.ValueSection>
       </div>
     </S.Wrapper>

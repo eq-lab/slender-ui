@@ -6,6 +6,7 @@ import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
+import { getRequiredError } from '../../../utils/get-required-error'
 import { getMaxDebt } from '../../../utils/get-max-debt'
 import { getDepositUsd } from '../../../utils/get-deposit-usd'
 import { useTokenInfo } from '../../../hooks/use-token-info'
@@ -30,8 +31,6 @@ export function BorrowStepModal({
   debtTokenName,
   depositTokenName,
 }: Props) {
-  const getTokenByTokenName = useGetTokenByTokenName()
-
   const borrowCoinInfo = useTokenInfo(debtTokenName)
   const { discount, priceInUsd, userBalance } = useTokenInfo(depositTokenName)
 
@@ -42,8 +41,7 @@ export function BorrowStepModal({
   const defaultBorrowCapacity =
     getDepositUsd(userBalance, priceInUsd, discount) * DEFAULT_HEALTH_VALUE
 
-  const maxDebt = getMaxDebt(availableToBorrow, defaultBorrowCapacity, borrowCoinInfo.priceInUsd)
-
+  const getTokenByTokenName = useGetTokenByTokenName()
   const debtToken = getTokenByTokenName(debtTokenName)
   const debtTokenSymbol = debtToken?.symbol
 
@@ -55,18 +53,22 @@ export function BorrowStepModal({
     </InfoLayout>
   )
 
+  const maxDebt = getMaxDebt(availableToBorrow, defaultBorrowCapacity, borrowCoinInfo.priceInUsd)
+  const formError = getRequiredError(value) || Number(value) > maxDebt
+
   return (
     <ModalLayout onClose={onClose} infoSlot={infoSlot}>
       <FormLayout
         title="How much to borrow"
-        description="Add borrow amount first"
+        description={formError ? 'Add borrow amount first' : 'Add collateral on the next step'}
         buttonProps={{
           label: `Continue`,
           onClick: onContinue,
-          disabled: !Number(value) || Number(value) > maxDebt,
+          disabled: formError,
         }}
       >
         <SuperField
+          type="number"
           onChange={(e) => {
             onBorrowValueChange(e.target.value)
           }}

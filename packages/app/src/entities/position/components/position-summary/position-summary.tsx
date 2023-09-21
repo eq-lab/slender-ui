@@ -5,8 +5,8 @@ import { formatUsd } from '@/shared/formatters'
 
 const getSubValue = (value?: number) => {
   if (!value) return undefined
-  if (value < 0) return String(value)
-  return `+${value}`
+  if (value < 0) return formatUsd(value)
+  return `+${formatUsd(value)}`
 }
 
 interface Props {
