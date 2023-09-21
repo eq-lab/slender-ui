@@ -1,4 +1,4 @@
-import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
+import { useMakeSimulate } from '@/shared/stellar/hooks/use-make-invoke'
 import { useEffect, useMemo, useState } from 'react'
 
 interface TokenData {
@@ -9,7 +9,7 @@ const defaultTokenData: TokenData = { totalSupply: '0' }
 
 export function useTokenData(sTokenAddress: string): TokenData {
   const [data, setData] = useState<TokenData>(defaultTokenData)
-  const makeInvoke = useMakeInvoke()
+  const makeInvoke = useMakeSimulate()
   const invokeSToken = useMemo(() => makeInvoke(sTokenAddress), [makeInvoke, sTokenAddress])
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
+import { useMakeSimulate } from '@/shared/stellar/hooks/use-make-invoke'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
 import { addressToScVal } from '@/shared/stellar/encoders'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
@@ -20,7 +20,7 @@ const isArraysEqual = <T>(a?: T[], b?: T[]) =>
 
 export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecord[] => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
-  const makeInvoke = useMakeInvoke()
+  const makeInvoke = useMakeSimulate()
   const tokensCache = useTokenCache()
   const { address: userAddress } = useWalletAddress()
 
