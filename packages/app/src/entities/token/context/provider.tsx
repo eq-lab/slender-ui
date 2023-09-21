@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { networks, ReserveData, u32 } from '@bindings/pool'
-import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
+import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke'
 import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens'
 import { addressToScVal } from '@/shared/stellar/encoders'
 import { CachedTokens, MarketContext, PoolData } from './context'

@@ -6,11 +6,9 @@ import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
-import { getRequiredError } from '../../../utils/get-required-error'
 import { getMaxDebt } from '../../../utils/get-max-debt'
-import { getDepositUsd } from '../../../utils/get-deposit-usd'
+import { getRequiredError } from '../../../utils/get-required-error'
 import { useTokenInfo } from '../../../hooks/use-token-info'
-import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { ModalLayout } from '../../modal-layout'
 import { FormLayout } from '../../form-layout'
 
@@ -19,8 +17,8 @@ interface Props {
   onContinue: () => void
   value: string
   onBorrowValueChange: (value: string) => void
+  maxDepositUsd: number
   debtTokenName: SupportedToken
-  depositTokenName: SupportedToken
 }
 
 export function BorrowStepModal({
@@ -29,17 +27,13 @@ export function BorrowStepModal({
   value,
   onBorrowValueChange,
   debtTokenName,
-  depositTokenName,
+  maxDepositUsd,
 }: Props) {
   const borrowCoinInfo = useTokenInfo(debtTokenName)
-  const { discount, priceInUsd, userBalance } = useTokenInfo(depositTokenName)
 
   const { borrowInterestRate, availableToBorrow } = useMarketDataForDisplay(
     tokenContracts[debtTokenName],
   )
-
-  const defaultBorrowCapacity =
-    getDepositUsd(userBalance, priceInUsd, discount) * DEFAULT_HEALTH_VALUE
 
   const getTokenByTokenName = useGetTokenByTokenName()
   const debtToken = getTokenByTokenName(debtTokenName)
@@ -53,7 +47,7 @@ export function BorrowStepModal({
     </InfoLayout>
   )
 
-  const maxDebt = getMaxDebt(availableToBorrow, defaultBorrowCapacity, borrowCoinInfo.priceInUsd)
+  const maxDebt = getMaxDebt(availableToBorrow, maxDepositUsd, borrowCoinInfo.priceInUsd)
   const formError = getRequiredError(value) || Number(value) > maxDebt
 
   return (
