@@ -11,7 +11,7 @@ import { PositionContext } from './context'
 const sorobanTokenRecordToPositionCell = (
   tokenRecord: SorobanTokenRecord,
   index: number,
-  cryptocurrencyUsdRates: SupportedTokenRates,
+  cryptocurrencyUsdRates?: SupportedTokenRates,
 ): PositionCell => {
   const value = Number(tokenRecord.balance) / 10 ** tokenRecord.decimals
   const tokenName = SUPPORTED_TOKENS[index]!

@@ -24,8 +24,11 @@ interface Props {
   debtValue: string
   debtTokenName: SupportedToken
   depositTokenNames: [SupportedToken, SupportedToken]
+  depositTokenName: SupportedToken
   onSend: (value: Position) => void
 }
+
+const MIN_HEALTH_VALUE = 25
 
 export function LendStepModal({
   onClose,
@@ -33,13 +36,12 @@ export function LendStepModal({
   debtTokenName,
   depositTokenNames,
   onSend,
+  depositTokenName,
 }: Props) {
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedToken>(
-    depositTokenNames[0],
-  )
+  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedToken>(depositTokenName)
 
   const [showExtraInput, setShowExtraInput] = useState(false)
 
@@ -55,15 +57,18 @@ export function LendStepModal({
 
   const debtUsd = Number(debtValue) * debtCoinInfo.priceInUsd
 
-  useEffect(() => {
-    const inputValue = Math.floor(
-      debtUsd / (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE),
-    )
+  const coreInputMax = coreDepositInfo.userBalance
+  const extraInputMax = extraDepositInfo.userBalance
 
-    const finalValue =
-      inputValue > coreDepositInfo.userBalance ? coreDepositInfo.userBalance : inputValue
+  useEffect(() => {
+    const inputValue = (
+      debtUsd /
+      (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE)
+    ).toFixed(2)
+
+    const finalValue = Number(inputValue) > coreInputMax ? coreInputMax : inputValue
     setCoreValue(String(finalValue))
-  }, [debtUsd, coreDepositInfo.discount, coreDepositInfo.priceInUsd, coreDepositInfo.userBalance])
+  }, [coreDepositInfo.discount, coreDepositInfo.priceInUsd, coreInputMax, debtUsd])
 
   const { borrowInterestRate } = useMarketDataForDisplay(tokenContracts[debtTokenName])
 
@@ -78,11 +83,13 @@ export function LendStepModal({
     actualDebtUsd: debtUsd,
   })
 
-  const firstInputError = Number(coreValue) > coreDepositInfo.userBalance
-  const secondInputError = Number(extraValue) > extraDepositInfo.userBalance
+  const firstInputError = Number(coreValue) > coreInputMax
+  const secondInputError = Number(extraValue) > extraInputMax
   const requiredError = getRequiredError(coreValue, extraValue, showExtraInput)
 
-  const formError = borrowCapacityError || firstInputError || secondInputError || requiredError
+  const lowHealthError = health < MIN_HEALTH_VALUE
+  const formError =
+    borrowCapacityError || firstInputError || secondInputError || requiredError || lowHealthError
 
   const getTokenByTokenName = useGetTokenByTokenName()
   const extraTokenSymbol = getTokenByTokenName(extraDepositTokenName)?.symbol
@@ -90,7 +97,7 @@ export function LendStepModal({
 
   const renderDescription = () => {
     if (requiredError) return 'Enter collateral amount first'
-    if (borrowCapacityError) return 'The amount of collateral is not enough to take the debt'
+    if (lowHealthError) return 'Add more collateral to have 25% health'
     if (firstInputError || secondInputError) return 'You don’t have enough funds'
     return `With APR ${borrowInterestRate}`
   }
@@ -134,7 +141,7 @@ export function LendStepModal({
             }}
             value={coreValue}
             title="To deposit"
-            placeholder={`${coreTokenSymbol} amount`}
+            placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
             className={cn(firstInputError && Error)}
             postfix={coreTokenSymbol}
           />
@@ -156,7 +163,7 @@ export function LendStepModal({
             }}
             value={extraValue}
             title="To deposit"
-            placeholder={`${extraTokenSymbol} amount`}
+            placeholder={`Max ${extraInputMax} ${extraTokenSymbol}`}
             className={cn(secondInputError && Error)}
             postfix={extraTokenSymbol}
           />
