@@ -12,14 +12,14 @@ export function useTokenInfo(tokenName: SupportedToken): {
   const { address } = tokenContracts[tokenName]
   const marketData = useMarketData()
   const { discount = 0 } = marketData?.[address] ?? {}
-  const priceInUsd = usePriceInUsd()[tokenName]
+  const priceInUsd = usePriceInUsd()?.[tokenName]
   const [balance] = useGetBalance([address])
   const decimals = balance?.decimals || 0
   const userBalance = Number(balance?.balance ?? 0) / 10 ** decimals
 
   return {
     discount: getDecimalDiscount(discount),
-    priceInUsd,
+    priceInUsd: priceInUsd || 0,
     userBalance,
   }
 }

@@ -5,6 +5,9 @@ import { useLiquidity } from './use-liquidity'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
 import { BorrowStepModal } from '../components/borrow-first-position-flow/borrow-step-modal'
 import { LendStepModal } from '../components/borrow-first-position-flow/lend-step-modal'
+import { useTokenInfo } from './use-token-info'
+import { getDepositUsd } from '../utils/get-deposit-usd'
+import { DEFAULT_HEALTH_VALUE } from '../constants'
 
 enum Step {
   Borrow = 'Borrow',
@@ -39,24 +42,48 @@ export const useBorrowFirstPosition = (
     }
   }
 
-  const [firstDepositToken, secondDepositToken] = excludeSupportedTokens([token])
+  const [firstDepositToken, secondDepositToken] = excludeSupportedTokens([token]) as [
+    SupportedToken,
+    SupportedToken,
+  ]
+
+  const firstDepositTokenInfo = useTokenInfo(firstDepositToken)
+  const secondDepositTokenInfo = useTokenInfo(secondDepositToken)
+
+  const firstTokenUserBalanceUsd = getDepositUsd(
+    firstDepositTokenInfo.userBalance,
+    firstDepositTokenInfo.priceInUsd,
+    firstDepositTokenInfo.discount,
+  )
+  const secondTokenUserBalanceUsd = getDepositUsd(
+    secondDepositTokenInfo.userBalance,
+    secondDepositTokenInfo.priceInUsd,
+    secondDepositTokenInfo.discount,
+  )
+
+  const maxDepositUsd =
+    (firstTokenUserBalanceUsd + secondTokenUserBalanceUsd) * DEFAULT_HEALTH_VALUE
+
+  const depositTokenName =
+    firstTokenUserBalanceUsd > secondTokenUserBalanceUsd ? firstDepositToken : secondDepositToken
 
   const modalByStep = {
-    [Step.Borrow]: firstDepositToken && (
+    [Step.Borrow]: (
       <BorrowStepModal
         value={debtValue}
         onClose={close}
         onContinue={() => setStep(Step.Deposit)}
+        maxDepositUsd={maxDepositUsd}
         onBorrowValueChange={setDebtValue}
         debtTokenName={token}
-        depositTokenName={firstDepositToken}
       />
     ),
-    [Step.Deposit]: firstDepositToken && secondDepositToken && (
+    [Step.Deposit]: (
       <LendStepModal
         onClose={close}
         debtValue={debtValue}
         debtTokenName={token}
+        depositTokenName={depositTokenName}
         depositTokenNames={[firstDepositToken, secondDepositToken]}
         onSend={handleSend}
       />
