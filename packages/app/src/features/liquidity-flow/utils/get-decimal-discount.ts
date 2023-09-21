@@ -1,3 +1,3 @@
-const DISCOUNT_RATIO = 10000
+import { PERCENT_PRECISION } from '@/entities/token/constants/contract-constants'
 
-export const getDecimalDiscount = (discount: number) => discount / DISCOUNT_RATIO
+export const getDecimalDiscount = (discount: number) => discount / PERCENT_PRECISION
