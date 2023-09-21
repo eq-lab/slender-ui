@@ -63,7 +63,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
         description={renderDescription()}
         title="How much to lend"
         buttonProps={{
-          label: `Continue`,
+          label: `Lend ${value} ${tokenSymbol}`,
           onClick: () => onSend(value),
           disabled: formError,
         }}

@@ -123,7 +123,7 @@ export function LendIncreaseModal({
         title="How much to lend"
         description={renderDescription()}
         buttonProps={{
-          label: `Borrow`,
+          label: `Lend`,
           onClick: () => onSend(getSaveData()),
           disabled: formError,
         }}
