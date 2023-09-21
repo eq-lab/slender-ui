@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { networks, i128, ReserveData } from '@bindings/pool'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
-import { useMakeSimulate } from '@/shared/stellar/hooks/use-make-invoke'
+import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke'
 import { addressToScVal } from '@/shared/stellar/encoders'
 import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../constants/contract-constants'
 
@@ -17,7 +17,7 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
   contractMultiplier: number
 } {
   const [data, setData] = useState<PoolData>({})
-  const makeInvoke = useMakeSimulate()
+  const makeInvoke = useMakeInvoke()
 
   useEffect(() => {
     ;(async () => {
@@ -30,8 +30,8 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
       ])
 
       setData({
-        borrowInterestRate: poolReserve.borrower_ir,
-        lendInterestRate: poolReserve.lender_ir,
+        borrowInterestRate: poolReserve?.borrower_ir,
+        lendInterestRate: poolReserve?.lender_ir,
         collateralCoefficient,
         debtCoefficient,
       })

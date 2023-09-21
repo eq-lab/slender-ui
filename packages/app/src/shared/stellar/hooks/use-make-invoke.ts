@@ -9,7 +9,6 @@ import { Tx, Wallet } from '@bindings/pool'
 import { logError } from '@/shared/logger'
 import { NETWORK_DETAILS } from '../constants/networks'
 import { parseMetaXdrToJs } from './parse-result-xdr'
-import GetSuccessfulTransactionResponse = SorobanRpc.GetSuccessfulTransactionResponse
 
 const FEE = '100'
 const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF'
@@ -79,7 +78,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
   return getTransactionResponse
 }
 
-function useMakeInvoke<S extends boolean>(shouldSign: S) {
+export function useMakeInvoke() {
   const userAddress =
     useContextSelector(WalletContext, (state) => state.address) || PLACEHOLDER_NULL_ACCOUNT
 
@@ -89,17 +88,7 @@ function useMakeInvoke<S extends boolean>(shouldSign: S) {
       return async <T>(
         methodName: string,
         txParams: SorobanClient.xdr.ScVal[] = [],
-      ): Promise<
-        S extends true
-          ?
-              | GetSuccessfulTransactionResponse
-              | T
-              | SorobanRpc.SendTransactionStatus
-              | SorobanRpc.GetTransactionStatus.NOT_FOUND
-              | SorobanRpc.GetTransactionStatus.FAILED
-              | undefined
-          : T
-      > => {
+      ): Promise<T | undefined> => {
         const wallet = await import('@stellar/freighter-api')
         const walletAccount = await getAccount(wallet)
 
@@ -121,11 +110,14 @@ function useMakeInvoke<S extends boolean>(shouldSign: S) {
           throw new Error(`invalid simulation: no result in ${simulated}`)
         }
 
-        if (!shouldSign) {
+        const authsCount = simulated.result.auth.length
+        const writeLength = simulated.transactionData.getReadWrite().length
+        const isViewCall = authsCount === 0 && writeLength === 0
+
+        if (isViewCall) {
           return scValToJs(simulated.result.retval)
         }
 
-        const authsCount = simulated.result.auth.length
         if (authsCount > 1) {
           throw new Error('Multiple auths not yet supported')
         }
@@ -151,23 +143,13 @@ function useMakeInvoke<S extends boolean>(shouldSign: S) {
             throw new Error('Transaction submission failed! Returning full RPC response.')
           }
 
-          // @ts-ignore
           return parseMetaXdrToJs<T>(raw.resultMetaXdr)
         }
 
         logError("Don't know how to parse result! Throwing status")
-        // @ts-ignore
         throw new Error(raw.status)
       }
     },
-    [userAddress, shouldSign],
+    [userAddress],
   )
-}
-
-export function useMakeSimulate() {
-  return useMakeInvoke(false)
-}
-
-export function useMakeSend() {
-  return useMakeInvoke(true)
 }
