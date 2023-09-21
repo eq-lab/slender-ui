@@ -18,7 +18,7 @@ const sorobanTokenRecordToPositionCell = (
   const usdRate = cryptocurrencyUsdRates?.[tokenName]
 
   return {
-    value: BigInt(tokenRecord.balance) / 10n ** BigInt(tokenRecord.decimals),
+    value: BigInt(tokenRecord.balance ?? 0) / 10n ** BigInt(tokenRecord.decimals),
     valueInUsd: usdRate && value * usdRate,
     tokenName,
   }

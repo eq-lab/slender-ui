@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
+import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
 import { addressToScVal } from '@/shared/stellar/encoders'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
@@ -7,7 +7,7 @@ import { CachedTokens } from '../context/context'
 import { useTokenCache } from '../context/hooks'
 
 export interface SorobanTokenRecord {
-  balance: string
+  balance?: string
   name: string
   symbol: string
   decimals: number

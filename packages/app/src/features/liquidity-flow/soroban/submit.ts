@@ -1,12 +1,14 @@
-import { i128, networks } from '@bindings/pool'
+import { networks, MintBurn } from '@bindings/pool'
 import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { logInfo } from '@/shared/logger'
 import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders'
-import { useMakeInvoke } from '@/shared/stellar/hooks/invoke'
+import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke'
+import { SorobanRpc } from 'soroban-client'
 import { PositionUpdate } from '../types'
 
 const USER_DECLINED_ERROR = 'User declined access'
 export type PoolMethodName = 'borrow' | 'deposit' | 'repay' | 'withdraw'
+const WITH_TO: PoolMethodName = 'withdraw'
 
 export const useSubmit = (methodName: PoolMethodName) => {
   const makeInvoke = useMakeInvoke()
@@ -18,8 +20,17 @@ export const useSubmit = (methodName: PoolMethodName) => {
   }: {
     who: string
     asset: string
-    amount: i128
-  }) => invoke(methodName, [addressToScVal(who), addressToScVal(asset), bigintToScVal(amount)])
+    amount: bigint
+  }) =>
+    invoke<Array<MintBurn> | SorobanRpc.SendTransactionStatus | SorobanRpc.GetTransactionStatus>(
+      methodName,
+      [
+        addressToScVal(who),
+        addressToScVal(asset),
+        bigintToScVal(amount),
+        ...(methodName === WITH_TO ? [addressToScVal(who)] : []),
+      ],
+    )
 
   return async (address: string, sendValue: PositionUpdate): Promise<'fulfilled' | never> => {
     // we have to sign and send transactions one by one
