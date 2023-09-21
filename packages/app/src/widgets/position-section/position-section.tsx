@@ -20,14 +20,14 @@ export function PositionSection() {
   const marketData = useMarketData()
 
   const isFullPosition =
-    (position?.debts.length || 0) + (position?.deposits.length || 0) === SUPPORTED_TOKENS.length
-  const isFullDeposits = position?.deposits.length === SUPPORTED_TOKENS.length
+    (position.debts.length || 0) + (position.deposits.length || 0) === SUPPORTED_TOKENS.length
+  const isFullDeposits = position.deposits.length === SUPPORTED_TOKENS.length
 
   const depositsSumUsd =
-    position?.deposits.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
+    position.deposits.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
 
   const debtsSumUsd =
-    position?.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
+    position.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
 
   const positionHealth =
     depositsSumUsd &&
@@ -47,14 +47,16 @@ export function PositionSection() {
       return sum + interestRatePercentNum * fractionInSumUsd
     }
 
-  const debtSumInterestRate = position?.debts?.reduce(makeGetSumInterestRate(false), 0) || 0
+  const debtSumInterestRate = position.debts.reduce(makeGetSumInterestRate(false), 0) || 0
 
-  const depositSumInterestRate = position?.deposits?.reduce(makeGetSumInterestRate(true), 0) || 0
+  const depositSumInterestRate = position.deposits.reduce(makeGetSumInterestRate(true), 0) || 0
 
   const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
   const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
   const { modal: lendDecreaseModal, open: openLendDecreaseModal } = useLendDecrease()
   const { modal: lendIncreaseModal, open: openLendIncreaseModal } = useLendIncrease()
+
+  if (!position.deposits.length && !position.debts.length) return null
 
   return (
     <S.PositionWrapper>
@@ -76,7 +78,7 @@ export function PositionSection() {
             </Label>
           </S.PositionHeadingContainer>
           <S.PositionCellContainer>
-            {position?.deposits.map((deposit) => {
+            {position.deposits.map((deposit) => {
               const { tokenName, valueInUsd } = deposit
               const depositPercentage =
                 valueInUsd && !!depositsSumUsd
@@ -95,7 +97,7 @@ export function PositionSection() {
             })}
             {!isFullPosition && (
               <button type="button" onClick={() => openLendIncreaseModal()}>
-                + lend more
+                + Lend More
               </button>
             )}
           </S.PositionCellContainer>
@@ -116,13 +118,13 @@ export function PositionSection() {
                   <Typography>Borrowed</Typography>
                 </S.PositionSumWrapper>
                 <Label negative lg>
-                  -{formatPercent(debtSumInterestRate)} APR
+                  &minus;{formatPercent(debtSumInterestRate)} APR
                 </Label>
               </>
             )}
           </S.PositionHeadingContainer>
           <S.PositionCellContainer>
-            {position?.debts.map((debt) => {
+            {position.debts.map((debt) => {
               const { tokenName, valueInUsd } = debt
               const debtPercentage =
                 valueInUsd && debtsSumUsd
@@ -141,7 +143,7 @@ export function PositionSection() {
             })}
             {!isFullDeposits && (
               <button type="button" onClick={() => openBorrowIncreaseModal()}>
-                + lend more
+                + Borrow more
               </button>
             )}
           </S.PositionCellContainer>

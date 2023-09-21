@@ -52,7 +52,7 @@ export function PositionCell({
             </Typography>
             {interestRate && (
               <Label positive={isLendPosition} negative={!isLendPosition} sm>
-                {isLendPosition ? '+' : '-'}
+                {isLendPosition ? '+' : '−'}
                 {interestRate}
               </Label>
             )}
