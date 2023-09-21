@@ -11,21 +11,24 @@ import { PositionContext } from './context'
 const sorobanTokenRecordToPositionCell = (
   tokenRecord: SorobanTokenRecord,
   index: number,
-  cryptocurrencyUsdRates: SupportedTokenRates,
+  cryptocurrencyUsdRates?: SupportedTokenRates,
 ): PositionCell => {
   const value = Number(tokenRecord.balance) / 10 ** tokenRecord.decimals
   const tokenName = SUPPORTED_TOKENS[index]!
   const usdRate = cryptocurrencyUsdRates?.[tokenName]
 
   return {
-    value: BigInt(tokenRecord.balance) / 10n ** BigInt(tokenRecord.decimals),
+    value: BigInt(tokenRecord.balance ?? 0) / 10n ** BigInt(tokenRecord.decimals),
     valueInUsd: usdRate && value * usdRate,
     tokenName,
   }
 }
 
 export function PositionProvider({ children }: { children: JSX.Element }) {
-  const [position, setPosition] = useState<Position>()
+  const [position, setPosition] = useState<Position>({
+    deposits: [],
+    debts: [],
+  })
   const [positionUpdate, setPositionUpdate] = useState(0)
   const updatePosition = () => {
     setPositionUpdate((state) => state + 1)
@@ -66,12 +69,10 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
       [],
     )
 
-    if (lendPositions.length || debtPositions.length) {
-      setPosition({
-        deposits: lendPositions,
-        debts: debtPositions,
-      })
-    }
+    setPosition({
+      deposits: lendPositions,
+      debts: debtPositions,
+    })
   }, [userAddress, setPosition, positionUpdate, debtBalances, lendBalances, cryptocurrencyUsdRates])
 
   return (

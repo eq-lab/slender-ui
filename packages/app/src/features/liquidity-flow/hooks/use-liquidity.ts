@@ -20,7 +20,7 @@ export const getPositionUpdateByCells = (
 
 export function useLiquidity(
   methodName: PoolMethodName,
-): (args: {
+): (parameters: {
   deposits?: PositionCell[]
   additionalDeposits?: PositionCell[]
   debts?: PositionCell[]
@@ -34,21 +34,26 @@ export function useLiquidity(
   const tokenInfo = useTokenCache()
   const submitFunc = useSubmit(methodName)
 
-  return async (args) => {
+  return async (parameters) => {
     if (!address) return false
 
     try {
       setWaitModalIsOpen(true)
 
       const positionUpdate = getPositionUpdateByCells(
-        args.additionalDeposits ?? args.additionalDebts ?? args.deposits ?? args.debts ?? [],
+        parameters.additionalDeposits ??
+          parameters.additionalDebts ??
+          parameters.deposits ??
+          parameters.debts ??
+          [],
         tokenInfo,
       )
       const result = await submitFunc(address, positionUpdate)
       logInfo(result)
 
-      const deposits = args.deposits ?? args.additionalDeposits ?? position?.deposits ?? []
-      const debts = args.debts ?? args.additionalDebts ?? position?.debts ?? []
+      const deposits =
+        parameters.deposits ?? parameters.additionalDeposits ?? position?.deposits ?? []
+      const debts = parameters.debts ?? parameters.additionalDebts ?? position?.debts ?? []
       setPosition({ deposits, debts })
       updatePosition()
       return true

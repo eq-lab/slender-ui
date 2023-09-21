@@ -6,6 +6,7 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -16,6 +17,7 @@ import { AssetSelect } from '../asset-select'
 import { InputLayout } from '../../styled'
 import { getMaxDebt } from '../../utils/get-max-debt'
 import { getExtraTokenName } from '../../utils/get-extra-token-name'
+import { getRequiredError } from '../../utils/get-required-error'
 
 interface Props {
   debtSumUsd: number
@@ -34,8 +36,6 @@ export function BorrowIncreaseModal({
   debtTokenNames,
   debtSumUsd,
 }: Props) {
-  const getTokenByTokenName = useGetTokenByTokenName()
-
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
@@ -58,10 +58,12 @@ export function BorrowIncreaseModal({
   const coreDebtInfo = useTokenInfo(coreDebtTokenName)
   const extraDebtInfo = useTokenInfo(extraDebtTokenName as SupportedToken)
 
-  const actualDebtUsd =
-    debtSumUsd +
-    Number(value) * coreDebtInfo.priceInUsd +
-    Number(extraValue) * extraDebtInfo.priceInUsd
+  const { availableToBorrow } = useMarketDataForDisplay(tokenContracts[coreDebtTokenName])
+
+  const inputDebtSumUsd =
+    Number(value) * coreDebtInfo.priceInUsd + Number(extraValue) * extraDebtInfo.priceInUsd
+
+  const actualDebtUsd = debtSumUsd + inputDebtSumUsd
 
   const {
     borrowCapacityDelta,
@@ -72,12 +74,10 @@ export function BorrowIncreaseModal({
     healthDelta,
   } = getPositionInfo({
     depositUsd: depositSumUsd,
-    actualDebtUsd,
-    debtUsd: debtSumUsd,
     actualDepositUsd: depositSumUsd,
+    debtUsd: debtSumUsd,
+    actualDebtUsd,
   })
-
-  const debtUsdDelta = actualDebtUsd - debtSumUsd
 
   const hasExtraDeptToken = Boolean(debtTokenNames[1])
 
@@ -94,6 +94,12 @@ export function BorrowIncreaseModal({
   const coreInputError = Number(value) > coreMaxDebt
   const extraInputError = Number(extraValue) > (extraInputMax || 0)
 
+  const formError =
+    borrowCapacityError ||
+    coreInputError ||
+    extraInputError ||
+    getRequiredError(value, extraValue, showExtraInput)
+
   const getSaveData = (): PositionUpdate => {
     const core = { [coreDebtTokenName]: BigInt(value) }
 
@@ -107,8 +113,7 @@ export function BorrowIncreaseModal({
     return core
   }
 
-  const sendButtonDisable = borrowCapacityError || coreInputError || extraInputError
-
+  const getTokenByTokenName = useGetTokenByTokenName()
   const extraTokenSymbol = getTokenByTokenName(extraDebtTokenName)?.symbol
   const coreTokenSymbol = getTokenByTokenName(coreDebtTokenName)?.symbol
 
@@ -121,7 +126,7 @@ export function BorrowIncreaseModal({
           borrowCapacity={borrowCapacityInterface}
           depositSumUsd={depositSumUsd}
           health={health}
-          debtUsdDelta={debtUsdDelta}
+          debtUsdDelta={inputDebtSumUsd}
           healthDelta={healthDelta}
           borrowCapacityError={borrowCapacityError}
         />
@@ -130,14 +135,16 @@ export function BorrowIncreaseModal({
     >
       <FormLayout
         title="How much to borrow"
+        description={hasExtraDeptToken ? undefined : `${availableToBorrow} available to borrow`}
         buttonProps={{
           label: `Borrow`,
           onClick: () => onSend(getSaveData()),
-          disabled: sendButtonDisable,
+          disabled: formError,
         }}
       >
         <InputLayout>
           <SuperField
+            type="number"
             onChange={(e) => setValue(e.target.value)}
             value={value}
             title="To borrow"
@@ -160,6 +167,7 @@ export function BorrowIncreaseModal({
 
         {showExtraInput && (
           <SuperField
+            type="number"
             onChange={(e) => {
               setExtraValue(e.target.value)
             }}

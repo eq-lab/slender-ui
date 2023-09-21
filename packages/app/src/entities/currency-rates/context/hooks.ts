@@ -6,7 +6,7 @@ import { CurrencyRatesContext } from './context'
 export type SupportedTokenRates = {
   [key in SupportedToken]: number
 }
-export const usePriceInUsd = (): SupportedTokenRates => {
+export const usePriceInUsd = (): SupportedTokenRates | undefined => {
   const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates)
 
   return useMemo(() => {

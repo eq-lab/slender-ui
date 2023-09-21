@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 export const MarketCardWrapper = styled.div`
+  width: 100%;
   background-color: var(--fill-secondary);
   border-radius: var(--rounding-radius-xl);
   overflow: hidden;
@@ -16,13 +17,16 @@ export const MarketCardHeadingContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 48px;
   grid-template-rows: 1fr 1fr;
-  grid-column-gap: 12px;
+  grid-column-gap: 8px;
+  grid-row-gap: 12px;
   padding-bottom: 24px;
 
   .token-name {
+    color: var(--text-on-dark);
     grid-area: 1 / 1 / 2 / 2;
   }
   .token-symbol {
+    color: var(--text-on-dark);
     grid-area: 2 / 1 / 3 / 2;
   }
   .token-icon {
@@ -37,15 +41,28 @@ export const MarketCardPoolInfoContainer = styled.div`
   grid-template-columns: 48px 1fr;
   grid-template-rows: repeat(2, 1fr);
   grid-column-gap: 16px;
-  padding: 64px 0 24px;
+  padding-top: 64px;
 
-  .piechart-container {
+  .piechart-with-tooltip-wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 48px;
+    height: 48px;
     grid-area: 1 / 1 / 3 / 2;
+    .piechart-with-tooltip-container {
+      position: absolute;
+      display: flex;
+      &:hover {
+        right: 0px;
+      }
+    }
   }
   .total-available {
+    color: var(--text-on-dark);
     grid-area: 1 / 2 / 2 / 3;
   }
   .total-supplied {
+    color: var(--text-on-dark);
     grid-area: 2 / 2 / 3 / 3;
   }
 `
@@ -69,6 +86,8 @@ export const MarketCardTextCell = styled.div`
   grid-column-gap: 12px;
 
   .tooltip-container {
+    fill: rgba(217, 217, 217, 1);
+    margin: auto;
     grid-area: 1 / 1 / 3 / 2;
   }
   .upper-text-container {

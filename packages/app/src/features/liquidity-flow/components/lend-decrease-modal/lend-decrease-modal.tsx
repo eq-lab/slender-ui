@@ -10,6 +10,7 @@ import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { getDepositUsd } from '../../utils/get-deposit-usd'
+import { getRequiredError } from '../../utils/get-required-error'
 
 interface Props {
   deposit: bigint
@@ -31,12 +32,14 @@ export function LendDecreaseModal({
   const [value, setValue] = useState('')
 
   const depositTokenInfo = useTokenInfo(tokenName)
-  const getTokenByTokenName = useGetTokenByTokenName()
 
-  const actualDepositUsd = Math.max(
-    depositSumUsd - getDepositUsd(value, depositTokenInfo.priceInUsd, depositTokenInfo.discount),
-    0,
+  const inputDepositSumUsd = getDepositUsd(
+    value,
+    depositTokenInfo.priceInUsd,
+    depositTokenInfo.discount,
   )
+
+  const actualDepositUsd = Math.max(depositSumUsd - inputDepositSumUsd, 0)
 
   const {
     borrowCapacityDelta,
@@ -47,20 +50,22 @@ export function LendDecreaseModal({
     healthDelta,
   } = getPositionInfo({
     depositUsd: depositSumUsd,
-    actualDebtUsd: debtSumUsd,
-    debtUsd: debtSumUsd,
     actualDepositUsd,
+    debtUsd: debtSumUsd,
+    actualDebtUsd: debtSumUsd,
   })
-
-  const borrowTokenInfo = useTokenInfo(tokenName)
-
-  const max = Math.floor(
-    defaultBorrowCapacity / (borrowTokenInfo.priceInUsd * borrowTokenInfo.discount),
-  )
 
   const depositDelta = deposit - BigInt(value)
   const depositError = depositDelta < 0
 
+  const formError = depositError || borrowCapacityError || getRequiredError(value)
+
+  const borrowTokenInfo = useTokenInfo(tokenName)
+  const max = Math.floor(
+    defaultBorrowCapacity / (borrowTokenInfo.priceInUsd * borrowTokenInfo.discount),
+  )
+
+  const getTokenByTokenName = useGetTokenByTokenName()
   const tokenSymbol = getTokenByTokenName(tokenName)?.symbol
 
   return (
@@ -71,23 +76,27 @@ export function LendDecreaseModal({
           borrowCapacityDelta={borrowCapacityDelta}
           borrowCapacity={borrowCapacityInterface}
           depositSumUsd={actualDepositUsd}
-          borrowCapacityError={borrowCapacityError}
+          collateralError={borrowCapacityError}
           health={health}
           healthDelta={healthDelta}
-          depositSumUsdDelta={actualDepositUsd - depositSumUsd}
+          depositSumUsdDelta={inputDepositSumUsd}
         />
       }
       onClose={onClose}
     >
       <FormLayout
         title="Withdraw collateral"
+        description={
+          formError ? "Can't withdraw, not enough collateral to cover the debt" : undefined
+        }
         buttonProps={{
           label: `Pay off ${value} ${tokenSymbol}`,
           onClick: () => onSend({ value: BigInt(value), tokenName }),
-          disabled: depositError || borrowCapacityError,
+          disabled: formError,
         }}
       >
         <SuperField
+          type="number"
           onChange={(e) => setValue(e.target.value)}
           value={value}
           title="To withdraw"

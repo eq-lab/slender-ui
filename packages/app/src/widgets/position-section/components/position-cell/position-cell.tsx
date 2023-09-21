@@ -3,11 +3,13 @@ import { tokenContracts } from '@/shared/stellar/constants/tokens'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import { colorByToken } from '@/entities/token/constants/token-colors'
 import Thumbnail from '@marginly/ui/components/thumbnail'
 import Typography from '@marginly/ui/components/typography'
 import Label from '@marginly/ui/components/label'
 import { formatUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
+import * as S from './position-cell.styled'
 
 export function PositionCell({
   position,
@@ -25,36 +27,54 @@ export function PositionCell({
   const { tokenName, value, valueInUsd } = position
   const Icon = getIconByTokenName(tokenName)
 
+  const tokenColor = colorByToken[tokenName]
+
   const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
     tokenContracts[tokenName],
   )
   const tokenCache = useTokenCache()?.[tokenContracts[tokenName].address]
 
+  const interestRate = isLendPosition ? lendInterestRate : borrowInterestRate
+
   return (
-    <div>
-      <Thumbnail md>
+    <S.PositionCellWrapper $backgroundColor={tokenColor}>
+      <Thumbnail md rectangle darkbg className="token-thumnail">
         <Icon />
       </Thumbnail>
-      <Typography caption>
-        {tokenCache?.name} · {percentage && percentage !== 100 ? `: ${percentage}%` : null}
-      </Typography>
-      <br />
-      {value.toString(10)} {tokenCache?.symbol}{' '}
-      {isLendPosition && (
-        <Typography caption>
-          <em>{discount} discount</em>
-        </Typography>
-      )}
-      {borrowInterestRate && (
-        <Label>{isLendPosition ? lendInterestRate : borrowInterestRate}</Label>
-      )}
-      {valueInUsd && Number(value) !== valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
-      <button type="button" onClick={openDecreaseModal}>
-        &minus;
-      </button>
-      <button type="button" onClick={openIncreaseModal}>
-        +
-      </button>
-    </div>
+      <S.PositionCellInfo>
+        <S.PositionCellInfoItem>
+          <Typography caption>
+            {tokenCache?.name} {percentage && percentage !== 100 ? `· ${percentage}%` : null}
+          </Typography>
+          <S.PositionCellTokenAmount>
+            <Typography>
+              {value.toString(10)} {tokenCache?.symbol}{' '}
+            </Typography>
+            {interestRate && (
+              <Label positive={isLendPosition} negative={!isLendPosition} sm>
+                {isLendPosition ? '+' : '−'}
+                {interestRate}
+              </Label>
+            )}
+          </S.PositionCellTokenAmount>
+        </S.PositionCellInfoItem>
+        {isLendPosition && (
+          <S.PositionCellInfoItem>
+            <Typography caption>
+              <em>{discount} discount</em>
+            </Typography>
+            {valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
+          </S.PositionCellInfoItem>
+        )}
+      </S.PositionCellInfo>
+      <S.PositionCellButtons>
+        <button type="button" onClick={openDecreaseModal}>
+          &minus;
+        </button>
+        <button type="button" onClick={openIncreaseModal}>
+          +
+        </button>
+      </S.PositionCellButtons>
+    </S.PositionCellWrapper>
   )
 }

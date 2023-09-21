@@ -7,7 +7,7 @@ export const primaryFont = PlusJakartaSans({ subsets: ['latin'] })
 
 export const GlobalStyle = createGlobalStyle`
 :root {
-  --primary-font: ${primaryFont.style.fontFamily};
+  --default-font: ${primaryFont.style.fontFamily};
 }
 
 * {
@@ -19,7 +19,7 @@ export const GlobalStyle = createGlobalStyle`
 html,
 body {
   max-width: 100vw;
-  font-family: var(--primary-font);
+  font-family: var(--default-font);
   font-weight: 500;
   text-shadow: 0 0 0;
 }
@@ -33,11 +33,5 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
 }
 `
