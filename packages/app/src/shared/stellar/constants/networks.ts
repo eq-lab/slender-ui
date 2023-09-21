@@ -22,7 +22,7 @@ enum FRIENDBOT_URLS {
 }
 
 const SOROBAN_RPC_URLS = {
-  FUTURENET: 'https://rpc-futurenet.stellar.org/',
+  FUTURENET: 'https://rpc-futurenet.stellar.org',
 }
 
 interface NetworkDetails {
