@@ -28,6 +28,12 @@ export const PositionSideContainer = styled.div`
   background: rgba(204, 187, 184, 0.16);
 `
 
+export const PositionCellContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+`
+
 export const PositionHeadingContainer = styled.div`
   display: flex;
   justify-content: space-between;

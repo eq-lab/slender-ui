@@ -10,7 +10,7 @@ interface Props {
 export function AddAssetButton({ onClick }: Props) {
   return (
     <S.Wrapper onClick={onClick}>
-      <Thumbnail md rectangle>
+      <Thumbnail md rectangle darkbg>
         <PlusIcon width={24} />
       </Thumbnail>
       Add Asset
