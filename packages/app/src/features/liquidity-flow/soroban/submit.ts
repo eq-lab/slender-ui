@@ -7,6 +7,7 @@ import { PositionUpdate } from '../types'
 
 const USER_DECLINED_ERROR = 'User declined access'
 export type PoolMethodName = 'borrow' | 'deposit' | 'repay' | 'withdraw'
+const WITH_TO: PoolMethodName = 'withdraw'
 
 export const useSubmit = (methodName: PoolMethodName) => {
   const makeInvoke = useMakeSend()
@@ -19,7 +20,12 @@ export const useSubmit = (methodName: PoolMethodName) => {
     who: string
     asset: string
     amount: bigint
-  }) => invoke(methodName, [addressToScVal(who), addressToScVal(asset), bigintToScVal(amount)])
+  }) => invoke(methodName, [
+      addressToScVal(who),
+      addressToScVal(asset),
+      bigintToScVal(amount),
+      ...(methodName === WITH_TO ? [addressToScVal(who)] : []),
+    ])
 
   return async (address: string, sendValue: PositionUpdate): Promise<'fulfilled' | never> => {
     // we have to sign and send transactions one by one
