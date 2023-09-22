@@ -7,7 +7,7 @@ import { colorByToken } from '@/entities/token/constants/token-colors'
 import Thumbnail from '@marginly/ui/components/thumbnail'
 import Typography from '@marginly/ui/components/typography'
 import Label from '@marginly/ui/components/label'
-import { formatUsd } from '@/shared/formatters'
+import { formatUsd, formatCryptoCurrency } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 import * as S from './position-cell.styled'
 
@@ -44,13 +44,13 @@ export function PositionCell({
         <Icon />
       </Thumbnail>
       <S.PositionCellInfo>
-        <S.PositionCellInfoItem>
+        <S.PositionCellInfoItem $isBorrowPosition={!isLendPosition}>
           <Typography caption>
             {tokenCache?.name} {percentage && percentage !== 100 ? `· ${percentage}%` : null}
           </Typography>
           <S.PositionCellTokenAmount>
             <Typography>
-              {value.toString(10)} {tokenCache?.symbol}{' '}
+              {formatCryptoCurrency(Number(value.toString(10)))} {tokenCache?.symbol}{' '}
             </Typography>
             {interestRate && (
               <Label positive={isLendPosition} negative={!isLendPosition} sm>
@@ -65,7 +65,7 @@ export function PositionCell({
             <Typography caption>
               <em>{discount} discount</em>
             </Typography>
-            {valueInUsd && <div>{formatUsd(valueInUsd)}</div>}
+            {valueInUsd && <Typography>{formatUsd(valueInUsd)}</Typography>}
           </S.PositionCellInfoItem>
         )}
       </S.PositionCellInfo>
