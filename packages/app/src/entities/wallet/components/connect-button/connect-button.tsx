@@ -7,7 +7,7 @@ import { ReactComponent as WalletIcon } from '@/shared/icons/wallet.svg'
 import { FREIGHTER_WALLET_URL } from '../../constants/wallet'
 import { Button } from './button'
 
-const SHORT_ADDRESS_SIZE = 6
+const SHORT_ADDRESS_SIZE = 4
 
 export function ConnectButton() {
   const { address, setAddress, isConnected } = useWalletAddress()
