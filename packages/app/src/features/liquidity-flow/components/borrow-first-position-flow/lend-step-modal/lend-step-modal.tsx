@@ -64,7 +64,10 @@ export function LendStepModal({
     const inputValue = (
       debtUsd /
       (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE)
-    ).toFixed(2)
+    ).toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    })
 
     const finalValue = Number(inputValue) > coreInputMax ? coreInputMax : inputValue
     setCoreValue(String(finalValue))
