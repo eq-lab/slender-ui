@@ -5,6 +5,7 @@ import { useBorrowDecrease } from '@/features/liquidity-flow/hooks/use-borrow-de
 import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
 import { useLendDecrease } from '@/features/liquidity-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
+import { HealthMeter } from '@/shared/components/health-meter'
 import { formatPercent, formatUsd } from '@/shared/formatters'
 import { SUPPORTED_TOKENS, tokenContracts } from '@/shared/stellar/constants/tokens'
 import Label from '@marginly/ui/components/label'
@@ -70,9 +71,7 @@ export function PositionSection() {
     <S.PositionWrapper>
       <S.PositionHeaderWrapper>
         <Typography title>Position</Typography>
-        <div>
-          <em>Health: {positionHealth}%</em>
-        </div>
+        <HealthMeter healthPercent={positionHealth} />
       </S.PositionHeaderWrapper>
       <S.PositionContainer>
         <S.PositionSideContainer>

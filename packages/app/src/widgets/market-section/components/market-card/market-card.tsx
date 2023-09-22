@@ -10,7 +10,6 @@ import { colorByToken } from '@/entities/token/constants/token-colors'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { PercentPieChart } from './percent-pie-chart'
 import { useActionModal } from '../../hooks/use-action-modal'
-import { Tooltip } from './tooltip'
 import * as S from './styled'
 
 export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
@@ -73,7 +72,6 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
           <div className="piechart-with-tooltip-wrapper">
             <div className="piechart-with-tooltip-container">
               <PercentPieChart percent={availablePercent} />
-              <Tooltip withThumbnail />
             </div>
           </div>
           <Typography className="total-available">
@@ -85,18 +83,14 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
       <S.MarketCardBottomContainer>
         <S.MarketCardBottomInfo>
           <S.MarketCardTextCell>
-            <div className="tooltip-container">
-              <Tooltip />
-            </div>
+            <div className="tooltip-container" />
             <Typography className="upper-text-container" caption secondary>
               Discount:
             </Typography>
             <Typography className="bottom-text-container">{discount}</Typography>
           </S.MarketCardTextCell>
           <S.MarketCardTextCell>
-            <div className="tooltip-container">
-              <Tooltip />
-            </div>
+            <div className="tooltip-container" />
             <Typography className="upper-text-container" caption secondary>
               Liquidation penalty:
             </Typography>

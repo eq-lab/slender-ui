@@ -13,15 +13,20 @@ export const PositionCellWrapper = styled.div<{ $backgroundColor: string }>`
 export const PositionCellInfo = styled.div`
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 `
 
 export const PositionCellInfoItem = styled.div<{ $isBorrowPosition?: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: ${({ $isBorrowPosition }) => ($isBorrowPosition ? '100%' : '50%')};
+  gap: 5px;
+  width: auto;
   white-space: nowrap;
+  &:first-child {
+    min-width: 50%;
+    width: auto;
+  }
 `
 
 export const PositionCellTokenAmount = styled.div`

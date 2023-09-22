@@ -45,7 +45,7 @@ export function PositionCell({
       </Thumbnail>
       <S.PositionCellInfo>
         <S.PositionCellInfoItem $isBorrowPosition={!isLendPosition}>
-          <Typography caption>
+          <Typography caption secondary>
             {tokenCache?.name} {percentage && percentage !== 100 ? `· ${percentage}%` : null}
           </Typography>
           <S.PositionCellTokenAmount>
@@ -62,8 +62,8 @@ export function PositionCell({
         </S.PositionCellInfoItem>
         {isLendPosition && (
           <S.PositionCellInfoItem>
-            <Typography caption>
-              <em>{discount} discount</em>
+            <Typography caption secondary>
+              {discount} discount
             </Typography>
             {valueInUsd && <Typography>{formatUsd(valueInUsd)}</Typography>}
           </S.PositionCellInfoItem>
