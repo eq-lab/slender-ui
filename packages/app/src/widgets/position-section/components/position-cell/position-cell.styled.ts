@@ -16,11 +16,12 @@ export const PositionCellInfo = styled.div`
   gap: 8px;
 `
 
-export const PositionCellInfoItem = styled.div`
+export const PositionCellInfoItem = styled.div<{ $isBorrowPosition?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 50%;
+  width: ${({ $isBorrowPosition }) => ($isBorrowPosition ? '100%' : '50%')};
+  white-space: nowrap;
 `
 
 export const PositionCellTokenAmount = styled.div`
