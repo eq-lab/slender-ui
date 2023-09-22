@@ -120,7 +120,7 @@ export function LendIncreaseModal({
       onClose={onClose}
     >
       <FormLayout
-        title="How much to lend"
+        title="Add collateral"
         description={renderDescription()}
         buttonProps={{
           label: `Lend`,
