@@ -6,8 +6,10 @@ import { ConnectButton } from '../../entities/wallet/components/connect-button'
 export function Header() {
   return (
     <S.Wrapper>
-      <SlenderLogo width={110} />
-      <ConnectButton />
+      <S.Inner>
+        <SlenderLogo width={110} />
+        <ConnectButton />
+      </S.Inner>
     </S.Wrapper>
   )
 }
