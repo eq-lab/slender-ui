@@ -10,9 +10,9 @@ import {
   SLENDER_TOKEN_XRP,
 } from '@/shared/stellar/constants/contracts'
 
-export const SUPPORTED_TOKENS = ['usdc', 'xlm', 'xrp'] as const
+export const SUPPORTED_TOKEN_NAMES = ['usdc', 'xlm', 'xrp'] as const
 
-export type SupportedTokenName = (typeof SUPPORTED_TOKENS)[number]
+export type SupportedTokenName = (typeof SUPPORTED_TOKEN_NAMES)[number]
 
 export const underlying = {
   xlm: SLENDER_TOKEN_XLM,
@@ -43,7 +43,7 @@ export interface TokenContracts {
   debtAddress: DebtToken
 }
 
-export const tokenContracts = SUPPORTED_TOKENS.reduce(
+export const tokenContracts = SUPPORTED_TOKEN_NAMES.reduce(
   (acc, token) => {
     acc[token] = {
       address: underlying[token],

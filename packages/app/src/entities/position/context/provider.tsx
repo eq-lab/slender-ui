@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useGetBalance, SorobanTokenRecord } from '@/entities/token/hooks/use-get-balance'
-import { tokenContracts, SUPPORTED_TOKENS } from '@/shared/stellar/constants/tokens'
+import { tokenContracts, SUPPORTED_TOKEN_NAMES } from '@/shared/stellar/constants/tokens'
 import { usePriceInUsd, SupportedTokenRates } from '@/entities/currency-rates/context/hooks'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { Position, PositionCell } from '../types'
@@ -14,7 +14,7 @@ const sorobanTokenRecordToPositionCell = (
   cryptocurrencyUsdRates?: SupportedTokenRates,
 ): PositionCell => {
   const value = Number(tokenRecord.balance) / 10 ** tokenRecord.decimals
-  const tokenName = SUPPORTED_TOKENS[index]!
+  const tokenName = SUPPORTED_TOKEN_NAMES[index]!
   const usdRate = cryptocurrencyUsdRates?.[tokenName]
 
   return {
@@ -38,10 +38,10 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
   const cryptocurrencyUsdRates = usePriceInUsd()
 
   const debtBalances = useGetBalance(
-    SUPPORTED_TOKENS.map((tokenName) => tokenContracts[tokenName].debtAddress),
+    SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].debtAddress),
   )
   const lendBalances = useGetBalance(
-    SUPPORTED_TOKENS.map((tokenName) => tokenContracts[tokenName].sAddress),
+    SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].sAddress),
   )
 
   useEffect(() => {
