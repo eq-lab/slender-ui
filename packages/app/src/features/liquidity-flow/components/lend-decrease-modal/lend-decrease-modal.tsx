@@ -90,7 +90,7 @@ export function LendDecreaseModal({
           formError ? "Can't withdraw, not enough collateral to cover the debt" : undefined
         }
         buttonProps={{
-          label: `Pay off ${value} ${tokenSymbol}`,
+          label: `Withdraw ${value} ${tokenSymbol}`,
           onClick: () => onSend({ value: BigInt(value), tokenName }),
           disabled: formError,
         }}

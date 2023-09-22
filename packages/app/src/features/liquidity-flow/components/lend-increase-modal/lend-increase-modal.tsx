@@ -12,12 +12,12 @@ import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { PositionUpdate } from '../../types'
-import { AddAssetButton } from '../add-asset-button'
 import { AssetSelect } from '../asset-select'
 import { InputLayout } from '../../styled'
-import { getExtraTokenName } from '../../utils/get-extra-token-name'
 import { getDepositUsd } from '../../utils/get-deposit-usd'
 import { getRequiredError } from '../../utils/get-required-error'
+import { excludeSupportedTokens } from '../../utils/exclude-supported-tokens'
+import { AddAsset } from '../add-asset/add-asset'
 
 interface Props {
   debtSumUsd: number
@@ -40,16 +40,14 @@ export function LendIncreaseModal({
   const [extraValue, setExtraValue] = useState('')
 
   const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedToken>(tokenName)
-  const [showExtraInput, setShowExtraInput] = useState(false)
+  const [extraDepositTokenName, setExtraDepositTokenName] = useState<SupportedToken>()
 
   useEffect(() => {
     setCoreDepositTokenName(tokenName)
   }, [tokenName])
 
-  const extraDepositTokenName = getExtraTokenName(depositTokenNames, coreDepositTokenName)
-
   const coreDepositInfo = useTokenInfo(coreDepositTokenName)
-  const extraDepositInfo = useTokenInfo(extraDepositTokenName as SupportedToken)
+  const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 
   const inputDepositSumUsd =
     getDepositUsd(value, coreDepositInfo.priceInUsd, coreDepositInfo.discount) +
@@ -65,7 +63,8 @@ export function LendIncreaseModal({
       actualDebtUsd: debtSumUsd,
     })
 
-  const hasExtraDepositToken = Boolean(depositTokenNames[1])
+  const excludedTokens = excludeSupportedTokens([coreDepositTokenName], depositTokenNames)
+  const hasExtraDepositToken = Boolean(excludedTokens.length)
 
   const coreInputMax = coreDepositInfo.userBalance
   const extraInputMax = extraDepositInfo.userBalance
@@ -81,7 +80,7 @@ export function LendIncreaseModal({
   const getSaveData = (): PositionUpdate => {
     const core = { [coreDepositTokenName]: BigInt(value) }
 
-    if (showExtraInput && extraDepositTokenName) {
+    if (extraDepositTokenName && extraDepositTokenName) {
       return {
         ...core,
         [extraDepositTokenName]: BigInt(extraValue),
@@ -95,7 +94,7 @@ export function LendIncreaseModal({
     borrowCapacityError ||
     coreInputError ||
     extraInputError ||
-    getRequiredError(value, extraValue, showExtraInput)
+    getRequiredError(value, extraValue, Boolean(extraDepositTokenName))
 
   const renderDescription = () => {
     if (!formError) return `${formatUsd(inputDepositSumUsd)} will be counted as collateral`
@@ -123,7 +122,7 @@ export function LendIncreaseModal({
         title="How much to lend"
         description={renderDescription()}
         buttonProps={{
-          label: `Borrow`,
+          label: `Lend`,
           onClick: () => onSend(getSaveData()),
           disabled: formError,
         }}
@@ -138,7 +137,7 @@ export function LendIncreaseModal({
             className={cn(coreInputError && Error)}
             postfix={coreTokenSymbol}
           />
-          {!showExtraInput && hasExtraDepositToken && (
+          {!extraDepositTokenName && hasExtraDepositToken && (
             <AssetSelect
               onChange={setCoreDepositTokenName}
               tokenNames={depositTokenNames}
@@ -147,10 +146,10 @@ export function LendIncreaseModal({
           )}
         </InputLayout>
 
-        {!showExtraInput && hasExtraDepositToken && (
-          <AddAssetButton onClick={() => setShowExtraInput(true)} />
+        {!extraDepositTokenName && (
+          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} />
         )}
-        {showExtraInput && (
+        {extraDepositTokenName && (
           <SuperField
             type="number"
             onChange={(e) => setExtraValue(e.target.value)}
