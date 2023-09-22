@@ -1,5 +1,5 @@
 import React from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
@@ -18,7 +18,7 @@ interface Props {
   value: string
   onBorrowValueChange: (value: string) => void
   maxDepositUsd: number
-  debtTokenName: SupportedToken
+  debtTokenName: SupportedTokenName
 }
 
 export function BorrowStepModal({
@@ -41,7 +41,7 @@ export function BorrowStepModal({
 
   const Icon = getIconByTokenName(debtTokenName)
   const infoSlot = (
-    <InfoLayout title={debtToken?.name} mediaSection={<Icon width={48} />}>
+    <InfoLayout title={debtToken?.title} mediaSection={<Icon width={48} />}>
       <InfoRow label="Borrow APR" value={borrowInterestRate} />
       <InfoRow label="Available" value={`${availableToBorrow} ${debtTokenSymbol}`} />
     </InfoLayout>

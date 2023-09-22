@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
@@ -10,9 +10,9 @@ import * as S from './styled'
 import { AddAssetButton } from '../add-asset-button'
 
 interface Props {
-  tokenNames: SupportedToken[]
-  onChange: (value: SupportedToken) => void
-  value?: SupportedToken
+  tokenNames: SupportedTokenName[]
+  onChange: (value: SupportedTokenName) => void
+  value?: SupportedTokenName
 }
 
 export function AssetSelect({ tokenNames, onChange, value }: Props) {
@@ -28,7 +28,7 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
   const close = () => {
     setAnchorEl(null)
   }
-  const handleItemClick = (itemValue: SupportedToken) => () => {
+  const handleItemClick = (itemValue: SupportedTokenName) => () => {
     onChange(itemValue)
     close()
   }
@@ -52,7 +52,7 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
         {tokenNames.map((tokenName, index) => {
           const token = getTokenByTokenName(tokenName)
           if (!token) return null
-          const { name, symbol, decimals } = token
+          const { title, symbol, decimals } = token
           const Icon = getIconByTokenName(tokenName)
           return (
             <MenuItem onClick={handleItemClick(tokenName)} key={tokenName}>
@@ -61,7 +61,7 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
                   <Icon />
                 </S.ThumbnailWrapper>
                 <div>
-                  <div>{name}</div>
+                  <div>{title}</div>
                   {Number(depositBalances[index]?.balance ?? 0) / 10 ** decimals} {symbol}
                 </div>
                 {tokenName === value && <CheckIcon width={24} />}

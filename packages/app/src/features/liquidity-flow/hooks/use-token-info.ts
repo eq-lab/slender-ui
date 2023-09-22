@@ -1,10 +1,10 @@
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useMarketData } from '@/entities/token/context/hooks'
 import { usePriceInUsd } from '@/entities/currency-rates/context/hooks'
 import { getDecimalDiscount } from '../../../shared/utils/get-decimal-discount'
 
-export function useTokenInfo(tokenName?: SupportedToken): {
+export function useTokenInfo(tokenName?: SupportedTokenName): {
   userBalance: number
   discount: number
   priceInUsd: number

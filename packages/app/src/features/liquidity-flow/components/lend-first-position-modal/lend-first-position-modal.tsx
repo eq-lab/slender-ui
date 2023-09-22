@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { InfoRow } from '@/shared/components/info-row'
@@ -17,7 +17,7 @@ import { getRequiredError } from '../../utils/get-required-error'
 interface Props {
   onClose: () => void
   onSend: (value: string) => void
-  depositTokenName: SupportedToken
+  depositTokenName: SupportedTokenName
 }
 
 export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Props) {
@@ -38,7 +38,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   const Icon = getIconByTokenName(depositTokenName)
 
   const infoSlot = (
-    <InfoLayout title={token?.name} mediaSection={<Icon width={48} />}>
+    <InfoLayout title={token?.title} mediaSection={<Icon width={48} />}>
       <InfoRow label="Lend APR" value={lendInterestRate} />
       <InfoRow label="Discount" value={discount} />
       <InfoRow label="Liquidation penalty" value={liquidationPenalty} />

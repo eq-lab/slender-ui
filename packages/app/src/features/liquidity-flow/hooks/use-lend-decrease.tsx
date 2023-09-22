@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { PositionCell } from '@/entities/position/types'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { useLiquidity } from './use-liquidity'
 import { useDepositUsd } from './use-deposit-usd'
 import { useDebtUsd } from './use-debt-usd'
@@ -10,10 +10,10 @@ import { LendDecreaseModal } from '../components/lend-decrease-modal'
 
 export const useLendDecrease = (): {
   modal: JSX.Element | null
-  open: (value: SupportedToken) => void
+  open: (value: SupportedTokenName) => void
 } => {
   const position = useContextSelector(PositionContext, (state) => state.position)
-  const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
+  const [modalToken, setModalToken] = useState<SupportedTokenName | null>(null)
 
   const debtSumUsd = useDebtUsd(position?.debts)
   const depositSumUsd = useDepositUsd(position?.deposits)
