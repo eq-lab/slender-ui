@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { PositionSummary } from '@/entities/position/components/position-summary'
@@ -22,9 +22,9 @@ import { AssetSelect } from '../../asset-select'
 interface Props {
   onClose: () => void
   debtValue: string
-  debtTokenName: SupportedToken
-  depositTokenNames: [SupportedToken, SupportedToken]
-  depositTokenName: SupportedToken
+  debtTokenName: SupportedTokenName
+  depositTokenNames: [SupportedTokenName, SupportedTokenName]
+  depositTokenName: SupportedTokenName
   onSend: (value: Position) => void
 }
 
@@ -41,7 +41,8 @@ export function LendStepModal({
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedToken>(depositTokenName)
+  const [coreDepositTokenName, setCoreDepositTokenName] =
+    useState<SupportedTokenName>(depositTokenName)
 
   const [showExtraInput, setShowExtraInput] = useState(false)
 
@@ -51,7 +52,7 @@ export function LendStepModal({
   const extraDepositTokenName = getExtraTokenName(
     depositTokenNames,
     coreDepositTokenName,
-  ) as SupportedToken
+  ) as SupportedTokenName
 
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 

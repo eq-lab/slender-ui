@@ -1,6 +1,6 @@
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 
-export const colorByToken: Record<SupportedToken, `#${string}`> = {
+export const colorByToken: Record<SupportedTokenName, `#${string}`> = {
   usdc: '#2775CA',
   xlm: '#3E1BDB',
   xrp: '#008CFF',

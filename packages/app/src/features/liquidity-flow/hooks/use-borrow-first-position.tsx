@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
 import { useLiquidity } from './use-liquidity'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
@@ -15,7 +15,7 @@ enum Step {
 }
 
 export const useBorrowFirstPosition = (
-  token: SupportedToken,
+  token: SupportedTokenName,
 ): {
   modal: JSX.Element | null
   open: () => void
@@ -43,8 +43,8 @@ export const useBorrowFirstPosition = (
   }
 
   const [firstDepositToken, secondDepositToken] = excludeSupportedTokens([token]) as [
-    SupportedToken,
-    SupportedToken,
+    SupportedTokenName,
+    SupportedTokenName,
   ]
 
   const firstDepositTokenInfo = useTokenInfo(firstDepositToken)

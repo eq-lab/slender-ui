@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
-import { SUPPORTED_TOKENS, SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SUPPORTED_TOKENS, SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { useContextSelector } from 'use-context-selector'
 import { CurrencyRatesContext } from './context'
 
 export type SupportedTokenRates = {
-  [key in SupportedToken]: number
+  [key in SupportedTokenName]: number
 }
 export const usePriceInUsd = (): SupportedTokenRates | undefined => {
   const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates)

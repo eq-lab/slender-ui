@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
@@ -23,9 +23,9 @@ interface Props {
   debtSumUsd: number
   depositSumUsd: number
   onClose: () => void
-  tokenName: SupportedToken
+  tokenName: SupportedTokenName
   onSend: (value: PositionUpdate) => void
-  depositTokenNames: SupportedToken[]
+  depositTokenNames: SupportedTokenName[]
 }
 
 export function LendIncreaseModal({
@@ -39,8 +39,8 @@ export function LendIncreaseModal({
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedToken>(tokenName)
-  const [extraDepositTokenName, setExtraDepositTokenName] = useState<SupportedToken>()
+  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedTokenName>(tokenName)
+  const [extraDepositTokenName, setExtraDepositTokenName] = useState<SupportedTokenName>()
 
   useEffect(() => {
     setCoreDepositTokenName(tokenName)

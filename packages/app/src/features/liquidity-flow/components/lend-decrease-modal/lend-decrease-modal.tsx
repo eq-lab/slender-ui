@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 
 import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
@@ -16,7 +16,7 @@ interface Props {
   deposit: bigint
   depositSumUsd: number
   onClose: () => void
-  tokenName: SupportedToken
+  tokenName: SupportedTokenName
   onSend: (value: PositionCell) => void
   debtSumUsd: number
 }

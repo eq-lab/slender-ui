@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useAvailableToBorrow } from '@/entities/token/hooks/use-available-to-borrow'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
@@ -23,9 +23,9 @@ interface Props {
   debtSumUsd: number
   depositSumUsd: number
   onClose: () => void
-  tokenName: SupportedToken
+  tokenName: SupportedTokenName
   onSend: (value: PositionUpdate) => void
-  debtTokenNames: SupportedToken[]
+  debtTokenNames: SupportedTokenName[]
 }
 
 export function BorrowIncreaseModal({
@@ -39,7 +39,7 @@ export function BorrowIncreaseModal({
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDebtTokenName, setCoreDebtTokenName] = useState<SupportedToken>(tokenName)
+  const [coreDebtTokenName, setCoreDebtTokenName] = useState<SupportedTokenName>(tokenName)
   const [showExtraInput, setShowExtraInput] = useState(false)
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export function BorrowIncreaseModal({
   )
 
   const coreDebtInfo = useTokenInfo(coreDebtTokenName)
-  const extraDebtInfo = useTokenInfo(extraDebtTokenName as SupportedToken)
+  const extraDebtInfo = useTokenInfo(extraDebtTokenName as SupportedTokenName)
 
   const { availableToBorrow } = useMarketDataForDisplay(tokenContracts[coreDebtTokenName])
 

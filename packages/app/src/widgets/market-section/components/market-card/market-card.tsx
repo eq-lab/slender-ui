@@ -1,4 +1,4 @@
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useTokenCache } from '@/entities/token/context/hooks'
 import Typography from '@marginly/ui/components/typography'
@@ -13,7 +13,7 @@ import { useActionModal } from '../../hooks/use-action-modal'
 import { Tooltip } from './tooltip'
 import * as S from './styled'
 
-export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
+export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
   const token = tokenContracts[tokenName]
 
   const {
@@ -62,7 +62,7 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
       <S.MarketCardUpperContainer $backgroundColor={tokenBackgroundColor}>
         <S.MarketCardHeadingContainer>
           <Typography headerS className="token-name">
-            {tokenCache?.name}
+            {tokenCache?.title}
           </Typography>
           <Typography className="token-symbol">{tokenCache?.symbol}</Typography>
           <div className="token-icon">

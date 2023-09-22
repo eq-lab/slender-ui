@@ -12,7 +12,7 @@ import {
 
 export const SUPPORTED_TOKENS = ['usdc', 'xlm', 'xrp'] as const
 
-export type SupportedToken = (typeof SUPPORTED_TOKENS)[number]
+export type SupportedTokenName = (typeof SUPPORTED_TOKENS)[number]
 
 export const underlying = {
   xlm: SLENDER_TOKEN_XLM,
@@ -52,5 +52,5 @@ export const tokenContracts = SUPPORTED_TOKENS.reduce(
     }
     return acc
   },
-  {} as Record<SupportedToken, TokenContracts>,
+  {} as Record<SupportedTokenName, TokenContracts>,
 )
