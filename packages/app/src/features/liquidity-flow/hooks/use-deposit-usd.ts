@@ -1,7 +1,7 @@
 import { Position as PositionType } from '@/entities/position/types'
 import { tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketData } from '@/entities/token/context/hooks'
-import { getDecimalDiscount } from '../utils/get-decimal-discount'
+import { getDecimalDiscount } from '../../../shared/utils/get-decimal-discount'
 
 export const useDepositUsd = (collaterals?: PositionType['deposits']): number => {
   const tokensCache = useMarketData()

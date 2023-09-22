@@ -12,19 +12,21 @@ import { useTokenCache } from '@/entities/token/context/hooks'
 import * as S from './position-cell.styled'
 
 export function PositionCell({
+  valueInUsd,
   position,
   percentage,
   openDecreaseModal,
   openIncreaseModal,
   isLendPosition,
 }: {
+  valueInUsd: number
   position: PositionCellType
   percentage?: number
   openDecreaseModal: () => void
   openIncreaseModal: () => void
   isLendPosition?: boolean
 }) {
-  const { tokenName, value, valueInUsd } = position
+  const { tokenName, value } = position
   const Icon = getIconByTokenName(tokenName)
 
   const tokenColor = colorByToken[tokenName]
