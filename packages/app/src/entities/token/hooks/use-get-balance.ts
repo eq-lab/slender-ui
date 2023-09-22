@@ -8,12 +8,12 @@ import { useTokenCache } from '../context/hooks'
 
 export interface SorobanTokenRecord {
   balance?: string
-  name: string
+  title: string
   symbol: string
   decimals: number
 }
 
-const defaultTokenRecord = { name: '', symbol: '', decimals: 0 }
+const defaultTokenRecord = { title: '', symbol: '', decimals: 0 }
 
 const isArraysEqual = <T>(a?: T[], b?: T[]) =>
   a?.length === b?.length && a?.every((value, index) => value === b?.[index])

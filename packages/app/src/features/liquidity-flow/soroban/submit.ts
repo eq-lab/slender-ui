@@ -1,5 +1,5 @@
 import { networks, MintBurn } from '@bindings/pool'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { logInfo } from '@/shared/logger'
 import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders'
 import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke'
@@ -35,7 +35,7 @@ export const useSubmit = (methodName: PoolMethodName) => {
   return async (address: string, sendValue: PositionUpdate): Promise<'fulfilled' | never> => {
     // we have to sign and send transactions one by one
     // eslint-disable-next-line no-restricted-syntax
-    for (const [tokenName, value] of Object.entries(sendValue) as [SupportedToken, bigint][]) {
+    for (const [tokenName, value] of Object.entries(sendValue) as [SupportedTokenName, bigint][]) {
       try {
         // that's exactly what we want
         // eslint-disable-next-line no-await-in-loop

@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { LendFirstPositionModal } from '../components/lend-first-position-modal'
 import { useLiquidity } from './use-liquidity'
 
 export const useLendFirstPosition = (
-  tokenName: SupportedToken,
+  tokenName: SupportedTokenName,
 ): {
   modal: JSX.Element | null
   open: () => void

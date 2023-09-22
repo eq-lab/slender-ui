@@ -1,16 +1,16 @@
 import { PositionContext } from '@/entities/position/context/context'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { useContextSelector } from 'use-context-selector'
 
 interface Props {
-  tokenName: SupportedToken
-  useFirstPosition: (token: SupportedToken) => {
+  tokenName: SupportedTokenName
+  useFirstPosition: (token: SupportedTokenName) => {
     modal: JSX.Element | null
     open: () => void
   }
   useIncrease: () => {
     modal: JSX.Element | null
-    open: (token: SupportedToken) => void
+    open: (token: SupportedTokenName) => void
   }
   type: 'borrow' | 'lend'
 }

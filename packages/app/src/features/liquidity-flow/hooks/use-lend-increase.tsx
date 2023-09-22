@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { useLiquidity } from './use-liquidity'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
 import { useDepositUsd } from './use-deposit-usd'
@@ -13,14 +13,14 @@ import { getCellByPositionUpdate } from '../soroban/get-cell-by-position-update'
 
 export const useLendIncrease = (): {
   modal: JSX.Element | null
-  open: (value?: SupportedToken) => void
+  open: (value?: SupportedTokenName) => void
 } => {
   const position = useContextSelector(PositionContext, (state) => state.position)
-  const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
+  const [modalToken, setModalToken] = useState<SupportedTokenName | null>(null)
 
   const debtsTokens = position?.debts.map((debt) => debt.tokenName) || []
 
-  const open = (value?: SupportedToken) => {
+  const open = (value?: SupportedTokenName) => {
     if (value) {
       setModalToken(value)
       return

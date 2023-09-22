@@ -7,7 +7,7 @@ import { useLendDecrease } from '@/features/liquidity-flow/hooks/use-lend-decrea
 import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
 import { HealthMeter } from '@/shared/components/health-meter'
 import { formatPercent, formatUsd } from '@/shared/formatters'
-import { SUPPORTED_TOKENS, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SUPPORTED_TOKEN_NAMES, tokenContracts } from '@/shared/stellar/constants/tokens'
 import Label from '@marginly/ui/components/label'
 import Typography from '@marginly/ui/components/typography'
 import { useMarketData } from '@/entities/token/context/hooks'
@@ -23,8 +23,8 @@ export function PositionSection() {
   const marketData = useMarketData()
 
   const isFullPosition =
-    (position.debts.length || 0) + (position.deposits.length || 0) === SUPPORTED_TOKENS.length
-  const isFullDeposits = position.deposits.length === SUPPORTED_TOKENS.length
+    (position.debts.length || 0) + (position.deposits.length || 0) === SUPPORTED_TOKEN_NAMES.length
+  const isFullDeposits = position.deposits.length === SUPPORTED_TOKEN_NAMES.length
 
   const depositsSumUsd =
     position.deposits.reduce((sum, currentCell) => {
