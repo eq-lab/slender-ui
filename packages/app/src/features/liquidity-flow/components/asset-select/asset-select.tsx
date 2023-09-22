@@ -7,11 +7,12 @@ import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import * as S from './styled'
+import { AddAssetButton } from '../add-asset-button'
 
 interface Props {
   tokenNames: SupportedToken[]
   onChange: (value: SupportedToken) => void
-  value: SupportedToken
+  value?: SupportedToken
 }
 
 export function AssetSelect({ tokenNames, onChange, value }: Props) {
@@ -32,12 +33,21 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
     close()
   }
 
-  const ButtonIcon = getIconByTokenName(value)
-  return (
-    <div>
+  const renderButton = () => {
+    if (!value) {
+      return <AddAssetButton onClick={handleClick} />
+    }
+    const ButtonIcon = getIconByTokenName(value)
+    return (
       <S.ThumbnailWrapper md rectangle onClick={handleClick}>
         <ButtonIcon />
       </S.ThumbnailWrapper>
+    )
+  }
+
+  return (
+    <div>
+      {renderButton()}
       <Menu anchorEl={anchorEl} open={open} onClose={close}>
         {tokenNames.map((tokenName, index) => {
           const token = getTokenByTokenName(tokenName)
