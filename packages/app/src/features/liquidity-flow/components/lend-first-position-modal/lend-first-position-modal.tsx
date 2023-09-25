@@ -8,15 +8,17 @@ import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { formatUsd } from '@/shared/formatters'
+import { PositionCell } from '@/entities/position/types'
 import { ModalLayout } from '../modal-layout'
 import { FormLayout } from '../form-layout'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { getDepositUsd } from '../../utils/get-deposit-usd'
 import { getRequiredError } from '../../utils/get-required-error'
+import { makePosition } from '../../utils/make-position'
 
 interface Props {
   onClose: () => void
-  onSend: (value: string) => void
+  onSend: (value: PositionCell) => void
   depositTokenName: SupportedTokenName
 }
 
@@ -36,6 +38,11 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   const token = getTokenByTokenName(depositTokenName)
   const tokenSymbol = token?.symbol
   const Icon = getIconByTokenName(depositTokenName)
+
+  const handleClick = () => {
+    const depositValue = makePosition(depositTokenName, value, token?.decimals)
+    onSend(depositValue)
+  }
 
   const infoSlot = (
     <InfoLayout title={token?.title} mediaSection={<Icon width={48} />}>
@@ -64,7 +71,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
         title="How much to lend"
         buttonProps={{
           label: `Lend ${value} ${tokenSymbol}`,
-          onClick: () => onSend(value),
+          onClick: handleClick,
           disabled: formError,
         }}
       >

@@ -18,6 +18,7 @@ import { InputLayout } from '../../styled'
 import { getMaxDebt } from '../../utils/get-max-debt'
 import { getExtraTokenName } from '../../utils/get-extra-token-name'
 import { getRequiredError } from '../../utils/get-required-error'
+import { makePosition } from '../../utils/make-position'
 
 interface Props {
   debtSumUsd: number
@@ -100,22 +101,27 @@ export function BorrowIncreaseModal({
     extraInputError ||
     getRequiredError(value, extraValue, showExtraInput)
 
+  const getTokenByTokenName = useGetTokenByTokenName()
+  const coreToken = getTokenByTokenName(coreDebtTokenName)
+  const coreTokenSymbol = coreToken?.symbol
+  const extraToken = getTokenByTokenName(extraDebtTokenName)
+  const extraTokenSymbol = extraToken?.symbol
+
   const getSaveData = (): PositionUpdate => {
-    const core = { [coreDebtTokenName]: BigInt(value) }
+    const core = {
+      [coreDebtTokenName]: makePosition(coreDebtTokenName, value, coreToken?.decimals),
+    }
 
     if (showExtraInput && extraDebtTokenName) {
+      const extraDebt = makePosition(extraDebtTokenName, extraValue, extraToken?.decimals)
       return {
         ...core,
-        [extraDebtTokenName]: BigInt(extraValue),
+        [extraDebtTokenName]: extraDebt,
       }
     }
 
     return core
   }
-
-  const getTokenByTokenName = useGetTokenByTokenName()
-  const extraTokenSymbol = getTokenByTokenName(extraDebtTokenName)?.symbol
-  const coreTokenSymbol = getTokenByTokenName(coreDebtTokenName)?.symbol
 
   return (
     <ModalLayout
