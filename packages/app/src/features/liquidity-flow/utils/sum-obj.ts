@@ -5,7 +5,9 @@ export const sumObj = <T extends string>(
   obj2: {
     [K in T]?: bigint
   },
-) => {
+): {
+  [K in T]?: bigint
+} => {
   const result = {} as {
     [K in T]?: bigint
   }
