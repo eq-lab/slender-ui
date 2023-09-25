@@ -18,6 +18,7 @@ import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { FormLayout } from '../../form-layout'
 import { AddAssetButton } from '../../add-asset-button'
 import { AssetSelect } from '../../asset-select'
+import { makePosition } from '../../../utils/make-position'
 
 interface Props {
   onClose: () => void
@@ -96,8 +97,6 @@ export function LendStepModal({
     borrowCapacityError || firstInputError || secondInputError || requiredError || lowHealthError
 
   const getTokenByTokenName = useGetTokenByTokenName()
-  const extraTokenSymbol = getTokenByTokenName(extraDepositTokenName)?.symbol
-  const coreTokenSymbol = getTokenByTokenName(coreDepositTokenName)?.symbol
 
   const renderDescription = () => {
     if (requiredError) return 'Enter collateral amount first'
@@ -105,6 +104,17 @@ export function LendStepModal({
     if (firstInputError || secondInputError) return 'You don’t have enough funds'
     return `With APR ${borrowInterestRate}`
   }
+
+  const debtToken = getTokenByTokenName(debtTokenName)
+  const debt = makePosition(debtTokenName, debtValue, debtToken?.decimals)
+
+  const coreToken = getTokenByTokenName(coreDepositTokenName)
+  const coreTokenSymbol = coreToken?.symbol
+  const coreDeposit = makePosition(coreDepositTokenName, coreValue, coreToken?.decimals)
+
+  const extraToken = getTokenByTokenName(extraDepositTokenName)
+  const extraTokenSymbol = extraToken?.symbol
+  const extraDeposit = makePosition(extraDepositTokenName, extraValue, extraToken?.decimals)
 
   return (
     <ModalLayout
@@ -126,13 +136,8 @@ export function LendStepModal({
           label: `Borrow ${debtValue} ${getTokenByTokenName(debtTokenName)?.symbol}`,
           onClick: () =>
             onSend({
-              debts: [{ tokenName: debtTokenName, value: BigInt(debtValue) }],
-              deposits: [
-                { tokenName: coreDepositTokenName, value: BigInt(coreValue) },
-                ...(showExtraInput
-                  ? [{ tokenName: extraDepositTokenName, value: BigInt(extraValue) }]
-                  : []),
-              ],
+              debts: [debt],
+              deposits: [coreDeposit, extraDeposit],
             }),
           disabled: formError,
         }}

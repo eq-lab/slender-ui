@@ -10,6 +10,7 @@ import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { getRequiredError } from '../../utils/get-required-error'
+import { makePosition } from '../../utils/make-position'
 
 interface Props {
   debt: bigint
@@ -47,7 +48,10 @@ export function BorrowDecreaseModal({
   const formError = debtError || getRequiredError(value)
 
   const getTokenByTokenName = useGetTokenByTokenName()
-  const tokenSymbol = getTokenByTokenName(tokenName)?.symbol
+  const token = getTokenByTokenName(tokenName)
+  const sendValue = makePosition(tokenName, value, token?.decimals)
+  const tokenSymbol = token?.symbol
+
   return (
     <ModalLayout
       infoSlot={
@@ -68,7 +72,7 @@ export function BorrowDecreaseModal({
         title="How much to pay off"
         buttonProps={{
           label: `Pay off ${value} ${tokenSymbol}`,
-          onClick: () => onSend({ value: BigInt(value), tokenName }),
+          onClick: () => onSend(sendValue),
           disabled: formError,
         }}
       >
