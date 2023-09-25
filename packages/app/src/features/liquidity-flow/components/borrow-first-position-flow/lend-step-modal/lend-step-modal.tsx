@@ -56,7 +56,7 @@ export function LendStepModal({
 
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 
-  const debtUsd = Number(debtValue) * debtCoinInfo.priceInUsd
+  const debtUsd = Number(debtValue) / debtCoinInfo.priceInUsd
 
   const coreInputMax = coreDepositInfo.userBalance
   const extraInputMax = extraDepositInfo.userBalance
@@ -64,7 +64,7 @@ export function LendStepModal({
   useEffect(() => {
     const inputValue = (
       debtUsd /
-      (coreDepositInfo.discount * coreDepositInfo.priceInUsd * DEFAULT_HEALTH_VALUE)
+      ((coreDepositInfo.discount / coreDepositInfo.priceInUsd) * DEFAULT_HEALTH_VALUE)
     ).toLocaleString('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,

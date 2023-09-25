@@ -31,7 +31,7 @@ export function BorrowDecreaseModal({
   const [value, setValue] = useState('')
 
   const tokenInfo = useTokenInfo(tokenName)
-  const inputDebtUsd = Number(value) * tokenInfo.priceInUsd
+  const inputDebtUsd = Number(value) / tokenInfo.priceInUsd
   const actualDebtUsd = Math.max(debtSumUsd - inputDebtUsd, 0)
 
   const { health, healthDelta, borrowCapacityInterface, borrowCapacityDelta } = getPositionInfo({

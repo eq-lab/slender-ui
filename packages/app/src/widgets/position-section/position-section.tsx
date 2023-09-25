@@ -12,7 +12,6 @@ import Label from '@marginly/ui/components/label'
 import Typography from '@marginly/ui/components/typography'
 import { useMarketData } from '@/entities/token/context/hooks'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
-import { getDecimalDiscount } from '@/shared/utils/get-decimal-discount'
 import { PositionCell } from './components/position-cell'
 import { MoreButton } from './components/more-button'
 import * as S from './position-section.styled'
@@ -27,13 +26,7 @@ export function PositionSection() {
   const isFullDeposits = position.deposits.length === SUPPORTED_TOKEN_NAMES.length
 
   const depositsSumUsd =
-    position.deposits.reduce((sum, currentCell) => {
-      const { tokenName, valueInUsd = 0 } = currentCell
-      const { address } = tokenContracts[tokenName]
-      const { discount } = marketData?.[address] || {}
-      const discountInDecimal = discount ? getDecimalDiscount(discount) : 1
-      return sum + valueInUsd * discountInDecimal
-    }, 0) || 0
+    position.deposits.reduce((sum, { valueInUsd }) => sum + (valueInUsd || 0), 0) || 0
 
   const debtsSumUsd =
     position.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
@@ -77,27 +70,26 @@ export function PositionSection() {
         <S.PositionSideContainer>
           <S.PositionHeadingContainer>
             <S.PositionSumWrapper>
-              {depositsSumUsd && <Typography headerL>{formatUsd(depositsSumUsd)}</Typography>}
+              <S.PositionSumContainer>
+                {depositsSumUsd && <Typography headerL>{formatUsd(depositsSumUsd)}</Typography>}
+                <Label positive lg>
+                  +{formatPercent(depositSumInterestRate)} APR
+                </Label>
+              </S.PositionSumContainer>
               <Typography secondary>Lent</Typography>
             </S.PositionSumWrapper>
-            <Label positive lg>
-              +{formatPercent(depositSumInterestRate)} APR
-            </Label>
           </S.PositionHeadingContainer>
           <S.PositionCellContainer>
             {position.deposits.map((deposit) => {
               const { tokenName, valueInUsd = 0 } = deposit
-              const { address } = tokenContracts[tokenName]
-              const { discount = 1 } = marketData?.[address] || {}
-              const valueInUsdWithDiscount = valueInUsd * getDecimalDiscount(discount)
               const depositPercentage =
-                !!valueInUsdWithDiscount && !!depositsSumUsd
-                  ? +Number((valueInUsdWithDiscount / depositsSumUsd) * 100).toFixed(1)
+                !!valueInUsd && !!depositsSumUsd
+                  ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
                   : undefined
               return (
                 <PositionCell
                   key={tokenName}
-                  valueInUsd={valueInUsdWithDiscount}
+                  valueInUsd={valueInUsd}
                   position={deposit}
                   percentage={depositPercentage}
                   openDecreaseModal={() => openLendDecreaseModal(tokenName)}
@@ -125,21 +117,21 @@ export function PositionSection() {
                 </Typography>
               </S.PositionSumWrapper>
             ) : (
-              <>
-                <S.PositionSumWrapper>
+              <S.PositionSumWrapper>
+                <S.PositionSumContainer>
                   <Typography headerL>
                     {debtsSumUsd ? formatUsd(debtsSumUsd) : 'No debt'}
                   </Typography>
-                  <Typography secondary>
-                    {debtsSumUsd ? 'Borrowed' : 'You earn on deposit'}
-                  </Typography>
-                </S.PositionSumWrapper>
-                {debtsSumUsd && (
                   <Label negative lg>
                     &minus;{formatPercent(debtSumInterestRate)} APR
                   </Label>
+                </S.PositionSumContainer>
+                {debtsSumUsd && (
+                  <Typography secondary>
+                    {debtsSumUsd ? 'Borrowed' : 'You earn on deposit'}
+                  </Typography>
                 )}
-              </>
+              </S.PositionSumWrapper>
             )}
           </S.PositionHeadingContainer>
           <S.PositionCellContainer>
