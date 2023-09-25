@@ -1,4 +1,5 @@
 import React from 'react'
+import { HealthMeter } from '@/shared/components/health-meter'
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { formatUsd } from '@/shared/formatters'
@@ -39,11 +40,7 @@ export function PositionSummary({
   return (
     <InfoLayout
       title="Position summary"
-      mediaSection={
-        <div>
-          {health}% {healthDelta ? `(${healthDelta}%)` : ''}
-        </div>
-      }
+      mediaSection={<HealthMeter healthPercent={healthDelta || health} />}
     >
       <InfoRow
         label="Debt"
