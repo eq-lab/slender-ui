@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import Button from '@marginly/ui/components/button'
 
 export const PositionCellWrapper = styled.div<{ $backgroundColor: string }>`
   display: flex;
@@ -38,4 +39,16 @@ export const PositionCellTokenAmount = styled.div`
 export const PositionCellButtons = styled.div`
   display: flex;
   gap: 8px;
+`
+
+export const CellButton = styled(Button)`
+  &&& {
+    width: 48px;
+    padding: 0;
+
+    svg {
+      width: 24px;
+      margin: 0;
+    }
+  }
 `
