@@ -1,25 +1,20 @@
 import styled from 'styled-components'
 
+export const HealthMeterWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 96px;
+  height: 96px;
+`
+
 export const HealthMeterContainer = styled.div`
   position: relative;
   width: 76px;
   height: 56px;
 `
 
-export const HealthTooltipContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  position: absolute;
-  bottom: -15px;
-  left: 14px;
-
-  .health-text {
-    color: var(--text-tertiary);
-  }
-`
-
-export const HealthMeterWrapper = styled.div`
+export const MeterContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,7 +25,25 @@ export const HealthMeterWrapper = styled.div`
   height: 100%;
 `
 
-export const MeterDash = styled.i<{ index: number; shaded?: boolean }>`
+export const HealthTooltipContainer = styled.div<{ $isRed: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 2px;
+  position: absolute;
+  bottom: -15px;
+
+  .health-text {
+    color: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-tertiary')});
+  }
+
+  svg {
+    fill: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-tertiary')});
+  }
+`
+
+export const MeterDash = styled.i<{ index: number; $shaded: boolean; $isRed: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -46,15 +59,21 @@ export const MeterDash = styled.i<{ index: number; shaded?: boolean }>`
     height: 8px;
     transform: rotate(309deg);
     transform-origin: top;
-    background: ${({ shaded }) =>
-      shaded ? 'var(--icon-primary)' : 'var(--color-transparent-gray4)'};
+    background: ${({ $shaded, $isRed }) => {
+      if (!$shaded) return 'var(--color-transparent-gray4)'
+      return $isRed ? 'var(--icon-negative)' : 'var(--icon-primary)'
+    }};
   }
 `
 
-export const HealthPercentCountContainer = styled.div`
+export const HealthPercentCountContainer = styled.div<{ $isRed: boolean }>`
   top: 14px;
   left: 3px;
   position: absolute;
   width: 100%;
   text-align: center;
+
+  .heath-count-text {
+    color: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-primary')});
+  }
 `
