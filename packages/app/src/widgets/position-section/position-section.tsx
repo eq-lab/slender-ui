@@ -63,7 +63,7 @@ export function PositionSection() {
   return (
     <S.PositionWrapper>
       <S.PositionHeaderWrapper>
-        <Typography title>Position</Typography>
+        <S.Typography title>Position</S.Typography>
         <HealthMeter healthPercent={positionHealth} />
       </S.PositionHeaderWrapper>
       <S.PositionContainer>
@@ -71,7 +71,9 @@ export function PositionSection() {
           <S.PositionHeadingContainer>
             <S.PositionSumWrapper>
               <S.PositionSumContainer>
-                {depositsSumUsd && <Typography headerL>{formatUsd(depositsSumUsd)}</Typography>}
+                {depositsSumUsd && (
+                  <S.TitleHeader headerL>{formatUsd(depositsSumUsd)}</S.TitleHeader>
+                )}
                 <Label positive lg>
                   +{formatPercent(depositSumInterestRate)} APR
                 </Label>
@@ -111,7 +113,7 @@ export function PositionSection() {
           <S.PositionHeadingContainer>
             {isFullDeposits ? (
               <S.PositionSumWrapper>
-                <Typography headerL>You can’t borrow</Typography>
+                <S.TitleHeader headerL>You can’t borrow</S.TitleHeader>
                 <Typography secondary>
                   Withdraw any collateral asset to be able to borrow
                 </Typography>
@@ -119,9 +121,7 @@ export function PositionSection() {
             ) : (
               <S.PositionSumWrapper>
                 <S.PositionSumContainer>
-                  <Typography headerL>
-                    {debtsSumUsd ? formatUsd(debtsSumUsd) : 'No debt'}
-                  </Typography>
+                  <S.TitleHeader>{debtsSumUsd ? formatUsd(debtsSumUsd) : 'No debt'}</S.TitleHeader>
                   <Label negative lg>
                     &minus;{formatPercent(debtSumInterestRate)} APR
                   </Label>

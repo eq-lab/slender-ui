@@ -1,17 +1,27 @@
 import styled from 'styled-components'
+import TypographyUi from '@marginly/ui/components/typography'
 
 export const Wrapper = styled.div`
   width: 352px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
   height: 100%;
+`
+
+export const Typography = styled(TypographyUi)`
+  &&& {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: 0em;
+    margin-bottom: 24px;
+  }
 `
 
 export const Inner = styled.div`
   display: grid;
   grid-template-columns: 100%;
   gap: 32px;
+  margin-bottom: 64px;
 `
 
 export const Button = styled.button`
@@ -33,8 +43,8 @@ export const Button = styled.button`
 `
 
 export const BottomSection = styled.div`
+  margin-top: auto;
   display: grid;
   gap: 16px;
-  margin-top: auto;
   justify-items: center;
 `

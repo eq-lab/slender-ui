@@ -11,6 +11,7 @@ import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { getDepositUsd } from '../../utils/get-deposit-usd'
 import { getRequiredError } from '../../utils/get-required-error'
+import { makePosition } from '../../utils/make-position'
 
 interface Props {
   deposit: bigint
@@ -66,7 +67,10 @@ export function LendDecreaseModal({
   )
 
   const getTokenByTokenName = useGetTokenByTokenName()
-  const tokenSymbol = getTokenByTokenName(tokenName)?.symbol
+  const token = getTokenByTokenName(tokenName)
+  const tokenSymbol = token?.symbol
+
+  const positionUpdate = makePosition(tokenName, value, token?.decimals)
 
   return (
     <ModalLayout
@@ -91,7 +95,7 @@ export function LendDecreaseModal({
         }
         buttonProps={{
           label: `Withdraw ${value} ${tokenSymbol}`,
-          onClick: () => onSend({ value: BigInt(value), tokenName }),
+          onClick: () => onSend(positionUpdate),
           disabled: formError,
         }}
       >
