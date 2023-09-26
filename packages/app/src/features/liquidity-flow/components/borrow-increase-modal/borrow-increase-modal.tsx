@@ -109,11 +109,11 @@ export function BorrowIncreaseModal({
 
   const getSaveData = (): PositionUpdate => {
     const core = {
-      [coreDebtTokenName]: makePosition(coreDebtTokenName, value, coreToken?.decimals),
+      [coreDebtTokenName]: makePosition(coreDebtTokenName, value, coreToken?.decimals).value,
     }
 
     if (showExtraInput && extraDebtTokenName) {
-      const extraDebt = makePosition(extraDebtTokenName, extraValue, extraToken?.decimals)
+      const extraDebt = makePosition(extraDebtTokenName, extraValue, extraToken?.decimals).value
       return {
         ...core,
         [extraDebtTokenName]: extraDebt,

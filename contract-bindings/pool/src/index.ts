@@ -92,11 +92,11 @@ function parseError(message: string): Err | undefined {
 export const networks = {
     futurenet: {
         networkPassphrase: "Test SDF Future Network ; October 2022",
-        contractId: "CD5LKMORORWZGXOSN4QNBE2BE6TXS3UZV5FTRXB34BYVBWV6VLAVHC6X",
+        contractId: "CDPKVRYEIV6SQCJR3ARFS5U2TYE6UHBZZWGK5QJ4CSLXADAQZ45UZ5K4",
     }
 } as const
 
-export type DataKey = {tag: "Admin", values: void} | {tag: "ReserveAssetKey", values: readonly [Address]} | {tag: "Reserves", values: void} | {tag: "Treasury", values: void} | {tag: "IRParams", values: void} | {tag: "UserConfig", values: readonly [Address]} | {tag: "PriceFeed", values: readonly [Address]} | {tag: "Pause", values: void} | {tag: "FlashLoanFee", values: void} | {tag: "STokenUnderlyingBalance", values: readonly [Address]} | {tag: "TokenSupply", values: readonly [Address]} | {tag: "TokenBalance", values: readonly [Address, Address]} | {tag: "Price", values: readonly [Address]};
+export type DataKey = {tag: "Admin", values: void} | {tag: "Reserves", values: void} | {tag: "ReserveAssetKey", values: readonly [Address]} | {tag: "ReserveTimestampWindow", values: void} | {tag: "Treasury", values: void} | {tag: "IRParams", values: void} | {tag: "UserConfig", values: readonly [Address]} | {tag: "PriceFeed", values: readonly [Address]} | {tag: "Pause", values: void} | {tag: "FlashLoanFee", values: void} | {tag: "STokenUnderlyingBalance", values: readonly [Address]} | {tag: "TokenSupply", values: readonly [Address]} | {tag: "TokenBalance", values: readonly [Address, Address]};
 
 export interface LiquidationCollateral {
   asset: Address;
@@ -204,12 +204,6 @@ export interface IRParams {
   scaling_coeff: u32;
 }
 
-export interface MintBurn {
-  asset_balance: AssetBalance;
-  mint: boolean;
-  who: Address;
-}
-
 export interface ReserveConfiguration {
   borrowing_enabled: boolean;
   decimals: u32;
@@ -258,18 +252,20 @@ export class Contract {
             spec: ContractSpec;
     constructor(public readonly options: ClassOptions) {
         this.spec = new ContractSpec([
-            "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAADQAAAAAAAAAAAAAABUFkbWluAAAAAAAAAQAAAAAAAAAPUmVzZXJ2ZUFzc2V0S2V5AAAAAAEAAAATAAAAAAAAAAAAAAAIUmVzZXJ2ZXMAAAAAAAAAAAAAAAhUcmVhc3VyeQAAAAAAAAAAAAAACElSUGFyYW1zAAAAAQAAAAAAAAAKVXNlckNvbmZpZwAAAAAAAQAAABMAAAABAAAAAAAAAAlQcmljZUZlZWQAAAAAAAABAAAAEwAAAAAAAAAAAAAABVBhdXNlAAAAAAAAAAAAAAAAAAAMRmxhc2hMb2FuRmVlAAAAAQAAAAAAAAAXU1Rva2VuVW5kZXJseWluZ0JhbGFuY2UAAAAAAQAAABMAAAABAAAAAAAAAAtUb2tlblN1cHBseQAAAAABAAAAEwAAAAEAAAAAAAAADFRva2VuQmFsYW5jZQAAAAIAAAATAAAAEwAAAAEAAAAAAAAABVByaWNlAAAAAAAAAQAAABM=",
+            "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAADQAAAAAAAAAAAAAABUFkbWluAAAAAAAAAAAAAAAAAAAIUmVzZXJ2ZXMAAAABAAAAAAAAAA9SZXNlcnZlQXNzZXRLZXkAAAAAAQAAABMAAAAAAAAAAAAAABZSZXNlcnZlVGltZXN0YW1wV2luZG93AAAAAAAAAAAAAAAAAAhUcmVhc3VyeQAAAAAAAAAAAAAACElSUGFyYW1zAAAAAQAAAAAAAAAKVXNlckNvbmZpZwAAAAAAAQAAABMAAAABAAAAAAAAAAlQcmljZUZlZWQAAAAAAAABAAAAEwAAAAAAAAAAAAAABVBhdXNlAAAAAAAAAAAAAAAAAAAMRmxhc2hMb2FuRmVlAAAAAQAAAAAAAAAXU1Rva2VuVW5kZXJseWluZ0JhbGFuY2UAAAAAAQAAABMAAAABAAAAAAAAAAtUb2tlblN1cHBseQAAAAABAAAAEwAAAAEAAAAAAAAADFRva2VuQmFsYW5jZQAAAAIAAAATAAAAEw==",
         "AAAAAQAAAAAAAAAAAAAAFUxpcXVpZGF0aW9uQ29sbGF0ZXJhbAAAAAAAAAUAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAALYXNzZXRfcHJpY2UAAAAACwAAAAAAAAAMY29sbGF0X2NvZWZmAAAACwAAAAAAAAAMcmVzZXJ2ZV9kYXRhAAAH0AAAAAtSZXNlcnZlRGF0YQAAAAAAAAAAD3NfdG9rZW5fYmFsYW5jZQAAAAAL",
         "AAAAAAAAAAAAAAAKaW5pdGlhbGl6ZQAAAAAABAAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAh0cmVhc3VyeQAAABMAAAAAAAAADmZsYXNoX2xvYW5fZmVlAAAAAAAEAAAAAAAAAAlpcl9wYXJhbXMAAAAAAAfQAAAACElSUGFyYW1zAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAAAAAAAAHdXBncmFkZQAAAAABAAAAAAAAAA1uZXdfd2FzbV9oYXNoAAAAAAAD7gAAACAAAAABAAAD6QAAA+0AAAAAAAAAAw==",
         "AAAAAAAAAAAAAAAPdXBncmFkZV9zX3Rva2VuAAAAAAIAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAANbmV3X3dhc21faGFzaAAAAAAAA+4AAAAgAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAAAAAAAASdXBncmFkZV9kZWJ0X3Rva2VuAAAAAAACAAAAAAAAAAVhc3NldAAAAAAAABMAAAAAAAAADW5ld193YXNtX2hhc2gAAAAAAAPuAAAAIAAAAAEAAAPpAAAD7QAAAAAAAAAD",
-        "AAAAAAAAACxSZXR1cm5zIHRoZSBjdXJyZW50IHZlcnNpb24gb2YgdGhlIGNvbnRyYWN0LgAAAAd2ZXJzaW9uAAAAAAAAAAABAAAABA==",
+        "AAAAAAAAAAAAAAAHdmVyc2lvbgAAAAAAAAAAAQAAAAQ=",
         "AAAAAAAAAAAAAAAMaW5pdF9yZXNlcnZlAAAAAgAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAVpbnB1dAAAAAAAB9AAAAAQSW5pdFJlc2VydmVJbnB1dAAAAAEAAAPpAAAD7QAAAAAAAAAD",
         "AAAAAAAAAAAAAAAMc2V0X2RlY2ltYWxzAAAAAgAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAhkZWNpbWFscwAAAAQAAAABAAAD6QAAA+0AAAAAAAAAAw==",
         "AAAAAAAAAAAAAAAOc2V0X2Jhc2VfYXNzZXQAAAAAAAIAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAHaXNfYmFzZQAAAAABAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAAAAAAAASc2V0X3Jlc2VydmVfc3RhdHVzAAAAAAACAAAAAAAAAAVhc3NldAAAAAAAABMAAAAAAAAACWlzX2FjdGl2ZQAAAAAAAAEAAAABAAAD6QAAA+0AAAAAAAAAAw==",
         "AAAAAAAAAAAAAAANc2V0X2lyX3BhcmFtcwAAAAAAAAEAAAAAAAAABWlucHV0AAAAAAAH0AAAAAhJUlBhcmFtcwAAAAEAAAPpAAAD7QAAAAAAAAAD",
+        "AAAAAAAAAAAAAAAYcmVzZXJ2ZV90aW1lc3RhbXBfd2luZG93AAAAAAAAAAEAAAAG",
+        "AAAAAAAAAAAAAAAcc2V0X3Jlc2VydmVfdGltZXN0YW1wX3dpbmRvdwAAAAEAAAAAAAAABndpbmRvdwAAAAAABgAAAAEAAAPpAAAD7QAAAAAAAAAD",
         "AAAAAAAAAAAAAAAJaXJfcGFyYW1zAAAAAAAAAAAAAAEAAAPoAAAH0AAAAAhJUlBhcmFtcw==",
         "AAAAAAAAAAAAAAAbZW5hYmxlX2JvcnJvd2luZ19vbl9yZXNlcnZlAAAAAAIAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAHZW5hYmxlZAAAAAABAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAAAAAAAAXY29uZmlndXJlX2FzX2NvbGxhdGVyYWwAAAAAAgAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZwYXJhbXMAAAAAB9AAAAAVQ29sbGF0ZXJhbFBhcmFtc0lucHV0AAAAAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
@@ -278,25 +274,24 @@ export class Contract {
         "AAAAAAAAAAAAAAAKZGVidF9jb2VmZgAAAAAAAQAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAQAAA+kAAAALAAAAAw==",
         "AAAAAAAAAAAAAAAOc2V0X3ByaWNlX2ZlZWQAAAAAAAIAAAAAAAAABGZlZWQAAAATAAAAAAAAAAZhc3NldHMAAAAAA+oAAAATAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAAAAAAAAKcHJpY2VfZmVlZAAAAAAAAQAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAQAAA+gAAAAT",
-        "AAAAAAAAAAAAAAAHZGVwb3NpdAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAA+oAAAfQAAAACE1pbnRCdXJuAAAAAw==",
-        "AAAAAAAAAAAAAAAFcmVwYXkAAAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAA+oAAAfQAAAACE1pbnRCdXJuAAAAAw==",
+        "AAAAAAAAAAAAAAAHZGVwb3NpdAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAA+0AAAAAAAAAAw==",
+        "AAAAAAAAAAAAAAAFcmVwYXkAAAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAA+0AAAAAAAAAAw==",
         "AAAAAAAAAAAAAAARZmluYWxpemVfdHJhbnNmZXIAAAAAAAAHAAAAAAAAAAVhc3NldAAAAAAAABMAAAAAAAAABGZyb20AAAATAAAAAAAAAAJ0bwAAAAAAEwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAAAAABNiYWxhbmNlX2Zyb21fYmVmb3JlAAAAAAsAAAAAAAAAEWJhbGFuY2VfdG9fYmVmb3JlAAAAAAAACwAAAAAAAAAOc190b2tlbl9zdXBwbHkAAAAAAAsAAAABAAAD6QAAA+0AAAAAAAAAAw==",
-        "AAAAAAAAAAAAAAAId2l0aGRyYXcAAAAEAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAAAnRvAAAAAAATAAAAAQAAA+kAAAPqAAAH0AAAAAhNaW50QnVybgAAAAM=",
-        "AAAAAAAAAAAAAAAGYm9ycm93AAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAA+oAAAfQAAAACE1pbnRCdXJuAAAAAw==",
+        "AAAAAAAAAAAAAAAId2l0aGRyYXcAAAAEAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAAAnRvAAAAAAATAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
+        "AAAAAAAAAAAAAAAGYm9ycm93AAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAA+0AAAAAAAAAAw==",
         "AAAAAAAAAAAAAAAJc2V0X3BhdXNlAAAAAAAAAQAAAAAAAAAFdmFsdWUAAAAAAAABAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAAAAAAAAGcGF1c2VkAAAAAAAAAAAAAQAAAAE=",
         "AAAAAAAAAAAAAAAIdHJlYXN1cnkAAAAAAAAAAQAAABM=",
         "AAAAAAAAAAAAAAAQYWNjb3VudF9wb3NpdGlvbgAAAAEAAAAAAAAAA3dobwAAAAATAAAAAQAAA+kAAAfQAAAAD0FjY291bnRQb3NpdGlvbgAAAAAD",
-        "AAAAAAAAAAAAAAAJbGlxdWlkYXRlAAAAAAAAAwAAAAAAAAAKbGlxdWlkYXRvcgAAAAAAEwAAAAAAAAADd2hvAAAAABMAAAAAAAAADnJlY2VpdmVfc3Rva2VuAAAAAAABAAAAAQAAA+kAAAPqAAAH0AAAAAhNaW50QnVybgAAAAM=",
+        "AAAAAAAAAAAAAAAJbGlxdWlkYXRlAAAAAAAAAwAAAAAAAAAKbGlxdWlkYXRvcgAAAAAAEwAAAAAAAAADd2hvAAAAABMAAAAAAAAADnJlY2VpdmVfc3Rva2VuAAAAAAABAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAAAAAAAAAAARc2V0X2FzX2NvbGxhdGVyYWwAAAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAABF1c2VfYXNfY29sbGF0ZXJhbAAAAAAAAAEAAAABAAAD6QAAA+0AAAAAAAAAAw==",
         "AAAAAAAAAAAAAAASdXNlcl9jb25maWd1cmF0aW9uAAAAAAABAAAAAAAAAAN3aG8AAAAAEwAAAAEAAAPpAAAH0AAAABFVc2VyQ29uZmlndXJhdGlvbgAAAAAAAAM=",
         "AAAAAAAAAAAAAAAZc3Rva2VuX3VuZGVybHlpbmdfYmFsYW5jZQAAAAAAAAEAAAAAAAAADnN0b2tlbl9hZGRyZXNzAAAAAAATAAAAAQAAAAs=",
+        "AAAAAAAAAAAAAAANdG9rZW5fYmFsYW5jZQAAAAAAAAIAAAAAAAAABXRva2VuAAAAAAAAEwAAAAAAAAAHYWNjb3VudAAAAAATAAAAAQAAAAs=",
         "AAAAAAAAAAAAAAASdG9rZW5fdG90YWxfc3VwcGx5AAAAAAABAAAAAAAAAAV0b2tlbgAAAAAAABMAAAABAAAACw==",
-        "AAAAAAAAAAAAAAAJc2V0X3ByaWNlAAAAAAAAAgAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAVwcmljZQAAAAAAAAsAAAAA",
         "AAAAAAAAAAAAAAASc2V0X2ZsYXNoX2xvYW5fZmVlAAAAAAABAAAAAAAAAANmZWUAAAAABAAAAAEAAAPpAAAD7QAAAAAAAAAD",
         "AAAAAAAAAAAAAAAOZmxhc2hfbG9hbl9mZWUAAAAAAAAAAAABAAAABA==",
-        "AAAAAAAAAbtBbGxvd3MgdGhlIGVuZC11c2VycyB0byBib3Jyb3cgdGhlIGFzc2V0cyB3aXRoaW4gb25lIHRyYW5zYWN0aW9uCmVuc3VyaW5nIHRoZSB0aGUgYW1vdW50IHRha2VuICsgZmVlIGlzIHJldHVybmVkLgoKIyBBcmd1bWVudHMKLSByZWNlaXZlciAtIFRoZSBjb250cmFjdCBhZGRyZXNzIHRoYXQgaW1wbGVtZW50cyB0aGUgRmxhc2hMb2FuUmVjZWl2ZXJUcmFpdAphbmQgcmVjZWl2ZXMgdGhlIHJlcXVlc3RlZCBhc3NldHMuCi0gYXNzZXRzIC0gVGhlIGFzc2V0cyBiZWluZyBmbGFzaCBib3Jyb3dlZC4gSWYgdGhlIGBib3Jyb3dgIGZsYWcgaXMgc2V0IHRvIHRydWUsCm9wZW5zIGRlYnQgZm9yIHRoZSBmbGFzaC1ib3Jyb3dlZCBhbW91bnQgdG8gdGhlIGB3aG9gIGFkZHJlc3MuCi0gcGFyYW1zIC0gQW4gZXh0cmEgaW5mb3JtYXRpb24gZm9yIHRoZSByZWNlaXZlci4KCiMgUGFuaWNzCgAAAAAKZmxhc2hfbG9hbgAAAAAABAAAAAAAAAADd2hvAAAAABMAAAAAAAAACHJlY2VpdmVyAAAAEwAAAAAAAAALbG9hbl9hc3NldHMAAAAD6gAAB9AAAAAORmxhc2hMb2FuQXNzZXQAAAAAAAAAAAAGcGFyYW1zAAAAAAAOAAAAAQAAA+kAAAPqAAAH0AAAAAhNaW50QnVybgAAAAM=",
-        "AAAAAAAAAAAAAAAJZ2V0X3ByaWNlAAAAAAAAAQAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAQAAAAs=",
+        "AAAAAAAAAAAAAAAKZmxhc2hfbG9hbgAAAAAABAAAAAAAAAADd2hvAAAAABMAAAAAAAAACHJlY2VpdmVyAAAAEwAAAAAAAAALbG9hbl9hc3NldHMAAAAD6gAAB9AAAAAORmxhc2hMb2FuQXNzZXQAAAAAAAAAAAAGcGFyYW1zAAAAAAAOAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
         "AAAAAQAAAAAAAAAAAAAABUFzc2V0AAAAAAAAAwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAAAAAAVhc3NldAAAAAAAABMAAAAAAAAAB3ByZW1pdW0AAAAACw==",
         "AAAAAQAAAAAAAAAAAAAAD0FjY291bnRQb3NpdGlvbgAAAAADAAAAAAAAAARkZWJ0AAAACwAAAAAAAAAVZGlzY291bnRlZF9jb2xsYXRlcmFsAAAAAAAACwAAAAAAAAADbnB2AAAAAAs=",
         "AAAAAQAAAAAAAAAAAAAADEFzc2V0QmFsYW5jZQAAAAIAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAHYmFsYW5jZQAAAAAL",
@@ -305,7 +300,6 @@ export class Contract {
         "AAAAAQAAAAAAAAAAAAAADkZsYXNoTG9hbkFzc2V0AAAAAAADAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAGYm9ycm93AAAAAAAB",
         "AAAAAQAAAAAAAAAAAAAAEEluaXRSZXNlcnZlSW5wdXQAAAACAAAAAAAAABJkZWJ0X3Rva2VuX2FkZHJlc3MAAAAAABMAAAAAAAAAD3NfdG9rZW5fYWRkcmVzcwAAAAAT",
         "AAAAAQAAABhJbnRlcmVzdCByYXRlIHBhcmFtZXRlcnMAAAAAAAAACElSUGFyYW1zAAAABAAAAAAAAAAFYWxwaGEAAAAAAAAEAAAAAAAAAAxpbml0aWFsX3JhdGUAAAAEAAAAAAAAAAhtYXhfcmF0ZQAAAAQAAAAAAAAADXNjYWxpbmdfY29lZmYAAAAAAAAE",
-        "AAAAAQAAAAAAAAAAAAAACE1pbnRCdXJuAAAAAwAAAAAAAAANYXNzZXRfYmFsYW5jZQAAAAAAB9AAAAAMQXNzZXRCYWxhbmNlAAAAAAAAAARtaW50AAAAAQAAAAAAAAADd2hvAAAAABM=",
         "AAAAAQAAAAAAAAAAAAAAFFJlc2VydmVDb25maWd1cmF0aW9uAAAACAAAAAAAAAARYm9ycm93aW5nX2VuYWJsZWQAAAAAAAABAAAAAAAAAAhkZWNpbWFscwAAAAQAAABoU3BlY2lmaWVzIHdoYXQgZnJhY3Rpb24gb2YgdGhlIHVuZGVybHlpbmcgYXNzZXQgY291bnRzIHRvd2FyZAp0aGUgcG9ydGZvbGlvIGNvbGxhdGVyYWwgdmFsdWUgWzAlLCAxMDAlXS4AAAAIZGlzY291bnQAAAAEAAAAAAAAAAlpc19hY3RpdmUAAAAAAAABAAAAAAAAAA1pc19iYXNlX2Fzc2V0AAAAAAAAAQAAAAAAAAAJbGlxX2JvbnVzAAAAAAAABAAAAAAAAAAHbGlxX2NhcAAAAAALAAAAAAAAAAh1dGlsX2NhcAAAAAQ=",
         "AAAAAQAAAAAAAAAAAAAAC1Jlc2VydmVEYXRhAAAAAAkAAAAAAAAAC2JvcnJvd2VyX2FyAAAAAAsAAAAAAAAAC2JvcnJvd2VyX2lyAAAAAAsAAAAAAAAADWNvbmZpZ3VyYXRpb24AAAAAAAfQAAAAFFJlc2VydmVDb25maWd1cmF0aW9uAAAAAAAAABJkZWJ0X3Rva2VuX2FkZHJlc3MAAAAAABMAAABEVGhlIGlkIG9mIHRoZSByZXNlcnZlIChwb3NpdGlvbiBpbiB0aGUgbGlzdCBvZiB0aGUgYWN0aXZlIHJlc2VydmVzKS4AAAACaWQAAAAAA+4AAAABAAAAAAAAABVsYXN0X3VwZGF0ZV90aW1lc3RhbXAAAAAAAAAGAAAAAAAAAAlsZW5kZXJfYXIAAAAAAAALAAAAAAAAAAlsZW5kZXJfaXIAAAAAAAALAAAAAAAAAA9zX3Rva2VuX2FkZHJlc3MAAAAAEw==",
         "AAAAAQAAAH9JbXBsZW1lbnRzIHRoZSBiaXRtYXAgbG9naWMgdG8gaGFuZGxlIHRoZSB1c2VyIGNvbmZpZ3VyYXRpb24uCkV2ZW4gcG9zaXRpb25zIGlzIGNvbGxhdGVyYWwgZmxhZ3MgYW5kIHVuZXZlbiBpcyBib3Jyb3dpbmcgZmxhZ3MuAAAAAAAAAAARVXNlckNvbmZpZ3VyYXRpb24AAAAAAAABAAAAAAAAAAEwAAAAAAAACg==",
@@ -464,10 +458,7 @@ export class Contract {
     }
 
 
-    /**
- * Returns the current version of the contract.
- */
-async version<R extends ResponseTypes = undefined>(options: {
+    async version<R extends ResponseTypes = undefined>(options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
@@ -675,6 +666,74 @@ async version<R extends ResponseTypes = undefined>(options: {
             ...this.options,
             parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
                 return new Ok(this.spec.funcResToNative("set_ir_params", xdr));
+            },
+        });
+        } catch (e) {
+            if (typeof e === 'string') {
+                let err = parseError(e);
+                if (err) return err;
+            }
+            throw e;
+        }
+    }
+
+
+    async reserveTimestampWindow<R extends ResponseTypes = undefined>(options: {
+        /**
+         * The fee to pay for the transaction. Default: 100.
+         */
+        fee?: number
+        /**
+         * What type of response to return.
+         *
+         *   - `undefined`, the default, parses the returned XDR as `u64`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
+         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
+         */
+        responseType?: R
+        /**
+         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
+         */
+        secondsToWait?: number
+    } = {}) {
+                    return await invoke({
+            method: 'reserve_timestamp_window',
+            args: this.spec.funcArgsToScVals("reserve_timestamp_window", {}),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr): u64 => {
+                return this.spec.funcResToNative("reserve_timestamp_window", xdr);
+            },
+        });
+    }
+
+
+    async setReserveTimestampWindow<R extends ResponseTypes = undefined>({window}: {window: u64}, options: {
+        /**
+         * The fee to pay for the transaction. Default: 100.
+         */
+        fee?: number
+        /**
+         * What type of response to return.
+         *
+         *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
+         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
+         */
+        responseType?: R
+        /**
+         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
+         */
+        secondsToWait?: number
+    } = {}) {
+                    try {
+            return await invoke({
+            method: 'set_reserve_timestamp_window',
+            args: this.spec.funcArgsToScVals("set_reserve_timestamp_window", {window}),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
+                return new Ok(this.spec.funcResToNative("set_reserve_timestamp_window", xdr));
             },
         });
         } catch (e) {
@@ -975,7 +1034,7 @@ async version<R extends ResponseTypes = undefined>(options: {
         /**
          * What type of response to return.
          *
-         *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
          *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
          *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
          */
@@ -991,7 +1050,7 @@ async version<R extends ResponseTypes = undefined>(options: {
             args: this.spec.funcArgsToScVals("deposit", {who, asset, amount}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+            parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
                 return new Ok(this.spec.funcResToNative("deposit", xdr));
             },
         });
@@ -1013,7 +1072,7 @@ async version<R extends ResponseTypes = undefined>(options: {
         /**
          * What type of response to return.
          *
-         *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
          *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
          *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
          */
@@ -1029,7 +1088,7 @@ async version<R extends ResponseTypes = undefined>(options: {
             args: this.spec.funcArgsToScVals("repay", {who, asset, amount}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+            parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
                 return new Ok(this.spec.funcResToNative("repay", xdr));
             },
         });
@@ -1089,7 +1148,7 @@ async version<R extends ResponseTypes = undefined>(options: {
         /**
          * What type of response to return.
          *
-         *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
          *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
          *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
          */
@@ -1105,7 +1164,7 @@ async version<R extends ResponseTypes = undefined>(options: {
             args: this.spec.funcArgsToScVals("withdraw", {who, asset, amount, to}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+            parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
                 return new Ok(this.spec.funcResToNative("withdraw", xdr));
             },
         });
@@ -1127,7 +1186,7 @@ async version<R extends ResponseTypes = undefined>(options: {
         /**
          * What type of response to return.
          *
-         *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
          *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
          *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
          */
@@ -1143,7 +1202,7 @@ async version<R extends ResponseTypes = undefined>(options: {
             args: this.spec.funcArgsToScVals("borrow", {who, asset, amount}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+            parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
                 return new Ok(this.spec.funcResToNative("borrow", xdr));
             },
         });
@@ -1301,7 +1360,7 @@ async version<R extends ResponseTypes = undefined>(options: {
         /**
          * What type of response to return.
          *
-         *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
          *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
          *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
          */
@@ -1317,7 +1376,7 @@ async version<R extends ResponseTypes = undefined>(options: {
             args: this.spec.funcArgsToScVals("liquidate", {liquidator, who, receive_stoken}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+            parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
                 return new Ok(this.spec.funcResToNative("liquidate", xdr));
             },
         });
@@ -1437,6 +1496,36 @@ async version<R extends ResponseTypes = undefined>(options: {
     }
 
 
+    async tokenBalance<R extends ResponseTypes = undefined>({token, account}: {token: Address, account: Address}, options: {
+        /**
+         * The fee to pay for the transaction. Default: 100.
+         */
+        fee?: number
+        /**
+         * What type of response to return.
+         *
+         *   - `undefined`, the default, parses the returned XDR as `i128`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
+         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
+         */
+        responseType?: R
+        /**
+         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
+         */
+        secondsToWait?: number
+    } = {}) {
+                    return await invoke({
+            method: 'token_balance',
+            args: this.spec.funcArgsToScVals("token_balance", {token, account}),
+            ...options,
+            ...this.options,
+            parseResultXdr: (xdr): i128 => {
+                return this.spec.funcResToNative("token_balance", xdr);
+            },
+        });
+    }
+
+
     async tokenTotalSupply<R extends ResponseTypes = undefined>({token}: {token: Address}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
@@ -1463,34 +1552,6 @@ async version<R extends ResponseTypes = undefined>(options: {
             parseResultXdr: (xdr): i128 => {
                 return this.spec.funcResToNative("token_total_supply", xdr);
             },
-        });
-    }
-
-
-    async setPrice<R extends ResponseTypes = undefined>({asset, price}: {asset: Address, price: i128}, options: {
-        /**
-         * The fee to pay for the transaction. Default: 100.
-         */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
-            method: 'set_price',
-            args: this.spec.funcArgsToScVals("set_price", {asset, price}),
-            ...options,
-            ...this.options,
-            parseResultXdr: () => {},
         });
     }
 
@@ -1563,21 +1624,7 @@ async version<R extends ResponseTypes = undefined>(options: {
     }
 
 
-    /**
- * Allows the end-users to borrow the assets within one transaction
- * ensuring the the amount taken + fee is returned.
- * 
- * # Arguments
- * - receiver - The contract address that implements the FlashLoanReceiverTrait
- * and receives the requested assets.
- * - assets - The assets being flash borrowed. If the `borrow` flag is set to true,
- * opens debt for the flash-borrowed amount to the `who` address.
- * - params - An extra information for the receiver.
- * 
- * # Panics
- * 
- */
-async flashLoan<R extends ResponseTypes = undefined>({who, receiver, loan_assets, params}: {who: Address, receiver: Address, loan_assets: Array<FlashLoanAsset>, params: Buffer}, options: {
+    async flashLoan<R extends ResponseTypes = undefined>({who, receiver, loan_assets, params}: {who: Address, receiver: Address, loan_assets: Array<FlashLoanAsset>, params: Buffer}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
@@ -1585,7 +1632,7 @@ async flashLoan<R extends ResponseTypes = undefined>({who, receiver, loan_assets
         /**
          * What type of response to return.
          *
-         *   - `undefined`, the default, parses the returned XDR as `Ok<Array<MintBurn>> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
+         *   - `undefined`, the default, parses the returned XDR as `Ok<void> | Err<Error_> | undefined`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
          *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
          *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
          */
@@ -1601,7 +1648,7 @@ async flashLoan<R extends ResponseTypes = undefined>({who, receiver, loan_assets
             args: this.spec.funcArgsToScVals("flash_loan", {who, receiver, loan_assets, params}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): Ok<Array<MintBurn>> | Err<Error_> | undefined => {
+            parseResultXdr: (xdr): Ok<void> | Err<Error_> | undefined => {
                 return new Ok(this.spec.funcResToNative("flash_loan", xdr));
             },
         });
@@ -1612,36 +1659,6 @@ async flashLoan<R extends ResponseTypes = undefined>({who, receiver, loan_assets
             }
             throw e;
         }
-    }
-
-
-    async getPrice<R extends ResponseTypes = undefined>({asset}: {asset: Address}, options: {
-        /**
-         * The fee to pay for the transaction. Default: 100.
-         */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `i128`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
-            method: 'get_price',
-            args: this.spec.funcArgsToScVals("get_price", {asset}),
-            ...options,
-            ...this.options,
-            parseResultXdr: (xdr): i128 => {
-                return this.spec.funcResToNative("get_price", xdr);
-            },
-        });
     }
 
 }
