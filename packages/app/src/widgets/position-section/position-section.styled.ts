@@ -13,7 +13,14 @@ export const PositionHeaderWrapper = styled.section`
 export const PositionSumWrapper = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  width: 100%;
+  gap: 16px;
+`
+
+export const PositionSumContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 `
 
 export const PositionContainer = styled.div`

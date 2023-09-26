@@ -62,7 +62,7 @@ export function BorrowIncreaseModal({
   const { availableToBorrow } = useMarketDataForDisplay(tokenContracts[coreDebtTokenName])
 
   const inputDebtSumUsd =
-    Number(value) * coreDebtInfo.priceInUsd + Number(extraValue) * extraDebtInfo.priceInUsd
+    Number(value) / coreDebtInfo.priceInUsd + Number(extraValue) / extraDebtInfo.priceInUsd
 
   const actualDebtUsd = debtSumUsd + inputDebtSumUsd
 

@@ -2,5 +2,5 @@ export const getDepositUsd = (value: number | string, priceInUsd?: number, disco
   if (!priceInUsd || !discount) {
     return 0
   }
-  return Number(value) * priceInUsd * discount
+  return (Number(value) / priceInUsd) * discount
 }
