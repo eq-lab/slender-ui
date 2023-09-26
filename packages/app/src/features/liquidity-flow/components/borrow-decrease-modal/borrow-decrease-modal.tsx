@@ -42,8 +42,7 @@ export function BorrowDecreaseModal({
     actualDebtUsd,
   })
 
-  const debtDelta = debt - BigInt(value)
-  const debtError = debtDelta < 0
+  const debtError = Number(debt) < Math.floor(+value)
 
   const formError = debtError || getRequiredError(value)
 

@@ -56,8 +56,7 @@ export function LendDecreaseModal({
     actualDebtUsd: debtSumUsd,
   })
 
-  const depositDelta = deposit - BigInt(value)
-  const depositError = depositDelta < 0
+  const depositError = Number(deposit) < Math.floor(+value)
 
   const formError = depositError || borrowCapacityError || getRequiredError(value)
 

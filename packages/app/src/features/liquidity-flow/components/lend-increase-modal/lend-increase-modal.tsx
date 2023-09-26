@@ -18,6 +18,7 @@ import { getDepositUsd } from '../../utils/get-deposit-usd'
 import { getRequiredError } from '../../utils/get-required-error'
 import { excludeSupportedTokens } from '../../utils/exclude-supported-tokens'
 import { AddAsset } from '../add-asset/add-asset'
+import { makePosition } from '../../utils/make-position'
 
 interface Props {
   debtSumUsd: number
@@ -73,17 +74,27 @@ export function LendIncreaseModal({
   const extraInputError = Number(extraValue) > extraDepositInfo.userBalance
 
   const getTokenByTokenName = useGetTokenByTokenName()
-  const extraTokenSymbol = getTokenByTokenName(extraDepositTokenName)?.symbol
-  const coreTokenSymbol = getTokenByTokenName(coreDepositTokenName)?.symbol
+  const coreToken = getTokenByTokenName(coreDepositTokenName)
+  const coreTokenSymbol = coreToken?.symbol
+
+  const extraToken = getTokenByTokenName(extraDepositTokenName)
+  const extraTokenSymbol = extraToken?.symbol
+
   const marketData = useMarketDataForDisplay(tokenContracts[coreDepositTokenName])
 
   const getSaveData = (): PositionUpdate => {
-    const core = { [coreDepositTokenName]: BigInt(value) }
+    const core = {
+      [coreDepositTokenName]: makePosition(coreDepositTokenName, value, coreToken?.decimals).value,
+    }
 
     if (extraDepositTokenName && extraDepositTokenName) {
       return {
         ...core,
-        [extraDepositTokenName]: BigInt(extraValue),
+        [extraDepositTokenName]: makePosition(
+          extraDepositTokenName,
+          extraValue,
+          extraToken?.decimals,
+        ).value,
       }
     }
 

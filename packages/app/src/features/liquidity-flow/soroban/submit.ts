@@ -1,4 +1,4 @@
-import { networks, MintBurn } from '@bindings/pool'
+import { networks } from '@bindings/pool'
 import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { logInfo } from '@/shared/logger'
 import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders'
@@ -22,15 +22,17 @@ export const useSubmit = (methodName: PoolMethodName) => {
     asset: string
     amount: bigint
   }) =>
-    invoke<Array<MintBurn> | SorobanRpc.SendTransactionStatus | SorobanRpc.GetTransactionStatus>(
-      methodName,
-      [
-        addressToScVal(who),
-        addressToScVal(asset),
-        bigintToScVal(amount),
-        ...(methodName === WITH_TO ? [addressToScVal(who)] : []),
-      ],
-    )
+    invoke<
+      | string
+      | SorobanRpc.SimulateTransactionResponse
+      | SorobanRpc.SendTransactionResponse
+      | SorobanRpc.GetTransactionResponse
+    >(methodName, [
+      addressToScVal(who),
+      addressToScVal(asset),
+      bigintToScVal(amount),
+      ...(methodName === WITH_TO ? [addressToScVal(who)] : []),
+    ])
 
   return async (address: string, sendValue: PositionUpdate): Promise<'fulfilled' | never> => {
     // we have to sign and send transactions one by one
