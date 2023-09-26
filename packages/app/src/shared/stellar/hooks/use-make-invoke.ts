@@ -90,7 +90,9 @@ export function useMakeInvoke() {
         txParams: SorobanClient.xdr.ScVal[] = [],
       ): Promise<T | undefined> => {
         const wallet = await import('@stellar/freighter-api')
-        const walletAccount = await getAccount(wallet)
+
+        // getAccount gives an error if stellar account is not activated (does not have 1 XML)
+        const walletAccount = await getAccount(wallet).catch(() => null)
 
         const sourceAccount =
           walletAccount ?? new SorobanClient.Account(userAddress, ACCOUNT_SEQUENCE)
@@ -113,7 +115,6 @@ export function useMakeInvoke() {
         const authsCount = simulated.result.auth.length
         const writeLength = simulated.transactionData.getReadWrite().length
         const isViewCall = authsCount === 0 && writeLength === 0
-
         if (isViewCall) {
           return scValToJs(simulated.result.retval)
         }
@@ -135,7 +136,6 @@ export function useMakeInvoke() {
         tx = await signTx(wallet, operation, NETWORK_DETAILS.networkPassphrase)
 
         const raw = await sendTx(tx, secondsToWait)
-
         // if `sendTx` awaited the inclusion of the tx in the ledger, it used
         // `getTransaction`, which has a `resultXdr` field
         if ('resultXdr' in raw) {

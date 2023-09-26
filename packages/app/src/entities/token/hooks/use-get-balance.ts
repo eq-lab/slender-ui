@@ -36,19 +36,22 @@ export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecor
       }
       const balanceTxParams = [addressToScVal(userAddress)]
 
-      const balances: SorobanTokenRecord[] = (
-        await Promise.all(
-          tokenAddresses.map((tokenAddress) => {
-            const invoke = makeInvoke(tokenAddress)
-            return invoke<string>('balance', balanceTxParams)
-          }),
-        )
-      ).map((balance, index) => ({
-        balance,
-        ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
-      }))
-
-      setBalanceInfo(balances)
+      try {
+        const balances: SorobanTokenRecord[] = (
+          await Promise.all(
+            tokenAddresses.map((tokenAddress) => {
+              const invoke = makeInvoke(tokenAddress)
+              return invoke<string>('balance', balanceTxParams)
+            }),
+          )
+        ).map((balance, index) => ({
+          balance,
+          ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
+        }))
+        setBalanceInfo(balances)
+      } catch (error) {
+        setBalanceInfo([])
+      }
     }
     if (
       !isArraysEqual(tokenAddresses, previousTokenAddresses.current) ||
