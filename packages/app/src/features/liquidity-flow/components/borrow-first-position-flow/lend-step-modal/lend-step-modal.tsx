@@ -73,7 +73,10 @@ export function LendStepModal({
 
     const finalValue = Number(inputValue) > coreInputMax ? coreInputMax : inputValue
     setCoreValue(String(finalValue))
-  }, [coreDepositInfo.discount, coreDepositInfo.priceInUsd, coreInputMax, debtUsd])
+
+    // We don't have to update the input when coreDepositInfo.discount or coreDepositInfo.priceInUsd changes,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coreInputMax, debtUsd])
 
   const { borrowInterestRate } = useMarketDataForDisplay(tokenContracts[debtTokenName])
 
