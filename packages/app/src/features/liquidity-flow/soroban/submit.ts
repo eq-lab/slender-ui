@@ -45,7 +45,7 @@ export const useSubmit = (methodName: PoolMethodName) => {
       SupportedTokenName,
       BigNumber,
     ][]) {
-      if (!value.isNaN() && !value.isZero()) {
+      if (!value?.isNaN() && !value?.isZero()) {
         try {
           const token = getTokenByTokenName(tokenName)
           const amount = value.times(10 ** (token?.decimals ?? 0))

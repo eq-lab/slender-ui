@@ -126,11 +126,9 @@ export function PositionSection() {
                     &minus;{formatPercent(debtSumInterestRate)} APR
                   </Label>
                 </S.PositionSumContainer>
-                {!!debtsSumUsd && (
-                  <Typography secondary>
-                    {debtsSumUsd ? 'Borrowed' : 'You earn on deposit'}
-                  </Typography>
-                )}
+                <Typography secondary>
+                  {debtsSumUsd ? 'Borrowed' : 'You earn on deposit'}
+                </Typography>
               </S.PositionSumWrapper>
             )}
           </S.PositionHeadingContainer>

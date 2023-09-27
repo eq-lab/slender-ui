@@ -7,6 +7,7 @@ import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { formatUsd } from '@/shared/formatters'
+import BigNumber from 'bignumber.js'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -83,13 +84,13 @@ export function LendIncreaseModal({
 
   const getSaveData = (): PositionUpdate => {
     const core = {
-      [coreDepositTokenName]: value,
+      [coreDepositTokenName]: BigNumber(value),
     }
 
     if (extraDepositTokenName && extraDepositTokenName) {
       return {
         ...core,
-        [extraDepositTokenName]: value,
+        [extraDepositTokenName]: BigNumber(value),
       }
     }
 
@@ -105,7 +106,7 @@ export function LendIncreaseModal({
   const renderDescription = () => {
     if (!formError) return `${formatUsd(inputDepositSumUsd)} will be counted as collateral`
     if (hasExtraDepositToken) return 'Add deposit amount first'
-    return `With ${marketData.discount}% discount`
+    return `With ${marketData.discount} discount`
   }
 
   return (
@@ -152,10 +153,7 @@ export function LendIncreaseModal({
           )}
         </InputLayout>
 
-        {!extraDepositTokenName && (
-          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} />
-        )}
-        {extraDepositTokenName && (
+        {extraDepositTokenName ? (
           <SuperField
             type="number"
             onChange={(e) => setExtraValue(e.target.value)}
@@ -165,6 +163,8 @@ export function LendIncreaseModal({
             className={cn(extraInputError && Error)}
             postfix={extraTokenSymbol}
           />
+        ) : (
+          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} />
         )}
       </FormLayout>
     </ModalLayout>

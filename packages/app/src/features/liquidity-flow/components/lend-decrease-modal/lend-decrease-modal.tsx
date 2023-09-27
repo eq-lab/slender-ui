@@ -6,6 +6,7 @@ import { PositionSummary } from '@/entities/position/components/position-summary
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import BigNumber from 'bignumber.js'
+import { formatCryptoCurrency } from '@/shared/formatters'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -61,10 +62,7 @@ export function LendDecreaseModal({
 
   const formError = depositError || borrowCapacityError || getRequiredError(value)
 
-  const borrowTokenInfo = useTokenInfo(tokenName)
-  const max = Math.floor(
-    defaultBorrowCapacity / (borrowTokenInfo.priceInUsd * borrowTokenInfo.discount),
-  )
+  const max = formatCryptoCurrency(deposit.toNumber())
 
   const getTokenByTokenName = useGetTokenByTokenName()
   const token = getTokenByTokenName(tokenName)

@@ -47,11 +47,11 @@ export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecor
           )
         ).map((balance, index) => {
           const tokenCache =
-          tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord
-        return {
-          balance: BigNumber(balance ?? 0).div(10 ** tokenCache.decimals),
-          ...tokenCache,
-        }
+            tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord
+          return {
+            balance: BigNumber(balance ?? 0).div(10 ** tokenCache.decimals),
+            ...tokenCache,
+          }
         })
         setBalanceInfo(balances)
       } catch (error) {

@@ -1,7 +1,7 @@
 import { TokenContracts } from '@/shared/stellar/constants/tokens'
 import { usePoolData } from './use-pool-data'
 import { useTokenData } from './use-token-data'
-import { useMarketData, useTokenCache } from '../context/hooks'
+import { useMarketData } from '../context/hooks'
 
 export function useAvailableToBorrow(token: TokenContracts): {
   totalSupplied: number
@@ -23,17 +23,11 @@ export function useAvailableToBorrow(token: TokenContracts): {
 
   const { utilizationCapacity = 0 } = marketData?.[token.address] ?? {}
 
-  const tokenCache = useTokenCache()?.[token.address]
-
-  const decimals = tokenCache?.decimals ?? 0
-
-  const totalSupplied =
-    ((Number(sTotalSupply) / contractMultiplier) * Number(collateralCoefficient)) / 10 ** decimals
+  const totalSupplied = (Number(sTotalSupply) / contractMultiplier) * Number(collateralCoefficient)
 
   const reserved = totalSupplied * (1 - utilizationCapacity / percentMultiplier)
 
-  const totalBorrowed =
-    ((Number(debtTotalSupply) / contractMultiplier) * Number(debtCoefficient)) / 10 ** decimals
+  const totalBorrowed = (Number(debtTotalSupply) / contractMultiplier) * Number(debtCoefficient)
 
   const availableToBorrow = Math.max(totalSupplied - totalBorrowed - reserved, 0)
 

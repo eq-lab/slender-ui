@@ -7,6 +7,7 @@ import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import BigNumber from 'bignumber.js'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -108,13 +109,13 @@ export function BorrowIncreaseModal({
 
   const getSaveData = (): PositionUpdate => {
     const core = {
-      [coreDebtTokenName]: value,
+      [coreDebtTokenName]: BigNumber(value),
     }
 
     if (showExtraInput && extraDebtTokenName) {
       return {
         ...core,
-        [extraDebtTokenName]: value,
+        [extraDebtTokenName]: BigNumber(value),
       }
     }
 

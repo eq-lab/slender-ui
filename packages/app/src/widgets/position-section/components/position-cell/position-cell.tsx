@@ -52,7 +52,7 @@ export function PositionCell({
           </Typography>
           <S.PositionCellTokenAmount>
             <Typography>
-              {formatCryptoCurrency(Number(value.toString(10)))} {tokenCache?.symbol}{' '}
+              {formatCryptoCurrency(value.toNumber())} {tokenCache?.symbol}{' '}
             </Typography>
             {interestRate && (
               <Label positive={isLendPosition} negative={!isLendPosition} sm>
