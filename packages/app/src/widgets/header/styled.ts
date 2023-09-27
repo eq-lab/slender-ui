@@ -12,6 +12,8 @@ export const Wrapper = styled.div`
 `
 
 export const Inner = styled.div`
+  max-width: 1472px;
+  margin: 0 auto;
   height: 56px;
   backdrop-filter: blur(12px);
   display: flex;
