@@ -27,8 +27,8 @@ export function useMarketDataForDisplay(token: TokenContracts): {
   return {
     discount: formatPercentage(discount),
     liquidationPenalty: formatPercentage(liquidationPenalty),
-    borrowInterestRate: formatInterestRate(borrowInterestRate),
-    lendInterestRate: formatInterestRate(lendInterestRate),
+    borrowInterestRate: formatInterestRate(borrowInterestRate?.toNumber()),
+    lendInterestRate: formatInterestRate(lendInterestRate?.toNumber()),
     totalSupplied,
     totalBorrowed,
     reserved,

@@ -7,6 +7,7 @@ import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import BigNumber from 'bignumber.js'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -18,7 +19,6 @@ import { InputLayout } from '../../styled'
 import { getMaxDebt } from '../../utils/get-max-debt'
 import { getExtraTokenName } from '../../utils/get-extra-token-name'
 import { getRequiredError } from '../../utils/get-required-error'
-import { makePosition } from '../../utils/make-position'
 
 interface Props {
   debtSumUsd: number
@@ -109,14 +109,13 @@ export function BorrowIncreaseModal({
 
   const getSaveData = (): PositionUpdate => {
     const core = {
-      [coreDebtTokenName]: makePosition(coreDebtTokenName, value, coreToken?.decimals).value,
+      [coreDebtTokenName]: BigNumber(value),
     }
 
     if (showExtraInput && extraDebtTokenName) {
-      const extraDebt = makePosition(extraDebtTokenName, extraValue, extraToken?.decimals).value
       return {
         ...core,
-        [extraDebtTokenName]: extraDebt,
+        [extraDebtTokenName]: BigNumber(value),
       }
     }
 

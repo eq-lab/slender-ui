@@ -49,9 +49,9 @@ export function PositionSection() {
       return sum + interestRatePercentNum * fractionInSumUsd
     }
 
-  const debtSumInterestRate = position.debts.reduce(makeGetSumInterestRate(false), 0) || 0
+  const debtSumInterestRate = position.debts.reduce(makeGetSumInterestRate(false), 0) ?? 0
 
-  const depositSumInterestRate = position.deposits.reduce(makeGetSumInterestRate(true), 0) || 0
+  const depositSumInterestRate = position.deposits.reduce(makeGetSumInterestRate(true), 0) ?? 0
 
   const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
   const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
@@ -83,9 +83,9 @@ export function PositionSection() {
           </S.PositionHeadingContainer>
           <S.PositionCellContainer>
             {position.deposits.map((deposit) => {
-              const { tokenName, valueInUsd = 0 } = deposit
+              const { tokenName, valueInUsd = 1 } = deposit
               const depositPercentage =
-                !!valueInUsd && !!depositsSumUsd
+                valueInUsd && depositsSumUsd
                   ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
                   : undefined
               return (
@@ -126,17 +126,15 @@ export function PositionSection() {
                     &minus;{formatPercent(debtSumInterestRate)} APR
                   </Label>
                 </S.PositionSumContainer>
-                {!!debtsSumUsd && (
-                  <Typography secondary>
-                    {debtsSumUsd ? 'Borrowed' : 'You earn on deposit'}
-                  </Typography>
-                )}
+                <Typography secondary>
+                  {debtsSumUsd ? 'Borrowed' : 'You earn on deposit'}
+                </Typography>
               </S.PositionSumWrapper>
             )}
           </S.PositionHeadingContainer>
           <S.PositionCellContainer>
             {position.debts.map((debt) => {
-              const { tokenName, valueInUsd = 0 } = debt
+              const { tokenName, valueInUsd = 1 } = debt
               const debtPercentage =
                 valueInUsd && debtsSumUsd
                   ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)

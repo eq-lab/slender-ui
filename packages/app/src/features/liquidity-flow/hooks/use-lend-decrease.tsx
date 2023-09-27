@@ -27,7 +27,7 @@ export const useLendDecrease = (): {
     const handleSend = async ({ tokenName, value }: PositionCell) => {
       const newDeposits = position.deposits.map((newDeposit) => {
         if (newDeposit.tokenName === tokenName) {
-          return { value: newDeposit.value - value, tokenName }
+          return { value: newDeposit.value.minus(value), tokenName }
         }
         return newDeposit
       })

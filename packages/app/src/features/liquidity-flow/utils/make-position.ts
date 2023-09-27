@@ -1,11 +1,7 @@
 import { PositionCell } from '@/entities/position/types'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import BigNumber from 'bignumber.js'
 
-export function makePosition(
-  tokenName: SupportedTokenName,
-  rawValue: string,
-  decimals: number = 0,
-): PositionCell {
-  const value = BigInt(Number(rawValue) * 10 ** decimals)
-  return { tokenName, value }
+export function makePosition(tokenName: SupportedTokenName, rawValue: string): PositionCell {
+  return { tokenName, value: BigNumber(rawValue) }
 }

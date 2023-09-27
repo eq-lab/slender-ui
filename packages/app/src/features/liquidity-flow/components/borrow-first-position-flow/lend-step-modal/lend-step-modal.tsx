@@ -71,7 +71,7 @@ export function LendStepModal({
       maximumFractionDigits: 2,
     })
 
-    const finalValue = Number(inputValue) > coreInputMax ? coreInputMax : inputValue
+    const finalValue = coreInputMax.lt(inputValue) ? coreInputMax : inputValue
     setCoreValue(String(finalValue))
 
     // We don't have to update the input when coreDepositInfo.discount or coreDepositInfo.priceInUsd changes,
@@ -91,8 +91,8 @@ export function LendStepModal({
     actualDebtUsd: debtUsd,
   })
 
-  const firstInputError = Number(coreValue) > coreInputMax
-  const secondInputError = Number(extraValue) > extraInputMax
+  const firstInputError = coreInputMax.lt(coreValue)
+  const secondInputError = extraInputMax.lt(extraValue)
   const requiredError = getRequiredError(coreValue, extraValue, showExtraInput)
 
   const lowHealthError = health < MIN_HEALTH_VALUE
@@ -108,16 +108,15 @@ export function LendStepModal({
     return `With APR ${borrowInterestRate}`
   }
 
-  const debtToken = getTokenByTokenName(debtTokenName)
-  const debt = makePosition(debtTokenName, debtValue, debtToken?.decimals)
+  const debt = makePosition(debtTokenName, debtValue)
 
   const coreToken = getTokenByTokenName(coreDepositTokenName)
   const coreTokenSymbol = coreToken?.symbol
-  const coreDeposit = makePosition(coreDepositTokenName, coreValue, coreToken?.decimals)
+  const coreDeposit = makePosition(coreDepositTokenName, coreValue)
 
   const extraToken = getTokenByTokenName(extraDepositTokenName)
   const extraTokenSymbol = extraToken?.symbol
-  const extraDeposit = makePosition(extraDepositTokenName, extraValue, extraToken?.decimals)
+  const extraDeposit = makePosition(extraDepositTokenName, extraValue)
 
   return (
     <ModalLayout

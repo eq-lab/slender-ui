@@ -63,7 +63,7 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
                 </S.ThumbnailWrapper>
                 <div>
                   <div>{title}</div>
-                  {Number(depositBalances[index]?.balance ?? 0) / 10 ** decimals} {symbol}
+                  {depositBalances[index]?.balance.toNumber() || 0} {symbol}
                 </div>
                 {tokenName === value && <CheckIcon width={24} />}
               </S.MenuItemInner>

@@ -27,7 +27,7 @@ export const useBorrowDecrease = (): {
     const handleSend = async ({ tokenName, value }: PositionCell) => {
       const newDebts = position.debts.map((debtCell) => {
         if (debtCell.tokenName === tokenName) {
-          return { value: debtCell.value - value, tokenName }
+          return { value: debtCell.value.minus(value), tokenName }
         }
         return debtCell
       })

@@ -5,6 +5,7 @@ import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
+import BigNumber from 'bignumber.js'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -13,7 +14,7 @@ import { getRequiredError } from '../../utils/get-required-error'
 import { makePosition } from '../../utils/make-position'
 
 interface Props {
-  debt: bigint
+  debt: BigNumber
   depositSumUsd: number
   onClose: () => void
   tokenName: SupportedTokenName
@@ -48,7 +49,7 @@ export function BorrowDecreaseModal({
 
   const getTokenByTokenName = useGetTokenByTokenName()
   const token = getTokenByTokenName(tokenName)
-  const sendValue = makePosition(tokenName, value, token?.decimals)
+  const sendValue = makePosition(tokenName, value)
   const tokenSymbol = token?.symbol
 
   return (

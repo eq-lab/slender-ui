@@ -3,18 +3,13 @@ import { PositionContext } from '@/entities/position/context/context'
 import { PositionCell } from '@/entities/position/types'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { logError, logInfo } from '@/shared/logger'
-import { useTokenCache } from '@/entities/token/context/hooks'
-import { CachedTokens } from '@/entities/token/context/context'
 import { useSetWaitModalIsOpen } from '../context/hooks'
 import { PositionUpdate } from '../types'
 import { useSubmit, PoolMethodName } from '../soroban/submit'
 
-export const getPositionUpdateByCells = (
-  positionCells: PositionCell[],
-  tokenCache: Partial<CachedTokens> = {},
-): PositionUpdate =>
+export const getPositionUpdateByCells = (positionCells: PositionCell[]): PositionUpdate =>
   positionCells.reduce((positionUpdate: PositionUpdate, item: PositionCell): PositionUpdate => {
-    positionUpdate[item.tokenName] = item.value * BigInt(tokenCache[item.tokenName]?.decimals ?? 1)
+    positionUpdate[item.tokenName] = item.value
     return positionUpdate
   }, {} as PositionUpdate)
 
@@ -31,7 +26,6 @@ export function useLiquidity(
   const setWaitModalIsOpen = useSetWaitModalIsOpen()
   const { address } = useWalletAddress()
   const position = useContextSelector(PositionContext, (state) => state.position)
-  const tokenInfo = useTokenCache()
   const submitFunc = useSubmit(methodName)
 
   return async (parameters) => {
@@ -46,7 +40,6 @@ export function useLiquidity(
           parameters.deposits ??
           parameters.debts ??
           [],
-        tokenInfo,
       )
       const result = await submitFunc(address, positionUpdate)
       logInfo(result)
