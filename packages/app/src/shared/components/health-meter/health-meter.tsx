@@ -16,7 +16,7 @@ export function HealthMeter({ healthPercent = 0, healthDelta }: Props) {
   const percent = healthPercent > 0 ? healthPercent : 0
   const isRed = percent < 25
   const dashesCount = getDashesCount(percent)
-  const healthDeltaText = healthDelta && `${healthDelta}%`
+  const healthDeltaText = healthDelta && `${healthDelta > 0 ? '+' : ''}${healthDelta}%`
 
   return (
     <S.HealthMeterWrapper>

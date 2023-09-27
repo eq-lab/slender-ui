@@ -33,6 +33,7 @@ export const HealthTooltipContainer = styled.div<{ $isRed: boolean }>`
   gap: 2px;
   position: absolute;
   bottom: -15px;
+  margin-left: 2px;
 
   .health-text {
     color: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-tertiary')});
