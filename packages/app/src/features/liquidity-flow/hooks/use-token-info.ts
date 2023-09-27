@@ -2,10 +2,11 @@ import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/t
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useMarketData } from '@/entities/token/context/hooks'
 import { usePriceInUsd } from '@/entities/currency-rates/context/hooks'
+import BigNumber from 'bignumber.js'
 import { getDecimalDiscount } from '../../../shared/utils/get-decimal-discount'
 
 export function useTokenInfo(tokenName?: SupportedTokenName): {
-  userBalance: number
+  userBalance: BigNumber
   discount: number
   priceInUsd: number
 } {
@@ -17,8 +18,7 @@ export function useTokenInfo(tokenName?: SupportedTokenName): {
   if (tokenName && address) {
     const { discount = 0 } = marketData?.[address] ?? {}
     const priceInUsd = priceInUsdList?.[tokenName] ?? 0
-    const decimals = balance?.decimals || 0
-    const userBalance = Number(balance?.balance ?? 0) / 10 ** decimals
+    const userBalance = balance?.balance ?? BigNumber(0)
 
     return {
       discount: getDecimalDiscount(discount),
@@ -29,7 +29,7 @@ export function useTokenInfo(tokenName?: SupportedTokenName): {
 
   return {
     discount: 0,
-    priceInUsd: 0,
-    userBalance: 0,
+    priceInUsd: 1,
+    userBalance: BigNumber(0),
   }
 }

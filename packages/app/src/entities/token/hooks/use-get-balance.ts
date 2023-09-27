@@ -3,11 +3,12 @@ import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
 import { addressToScVal } from '@/shared/stellar/encoders'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
+import BigNumber from 'bignumber.js'
 import { CachedTokens } from '../context/context'
 import { useTokenCache } from '../context/hooks'
 
 export interface SorobanTokenRecord {
-  balance?: string
+  balance: BigNumber
   title: string
   symbol: string
   decimals: number
@@ -44,10 +45,14 @@ export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecor
               return invoke<string>('balance', balanceTxParams)
             }),
           )
-        ).map((balance, index) => ({
-          balance,
-          ...(tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord),
-        }))
+        ).map((balance, index) => {
+          const tokenCache =
+          tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord
+        return {
+          balance: BigNumber(balance ?? 0).div(10 ** tokenCache.decimals),
+          ...tokenCache,
+        }
+        })
         setBalanceInfo(balances)
       } catch (error) {
         setBalanceInfo([])

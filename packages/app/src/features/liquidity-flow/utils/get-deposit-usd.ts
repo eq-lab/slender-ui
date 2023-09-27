@@ -1,6 +1,15 @@
-export const getDepositUsd = (value: number | string, priceInUsd?: number, discount?: number) => {
+import BigNumber from 'bignumber.js'
+
+export const getDepositUsd = (
+  value: BigNumber | string,
+  priceInUsd?: number,
+  discount?: number,
+): number => {
   if (!priceInUsd || !discount) {
     return 0
   }
-  return (Number(value) / priceInUsd) * discount
+  return BigNumber(value || 0)
+    .div(priceInUsd)
+    .times(discount)
+    .toNumber()
 }

@@ -3,14 +3,17 @@ import { networks, i128, ReserveData } from '@bindings/pool'
 import { TokenAddress } from '@/shared/stellar/constants/tokens'
 import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke'
 import { addressToScVal } from '@/shared/stellar/encoders'
+import BigNumber from 'bignumber.js'
 import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../constants/contract-constants'
 
 type PoolData = {
-  borrowInterestRate?: bigint
-  lendInterestRate?: bigint
-  collateralCoefficient?: bigint
-  debtCoefficient?: bigint
+  borrowInterestRate?: BigNumber
+  lendInterestRate?: BigNumber
+  collateralCoefficient?: BigNumber
+  debtCoefficient?: BigNumber
 }
+
+const getBigNumber = (value?: bigint): BigNumber => new BigNumber(value?.toString() ?? 0)
 
 export function usePoolData(tokenAddress: TokenAddress): PoolData & {
   percentMultiplier: number
@@ -30,10 +33,10 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
       ])
 
       setData({
-        borrowInterestRate: poolReserve?.borrower_ir,
-        lendInterestRate: poolReserve?.lender_ir,
-        collateralCoefficient,
-        debtCoefficient,
+        borrowInterestRate: getBigNumber(poolReserve?.borrower_ir),
+        lendInterestRate: getBigNumber(poolReserve?.lender_ir),
+        collateralCoefficient: getBigNumber(collateralCoefficient),
+        debtCoefficient: getBigNumber(debtCoefficient),
       })
     })()
   }, [tokenAddress, makeInvoke])

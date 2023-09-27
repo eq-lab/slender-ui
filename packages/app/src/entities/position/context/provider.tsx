@@ -15,25 +15,26 @@ import { Position, PositionCell } from '../types'
 import { PositionContext } from './context'
 
 const sorobanTokenRecordToPositionCell = ({
-  tokenRecord,
+  tokenRecord: { balance },
   tokenName,
   cryptocurrencyUsdRates,
-  decimals,
-  discount,
+  discount = 1,
 }: {
   tokenRecord: SorobanTokenRecord
   tokenName: SupportedTokenName
   cryptocurrencyUsdRates?: SupportedTokenRates
-  decimals?: number
   discount?: number
 }): PositionCell => {
-  const denominator = decimals ? 10 ** decimals : 1
-  const value = BigInt(tokenRecord.balance ?? 0) / BigInt(denominator)
   const usdRate = cryptocurrencyUsdRates?.[tokenName]
 
   return {
-    value,
-    valueInUsd: usdRate && (Number(value) / usdRate) * (discount || 1),
+    value: balance,
+    valueInUsd: usdRate
+      ? balance
+          .div(usdRate)
+          .times(discount ?? 1)
+          .toNumber()
+      : 1,
     tokenName,
   }
 }
@@ -60,7 +61,7 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
     SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].sAddress),
   )
 
-  const balancesUnderlaying = useGetBalance(
+  const balancesUnderlying = useGetBalance(
     SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].address),
   )
 
@@ -69,13 +70,11 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
       (resultArr: PositionCell[], currentItem, currentIndex) => {
         if (currentItem && Number(currentItem.balance)) {
           const tokenName = SUPPORTED_TOKEN_NAMES[currentIndex]!
-          const { decimals } = balancesUnderlaying[currentIndex] || {}
           resultArr.push(
             sorobanTokenRecordToPositionCell({
               tokenRecord: currentItem,
               tokenName,
               cryptocurrencyUsdRates,
-              decimals,
             }),
           )
         }
@@ -91,13 +90,11 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
           const { address } = tokenContracts[tokenName]
           const { discount } = marketData?.[address] || {}
           const discountInDecimal = discount ? getDecimalDiscount(discount) : 1
-          const { decimals } = balancesUnderlaying[currentIndex] || {}
           resultArr.push(
             sorobanTokenRecordToPositionCell({
               tokenRecord: currentItem,
               tokenName,
               cryptocurrencyUsdRates,
-              decimals,
               discount: discountInDecimal,
             }),
           )
@@ -117,7 +114,7 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
     positionUpdate,
     debtBalances,
     lendBalances,
-    balancesUnderlaying,
+    balancesUnderlying,
     cryptocurrencyUsdRates,
     marketData,
   ])

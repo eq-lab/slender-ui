@@ -18,7 +18,6 @@ import { InputLayout } from '../../styled'
 import { getMaxDebt } from '../../utils/get-max-debt'
 import { getExtraTokenName } from '../../utils/get-extra-token-name'
 import { getRequiredError } from '../../utils/get-required-error'
-import { makePosition } from '../../utils/make-position'
 
 interface Props {
   debtSumUsd: number
@@ -109,14 +108,13 @@ export function BorrowIncreaseModal({
 
   const getSaveData = (): PositionUpdate => {
     const core = {
-      [coreDebtTokenName]: makePosition(coreDebtTokenName, value, coreToken?.decimals).value,
+      [coreDebtTokenName]: value,
     }
 
     if (showExtraInput && extraDebtTokenName) {
-      const extraDebt = makePosition(extraDebtTokenName, extraValue, extraToken?.decimals).value
       return {
         ...core,
-        [extraDebtTokenName]: extraDebt,
+        [extraDebtTokenName]: value,
       }
     }
 

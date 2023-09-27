@@ -40,7 +40,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   const Icon = getIconByTokenName(depositTokenName)
 
   const handleClick = () => {
-    const depositValue = makePosition(depositTokenName, value, token?.decimals)
+    const depositValue = makePosition(depositTokenName, value)
     onSend(depositValue)
   }
 

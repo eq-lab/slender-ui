@@ -14,7 +14,9 @@ export const getPositionUpdateByCells = (
   tokenCache: Partial<CachedTokens> = {},
 ): PositionUpdate =>
   positionCells.reduce((positionUpdate: PositionUpdate, item: PositionCell): PositionUpdate => {
-    positionUpdate[item.tokenName] = item.value * BigInt(tokenCache[item.tokenName]?.decimals ?? 1)
+    positionUpdate[item.tokenName] = item.value.times(
+      10 ** (tokenCache[item.tokenName]?.decimals ?? 0),
+    )
     return positionUpdate
   }, {} as PositionUpdate)
 

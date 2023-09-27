@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import BigNumber from 'bignumber.js'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
 import { BorrowIncreaseModal } from '../components/borrow-increase-modal'
 import { sumObj } from '../utils/sum-obj'
@@ -48,7 +49,7 @@ export const useBorrowIncrease = (): {
       )
       const finalDebtsObj = sumObj(prevDebtsObj, sendValue)
       const debts = Object.entries(finalDebtsObj).map((entry) => {
-        const [tokenName, value] = entry as [SupportedTokenName, bigint]
+        const [tokenName, value] = entry as [SupportedTokenName, BigNumber]
         return {
           tokenName,
           value,
