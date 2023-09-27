@@ -101,9 +101,9 @@ export const MarketCardTextCell = styled.div`
 `
 
 export const MarketCardButtonsContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 8px;
 `
 
 export const MarketCardButton = styled(Button)<{ $isLend?: boolean }>`
