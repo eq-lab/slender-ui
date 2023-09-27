@@ -36,10 +36,12 @@ export const HealthTooltipContainer = styled.div<{ $isRed: boolean }>`
   margin-left: 2px;
 
   .health-text {
+    transition: color 300ms ease-in-out;
     color: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-tertiary')});
   }
 
   svg {
+    transition: fill 300ms ease-in-out;
     fill: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-tertiary')});
   }
 `
@@ -60,7 +62,8 @@ export const MeterDash = styled.i<{ index: number; $shaded: boolean; $isRed: boo
     height: 8px;
     transform: rotate(309deg);
     transform-origin: top;
-    background: ${({ $shaded, $isRed }) => {
+    transition: background-color 300ms ease-in-out;
+    background-color: ${({ $shaded, $isRed }) => {
       if (!$shaded) return 'var(--color-transparent-gray4)'
       return $isRed ? 'var(--icon-negative)' : 'var(--icon-primary)'
     }};
@@ -75,6 +78,7 @@ export const HealthPercentCountContainer = styled.div<{ $isRed: boolean }>`
   text-align: center;
 
   .heath-count-text {
+    transition: color 300ms ease-in-out;
     color: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-primary')});
   }
 `
