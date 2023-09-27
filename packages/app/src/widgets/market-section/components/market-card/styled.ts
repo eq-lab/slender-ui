@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import Button from '@marginly/ui/components/button'
 
 export const MarketCardWrapper = styled.div`
   width: 100%;
@@ -102,4 +103,12 @@ export const MarketCardTextCell = styled.div`
 export const MarketCardButtonsContainer = styled.div`
   display: flex;
   gap: 8px;
+  width: 100%;
+`
+
+export const MarketCardButton = styled(Button)<{ $isLend?: boolean }>`
+  &&& {
+    color: var(${({ $isLend }) => ($isLend ? '--text-positive' : '--text-primary')});
+    font-weight: 700;
+  }
 `

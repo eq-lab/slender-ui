@@ -71,7 +71,7 @@ export function PositionSection() {
           <S.PositionHeadingContainer>
             <S.PositionSumWrapper>
               <S.PositionSumContainer>
-                {depositsSumUsd && (
+                {!!depositsSumUsd && (
                   <S.TitleHeader headerL>{formatUsd(depositsSumUsd)}</S.TitleHeader>
                 )}
                 <Label positive lg>
@@ -126,7 +126,7 @@ export function PositionSection() {
                     &minus;{formatPercent(debtSumInterestRate)} APR
                   </Label>
                 </S.PositionSumContainer>
-                {debtsSumUsd && (
+                {!!debtsSumUsd && (
                   <Typography secondary>
                     {debtsSumUsd ? 'Borrowed' : 'You earn on deposit'}
                   </Typography>
@@ -155,7 +155,7 @@ export function PositionSection() {
             })}
             {!isFullDeposits && (
               <MoreButton
-                upperText="Borrow More"
+                upperText={debtsSumUsd ? 'Borrow More' : 'Borrow'}
                 bottomText={`Up to ${formatUsd(depositsSumUsd - debtsSumUsd)}`}
                 onClick={() => openBorrowIncreaseModal()}
               />

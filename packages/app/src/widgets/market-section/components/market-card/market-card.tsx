@@ -98,12 +98,12 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
           </S.MarketCardTextCell>
         </S.MarketCardBottomInfo>
         <S.MarketCardButtonsContainer>
-          <button type="button" onClick={borrowOpen} disabled={borrowDisabled}>
+          <S.MarketCardButton md elevated onClick={borrowOpen} disabled={borrowDisabled}>
             {`-${borrowInterestRate} Borrow`}
-          </button>
-          <button type="button" onClick={lendOpen} disabled={lendDisabled}>
+          </S.MarketCardButton>
+          <S.MarketCardButton md elevated onClick={lendOpen} disabled={lendDisabled} $isLend>
             {`+${lendInterestRate} Lend`}
-          </button>
+          </S.MarketCardButton>
         </S.MarketCardButtonsContainer>
       </S.MarketCardBottomContainer>
       {lendModal}
