@@ -40,7 +40,7 @@ export function PositionSummary({
   return (
     <InfoLayout
       title="Position summary"
-      mediaSection={<HealthMeter healthPercent={healthDelta || health} />}
+      mediaSection={<HealthMeter healthPercent={health} healthDelta={healthDelta} />}
     >
       <InfoRow
         label="Debt"
