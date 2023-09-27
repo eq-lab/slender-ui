@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import { PositionCell } from '@/entities/position/types'
 import { LendFirstPositionModal } from '../components/lend-first-position-modal'
 import { useLiquidity } from './use-liquidity'
 
 export const useLendFirstPosition = (
-  tokenName: SupportedToken,
+  tokenName: SupportedTokenName,
 ): {
   modal: JSX.Element | null
   open: () => void
@@ -12,9 +13,9 @@ export const useLendFirstPosition = (
   const [isModalOpen, setModalOpenStatus] = useState(false)
   const send = useLiquidity('deposit')
 
-  const handleSend = async (value: string) => {
+  const handleSend = async (value: PositionCell) => {
     setModalOpenStatus(false)
-    await send({ deposits: [{ tokenName, value: BigInt(value) }] })
+    await send({ deposits: [value] })
   }
 
   const modal = isModalOpen ? (

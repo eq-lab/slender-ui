@@ -1,22 +1,25 @@
 import React, { useState } from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 
 import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
+import BigNumber from 'bignumber.js'
+import { formatCryptoCurrency } from '@/shared/formatters'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { getDepositUsd } from '../../utils/get-deposit-usd'
 import { getRequiredError } from '../../utils/get-required-error'
+import { makePosition } from '../../utils/make-position'
 
 interface Props {
-  deposit: bigint
+  deposit: BigNumber
   depositSumUsd: number
   onClose: () => void
-  tokenName: SupportedToken
+  tokenName: SupportedTokenName
   onSend: (value: PositionCell) => void
   debtSumUsd: number
 }
@@ -55,18 +58,17 @@ export function LendDecreaseModal({
     actualDebtUsd: debtSumUsd,
   })
 
-  const depositDelta = deposit - BigInt(value)
-  const depositError = depositDelta < 0
+  const depositError = Number(deposit) < Math.floor(+value)
 
   const formError = depositError || borrowCapacityError || getRequiredError(value)
 
-  const borrowTokenInfo = useTokenInfo(tokenName)
-  const max = Math.floor(
-    defaultBorrowCapacity / (borrowTokenInfo.priceInUsd * borrowTokenInfo.discount),
-  )
+  const max = formatCryptoCurrency(deposit.toNumber())
 
   const getTokenByTokenName = useGetTokenByTokenName()
-  const tokenSymbol = getTokenByTokenName(tokenName)?.symbol
+  const token = getTokenByTokenName(tokenName)
+  const tokenSymbol = token?.symbol
+
+  const positionUpdate = makePosition(tokenName, value)
 
   return (
     <ModalLayout
@@ -79,7 +81,7 @@ export function LendDecreaseModal({
           collateralError={borrowCapacityError}
           health={health}
           healthDelta={healthDelta}
-          depositSumUsdDelta={inputDepositSumUsd}
+          depositSumUsdDelta={-inputDepositSumUsd}
         />
       }
       onClose={onClose}
@@ -91,7 +93,7 @@ export function LendDecreaseModal({
         }
         buttonProps={{
           label: `Withdraw ${value} ${tokenSymbol}`,
-          onClick: () => onSend({ value: BigInt(value), tokenName }),
+          onClick: () => onSend(positionUpdate),
           disabled: formError,
         }}
       >

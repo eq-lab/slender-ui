@@ -1,8 +1,9 @@
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import BigNumber from 'bignumber.js'
 
 export interface PositionCell {
-  tokenName: SupportedToken
-  value: bigint
+  tokenName: SupportedTokenName
+  value: BigNumber
   valueInUsd?: number
 }
 

@@ -1,4 +1,4 @@
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { useTokenCache } from '@/entities/token/context/hooks'
 import Typography from '@marginly/ui/components/typography'
@@ -10,10 +10,9 @@ import { colorByToken } from '@/entities/token/constants/token-colors'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { PercentPieChart } from './percent-pie-chart'
 import { useActionModal } from '../../hooks/use-action-modal'
-import { Tooltip } from './tooltip'
 import * as S from './styled'
 
-export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
+export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
   const token = tokenContracts[tokenName]
 
   const {
@@ -62,7 +61,7 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
       <S.MarketCardUpperContainer $backgroundColor={tokenBackgroundColor}>
         <S.MarketCardHeadingContainer>
           <Typography headerS className="token-name">
-            {tokenCache?.name}
+            {tokenCache?.title}
           </Typography>
           <Typography className="token-symbol">{tokenCache?.symbol}</Typography>
           <div className="token-icon">
@@ -73,7 +72,6 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
           <div className="piechart-with-tooltip-wrapper">
             <div className="piechart-with-tooltip-container">
               <PercentPieChart percent={availablePercent} />
-              <Tooltip withThumbnail />
             </div>
           </div>
           <Typography className="total-available">
@@ -85,18 +83,14 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
       <S.MarketCardBottomContainer>
         <S.MarketCardBottomInfo>
           <S.MarketCardTextCell>
-            <div className="tooltip-container">
-              <Tooltip />
-            </div>
+            <div className="tooltip-container" />
             <Typography className="upper-text-container" caption secondary>
               Discount:
             </Typography>
             <Typography className="bottom-text-container">{discount}</Typography>
           </S.MarketCardTextCell>
           <S.MarketCardTextCell>
-            <div className="tooltip-container">
-              <Tooltip />
-            </div>
+            <div className="tooltip-container" />
             <Typography className="upper-text-container" caption secondary>
               Liquidation penalty:
             </Typography>
@@ -104,12 +98,12 @@ export function MarketCard({ tokenName }: { tokenName: SupportedToken }) {
           </S.MarketCardTextCell>
         </S.MarketCardBottomInfo>
         <S.MarketCardButtonsContainer>
-          <button type="button" onClick={borrowOpen} disabled={borrowDisabled}>
+          <S.MarketCardButton md elevated onClick={borrowOpen} disabled={borrowDisabled}>
             {`-${borrowInterestRate} Borrow`}
-          </button>
-          <button type="button" onClick={lendOpen} disabled={lendDisabled}>
+          </S.MarketCardButton>
+          <S.MarketCardButton md elevated onClick={lendOpen} disabled={lendDisabled} $isLend>
             {`+${lendInterestRate} Lend`}
-          </button>
+          </S.MarketCardButton>
         </S.MarketCardButtonsContainer>
       </S.MarketCardBottomContainer>
       {lendModal}

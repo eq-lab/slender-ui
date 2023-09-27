@@ -8,15 +8,15 @@ import { StyledComponentsRegistry } from './styled-registry'
 export function Providers({ children }: { children: JSX.Element }) {
   return (
     <CurrencyRatesProvider>
-      <WalletProvider>
-        <TokenProvider>
+      <TokenProvider>
+        <WalletProvider>
           <PositionProvider>
             <WaitModalProvider>
               <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
             </WaitModalProvider>
           </PositionProvider>
-        </TokenProvider>
-      </WalletProvider>
+        </WalletProvider>
+      </TokenProvider>
     </CurrencyRatesProvider>
   )
 }

@@ -1,11 +1,11 @@
 import React from 'react'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { AddAssetButton } from '../add-asset-button'
 import { AssetSelect } from '../asset-select'
 
 interface Props {
-  onChange: (value?: SupportedToken) => void
-  excludedTokens: SupportedToken[]
+  onChange: (value?: SupportedTokenName) => void
+  excludedTokens: SupportedTokenName[]
 }
 
 export function AddAsset({ onChange, excludedTokens }: Props) {

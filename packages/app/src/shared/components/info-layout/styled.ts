@@ -5,10 +5,11 @@ export const Wrapper = styled.div`
   padding: 24px;
   background-color: var(--fill-secondary);
   border-radius: 24px;
-  grid-template-columns: 100%;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
   gap: 24px;
-  justify-items: center;
 `
 
 export const List = styled.div`

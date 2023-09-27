@@ -1,4 +1,5 @@
 import * as SorobanClient from 'soroban-client'
+import BigNumber from 'bignumber.js'
 
 type ElementType<T> = T extends Array<infer U> ? U : never
 type KeyType<T> = T extends Map<infer K, any> ? K : never
@@ -24,7 +25,7 @@ export function scValToJs<T>(val: SorobanClient.xdr.ScVal): T {
     case SorobanClient.xdr.ScValType.scvI128():
     case SorobanClient.xdr.ScValType.scvU256():
     case SorobanClient.xdr.ScValType.scvI256(): {
-      return SorobanClient.scValToBigInt(val) as unknown as T
+      return BigNumber(SorobanClient.scValToBigInt(val).toString()) as unknown as T
     }
     case SorobanClient.xdr.ScValType.scvAddress(): {
       return SorobanClient.Address.fromScVal(val).toString() as unknown as T

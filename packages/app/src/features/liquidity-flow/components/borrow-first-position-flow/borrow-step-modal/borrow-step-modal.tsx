@@ -1,11 +1,12 @@
 import React from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
+import { formatCryptoCurrency } from '@/shared/formatters'
 import { getMaxDebt } from '../../../utils/get-max-debt'
 import { getRequiredError } from '../../../utils/get-required-error'
 import { useTokenInfo } from '../../../hooks/use-token-info'
@@ -18,7 +19,7 @@ interface Props {
   value: string
   onBorrowValueChange: (value: string) => void
   maxDepositUsd: number
-  debtTokenName: SupportedToken
+  debtTokenName: SupportedTokenName
 }
 
 export function BorrowStepModal({
@@ -41,9 +42,12 @@ export function BorrowStepModal({
 
   const Icon = getIconByTokenName(debtTokenName)
   const infoSlot = (
-    <InfoLayout title={debtToken?.name} mediaSection={<Icon width={48} />}>
+    <InfoLayout title={debtToken?.title} mediaSection={<Icon width={48} />}>
       <InfoRow label="Borrow APR" value={borrowInterestRate} />
-      <InfoRow label="Available" value={`${availableToBorrow} ${debtTokenSymbol}`} />
+      <InfoRow
+        label="Available"
+        value={`${formatCryptoCurrency(availableToBorrow)} ${debtTokenSymbol}`}
+      />
     </InfoLayout>
   )
 

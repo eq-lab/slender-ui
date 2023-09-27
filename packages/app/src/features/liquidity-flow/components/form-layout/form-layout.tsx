@@ -1,5 +1,6 @@
 import React from 'react'
 import Typography from '@marginly/ui/components/typography'
+import Button from '@marginly/ui/components/button'
 import * as S from './styled'
 
 interface Props {
@@ -16,12 +17,12 @@ interface Props {
 export function FormLayout({ title, children, buttonProps, description }: Props) {
   return (
     <S.Wrapper>
-      <Typography headerL>{title}</Typography>
+      <S.Typography headerL>{title}</S.Typography>
       <S.Inner>{children}</S.Inner>
       <S.BottomSection>
-        <S.Button onClick={buttonProps.onClick} type="button" disabled={buttonProps.disabled}>
+        <Button lg onClick={buttonProps.onClick} disabled={buttonProps.disabled} fullWidth>
           {buttonProps.label}
-        </S.Button>
+        </Button>
         {description && (
           <Typography caption secondary>
             {description}

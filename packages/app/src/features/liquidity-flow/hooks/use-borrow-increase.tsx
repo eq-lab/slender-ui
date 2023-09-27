@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import BigNumber from 'bignumber.js'
 import { excludeSupportedTokens } from '../utils/exclude-supported-tokens'
 import { BorrowIncreaseModal } from '../components/borrow-increase-modal'
 import { sumObj } from '../utils/sum-obj'
@@ -13,10 +14,10 @@ import { getCellByPositionUpdate } from '../soroban/get-cell-by-position-update'
 
 export const useBorrowIncrease = (): {
   modal: JSX.Element | null
-  open: (value?: SupportedToken) => void
+  open: (value?: SupportedTokenName) => void
 } => {
   const position = useContextSelector(PositionContext, (state) => state.position)
-  const [modalToken, setModalToken] = useState<SupportedToken | null>(null)
+  const [modalToken, setModalToken] = useState<SupportedTokenName | null>(null)
 
   const depositTokens = position?.deposits.map((deposit) => deposit.tokenName) || []
 
@@ -24,7 +25,7 @@ export const useBorrowIncrease = (): {
   const debtSumUsd = useDebtUsd(position?.debts)
   const send = useLiquidity('borrow')
 
-  const open = (value?: SupportedToken) => {
+  const open = (value?: SupportedTokenName) => {
     if (value) {
       setModalToken(value)
       return
@@ -48,7 +49,7 @@ export const useBorrowIncrease = (): {
       )
       const finalDebtsObj = sumObj(prevDebtsObj, sendValue)
       const debts = Object.entries(finalDebtsObj).map((entry) => {
-        const [tokenName, value] = entry as [SupportedToken, bigint]
+        const [tokenName, value] = entry as [SupportedTokenName, BigNumber]
         return {
           tokenName,
           value,

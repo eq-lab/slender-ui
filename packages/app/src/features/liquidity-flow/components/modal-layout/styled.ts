@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import DialogMui from '@mui/material/Dialog'
 
 export const Inner = styled.div<{ $clean?: boolean }>`
+  min-height: 476px;
   display: flex;
   padding: ${({ $clean }) => ($clean ? '32px 48px 48px' : '32px 32px 32px 48px')};
   gap: 48px;

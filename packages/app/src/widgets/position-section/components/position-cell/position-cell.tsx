@@ -9,6 +9,8 @@ import Typography from '@marginly/ui/components/typography'
 import Label from '@marginly/ui/components/label'
 import { formatUsd, formatCryptoCurrency } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
+import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
+import { ReactComponent as MinusIcon } from '@/shared/icons/minus.svg'
 import * as S from './position-cell.styled'
 
 export function PositionCell({
@@ -45,12 +47,12 @@ export function PositionCell({
       </Thumbnail>
       <S.PositionCellInfo>
         <S.PositionCellInfoItem $isBorrowPosition={!isLendPosition}>
-          <Typography caption>
-            {tokenCache?.name} {percentage && percentage !== 100 ? `· ${percentage}%` : null}
+          <Typography caption secondary>
+            {tokenCache?.title} {percentage && percentage !== 100 ? `· ${percentage}%` : null}
           </Typography>
           <S.PositionCellTokenAmount>
             <Typography>
-              {formatCryptoCurrency(Number(value.toString(10)))} {tokenCache?.symbol}{' '}
+              {formatCryptoCurrency(value.toNumber())} {tokenCache?.symbol}{' '}
             </Typography>
             {interestRate && (
               <Label positive={isLendPosition} negative={!isLendPosition} sm>
@@ -62,20 +64,20 @@ export function PositionCell({
         </S.PositionCellInfoItem>
         {isLendPosition && (
           <S.PositionCellInfoItem>
-            <Typography caption>
-              <em>{discount} discount</em>
+            <Typography caption secondary>
+              {discount} discount
             </Typography>
             {valueInUsd && <Typography>{formatUsd(valueInUsd)}</Typography>}
           </S.PositionCellInfoItem>
         )}
       </S.PositionCellInfo>
       <S.PositionCellButtons>
-        <button type="button" onClick={openDecreaseModal}>
-          &minus;
-        </button>
-        <button type="button" onClick={openIncreaseModal}>
-          +
-        </button>
+        <S.CellButton md elevated onClick={openDecreaseModal}>
+          <MinusIcon />
+        </S.CellButton>
+        <S.CellButton md elevated onClick={openIncreaseModal}>
+          <PlusIcon />
+        </S.CellButton>
       </S.PositionCellButtons>
     </S.PositionCellWrapper>
   )

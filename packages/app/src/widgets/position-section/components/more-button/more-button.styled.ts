@@ -6,9 +6,12 @@ export const MoreButtonWrapper = styled.div`
   grid-template-rows: repeat(2, 1fr);
   grid-column-gap: 16px;
   grid-row-gap: 0px;
+  color: var(--text-secondary);
+  cursor: pointer;
 
   .plus-button {
     grid-area: 1 / 1 / 3 / 2;
+    fill: var(--icon-secondary);
   }
   .upper-text {
     font-weight: 700;

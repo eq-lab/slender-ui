@@ -1,3 +1,4 @@
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import BigNumber from 'bignumber.js'
 
-export type PositionUpdate = Partial<Record<SupportedToken, bigint>>
+export type PositionUpdate = Partial<Record<SupportedTokenName, BigNumber>>

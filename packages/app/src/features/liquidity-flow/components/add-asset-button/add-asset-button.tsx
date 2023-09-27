@@ -1,18 +1,18 @@
-import React, { MouseEventHandler } from 'react'
+import React, { MouseEvent } from 'react'
 import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
-import Thumbnail from '@marginly/ui/components/thumbnail'
+import Button from '@marginly/ui/components/button'
 import * as S from './styled'
 
 interface Props {
-  onClick?: MouseEventHandler<HTMLDivElement>
+  onClick?: (event: MouseEvent<HTMLElement>) => void
 }
 
 export function AddAssetButton({ onClick }: Props) {
   return (
     <S.Wrapper onClick={onClick}>
-      <Thumbnail md rectangle darkbg>
+      <Button md icon secondary>
         <PlusIcon width={24} />
-      </Thumbnail>
+      </Button>
       Add Asset
     </S.Wrapper>
   )

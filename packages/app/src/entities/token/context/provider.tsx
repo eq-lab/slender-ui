@@ -10,7 +10,7 @@ import { PERCENT_PRECISION, CONTRACT_MATH_PRECISION } from '../constants/contrac
 import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision'
 
 const NATIVE_ID = 'native'
-const NATIVE_NAME = 'Lumen'
+const NATIVE_TITLE = 'Lumen'
 const NATIVE_SYMBOL = 'XLM'
 
 type Rest = [string, string, number]
@@ -51,21 +51,24 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
         Promise.all(marketTxs),
       ])) as [[...Rest, ...Rest[]], ReserveData[]]
 
-      const newCachedTokens = CACHED_POOL_ADDRESSES.reduce<CachedTokens>((cached, tokenAddress) => {
-        const name = restValues.shift() as string
-        const symbol = restValues.shift() as string
-        const decimals = restValues.shift() as number
-        cached[tokenAddress] = {
-          name: name === NATIVE_ID ? NATIVE_NAME : name,
-          symbol: symbol === NATIVE_ID ? NATIVE_SYMBOL : symbol,
-          decimals,
-        }
-        return cached
-      }, {} as CachedTokens)
+      const newCachedTokens = CACHED_TOKEN_ADDRESSES.reduce<CachedTokens>(
+        (cached, tokenAddress) => {
+          const title = restValues.shift() as string
+          const symbol = restValues.shift() as string
+          const decimals = restValues.shift() as number
+          cached[tokenAddress] = {
+            title: title === NATIVE_ID ? NATIVE_TITLE : title,
+            symbol: symbol === NATIVE_ID ? NATIVE_SYMBOL : symbol,
+            decimals,
+          }
+          return cached
+        },
+        {} as CachedTokens,
+      )
       setCachedTokens(newCachedTokens)
 
       const newMarketData = marketValues.reduce<PoolData>((cached, poolReserve, currentIndex) => {
-        cached[CACHED_TOKEN_ADDRESSES[currentIndex]!] = {
+        cached[CACHED_POOL_ADDRESSES[currentIndex]!] = {
           // @ts-ignore
           discount: poolReserve.configuration.get('discount'),
           // @ts-ignore

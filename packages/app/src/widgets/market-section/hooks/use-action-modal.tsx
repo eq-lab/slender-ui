@@ -1,16 +1,18 @@
 import { PositionContext } from '@/entities/position/context/context'
-import { SupportedToken } from '@/shared/stellar/constants/tokens'
+import { useWalletActions } from '@/entities/wallet/utils/use-wallet-action'
+import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { useContextSelector } from 'use-context-selector'
 
 interface Props {
-  tokenName: SupportedToken
-  useFirstPosition: (token: SupportedToken) => {
+  tokenName: SupportedTokenName
+  useFirstPosition: (token: SupportedTokenName) => {
     modal: JSX.Element | null
     open: () => void
   }
   useIncrease: () => {
     modal: JSX.Element | null
-    open: (token: SupportedToken) => void
+    open: (token: SupportedTokenName) => void
   }
   type: 'borrow' | 'lend'
 }
@@ -25,6 +27,8 @@ export const useActionModal = ({
   open: () => void
   disabled: boolean
 } => {
+  const { address, isConnected } = useWalletAddress()
+  const { connect, getWallet } = useWalletActions()
   const position = useContextSelector(PositionContext, (state) => state.position)
   const { modal: firstPositionModal, open: firstPositionOpen } = useFirstPosition(tokenName)
   const { modal: increaseModal, open: increaseOpen } = useIncrease()
@@ -38,6 +42,14 @@ export const useActionModal = ({
   )
 
   const open = () => {
+    if (!isConnected) {
+      getWallet()
+      return
+    }
+    if (!address) {
+      connect()
+      return
+    }
     if (havePosition) {
       increaseOpen(tokenName)
       return

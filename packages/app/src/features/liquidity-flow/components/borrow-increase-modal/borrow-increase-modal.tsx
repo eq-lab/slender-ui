@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { useAvailableToBorrow } from '@/entities/token/hooks/use-available-to-borrow'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
@@ -7,6 +7,7 @@ import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
+import BigNumber from 'bignumber.js'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -23,9 +24,9 @@ interface Props {
   debtSumUsd: number
   depositSumUsd: number
   onClose: () => void
-  tokenName: SupportedToken
+  tokenName: SupportedTokenName
   onSend: (value: PositionUpdate) => void
-  debtTokenNames: SupportedToken[]
+  debtTokenNames: SupportedTokenName[]
 }
 
 export function BorrowIncreaseModal({
@@ -39,7 +40,7 @@ export function BorrowIncreaseModal({
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDebtTokenName, setCoreDebtTokenName] = useState<SupportedToken>(tokenName)
+  const [coreDebtTokenName, setCoreDebtTokenName] = useState<SupportedTokenName>(tokenName)
   const [showExtraInput, setShowExtraInput] = useState(false)
 
   useEffect(() => {
@@ -56,12 +57,12 @@ export function BorrowIncreaseModal({
   )
 
   const coreDebtInfo = useTokenInfo(coreDebtTokenName)
-  const extraDebtInfo = useTokenInfo(extraDebtTokenName as SupportedToken)
+  const extraDebtInfo = useTokenInfo(extraDebtTokenName as SupportedTokenName)
 
   const { availableToBorrow } = useMarketDataForDisplay(tokenContracts[coreDebtTokenName])
 
   const inputDebtSumUsd =
-    Number(value) * coreDebtInfo.priceInUsd + Number(extraValue) * extraDebtInfo.priceInUsd
+    Number(value) / coreDebtInfo.priceInUsd + Number(extraValue) / extraDebtInfo.priceInUsd
 
   const actualDebtUsd = debtSumUsd + inputDebtSumUsd
 
@@ -100,22 +101,26 @@ export function BorrowIncreaseModal({
     extraInputError ||
     getRequiredError(value, extraValue, showExtraInput)
 
+  const getTokenByTokenName = useGetTokenByTokenName()
+  const coreToken = getTokenByTokenName(coreDebtTokenName)
+  const coreTokenSymbol = coreToken?.symbol
+  const extraToken = getTokenByTokenName(extraDebtTokenName)
+  const extraTokenSymbol = extraToken?.symbol
+
   const getSaveData = (): PositionUpdate => {
-    const core = { [coreDebtTokenName]: BigInt(value) }
+    const core = {
+      [coreDebtTokenName]: BigNumber(value),
+    }
 
     if (showExtraInput && extraDebtTokenName) {
       return {
         ...core,
-        [extraDebtTokenName]: BigInt(extraValue),
+        [extraDebtTokenName]: BigNumber(value),
       }
     }
 
     return core
   }
-
-  const getTokenByTokenName = useGetTokenByTokenName()
-  const extraTokenSymbol = getTokenByTokenName(extraDebtTokenName)?.symbol
-  const coreTokenSymbol = getTokenByTokenName(coreDebtTokenName)?.symbol
 
   return (
     <ModalLayout

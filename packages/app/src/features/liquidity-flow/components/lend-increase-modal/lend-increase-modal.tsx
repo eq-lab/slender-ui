@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SupportedToken, tokenContracts } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
@@ -7,6 +7,7 @@ import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { formatUsd } from '@/shared/formatters'
+import BigNumber from 'bignumber.js'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -23,9 +24,9 @@ interface Props {
   debtSumUsd: number
   depositSumUsd: number
   onClose: () => void
-  tokenName: SupportedToken
+  tokenName: SupportedTokenName
   onSend: (value: PositionUpdate) => void
-  depositTokenNames: SupportedToken[]
+  depositTokenNames: SupportedTokenName[]
 }
 
 export function LendIncreaseModal({
@@ -39,8 +40,8 @@ export function LendIncreaseModal({
   const [value, setValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
 
-  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedToken>(tokenName)
-  const [extraDepositTokenName, setExtraDepositTokenName] = useState<SupportedToken>()
+  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedTokenName>(tokenName)
+  const [extraDepositTokenName, setExtraDepositTokenName] = useState<SupportedTokenName>()
 
   useEffect(() => {
     setCoreDepositTokenName(tokenName)
@@ -69,21 +70,27 @@ export function LendIncreaseModal({
   const coreInputMax = coreDepositInfo.userBalance
   const extraInputMax = extraDepositInfo.userBalance
 
-  const coreInputError = Number(value) > coreDepositInfo.userBalance
-  const extraInputError = Number(extraValue) > extraDepositInfo.userBalance
+  const coreInputError = coreDepositInfo.userBalance.lt(value)
+  const extraInputError = coreDepositInfo.userBalance.lt(extraValue)
 
   const getTokenByTokenName = useGetTokenByTokenName()
-  const extraTokenSymbol = getTokenByTokenName(extraDepositTokenName)?.symbol
-  const coreTokenSymbol = getTokenByTokenName(coreDepositTokenName)?.symbol
+  const coreToken = getTokenByTokenName(coreDepositTokenName)
+  const coreTokenSymbol = coreToken?.symbol
+
+  const extraToken = getTokenByTokenName(extraDepositTokenName)
+  const extraTokenSymbol = extraToken?.symbol
+
   const marketData = useMarketDataForDisplay(tokenContracts[coreDepositTokenName])
 
   const getSaveData = (): PositionUpdate => {
-    const core = { [coreDepositTokenName]: BigInt(value) }
+    const core = {
+      [coreDepositTokenName]: BigNumber(value),
+    }
 
     if (extraDepositTokenName && extraDepositTokenName) {
       return {
         ...core,
-        [extraDepositTokenName]: BigInt(extraValue),
+        [extraDepositTokenName]: BigNumber(value),
       }
     }
 
@@ -99,7 +106,7 @@ export function LendIncreaseModal({
   const renderDescription = () => {
     if (!formError) return `${formatUsd(inputDepositSumUsd)} will be counted as collateral`
     if (hasExtraDepositToken) return 'Add deposit amount first'
-    return `With ${marketData.discount}% discount`
+    return `With ${marketData.discount} discount`
   }
 
   return (
@@ -146,10 +153,7 @@ export function LendIncreaseModal({
           )}
         </InputLayout>
 
-        {!extraDepositTokenName && (
-          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} />
-        )}
-        {extraDepositTokenName && (
+        {extraDepositTokenName ? (
           <SuperField
             type="number"
             onChange={(e) => setExtraValue(e.target.value)}
@@ -159,6 +163,8 @@ export function LendIncreaseModal({
             className={cn(extraInputError && Error)}
             postfix={extraTokenSymbol}
           />
+        ) : (
+          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} />
         )}
       </FormLayout>
     </ModalLayout>
