@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { MouseEvent, useState } from 'react'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
@@ -6,6 +6,7 @@ import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
+import Button from '@marginly/ui/components/button'
 import * as S from './styled'
 import { AddAssetButton } from '../add-asset-button'
 
@@ -22,7 +23,7 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
   const getTokenByTokenName = useGetTokenByTokenName()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
   const close = () => {
@@ -39,9 +40,9 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
     }
     const ButtonIcon = getIconByTokenName(value)
     return (
-      <S.ThumbnailWrapper md rectangle onClick={handleClick}>
-        <ButtonIcon />
-      </S.ThumbnailWrapper>
+      <Button md onClick={handleClick} secondary icon>
+        <ButtonIcon width={24} />
+      </Button>
     )
   }
 

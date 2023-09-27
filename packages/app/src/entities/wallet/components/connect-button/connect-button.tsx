@@ -1,32 +1,23 @@
 'use client'
 
 import React from 'react'
-import { getPublicKey } from '@stellar/freighter-api'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { ReactComponent as WalletIcon } from '@/shared/icons/wallet.svg'
-import { FREIGHTER_WALLET_URL } from '../../constants/wallet'
 import { Button } from './button'
+import { useWalletActions } from '../../utils/use-wallet-action'
 
 const SHORT_ADDRESS_SIZE = 4
 
 export function ConnectButton() {
-  const { address, setAddress, isConnected } = useWalletAddress()
-
-  const handleGetWalletClick = () => {
-    window.open(FREIGHTER_WALLET_URL, '_blank')
-  }
-
-  const handleConnectClick = async () => {
-    const publicKey = await getPublicKey()
-    setAddress(publicKey)
-  }
+  const { address, isConnected } = useWalletAddress()
+  const { connect, getWallet } = useWalletActions()
 
   if (isConnected === undefined) {
     return null
   }
 
   if (!isConnected) {
-    return <Button onClick={handleGetWalletClick}>Get Freighter</Button>
+    return <Button onClick={getWallet}>Get Freighter</Button>
   }
 
   if (address === undefined) {
@@ -34,7 +25,7 @@ export function ConnectButton() {
   }
 
   if (!address) {
-    return <Button onClick={handleConnectClick}>Connect</Button>
+    return <Button onClick={connect}>Connect</Button>
   }
 
   return (

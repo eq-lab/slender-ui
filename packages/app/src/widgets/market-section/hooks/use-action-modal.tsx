@@ -1,4 +1,6 @@
 import { PositionContext } from '@/entities/position/context/context'
+import { useWalletActions } from '@/entities/wallet/utils/use-wallet-action'
+import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { useContextSelector } from 'use-context-selector'
 
@@ -25,6 +27,8 @@ export const useActionModal = ({
   open: () => void
   disabled: boolean
 } => {
+  const { address, isConnected } = useWalletAddress()
+  const { connect, getWallet } = useWalletActions()
   const position = useContextSelector(PositionContext, (state) => state.position)
   const { modal: firstPositionModal, open: firstPositionOpen } = useFirstPosition(tokenName)
   const { modal: increaseModal, open: increaseOpen } = useIncrease()
@@ -38,6 +42,14 @@ export const useActionModal = ({
   )
 
   const open = () => {
+    if (!isConnected) {
+      getWallet()
+      return
+    }
+    if (!address) {
+      connect()
+      return
+    }
     if (havePosition) {
       increaseOpen(tokenName)
       return
