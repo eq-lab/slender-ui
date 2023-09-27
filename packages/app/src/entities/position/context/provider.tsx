@@ -61,10 +61,6 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
     SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].sAddress),
   )
 
-  const balancesUnderlying = useGetBalance(
-    SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].address),
-  )
-
   useEffect(() => {
     const debtPositions = debtBalances?.reduce(
       (resultArr: PositionCell[], currentItem, currentIndex) => {
@@ -114,7 +110,6 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
     positionUpdate,
     debtBalances,
     lendBalances,
-    balancesUnderlying,
     cryptocurrencyUsdRates,
     marketData,
   ])
