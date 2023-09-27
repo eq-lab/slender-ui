@@ -82,7 +82,7 @@ export function LendDecreaseModal({
           collateralError={borrowCapacityError}
           health={health}
           healthDelta={healthDelta}
-          depositSumUsdDelta={inputDepositSumUsd}
+          depositSumUsdDelta={-inputDepositSumUsd}
         />
       }
       onClose={onClose}
