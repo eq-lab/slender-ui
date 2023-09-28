@@ -48,7 +48,7 @@ export const useSubmit = (methodName: PoolMethodName) => {
       if (!value?.isNaN() && !value?.isZero()) {
         try {
           const token = getTokenByTokenName(tokenName)
-          const amount = value.times(10 ** (token?.decimals ?? 0))
+          const amount = value.times(10 ** (token?.decimals ?? 0)).dp(0)
           // that's exactly what we want
           // eslint-disable-next-line no-await-in-loop
           const result = await runLiquidityBinding({
