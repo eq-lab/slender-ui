@@ -60,7 +60,10 @@ export function LendDecreaseModal({
 
   const depositError = Number(deposit) < Math.floor(+value)
 
-  const formError = depositError || borrowCapacityError || getRequiredError(value)
+  const formError =
+    depositError ||
+    borrowCapacityError ||
+    getRequiredError({ value, valueDecimals: depositTokenInfo.decimals })
 
   const max = formatCryptoCurrency(deposit.toNumber())
 

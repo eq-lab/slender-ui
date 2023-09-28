@@ -1,7 +1,20 @@
-export const getRequiredError = (value: string, extraValue?: string, showExtraInput?: boolean) => {
-  const hasCoreValueRequiredError = !Number(value)
-  if (!showExtraInput) return hasCoreValueRequiredError
-  const hasExtraValueRequiredError = !Number(extraValue)
+export const getRequiredError = ({
+  value: rawValue,
+  valueDecimals,
+  showExtraInput,
+  extraValue: rawExtraValue,
+  extraValueDecimals = 0,
+}: {
+  value: string
+  valueDecimals: number
+  showExtraInput?: boolean
+  extraValue?: string
+  extraValueDecimals?: number
+}) => {
+  const value = Number(rawValue)
+  const hasCoreValueRequiredError = !value || value < 1 / 10 ** valueDecimals
+  if (!showExtraInput || !hasCoreValueRequiredError) return hasCoreValueRequiredError
 
-  return hasCoreValueRequiredError && hasExtraValueRequiredError
+  const extraValue = Number(rawExtraValue)
+  return !extraValue || extraValue < 1 / 10 ** extraValueDecimals
 }

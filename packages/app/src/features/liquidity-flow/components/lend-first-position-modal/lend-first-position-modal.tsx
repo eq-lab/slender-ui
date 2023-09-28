@@ -51,7 +51,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
     </InfoLayout>
   )
 
-  const requiredError = getRequiredError(value)
+  const requiredError = getRequiredError({ value, valueDecimals: tokenInfo.decimals })
   const notEnoughFoundsError = Number(value) > max
 
   const formError = requiredError || notEnoughFoundsError

@@ -99,7 +99,13 @@ export function BorrowIncreaseModal({
     borrowCapacityError ||
     coreInputError ||
     extraInputError ||
-    getRequiredError(value, extraValue, showExtraInput)
+    getRequiredError({
+      value,
+      valueDecimals: coreDebtInfo.decimals,
+      showExtraInput,
+      extraValue,
+      extraValueDecimals: extraDebtInfo.decimals,
+    })
 
   const getTokenByTokenName = useGetTokenByTokenName()
   const coreToken = getTokenByTokenName(coreDebtTokenName)
