@@ -149,6 +149,7 @@ export function LendIncreaseModal({
               onChange={setCoreDepositTokenName}
               tokenNames={depositTokenNames}
               value={coreDepositTokenName}
+              isDeposit
             />
           )}
         </InputLayout>

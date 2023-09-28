@@ -22,6 +22,7 @@ import { makePosition } from '../../../utils/make-position'
 
 interface Props {
   onClose: () => void
+  onBack: () => void
   debtValue: string
   debtTokenName: SupportedTokenName
   depositTokenNames: [SupportedTokenName, SupportedTokenName]
@@ -33,6 +34,7 @@ const MIN_HEALTH_VALUE = 25
 
 export function LendStepModal({
   onClose,
+  onBack,
   debtValue,
   debtTokenName,
   depositTokenNames,
@@ -121,6 +123,7 @@ export function LendStepModal({
   return (
     <ModalLayout
       onClose={onClose}
+      onBack={onBack}
       infoSlot={
         <PositionSummary
           health={health}
@@ -161,6 +164,7 @@ export function LendStepModal({
               onChange={setCoreDepositTokenName}
               tokenNames={depositTokenNames}
               value={coreDepositTokenName}
+              isDeposit
             />
           )}
         </InputLayout>

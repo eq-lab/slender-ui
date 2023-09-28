@@ -6,7 +6,6 @@ import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
-import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { formatUsd } from '@/shared/formatters'
 import { PositionCell } from '@/entities/position/types'
 import { ModalLayout } from '../modal-layout'
@@ -15,6 +14,7 @@ import { useTokenInfo } from '../../hooks/use-token-info'
 import { getDepositUsd } from '../../utils/get-deposit-usd'
 import { getRequiredError } from '../../utils/get-required-error'
 import { makePosition } from '../../utils/make-position'
+import { TokenThumbnail } from '../token-thumbnail'
 
 interface Props {
   onClose: () => void
@@ -36,7 +36,6 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   const getTokenByTokenName = useGetTokenByTokenName()
   const token = getTokenByTokenName(depositTokenName)
   const tokenSymbol = token?.symbol
-  const Icon = getIconByTokenName(depositTokenName)
 
   const handleClick = () => {
     const depositValue = makePosition(depositTokenName, value)
@@ -44,7 +43,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   }
 
   const infoSlot = (
-    <InfoLayout title={token?.title} mediaSection={<Icon width={48} />}>
+    <InfoLayout title={token?.title} mediaSection={<TokenThumbnail tokenName={depositTokenName} />}>
       <InfoRow label="Lend APR" value={lendInterestRate} />
       <InfoRow label="Discount" value={discount} />
       <InfoRow label="Liquidation penalty" value={liquidationPenalty} />

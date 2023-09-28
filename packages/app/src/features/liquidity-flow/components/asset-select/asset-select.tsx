@@ -1,6 +1,4 @@
 import { MouseEvent, useState } from 'react'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
 import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
@@ -14,9 +12,10 @@ interface Props {
   tokenNames: SupportedTokenName[]
   onChange: (value: SupportedTokenName) => void
   value?: SupportedTokenName
+  isDeposit?: boolean
 }
 
-export function AssetSelect({ tokenNames, onChange, value }: Props) {
+export function AssetSelect({ tokenNames, onChange, value, isDeposit }: Props) {
   const depositBalances = useGetBalance(
     tokenNames.map((tokenName) => tokenContracts[tokenName].address),
   )
@@ -49,28 +48,29 @@ export function AssetSelect({ tokenNames, onChange, value }: Props) {
   return (
     <div>
       {renderButton()}
-      <Menu anchorEl={anchorEl} open={open} onClose={close}>
+      <S.Menu anchorEl={anchorEl} open={open} onClose={close}>
         {tokenNames.map((tokenName, index) => {
           const token = getTokenByTokenName(tokenName)
-          if (!token) return null
-          const { title, symbol, decimals } = token
+          const tokenBalance = depositBalances[index]?.balance.toNumber() || 0
+          if (!token || (!tokenBalance && isDeposit)) return null
+          const { title, symbol } = token
           const Icon = getIconByTokenName(tokenName)
           return (
-            <MenuItem onClick={handleItemClick(tokenName)} key={tokenName}>
+            <S.MenuItem onClick={handleItemClick(tokenName)} key={tokenName}>
               <S.MenuItemInner>
                 <S.ThumbnailWrapper rectangle md>
                   <Icon />
                 </S.ThumbnailWrapper>
                 <div>
                   <div>{title}</div>
-                  {depositBalances[index]?.balance.toNumber() || 0} {symbol}
+                  {tokenBalance} {symbol}
                 </div>
                 {tokenName === value && <CheckIcon width={24} />}
               </S.MenuItemInner>
-            </MenuItem>
+            </S.MenuItem>
           )
         })}
-      </Menu>
+      </S.Menu>
     </div>
   )
 }

@@ -21,7 +21,6 @@ body {
   max-width: 100vw;
   font-family: var(--default-font);
   font-weight: 500;
-  text-shadow: 0 0 0;
 }
 
 body {

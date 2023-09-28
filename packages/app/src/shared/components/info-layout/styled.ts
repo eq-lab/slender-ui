@@ -10,6 +10,7 @@ export const Wrapper = styled.div`
   align-items: center;
   height: 100%;
   gap: 24px;
+  overflow: hidden;
 `
 
 export const List = styled.div`
