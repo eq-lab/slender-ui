@@ -44,23 +44,20 @@ export function LendDecreaseModal({
 
   const actualDepositUsd = Math.max(depositSumUsd - inputDepositSumUsd, 0)
 
-  const {
-    borrowCapacityDelta,
-    borrowCapacityInterface,
-    borrowCapacityError,
-    defaultBorrowCapacity,
-    health,
-    healthDelta,
-  } = getPositionInfo({
-    depositUsd: depositSumUsd,
-    actualDepositUsd,
-    debtUsd: debtSumUsd,
-    actualDebtUsd: debtSumUsd,
-  })
+  const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError, health, healthDelta } =
+    getPositionInfo({
+      depositUsd: depositSumUsd,
+      actualDepositUsd,
+      debtUsd: debtSumUsd,
+      actualDebtUsd: debtSumUsd,
+    })
 
   const depositError = Number(deposit) < Math.floor(+value)
 
-  const formError = depositError || borrowCapacityError || getRequiredError(value)
+  const formError =
+    depositError ||
+    borrowCapacityError ||
+    getRequiredError({ value, valueDecimals: depositTokenInfo.decimals })
 
   const max = formatCryptoCurrency(deposit.toNumber())
 

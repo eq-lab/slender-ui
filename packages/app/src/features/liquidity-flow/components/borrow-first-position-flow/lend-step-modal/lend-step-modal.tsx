@@ -93,7 +93,13 @@ export function LendStepModal({
 
   const firstInputError = coreInputMax.lt(coreValue)
   const secondInputError = extraInputMax.lt(extraValue)
-  const requiredError = getRequiredError(coreValue, extraValue, showExtraInput)
+  const requiredError = getRequiredError({
+    value: coreValue,
+    valueDecimals: coreDepositInfo.decimals,
+    showExtraInput,
+    extraValue,
+    extraValueDecimals: extraDepositInfo.decimals,
+  })
 
   const lowHealthError = health < MIN_HEALTH_VALUE
   const formError =

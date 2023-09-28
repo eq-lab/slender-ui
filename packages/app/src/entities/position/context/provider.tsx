@@ -56,9 +56,11 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
 
   const debtBalances = useGetBalance(
     SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].debtAddress),
+    positionUpdate,
   )
   const lendBalances = useGetBalance(
     SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].sAddress),
+    positionUpdate,
   )
 
   useEffect(() => {

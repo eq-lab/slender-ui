@@ -45,7 +45,7 @@ export function BorrowDecreaseModal({
 
   const debtError = Number(debt) < Math.floor(+value)
 
-  const formError = debtError || getRequiredError(value)
+  const formError = debtError || getRequiredError({ value, valueDecimals: tokenInfo.decimals })
 
   const getTokenByTokenName = useGetTokenByTokenName()
   const token = getTokenByTokenName(tokenName)

@@ -101,7 +101,13 @@ export function LendIncreaseModal({
     borrowCapacityError ||
     coreInputError ||
     extraInputError ||
-    getRequiredError(value, extraValue, Boolean(extraDepositTokenName))
+    getRequiredError({
+      value,
+      valueDecimals: coreDepositInfo.decimals,
+      extraValue,
+      extraValueDecimals: extraDepositInfo.decimals,
+      showExtraInput: Boolean(extraDepositTokenName),
+    })
 
   const renderDescription = () => {
     if (!formError) return `${formatUsd(inputDepositSumUsd)} will be counted as collateral`

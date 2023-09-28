@@ -52,7 +52,8 @@ export function BorrowStepModal({
   )
 
   const maxDebt = getMaxDebt(availableToBorrow, maxDepositUsd, borrowCoinInfo.priceInUsd)
-  const formError = getRequiredError(value) || Number(value) > maxDebt
+  const formError =
+    getRequiredError({ value, valueDecimals: borrowCoinInfo.decimals }) || Number(value) > maxDebt
 
   return (
     <ModalLayout onClose={onClose} infoSlot={infoSlot}>
