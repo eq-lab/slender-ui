@@ -5,4 +5,4 @@ export const addressToScVal = (account: string) =>
   SorobanClient.nativeToScVal(account, { type: 'address' })
 
 export const bigintToScVal = (i: BigNumber): SorobanClient.xdr.ScVal =>
-  new SorobanClient.ScInt(i.toString()).toI128()
+  new SorobanClient.ScInt(i.toFixed(0)).toI128()

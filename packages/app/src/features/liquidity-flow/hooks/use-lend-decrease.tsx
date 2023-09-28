@@ -3,6 +3,8 @@ import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { PositionCell } from '@/entities/position/types'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import { MAX_POSITION, MINIMAL_POSITION } from '@/features/liquidity-flow/constants'
+import BigNumber from 'bignumber.js'
 import { useLiquidity } from './use-liquidity'
 import { useDepositUsd } from './use-deposit-usd'
 import { useDebtUsd } from './use-debt-usd'
@@ -25,16 +27,19 @@ export const useLendDecrease = (): {
     if (!deposit) return null
 
     const handleSend = async ({ tokenName, value }: PositionCell) => {
+      let fullWithdrawal = false
       const newDeposits = position.deposits.map((newDeposit) => {
         if (newDeposit.tokenName === tokenName) {
-          return { value: newDeposit.value.minus(value), tokenName }
+          const newValue = newDeposit.value.minus(value)
+          fullWithdrawal = newValue.lt(MINIMAL_POSITION)
+          return { value: fullWithdrawal ? BigNumber(0) : newValue, tokenName }
         }
         return newDeposit
       })
 
       setModalToken(null)
       await send({
-        additionalDeposits: [{ tokenName, value }],
+        additionalDeposits: [{ tokenName, value: fullWithdrawal ? MAX_POSITION : value }],
         deposits: newDeposits,
       })
     }
