@@ -3,12 +3,12 @@ import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import Button from '@marginly/ui/components/button'
-import { AssetsInfo } from '../../hooks/use-get-assets-info'
+import { AssetInfo } from '../../hooks/use-get-assets-info'
 import * as S from './styled'
 import { AddAssetButton } from '../add-asset-button'
 
 interface Props {
-  assetsInfo: AssetsInfo[]
+  assetsInfo: AssetInfo[]
   onChange: (value: SupportedTokenName) => void
   value?: SupportedTokenName
 }

@@ -4,7 +4,7 @@ import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 
-export interface AssetsInfo {
+export interface AssetInfo {
   tokenName: SupportedTokenName
   title: string
   symbol: string
@@ -15,30 +15,27 @@ export interface AssetsInfo {
 export function useGetAssetsInfo(
   tokenNames: SupportedTokenName[],
   isDeposit?: boolean,
-): AssetsInfo[] {
+): AssetInfo[] {
   const getTokenByTokenName = useGetTokenByTokenName()
   const depositBalances = useGetBalance(
     tokenNames.map((tokenName) => tokenContracts[tokenName].address),
   )
 
-  const assetsInfo: AssetsInfo[] = tokenNames.reduce(
-    (tokens: AssetsInfo[], currentToken, index) => {
-      const token = getTokenByTokenName(currentToken)
-      const tokenBalance = depositBalances[index]?.balance.toNumber() || 0
-      if (!token || (!tokenBalance && isDeposit)) return tokens
-      const { title, symbol } = token
-      const Icon = getIconByTokenName(currentToken)
-      tokens.push({
-        tokenName: currentToken,
-        title,
-        symbol,
-        Icon,
-        tokenBalance,
-      })
-      return tokens
-    },
-    [],
-  )
+  const assetsInfo: AssetInfo[] = tokenNames.reduce((tokens: AssetInfo[], currentToken, index) => {
+    const token = getTokenByTokenName(currentToken)
+    const tokenBalance = depositBalances[index]?.balance.toNumber() || 0
+    if (!token || (!tokenBalance && isDeposit)) return tokens
+    const { title, symbol } = token
+    const Icon = getIconByTokenName(currentToken)
+    tokens.push({
+      tokenName: currentToken,
+      title,
+      symbol,
+      Icon,
+      tokenBalance,
+    })
+    return tokens
+  }, [])
 
   return assetsInfo
 }
