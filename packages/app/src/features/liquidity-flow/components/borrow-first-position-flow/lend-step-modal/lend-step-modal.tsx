@@ -3,10 +3,10 @@ import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/t
 import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { PositionSummary } from '@/entities/position/components/position-summary'
-import { SuperField } from '@marginly/ui/components/input/super-field'
 import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
+import { TokenSuperField } from '@/shared/components/token-super-field'
 import { getRequiredError } from '../../../utils/get-required-error'
 import { getPositionInfo } from '../../../utils/get-position-info'
 import { getExtraTokenName } from '../../../utils/get-extra-token-name'
@@ -151,11 +151,9 @@ export function LendStepModal({
         }}
       >
         <InputLayout>
-          <SuperField
-            type="number"
-            onChange={(e) => {
-              setCoreValue(e.target.value)
-            }}
+          <TokenSuperField
+            onChange={setCoreValue}
+            initFocus
             value={coreValue}
             title="To deposit"
             placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
@@ -173,10 +171,9 @@ export function LendStepModal({
 
         {!showExtraInput && <AddAssetButton onClick={() => setShowExtraInput(true)} />}
         {showExtraInput && (
-          <SuperField
-            type="number"
+          <TokenSuperField
             onChange={(e) => {
-              setExtraValue(e.target.value)
+              setExtraValue(e)
             }}
             value={extraValue}
             title="To deposit"

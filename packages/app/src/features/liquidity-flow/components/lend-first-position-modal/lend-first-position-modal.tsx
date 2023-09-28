@@ -4,11 +4,11 @@ import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-
 import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
-import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { formatUsd } from '@/shared/formatters'
 import { PositionCell } from '@/entities/position/types'
+import { TokenSuperField } from '@/shared/components/token-super-field'
 import { ModalLayout } from '../modal-layout'
 import { FormLayout } from '../form-layout'
 import { useTokenInfo } from '../../hooks/use-token-info'
@@ -74,11 +74,9 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
           disabled: formError,
         }}
       >
-        <SuperField
-          type="number"
-          onChange={(e) => {
-            setValue(e.target.value)
-          }}
+        <TokenSuperField
+          initFocus
+          onChange={setValue}
           value={value}
           title="To deposit"
           placeholder={`Max ${max} ${tokenSymbol}`}

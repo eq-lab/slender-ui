@@ -3,10 +3,10 @@ import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/t
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
-import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { formatCryptoCurrency } from '@/shared/formatters'
+import { TokenSuperField } from '@/shared/components/token-super-field'
 import { getMaxDebt } from '../../../utils/get-max-debt'
 import { getRequiredError } from '../../../utils/get-required-error'
 import { useTokenInfo } from '../../../hooks/use-token-info'
@@ -66,11 +66,9 @@ export function BorrowStepModal({
           disabled: formError,
         }}
       >
-        <SuperField
-          type="number"
-          onChange={(e) => {
-            onBorrowValueChange(e.target.value)
-          }}
+        <TokenSuperField
+          onChange={onBorrowValueChange}
+          initFocus
           value={value}
           title="To borrow"
           placeholder={`Max ${maxDebt} ${debtTokenSymbol}`}
