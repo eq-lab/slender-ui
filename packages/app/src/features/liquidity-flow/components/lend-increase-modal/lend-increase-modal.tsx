@@ -19,6 +19,7 @@ import { getDepositUsd } from '../../utils/get-deposit-usd'
 import { getRequiredError } from '../../utils/get-required-error'
 import { excludeSupportedTokens } from '../../utils/exclude-supported-tokens'
 import { AddAsset } from '../add-asset/add-asset'
+import { useGetAssetsInfo } from '../../hooks/use-get-assets-info'
 
 interface Props {
   debtSumUsd: number
@@ -49,6 +50,8 @@ export function LendIncreaseModal({
 
   const coreDepositInfo = useTokenInfo(coreDepositTokenName)
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
+
+  const assetsInfo = useGetAssetsInfo(depositTokenNames, true)
 
   const inputDepositSumUsd =
     getDepositUsd(value, coreDepositInfo.priceInUsd, coreDepositInfo.discount) +
@@ -147,9 +150,8 @@ export function LendIncreaseModal({
           {!extraDepositTokenName && hasExtraDepositToken && (
             <AssetSelect
               onChange={setCoreDepositTokenName}
-              tokenNames={depositTokenNames}
+              assetsInfo={assetsInfo}
               value={coreDepositTokenName}
-              isDeposit
             />
           )}
         </InputLayout>
@@ -165,7 +167,7 @@ export function LendIncreaseModal({
             postfix={extraTokenSymbol}
           />
         ) : (
-          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} />
+          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} isDeposit />
         )}
       </FormLayout>
     </ModalLayout>

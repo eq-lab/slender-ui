@@ -19,6 +19,7 @@ import { FormLayout } from '../../form-layout'
 import { AddAssetButton } from '../../add-asset-button'
 import { AssetSelect } from '../../asset-select'
 import { makePosition } from '../../../utils/make-position'
+import { useGetAssetsInfo } from '../../../hooks/use-get-assets-info'
 
 interface Props {
   onClose: () => void
@@ -56,6 +57,8 @@ export function LendStepModal({
     depositTokenNames,
     coreDepositTokenName,
   ) as SupportedTokenName
+
+  const assetsInfo = useGetAssetsInfo(depositTokenNames, true)
 
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 
@@ -162,9 +165,8 @@ export function LendStepModal({
           {!showExtraInput && (
             <AssetSelect
               onChange={setCoreDepositTokenName}
-              tokenNames={depositTokenNames}
+              assetsInfo={assetsInfo}
               value={coreDepositTokenName}
-              isDeposit
             />
           )}
         </InputLayout>
