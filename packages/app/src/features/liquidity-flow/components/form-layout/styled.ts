@@ -43,6 +43,7 @@ export const Button = styled.button`
 `
 
 export const BottomSection = styled.div`
+  grid-template-columns: 100%;
   margin-top: auto;
   display: grid;
   gap: 16px;

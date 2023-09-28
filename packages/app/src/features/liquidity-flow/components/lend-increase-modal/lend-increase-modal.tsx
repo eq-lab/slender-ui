@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { PositionSummary } from '@/entities/position/components/position-summary'
-import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { formatUsd } from '@/shared/formatters'
 import BigNumber from 'bignumber.js'
+import { TokenSuperField } from '@/shared/components/token-super-field'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -141,9 +141,9 @@ export function LendIncreaseModal({
         }}
       >
         <InputLayout>
-          <SuperField
-            type="number"
-            onChange={(e) => setValue(e.target.value)}
+          <TokenSuperField
+            initFocus
+            onChange={setValue}
             value={value}
             title="To deposit"
             placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
@@ -160,9 +160,8 @@ export function LendIncreaseModal({
         </InputLayout>
 
         {extraDepositTokenName ? (
-          <SuperField
-            type="number"
-            onChange={(e) => setExtraValue(e.target.value)}
+          <TokenSuperField
+            onChange={setExtraValue}
             value={extraValue}
             title="To deposit"
             placeholder={`Max ${extraInputMax} ${extraTokenSymbol}`}

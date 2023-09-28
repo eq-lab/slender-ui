@@ -12,4 +12,5 @@ export const MenuItemInner = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
+  grid-template-columns: 100%;
 `
