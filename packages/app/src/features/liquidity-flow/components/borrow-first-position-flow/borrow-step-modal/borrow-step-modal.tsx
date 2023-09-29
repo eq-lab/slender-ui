@@ -73,8 +73,8 @@ export function BorrowStepModal({
           initFocus
           value={value}
           title="To borrow"
-          placeholder={`Max ${maxDebt} ${debtTokenSymbol}`}
-          postfix={debtTokenSymbol}
+          badgeValue={String(maxDebt)}
+          tokenSymbol={debtTokenSymbol}
         />
       </FormLayout>
     </ModalLayout>

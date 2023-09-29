@@ -149,9 +149,9 @@ export function LendIncreaseModal({
             onChange={setValue}
             value={value}
             title="To deposit"
-            placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
+            badgeValue={String(coreInputMax)}
+            tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
-            postfix={coreTokenSymbol}
           />
           {!extraDepositTokenName && hasExtraDepositToken && (
             <AssetSelect
@@ -167,9 +167,9 @@ export function LendIncreaseModal({
             onChange={setExtraValue}
             value={extraValue}
             title="To deposit"
-            placeholder={`Max ${extraInputMax} ${extraTokenSymbol}`}
+            badgeValue={extraInputMax.toString(10)}
+            tokenSymbol={extraTokenSymbol}
             className={cn(extraInputError && Error)}
-            postfix={extraTokenSymbol}
           />
         ) : (
           <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} isDeposit />

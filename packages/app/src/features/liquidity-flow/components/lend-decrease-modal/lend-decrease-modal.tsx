@@ -99,8 +99,8 @@ export function LendDecreaseModal({
           onChange={setValue}
           value={value}
           title="To withdraw"
-          placeholder={`Max ${max} ${tokenSymbol}`}
-          postfix={tokenSymbol}
+          badgeValue={max}
+          tokenSymbol={tokenSymbol}
         />
       </FormLayout>
     </ModalLayout>

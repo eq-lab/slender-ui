@@ -78,8 +78,8 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
           onChange={setValue}
           value={value}
           title="To deposit"
-          placeholder={`Max ${max} ${tokenSymbol}`}
-          postfix={tokenSymbol}
+          badgeValue={String(max)}
+          tokenSymbol={tokenSymbol}
         />
       </FormLayout>
     </ModalLayout>

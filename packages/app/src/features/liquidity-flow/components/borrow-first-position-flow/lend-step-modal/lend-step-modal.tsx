@@ -68,13 +68,8 @@ export function LendStepModal({
   const extraInputMax = extraDepositInfo.userBalance
 
   useEffect(() => {
-    const inputValue = (
-      debtUsd /
-      ((coreDepositInfo.discount / coreDepositInfo.priceInUsd) * DEFAULT_HEALTH_VALUE)
-    ).toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    })
+    const inputValue =
+      debtUsd / ((coreDepositInfo.discount / coreDepositInfo.priceInUsd) * DEFAULT_HEALTH_VALUE)
 
     const finalValue = coreInputMax.lt(inputValue) ? coreInputMax : inputValue
     setCoreValue(String(finalValue))
@@ -162,9 +157,9 @@ export function LendStepModal({
             initFocus
             value={coreValue}
             title="To deposit"
-            placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
+            tokenSymbol={coreTokenSymbol}
+            badgeValue={String(coreInputMax)}
             className={cn(firstInputError && Error)}
-            postfix={coreTokenSymbol}
           />
           {!showExtraInput && (
             <AssetSelect
@@ -183,9 +178,9 @@ export function LendStepModal({
             }}
             value={extraValue}
             title="To deposit"
-            placeholder={`Max ${extraInputMax} ${extraTokenSymbol}`}
+            tokenSymbol={extraTokenSymbol}
+            badgeValue={extraInputMax.toString(10)}
             className={cn(secondInputError && Error)}
-            postfix={extraTokenSymbol}
           />
         )}
       </FormLayout>
