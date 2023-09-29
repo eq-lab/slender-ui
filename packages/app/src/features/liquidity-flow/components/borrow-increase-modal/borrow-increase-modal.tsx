@@ -85,7 +85,7 @@ export function BorrowIncreaseModal({
 
   const hasExtraDeptToken = Boolean(debtTokenNames[1])
 
-  const coreMaxDebt = getMaxDebt(
+  const coreInputMax = getMaxDebt(
     coreAvailableToBorrow,
     defaultBorrowCapacity,
     coreDebtInfo.priceInUsd,
@@ -95,7 +95,7 @@ export function BorrowIncreaseModal({
     extraDebtTokenName &&
     getMaxDebt(extraAvailableToBorrow, defaultBorrowCapacity, extraDebtInfo.priceInUsd)
 
-  const coreInputError = Number(value) > coreMaxDebt
+  const coreInputError = Number(value) > coreInputMax
   const extraInputError = Number(extraValue) > (extraInputMax || 0)
 
   const formError =
@@ -162,9 +162,9 @@ export function BorrowIncreaseModal({
             onChange={setValue}
             value={value}
             title="To borrow"
-            placeholder={`Max ${coreMaxDebt} ${coreTokenSymbol}`}
+            badgeValue={String(coreInputMax)}
+            tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
-            postfix={coreTokenSymbol}
           />
           {!showExtraInput && hasExtraDeptToken && (
             <AssetSelect
@@ -184,9 +184,9 @@ export function BorrowIncreaseModal({
             onChange={setExtraValue}
             value={extraValue}
             title="To borrow"
-            placeholder={`Max ${extraInputMax} ${extraTokenSymbol}`}
+            badgeValue={String(extraInputMax)}
+            tokenSymbol={extraTokenSymbol}
             className={cn(extraInputError && Error)}
-            postfix={extraTokenSymbol}
           />
         )}
       </FormLayout>

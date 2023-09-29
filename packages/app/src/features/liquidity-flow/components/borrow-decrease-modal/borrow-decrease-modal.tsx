@@ -79,10 +79,10 @@ export function BorrowDecreaseModal({
         <TokenSuperField
           initFocus
           onChange={setValue}
+          tokenSymbol={tokenSymbol}
           value={value}
           title="To pay off"
-          placeholder={`Max ${debt.toString(10)} ${tokenSymbol}`}
-          postfix={tokenSymbol}
+          badgeValue={debt.toString(10)}
         />
       </FormLayout>
     </ModalLayout>
