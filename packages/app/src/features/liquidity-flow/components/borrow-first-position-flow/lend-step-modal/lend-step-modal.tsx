@@ -19,9 +19,11 @@ import { FormLayout } from '../../form-layout'
 import { AddAssetButton } from '../../add-asset-button'
 import { AssetSelect } from '../../asset-select'
 import { makePosition } from '../../../utils/make-position'
+import { useGetAssetsInfo } from '../../../hooks/use-get-assets-info'
 
 interface Props {
   onClose: () => void
+  onBack: () => void
   debtValue: string
   debtTokenName: SupportedTokenName
   depositTokenNames: [SupportedTokenName, SupportedTokenName]
@@ -33,6 +35,7 @@ const MIN_HEALTH_VALUE = 25
 
 export function LendStepModal({
   onClose,
+  onBack,
   debtValue,
   debtTokenName,
   depositTokenNames,
@@ -54,6 +57,8 @@ export function LendStepModal({
     depositTokenNames,
     coreDepositTokenName,
   ) as SupportedTokenName
+
+  const assetsInfo = useGetAssetsInfo(depositTokenNames, true)
 
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
 
@@ -127,6 +132,7 @@ export function LendStepModal({
   return (
     <ModalLayout
       onClose={onClose}
+      onBack={onBack}
       infoSlot={
         <PositionSummary
           health={health}
@@ -163,7 +169,7 @@ export function LendStepModal({
           {!showExtraInput && (
             <AssetSelect
               onChange={setCoreDepositTokenName}
-              tokenNames={depositTokenNames}
+              assetsInfo={assetsInfo}
               value={coreDepositTokenName}
             />
           )}

@@ -1,6 +1,6 @@
 import React, { MouseEvent } from 'react'
 import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
-import Button from '@marginly/ui/components/button'
+import Typography from '@marginly/ui/components/typography'
 import * as S from './styled'
 
 interface Props {
@@ -10,10 +10,10 @@ interface Props {
 export function AddAssetButton({ onClick }: Props) {
   return (
     <S.Wrapper onClick={onClick}>
-      <Button md icon secondary>
+      <S.Button md icon secondary>
         <PlusIcon width={24} />
-      </Button>
-      Add Asset
+      </S.Button>
+      <Typography secondary>Add Asset</Typography>
     </S.Wrapper>
   )
 }

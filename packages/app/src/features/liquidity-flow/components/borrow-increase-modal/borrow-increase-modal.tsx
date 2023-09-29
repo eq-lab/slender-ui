@@ -19,6 +19,7 @@ import { InputLayout } from '../../styled'
 import { getMaxDebt } from '../../utils/get-max-debt'
 import { getExtraTokenName } from '../../utils/get-extra-token-name'
 import { getRequiredError } from '../../utils/get-required-error'
+import { useGetAssetsInfo } from '../../hooks/use-get-assets-info'
 
 interface Props {
   debtSumUsd: number
@@ -60,6 +61,8 @@ export function BorrowIncreaseModal({
   const extraDebtInfo = useTokenInfo(extraDebtTokenName as SupportedTokenName)
 
   const { availableToBorrow } = useMarketDataForDisplay(tokenContracts[coreDebtTokenName])
+
+  const assetsInfo = useGetAssetsInfo(debtTokenNames)
 
   const inputDebtSumUsd =
     Number(value) / coreDebtInfo.priceInUsd + Number(extraValue) / extraDebtInfo.priceInUsd
@@ -166,7 +169,7 @@ export function BorrowIncreaseModal({
           {!showExtraInput && hasExtraDeptToken && (
             <AssetSelect
               onChange={setCoreDebtTokenName}
-              tokenNames={debtTokenNames}
+              assetsInfo={assetsInfo}
               value={coreDebtTokenName}
             />
           )}

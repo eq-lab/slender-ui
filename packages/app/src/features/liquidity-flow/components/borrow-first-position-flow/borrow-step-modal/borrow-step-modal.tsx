@@ -4,7 +4,6 @@ import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
-import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { formatCryptoCurrency } from '@/shared/formatters'
 import { TokenSuperField } from '@/shared/components/token-super-field'
 import { getMaxDebt } from '../../../utils/get-max-debt'
@@ -12,6 +11,7 @@ import { getRequiredError } from '../../../utils/get-required-error'
 import { useTokenInfo } from '../../../hooks/use-token-info'
 import { ModalLayout } from '../../modal-layout'
 import { FormLayout } from '../../form-layout'
+import { TokenThumbnail } from '../../token-thumbnail'
 
 interface Props {
   onClose: () => void
@@ -40,9 +40,11 @@ export function BorrowStepModal({
   const debtToken = getTokenByTokenName(debtTokenName)
   const debtTokenSymbol = debtToken?.symbol
 
-  const Icon = getIconByTokenName(debtTokenName)
   const infoSlot = (
-    <InfoLayout title={debtToken?.title} mediaSection={<Icon width={48} />}>
+    <InfoLayout
+      title={debtToken?.title}
+      mediaSection={<TokenThumbnail tokenName={debtTokenName} />}
+    >
       <InfoRow label="Borrow APR" value={borrowInterestRate} />
       <InfoRow
         label="Available"
