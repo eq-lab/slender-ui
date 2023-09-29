@@ -15,6 +15,7 @@ interface Props {
   initFocus?: boolean
   tokenSymbol?: string
   badgeValue?: string
+  children?: React.ReactNode
 }
 
 export function TokenSuperField({
@@ -25,6 +26,7 @@ export function TokenSuperField({
   initFocus,
   tokenSymbol,
   badgeValue,
+  children,
 }: Props) {
   const { focused, onClick, ref, setInputFocused } = useFocus()
 
@@ -59,6 +61,7 @@ export function TokenSuperField({
       ref={refCallback}
       focused={focused}
     >
+      {children}
       {Number(badgeValue) && badgeValue ? (
         <FieldContainer className={Suggestion}>
           <Label badge onClick={() => onChange(badgeValue)}>

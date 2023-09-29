@@ -33,14 +33,14 @@ export function AssetSelect({ assetsInfo, onChange, value }: Props) {
     }
     const ButtonIcon = getIconByTokenName(value)
     return (
-      <Button md onClick={handleClick} secondary icon>
+      <Button md elevated onClick={handleClick} icon>
         <ButtonIcon width={24} />
       </Button>
     )
   }
 
   return (
-    <div>
+    <S.ButtonWrapper>
       {renderButton()}
       <S.Menu anchorEl={anchorEl} open={open} onClose={close}>
         {assetsInfo.map(({ tokenName, tokenBalance, title, symbol, Icon }) => (
@@ -58,6 +58,6 @@ export function AssetSelect({ assetsInfo, onChange, value }: Props) {
           </S.MenuItem>
         ))}
       </S.Menu>
-    </div>
+    </S.ButtonWrapper>
   )
 }

@@ -165,14 +165,15 @@ export function BorrowIncreaseModal({
             badgeValue={String(coreInputMax)}
             tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
-          />
-          {!showExtraInput && hasExtraDeptToken && (
-            <AssetSelect
-              onChange={setCoreDebtTokenName}
-              assetsInfo={assetsInfo}
-              value={coreDebtTokenName}
-            />
-          )}
+          >
+            {!showExtraInput && hasExtraDeptToken && (
+              <AssetSelect
+                onChange={setCoreDebtTokenName}
+                assetsInfo={assetsInfo}
+                value={coreDebtTokenName}
+              />
+            )}
+          </TokenSuperField>
         </InputLayout>
 
         {!showExtraInput && hasExtraDeptToken && (

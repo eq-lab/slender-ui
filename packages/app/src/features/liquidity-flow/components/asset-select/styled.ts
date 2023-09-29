@@ -3,6 +3,12 @@ import MenuUi from '@mui/material/Menu'
 import MenuItemUi from '@mui/material/MenuItem'
 import ThumbnailUi from '@marginly/ui/components/thumbnail'
 
+export const ButtonWrapper = styled.div`
+  position: absolute;
+  top: 24px;
+  right: 24px;
+`
+
 export const Menu = styled(MenuUi)`
   .MuiMenu-paper {
     border-radius: var(--rounding-radius-xl);
