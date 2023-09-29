@@ -54,7 +54,7 @@ export const MarketCardPoolInfoContainer = styled.div`
       position: absolute;
       display: flex;
       &:hover {
-        right: 0px;
+        right: 0;
       }
     }
   }

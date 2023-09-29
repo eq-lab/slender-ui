@@ -8,8 +8,8 @@ export const Menu = styled(MenuUi)`
     border-radius: var(--rounding-radius-xl);
     background: var(--background-elevated, #fff);
     box-shadow:
-      0px 8px 24px 0px rgba(51, 20, 0, 0.08),
-      0px 4px 8px 0px rgba(51, 20, 0, 0.04);
+      0 8px 24px 0 rgba(51, 20, 0, 0.08),
+      0 4px 8px 0 rgba(51, 20, 0, 0.04);
   }
 `
 
