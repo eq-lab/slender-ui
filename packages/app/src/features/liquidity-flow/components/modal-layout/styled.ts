@@ -31,7 +31,7 @@ const modalButtonDefaultStyles = css`
     top: 32px;
     width: 32px;
     height: 32px;
-    padding: 0px;
+    padding: 0;
 
     svg {
       width: 24px;
