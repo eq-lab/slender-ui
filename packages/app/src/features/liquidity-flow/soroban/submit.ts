@@ -6,6 +6,7 @@ import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke'
 import { SorobanRpc } from 'soroban-client'
 import BigNumber from 'bignumber.js'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
+import { MAX_POSITION } from '@/features/liquidity-flow/constants'
 import { PositionUpdate } from '../types'
 
 const USER_DECLINED_ERROR = 'User declined access'
@@ -48,7 +49,9 @@ export const useSubmit = (methodName: PoolMethodName) => {
       if (!value?.isNaN() && !value?.isZero()) {
         try {
           const token = getTokenByTokenName(tokenName)
-          const amount = value.times(10 ** (token?.decimals ?? 0))
+          const amount = value.eq(MAX_POSITION)
+            ? MAX_POSITION
+            : value.times(10 ** (token?.decimals ?? 0)).dp(0)
           // that's exactly what we want
           // eslint-disable-next-line no-await-in-loop
           const result = await runLiquidityBinding({

@@ -146,8 +146,8 @@ export function useMakeInvoke() {
           return parseMetaXdrToJs<T>(raw.resultMetaXdr)
         }
 
-        logError("Don't know how to parse result! Throwing status")
-        throw new Error(raw.status)
+        logError("Don't know how to parse result!")
+        throw new Error(raw.toString())
       }
     },
     [userAddress],

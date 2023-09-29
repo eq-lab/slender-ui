@@ -3,10 +3,10 @@ import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 
 import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
-import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import BigNumber from 'bignumber.js'
 import { formatCryptoCurrency } from '@/shared/formatters'
+import { TokenSuperField } from '@/shared/components/token-super-field'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -44,23 +44,20 @@ export function LendDecreaseModal({
 
   const actualDepositUsd = Math.max(depositSumUsd - inputDepositSumUsd, 0)
 
-  const {
-    borrowCapacityDelta,
-    borrowCapacityInterface,
-    borrowCapacityError,
-    defaultBorrowCapacity,
-    health,
-    healthDelta,
-  } = getPositionInfo({
-    depositUsd: depositSumUsd,
-    actualDepositUsd,
-    debtUsd: debtSumUsd,
-    actualDebtUsd: debtSumUsd,
-  })
+  const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError, health, healthDelta } =
+    getPositionInfo({
+      depositUsd: depositSumUsd,
+      actualDepositUsd,
+      debtUsd: debtSumUsd,
+      actualDebtUsd: debtSumUsd,
+    })
 
   const depositError = Number(deposit) < Math.floor(+value)
 
-  const formError = depositError || borrowCapacityError || getRequiredError(value)
+  const formError =
+    depositError ||
+    borrowCapacityError ||
+    getRequiredError({ value, valueDecimals: depositTokenInfo.decimals })
 
   const max = formatCryptoCurrency(deposit.toNumber())
 
@@ -97,9 +94,9 @@ export function LendDecreaseModal({
           disabled: formError,
         }}
       >
-        <SuperField
-          type="number"
-          onChange={(e) => setValue(e.target.value)}
+        <TokenSuperField
+          initFocus
+          onChange={setValue}
           value={value}
           title="To withdraw"
           placeholder={`Max ${max} ${tokenSymbol}`}

@@ -81,6 +81,7 @@ export const useBorrowFirstPosition = (
     [Step.Deposit]: (
       <LendStepModal
         onClose={close}
+        onBack={() => setStep(Step.Borrow)}
         debtValue={debtValue}
         debtTokenName={token}
         depositTokenName={depositTokenName}

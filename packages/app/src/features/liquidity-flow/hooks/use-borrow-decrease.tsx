@@ -3,6 +3,8 @@ import { PositionContext } from '@/entities/position/context/context'
 import { useContextSelector } from 'use-context-selector'
 import { PositionCell } from '@/entities/position/types'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import { MAX_POSITION, MINIMAL_POSITION } from '@/features/liquidity-flow/constants'
+import BigNumber from 'bignumber.js'
 import { useLiquidity } from './use-liquidity'
 import { BorrowDecreaseModal } from '../components/borrow-decrease-modal'
 import { useDebtUsd } from './use-debt-usd'
@@ -25,16 +27,19 @@ export const useBorrowDecrease = (): {
     if (!debt) return null
 
     const handleSend = async ({ tokenName, value }: PositionCell) => {
+      let fullWithdrawal = false
       const newDebts = position.debts.map((debtCell) => {
         if (debtCell.tokenName === tokenName) {
-          return { value: debtCell.value.minus(value), tokenName }
+          const newValue = debtCell.value.minus(value)
+          fullWithdrawal = newValue.lt(MINIMAL_POSITION)
+          return { value: fullWithdrawal ? BigNumber(0) : debtCell.value.minus(value), tokenName }
         }
         return debtCell
       })
 
       setModalToken(null)
       await send({
-        additionalDebts: [{ tokenName, value }],
+        additionalDebts: [{ tokenName, value: fullWithdrawal ? MAX_POSITION : value }],
         debts: newDebts,
       })
     }

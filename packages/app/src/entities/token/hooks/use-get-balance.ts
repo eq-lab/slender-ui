@@ -19,7 +19,10 @@ const defaultTokenRecord = { title: '', symbol: '', decimals: 0 }
 const isArraysEqual = <T>(a?: T[], b?: T[]) =>
   a?.length === b?.length && a?.every((value, index) => value === b?.[index])
 
-export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecord[] => {
+export const useGetBalance = (
+  tokenAddresses: TokenAddress[],
+  numberUpdate?: number,
+): SorobanTokenRecord[] => {
   const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
   const makeInvoke = useMakeInvoke()
   const tokensCache = useTokenCache()
@@ -28,6 +31,7 @@ export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecor
   const previousTokenAddresses = useRef<TokenAddress[]>()
   const previousUserAddress = useRef<string>()
   const previousTokensCache = useRef<Partial<CachedTokens>>()
+  const previousUpdateNumber = useRef<number>()
 
   useEffect(() => {
     async function updateBalances() {
@@ -61,16 +65,18 @@ export const useGetBalance = (tokenAddresses: TokenAddress[]): SorobanTokenRecor
     if (
       !isArraysEqual(tokenAddresses, previousTokenAddresses.current) ||
       userAddress !== previousUserAddress.current ||
-      tokensCache !== previousTokensCache.current
+      tokensCache !== previousTokensCache.current ||
+      numberUpdate !== previousUpdateNumber.current
     ) {
       updateBalances()
     }
-  }, [makeInvoke, tokenAddresses, userAddress, tokensCache])
+  }, [makeInvoke, tokenAddresses, userAddress, tokensCache, numberUpdate])
 
   useEffect(() => {
     previousTokenAddresses.current = tokenAddresses
     previousUserAddress.current = userAddress
     previousTokensCache.current = tokensCache
+    previousUpdateNumber.current = numberUpdate
   })
 
   return balanceInfo

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { PositionSummary } from '@/entities/position/components/position-summary'
-import { SuperField } from '@marginly/ui/components/input/super-field'
 import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import { formatUsd } from '@/shared/formatters'
 import BigNumber from 'bignumber.js'
+import { TokenSuperField } from '@/shared/components/token-super-field'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -19,6 +19,7 @@ import { getDepositUsd } from '../../utils/get-deposit-usd'
 import { getRequiredError } from '../../utils/get-required-error'
 import { excludeSupportedTokens } from '../../utils/exclude-supported-tokens'
 import { AddAsset } from '../add-asset/add-asset'
+import { useGetAssetsInfo } from '../../hooks/use-get-assets-info'
 
 interface Props {
   debtSumUsd: number
@@ -49,6 +50,8 @@ export function LendIncreaseModal({
 
   const coreDepositInfo = useTokenInfo(coreDepositTokenName)
   const extraDepositInfo = useTokenInfo(extraDepositTokenName)
+
+  const assetsInfo = useGetAssetsInfo(depositTokenNames, true)
 
   const inputDepositSumUsd =
     getDepositUsd(value, coreDepositInfo.priceInUsd, coreDepositInfo.discount) +
@@ -101,7 +104,13 @@ export function LendIncreaseModal({
     borrowCapacityError ||
     coreInputError ||
     extraInputError ||
-    getRequiredError(value, extraValue, Boolean(extraDepositTokenName))
+    getRequiredError({
+      value,
+      valueDecimals: coreDepositInfo.decimals,
+      extraValue,
+      extraValueDecimals: extraDepositInfo.decimals,
+      showExtraInput: Boolean(extraDepositTokenName),
+    })
 
   const renderDescription = () => {
     if (!formError) return `${formatUsd(inputDepositSumUsd)} will be counted as collateral`
@@ -135,9 +144,9 @@ export function LendIncreaseModal({
         }}
       >
         <InputLayout>
-          <SuperField
-            type="number"
-            onChange={(e) => setValue(e.target.value)}
+          <TokenSuperField
+            initFocus
+            onChange={setValue}
             value={value}
             title="To deposit"
             placeholder={`Max ${coreInputMax} ${coreTokenSymbol}`}
@@ -147,16 +156,15 @@ export function LendIncreaseModal({
           {!extraDepositTokenName && hasExtraDepositToken && (
             <AssetSelect
               onChange={setCoreDepositTokenName}
-              tokenNames={depositTokenNames}
+              assetsInfo={assetsInfo}
               value={coreDepositTokenName}
             />
           )}
         </InputLayout>
 
         {extraDepositTokenName ? (
-          <SuperField
-            type="number"
-            onChange={(e) => setExtraValue(e.target.value)}
+          <TokenSuperField
+            onChange={setExtraValue}
             value={extraValue}
             title="To deposit"
             placeholder={`Max ${extraInputMax} ${extraTokenSymbol}`}
@@ -164,7 +172,7 @@ export function LendIncreaseModal({
             postfix={extraTokenSymbol}
           />
         ) : (
-          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} />
+          <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} isDeposit />
         )}
       </FormLayout>
     </ModalLayout>

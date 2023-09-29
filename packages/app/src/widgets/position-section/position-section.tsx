@@ -121,10 +121,14 @@ export function PositionSection() {
             ) : (
               <S.PositionSumWrapper>
                 <S.PositionSumContainer>
-                  <S.TitleHeader>{debtsSumUsd ? formatUsd(debtsSumUsd) : 'No debt'}</S.TitleHeader>
-                  <Label negative lg>
-                    &minus;{formatPercent(debtSumInterestRate)} APR
-                  </Label>
+                  <S.TitleHeader headerL>
+                    {debtsSumUsd ? formatUsd(debtsSumUsd) : 'No debt'}
+                  </S.TitleHeader>
+                  {!!debtsSumUsd && (
+                    <Label negative lg>
+                      &minus;{formatPercent(debtSumInterestRate)} APR
+                    </Label>
+                  )}
                 </S.PositionSumContainer>
                 <Typography secondary>
                   {debtsSumUsd ? 'Borrowed' : 'You earn on deposit'}

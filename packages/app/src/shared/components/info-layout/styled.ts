@@ -10,10 +10,12 @@ export const Wrapper = styled.div`
   align-items: center;
   height: 100%;
   gap: 24px;
+  overflow: hidden;
 `
 
 export const List = styled.div`
   width: 100%;
   display: grid;
   gap: 16px;
+  grid-template-columns: 100%;
 `
