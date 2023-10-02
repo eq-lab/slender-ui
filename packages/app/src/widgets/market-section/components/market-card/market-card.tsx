@@ -77,7 +77,9 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
           <Typography className="total-available">
             {Math.floor(availableToBorrow)} available
           </Typography>
-          <Typography className="total-supplied">From {Math.floor(totalSupplied)}</Typography>
+          <Typography caption className="total-supplied">
+            From {Math.floor(totalSupplied)}
+          </Typography>
         </S.MarketCardPoolInfoContainer>
       </S.MarketCardUpperContainer>
       <S.MarketCardBottomContainer>
