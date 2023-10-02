@@ -17,10 +17,11 @@ export const Dialog = styled(DialogMui)<{ $clean?: boolean }>`
   .MuiPaper-root {
     position: static;
     border-radius: 48px;
-    ${({ $clean }) => ($clean ? 'width: 520px;' : '')}
+    ${({ $clean }) => ($clean ? 'width: 520px;' : '')};
+    box-shadow: 0px 8px 32px 0px rgba(51, 20, 0, 0.16);
   }
   .MuiBackdrop-root {
-    background: var(--background-overlay, rgba(245, 241, 240, 0.8));
+    background: rgba(245, 241, 240, 0.8);
     backdrop-filter: blur(12px);
   }
 `
