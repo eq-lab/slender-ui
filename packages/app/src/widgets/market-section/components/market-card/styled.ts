@@ -87,16 +87,15 @@ export const MarketCardTextCell = styled.div`
   grid-column-gap: 12px;
 
   .tooltip-container {
-    display: none;
     fill: rgba(217, 217, 217, 1);
     margin: auto;
     grid-area: 1 / 1 / 3 / 2;
   }
   .upper-text-container {
-    grid-area: 1 / 1 / 2 / 3;
+    grid-area: 1 / 2 / 2 / 3;
   }
   .bottom-text-container {
-    grid-area: 2 / 1 / 3 / 3;
+    grid-area: 2 / 2 / 3 / 3;
   }
 `
 

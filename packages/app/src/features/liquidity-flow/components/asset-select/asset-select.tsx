@@ -1,4 +1,5 @@
 import { MouseEvent, useState } from 'react'
+import { Tooltip, TooltipText } from '@/shared/components/tooltip'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
@@ -11,9 +12,10 @@ interface Props {
   assetsInfo: AssetInfo[]
   onChange: (value: SupportedTokenName) => void
   value?: SupportedTokenName
+  tooltipText: string
 }
 
-export function AssetSelect({ assetsInfo, onChange, value }: Props) {
+export function AssetSelect({ assetsInfo, onChange, value, tooltipText }: Props) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -33,9 +35,11 @@ export function AssetSelect({ assetsInfo, onChange, value }: Props) {
     }
     const ButtonIcon = getIconByTokenName(value)
     return (
-      <Button md elevated onClick={handleClick} icon>
-        <ButtonIcon width={24} />
-      </Button>
+      <Tooltip content={<TooltipText>{tooltipText}</TooltipText>} placement="top">
+        <Button md elevated onClick={handleClick} icon>
+          <ButtonIcon width={24} />
+        </Button>
+      </Tooltip>
     )
   }
 

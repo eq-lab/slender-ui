@@ -166,6 +166,7 @@ export function LendStepModal({
               onChange={setCoreDepositTokenName}
               assetsInfo={assetsInfo}
               value={coreDepositTokenName}
+              tooltipText="Collateral Asset"
             />
           )}
         </InputLayout>
