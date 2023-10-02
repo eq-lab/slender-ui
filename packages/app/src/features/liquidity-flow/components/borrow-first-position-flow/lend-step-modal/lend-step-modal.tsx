@@ -111,7 +111,7 @@ export function LendStepModal({
     if (requiredError) return 'Enter collateral amount first'
     if (lowHealthError) return 'Add more collateral to have 25% health'
     if (firstInputError || secondInputError) return 'You don’t have enough funds'
-    return `With APR ${borrowInterestRate}`
+    return `With APR -${borrowInterestRate}`
   }
 
   const debt = makePosition(debtTokenName, debtValue)
