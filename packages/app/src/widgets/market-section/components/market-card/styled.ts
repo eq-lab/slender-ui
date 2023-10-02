@@ -59,11 +59,12 @@ export const MarketCardPoolInfoContainer = styled.div`
     }
   }
   .total-available {
+    margin-top: 2px;
     color: var(--text-on-dark);
     grid-area: 1 / 2 / 2 / 3;
   }
   .total-supplied {
-    color: var(--text-on-dark);
+    color: var(--text-secondary-on-dark, rgba(242, 237, 235, 0.48));
     grid-area: 2 / 2 / 3 / 3;
   }
 `

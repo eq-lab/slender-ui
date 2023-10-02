@@ -89,8 +89,12 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
               </TooltipThumbnail>
             </div>
           </div>
-          <Typography className="total-available">{availableToBorrowAmount} available</Typography>
-          <Typography className="total-supplied">From {totalSuppliedAmount}</Typography>
+          <Typography className="total-available">
+            {Math.floor(availableToBorrowAmount)} available
+          </Typography>
+          <Typography caption className="total-supplied">
+            From {totalSuppliedAmount}
+          </Typography>
         </S.MarketCardPoolInfoContainer>
       </S.MarketCardUpperContainer>
       <S.MarketCardBottomContainer>
