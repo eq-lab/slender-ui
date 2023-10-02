@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { SuperField } from '@marginly/ui/components/input/super-field'
+import SuperField from '@marginly/ui/components/input/super-field'
 import { useFocus } from '@marginly/ui/components/input/use-focus'
 import { FieldContainer } from '@marginly/ui/components/input/text.styled'
 import { Suggestion } from '@marginly/ui/constants/classnames'
