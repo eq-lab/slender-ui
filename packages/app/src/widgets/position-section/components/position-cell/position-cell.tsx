@@ -11,6 +11,7 @@ import { formatUsd, formatCryptoCurrency } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
 import { ReactComponent as MinusIcon } from '@/shared/icons/minus.svg'
+import Button from '@marginly/ui/components/button'
 import * as S from './position-cell.styled'
 
 export function PositionCell({
@@ -72,12 +73,12 @@ export function PositionCell({
         )}
       </S.PositionCellInfo>
       <S.PositionCellButtons>
-        <S.CellButton md elevated onClick={openDecreaseModal}>
-          <MinusIcon />
-        </S.CellButton>
-        <S.CellButton md elevated onClick={openIncreaseModal}>
-          <PlusIcon />
-        </S.CellButton>
+        <Button md elevated onClick={openDecreaseModal} icon>
+          <MinusIcon width={24} />
+        </Button>
+        <Button md elevated onClick={openIncreaseModal} icon>
+          <PlusIcon width={24} />
+        </Button>
       </S.PositionCellButtons>
     </S.PositionCellWrapper>
   )

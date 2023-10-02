@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import ButtonUi from '@marginly/ui/components/button'
+import ThumbnailUi from '@marginly/ui/components/thumbnail'
 
 export const Wrapper = styled.div`
   display: inline-flex;
@@ -10,10 +10,6 @@ export const Wrapper = styled.div`
   font-variation-settings: 'wght' 700;
 `
 
-export const Button = styled(ButtonUi)`
-  &&& {
-    svg {
-      fill: var(--icon-secondary);
-    }
-  }
+export const Thumbnail = styled(ThumbnailUi)`
+  fill: var(--icon-secondary);
 `
