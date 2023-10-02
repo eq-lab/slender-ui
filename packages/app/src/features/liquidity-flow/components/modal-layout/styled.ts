@@ -21,7 +21,7 @@ export const Dialog = styled(DialogMui)<{ $clean?: boolean }>`
     box-shadow: 0px 8px 32px 0px rgba(51, 20, 0, 0.16);
   }
   .MuiBackdrop-root {
-    background: rgba(245, 241, 240, 0.8);
+    background: var(--background-overlay);
     backdrop-filter: blur(12px);
   }
 `
