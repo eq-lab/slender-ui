@@ -61,7 +61,7 @@ export function BorrowDecreaseModal({
           borrowCapacity={borrowCapacityInterface}
           depositSumUsd={depositSumUsd}
           health={health}
-          debtUsdDelta={inputDebtUsd}
+          debtUsdDelta={-inputDebtUsd}
           healthDelta={healthDelta}
           debtError={debtError}
         />

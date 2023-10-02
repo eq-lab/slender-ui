@@ -5,9 +5,9 @@ import { PositionSummary } from '@/entities/position/components/position-summary
 import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
-import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
 import BigNumber from 'bignumber.js'
 import { TokenSuperField } from '@/shared/components/token-super-field'
+import { formatCryptoCurrency } from '@/shared/formatters'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -59,8 +59,6 @@ export function BorrowIncreaseModal({
 
   const coreDebtInfo = useTokenInfo(coreDebtTokenName)
   const extraDebtInfo = useTokenInfo(extraDebtTokenName as SupportedTokenName)
-
-  const { availableToBorrow } = useMarketDataForDisplay(tokenContracts[coreDebtTokenName])
 
   const assetsInfo = useGetAssetsInfo(debtTokenNames)
 
@@ -131,6 +129,10 @@ export function BorrowIncreaseModal({
     return core
   }
 
+  const description = showExtraInput
+    ? undefined
+    : `${formatCryptoCurrency(coreAvailableToBorrow)} ${coreTokenSymbol} available to borrow`
+
   return (
     <ModalLayout
       infoSlot={
@@ -149,7 +151,7 @@ export function BorrowIncreaseModal({
     >
       <FormLayout
         title="How much to borrow"
-        description={hasExtraDeptToken ? undefined : `${availableToBorrow} available to borrow`}
+        description={description}
         buttonProps={{
           label: `Borrow`,
           onClick: () => onSend(getSaveData()),
