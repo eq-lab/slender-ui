@@ -8,9 +8,11 @@ import { useBorrowFirstPosition } from '@/features/liquidity-flow/hooks/use-borr
 import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
 import { colorByToken } from '@/entities/token/constants/token-colors'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
+import { TooltipText } from '@/shared/components/tooltip'
 import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { PercentPieChart } from './percent-pie-chart'
 import { useActionModal } from '../../hooks/use-action-modal'
+import { TooltipThumbnail } from './tooltip-thumbnail'
 import * as S from './styled'
 
 export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
@@ -44,6 +46,8 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
     borrowInterestRate,
     lendInterestRate,
     totalSupplied,
+    totalBorrowed,
+    reserved,
     availableToBorrow,
   } = useMarketDataForDisplay(token)
   const tokenCache = useTokenCache()?.[token.address]
@@ -52,6 +56,9 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
   const TokenIcon = getIconByTokenName(tokenName)
 
   const availablePercent = +Number((availableToBorrow / totalSupplied) * 100).toFixed() || 0
+
+  const totalSuppliedAmount = Math.floor(totalSupplied)
+  const availableToBorrowAmount = Math.floor(availableToBorrow)
 
   if (discount === undefined) {
     return 'Loading...'
@@ -73,27 +80,49 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
           <div className="piechart-with-tooltip-wrapper">
             <div className="piechart-with-tooltip-container">
               <PercentPieChart percent={availablePercent} />
+              <TooltipThumbnail withThumbnail>
+                <TooltipText>
+                  {formatCompactCryptoCurrency(totalSuppliedAmount)} Total Supplied
+                </TooltipText>
+                <TooltipText>
+                  {formatCompactCryptoCurrency(totalBorrowed)} Total Borrowed
+                </TooltipText>
+                <TooltipText>{formatCompactCryptoCurrency(reserved)} Reserved</TooltipText>
+                <TooltipText>
+                  {formatCompactCryptoCurrency(availableToBorrowAmount)} Available to Borrow
+                </TooltipText>
+              </TooltipThumbnail>
             </div>
           </div>
           <Typography className="total-available">
-            {formatCompactCryptoCurrency(availableToBorrow)} available
+            {formatCompactCryptoCurrency(availableToBorrowAmount)} available
           </Typography>
-          <Typography className="total-supplied">
-            From {formatCompactCryptoCurrency(totalSupplied)}
+          <Typography caption className="total-supplied">
+            From {formatCompactCryptoCurrency(totalSuppliedAmount)}
           </Typography>
         </S.MarketCardPoolInfoContainer>
       </S.MarketCardUpperContainer>
       <S.MarketCardBottomContainer>
         <S.MarketCardBottomInfo>
           <S.MarketCardTextCell>
-            <div className="tooltip-container" />
+            <div className="tooltip-container">
+              <TooltipThumbnail>
+                <TooltipText>
+                  Only {discount} of the asset’s value <br /> counts as collateral
+                </TooltipText>
+              </TooltipThumbnail>
+            </div>
             <Typography className="upper-text-container" caption secondary>
               Discount:
             </Typography>
             <Typography className="bottom-text-container">{discount}</Typography>
           </S.MarketCardTextCell>
           <S.MarketCardTextCell>
-            <div className="tooltip-container" />
+            <div className="tooltip-container">
+              <TooltipThumbnail>
+                <TooltipText>Penalty Percentage</TooltipText>
+              </TooltipThumbnail>
+            </div>
             <Typography className="upper-text-container" caption secondary>
               Liquidation penalty:
             </Typography>
