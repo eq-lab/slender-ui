@@ -74,7 +74,7 @@ export function LendIncreaseModal({
   const extraInputMax = extraDepositInfo.userBalance
 
   const coreInputError = coreDepositInfo.userBalance.lt(value)
-  const extraInputError = coreDepositInfo.userBalance.lt(extraValue)
+  const extraInputError = extraDepositInfo.userBalance.lt(extraValue)
 
   const getTokenByTokenName = useGetTokenByTokenName()
   const coreToken = getTokenByTokenName(coreDepositTokenName)
