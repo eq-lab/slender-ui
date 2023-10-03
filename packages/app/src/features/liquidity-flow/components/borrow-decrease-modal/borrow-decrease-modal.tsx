@@ -6,6 +6,7 @@ import { PositionSummary } from '@/entities/position/components/position-summary
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import BigNumber from 'bignumber.js'
 import { TokenSuperField } from '@/shared/components/token-super-field'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -71,7 +72,7 @@ export function BorrowDecreaseModal({
       <FormLayout
         title="How much to pay off"
         buttonProps={{
-          label: `Pay off ${value} ${tokenSymbol}`,
+          label: `Pay off ${formatCompactCryptoCurrency(Number(value))} ${tokenSymbol}`,
           onClick: () => onSend(sendValue),
           disabled: formError,
         }}

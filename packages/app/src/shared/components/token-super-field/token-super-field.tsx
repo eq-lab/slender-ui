@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react'
-import SuperField from '@marginly/ui/components/input/super-field'
+import { SuperField } from '@marginly/ui/components/input/super-field'
 import { useFocus } from '@marginly/ui/components/input/use-focus'
 import { FieldContainer } from '@marginly/ui/components/input/text.styled'
 import { Suggestion } from '@marginly/ui/constants/classnames'
 import Label from '@marginly/ui/components/label'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 
 const NUMBER_INPUT_REGEX = /^[0-9]+(?:\.[0-9]*)?$/
 
@@ -65,7 +66,7 @@ export function TokenSuperField({
       {Number(badgeValue) && badgeValue ? (
         <FieldContainer className={Suggestion}>
           <Label badge onClick={() => onChange(badgeValue)}>
-            Max {badgeValue}
+            Max {formatCompactCryptoCurrency(Number(badgeValue))}
           </Label>
         </FieldContainer>
       ) : null}

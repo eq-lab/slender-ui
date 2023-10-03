@@ -7,6 +7,7 @@ import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { TokenSuperField } from '@/shared/components/token-super-field'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { getRequiredError } from '../../../utils/get-required-error'
 import { getPositionInfo } from '../../../utils/get-position-info'
 import { getExtraTokenName } from '../../../utils/get-extra-token-name'
@@ -142,7 +143,9 @@ export function LendStepModal({
         title="Add collateral"
         description={renderDescription()}
         buttonProps={{
-          label: `Borrow ${debtValue} ${getTokenByTokenName(debtTokenName)?.symbol}`,
+          label: `Borrow ${formatCompactCryptoCurrency(Number(debtValue))} ${getTokenByTokenName(
+            debtTokenName,
+          )?.symbol}`,
           onClick: () =>
             onSend({
               debts: [debt],

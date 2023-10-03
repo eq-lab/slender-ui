@@ -8,6 +8,7 @@ import { useBorrowFirstPosition } from '@/features/liquidity-flow/hooks/use-borr
 import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
 import { colorByToken } from '@/entities/token/constants/token-colors'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { PercentPieChart } from './percent-pie-chart'
 import { useActionModal } from '../../hooks/use-action-modal'
 import * as S from './styled'
@@ -75,10 +76,10 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
             </div>
           </div>
           <Typography className="total-available">
-            {Math.floor(availableToBorrow)} available
+            {formatCompactCryptoCurrency(availableToBorrow)} available
           </Typography>
-          <Typography caption className="total-supplied">
-            From {Math.floor(totalSupplied)}
+          <Typography className="total-supplied">
+            From {formatCompactCryptoCurrency(totalSupplied)}
           </Typography>
         </S.MarketCardPoolInfoContainer>
       </S.MarketCardUpperContainer>

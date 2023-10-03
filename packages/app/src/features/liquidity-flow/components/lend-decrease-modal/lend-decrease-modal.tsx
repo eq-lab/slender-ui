@@ -5,7 +5,7 @@ import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import BigNumber from 'bignumber.js'
-import { formatCryptoCurrency } from '@/shared/formatters'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { TokenSuperField } from '@/shared/components/token-super-field'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
@@ -59,8 +59,6 @@ export function LendDecreaseModal({
     borrowCapacityError ||
     getRequiredError({ value, valueDecimals: depositTokenInfo.decimals })
 
-  const max = formatCryptoCurrency(deposit.toNumber())
-
   const getTokenByTokenName = useGetTokenByTokenName()
   const token = getTokenByTokenName(tokenName)
   const tokenSymbol = token?.symbol
@@ -89,7 +87,7 @@ export function LendDecreaseModal({
           formError ? "Can't withdraw, not enough collateral to cover the debt" : undefined
         }
         buttonProps={{
-          label: `Withdraw ${value} ${tokenSymbol}`,
+          label: `Withdraw ${formatCompactCryptoCurrency(Number(value))} ${tokenSymbol}`,
           onClick: () => onSend(positionUpdate),
           disabled: formError,
         }}
@@ -99,7 +97,7 @@ export function LendDecreaseModal({
           onChange={setValue}
           value={value}
           title="To withdraw"
-          badgeValue={max}
+          badgeValue={formatCompactCryptoCurrency(deposit.toNumber())}
           tokenSymbol={tokenSymbol}
         />
       </FormLayout>

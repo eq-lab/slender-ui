@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
-import { formatUsd } from '@/shared/formatters'
+import { formatCompactUsd } from '@/shared/formatters'
 import BigNumber from 'bignumber.js'
 import { TokenSuperField } from '@/shared/components/token-super-field'
 import { useTokenInfo } from '../../hooks/use-token-info'
@@ -113,7 +113,7 @@ export function LendIncreaseModal({
     })
 
   const renderDescription = () => {
-    if (!formError) return `${formatUsd(inputDepositSumUsd)} will be counted as collateral`
+    if (!formError) return `${formatCompactUsd(inputDepositSumUsd)} will be counted as collateral`
     if (hasExtraDepositToken) return 'Add deposit amount first'
     return `With ${marketData.discount} discount`
   }
