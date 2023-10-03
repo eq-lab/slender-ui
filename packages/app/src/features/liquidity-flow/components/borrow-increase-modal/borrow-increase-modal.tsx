@@ -7,7 +7,7 @@ import { Error } from '@marginly/ui/constants/classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import BigNumber from 'bignumber.js'
 import { TokenSuperField } from '@/shared/components/token-super-field'
-import { formatCryptoCurrency } from '@/shared/formatters'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { ModalLayout } from '../modal-layout'
 import { getPositionInfo } from '../../utils/get-position-info'
@@ -131,7 +131,7 @@ export function BorrowIncreaseModal({
 
   const description = showExtraInput
     ? undefined
-    : `${formatCryptoCurrency(coreAvailableToBorrow)} ${coreTokenSymbol} available to borrow`
+    : `${formatCompactCryptoCurrency(coreAvailableToBorrow)} ${coreTokenSymbol} available to borrow`
 
   return (
     <ModalLayout

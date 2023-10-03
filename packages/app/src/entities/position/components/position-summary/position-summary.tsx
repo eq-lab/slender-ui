@@ -2,12 +2,12 @@ import React from 'react'
 import { HealthMeter } from '@/shared/components/health-meter'
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
-import { formatUsd } from '@/shared/formatters'
+import { formatCompactUsd } from '@/shared/formatters'
 
 const getSubValue = (value?: number) => {
   if (!value) return undefined
-  if (value < 0) return formatUsd(value)
-  return `+${formatUsd(value)}`
+  if (value < 0) return formatCompactUsd(value)
+  return `+${formatCompactUsd(value)}`
 }
 
 interface Props {
@@ -44,19 +44,19 @@ export function PositionSummary({
     >
       <InfoRow
         label="Debt"
-        value={formatUsd(debtUsd)}
+        value={formatCompactUsd(debtUsd)}
         subValue={getSubValue(debtUsdDelta)}
         error={debtError}
       />
       <InfoRow
         label="Collateral"
-        value={formatUsd(depositSumUsd)}
+        value={formatCompactUsd(depositSumUsd)}
         subValue={getSubValue(depositSumUsdDelta)}
         error={collateralError}
       />
       <InfoRow
         label="Borrow capacity"
-        value={formatUsd(borrowCapacity)}
+        value={formatCompactUsd(borrowCapacity)}
         subValue={getSubValue(borrowCapacityDelta)}
         error={borrowCapacityError}
       />

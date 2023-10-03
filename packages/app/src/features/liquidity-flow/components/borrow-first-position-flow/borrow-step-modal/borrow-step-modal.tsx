@@ -4,7 +4,7 @@ import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
-import { formatCryptoCurrency } from '@/shared/formatters'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { TokenSuperField } from '@/shared/components/token-super-field'
 import { getMaxDebt } from '../../../utils/get-max-debt'
 import { getRequiredError } from '../../../utils/get-required-error'
@@ -48,7 +48,7 @@ export function BorrowStepModal({
       <InfoRow label="Borrow APR" value={borrowInterestRate} />
       <InfoRow
         label="Available"
-        value={`${formatCryptoCurrency(availableToBorrow)} ${debtTokenSymbol}`}
+        value={`${formatCompactCryptoCurrency(availableToBorrow)} ${debtTokenSymbol}`}
       />
     </InfoLayout>
   )

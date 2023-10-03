@@ -4,6 +4,7 @@ import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import Button from '@marginly/ui/components/button'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { AssetInfo } from '../../hooks/use-get-assets-info'
 import * as S from './styled'
 import { AddAssetButton } from '../add-asset-button'
@@ -55,7 +56,7 @@ export function AssetSelect({ assetsInfo, onChange, value, tooltipText }: Props)
               </S.ThumbnailWrapper>
               <div>
                 <div>{title}</div>
-                {tokenBalance} {symbol}
+                {formatCompactCryptoCurrency(tokenBalance)} {symbol}
               </div>
               {tokenName === value && <CheckIcon width={24} />}
             </S.MenuItemInner>

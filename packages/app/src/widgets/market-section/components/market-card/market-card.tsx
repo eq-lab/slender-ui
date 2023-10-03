@@ -9,6 +9,7 @@ import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-in
 import { colorByToken } from '@/entities/token/constants/token-colors'
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
 import { TooltipText } from '@/shared/components/tooltip'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { PercentPieChart } from './percent-pie-chart'
 import { useActionModal } from '../../hooks/use-action-modal'
 import { TooltipThumbnail } from './tooltip-thumbnail'
@@ -80,18 +81,24 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
             <div className="piechart-with-tooltip-container">
               <PercentPieChart percent={availablePercent} />
               <TooltipThumbnail withThumbnail>
-                <TooltipText>{totalSuppliedAmount} Total Supplied</TooltipText>
-                <TooltipText>{Math.floor(totalBorrowed)} Total Borrowed</TooltipText>
-                <TooltipText>{Math.floor(reserved)} Reserved</TooltipText>
-                <TooltipText>{availableToBorrowAmount} Available to Borrow</TooltipText>
+                <TooltipText>
+                  {formatCompactCryptoCurrency(totalSuppliedAmount)} Total Supplied
+                </TooltipText>
+                <TooltipText>
+                  {formatCompactCryptoCurrency(totalBorrowed)} Total Borrowed
+                </TooltipText>
+                <TooltipText>{formatCompactCryptoCurrency(reserved)} Reserved</TooltipText>
+                <TooltipText>
+                  {formatCompactCryptoCurrency(availableToBorrowAmount)} Available to Borrow
+                </TooltipText>
               </TooltipThumbnail>
             </div>
           </div>
           <Typography className="total-available">
-            {Math.floor(availableToBorrowAmount)} available
+            {formatCompactCryptoCurrency(availableToBorrowAmount)} available
           </Typography>
           <Typography caption className="total-supplied">
-            From {totalSuppliedAmount}
+            From {formatCompactCryptoCurrency(totalSuppliedAmount)}
           </Typography>
         </S.MarketCardPoolInfoContainer>
       </S.MarketCardUpperContainer>
