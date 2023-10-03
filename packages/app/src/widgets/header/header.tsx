@@ -1,7 +1,7 @@
 import React from 'react'
 import { ReactComponent as SlenderLogo } from '@/shared/icons/logo/slender.svg'
+import { ConnectButton } from '@/entities/wallet/components/connect-button'
 import * as S from './styled'
-import { ConnectButton } from '../../entities/wallet/components/connect-button'
 
 export function Header() {
   return (
