@@ -80,12 +80,10 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
             <div className="piechart-with-tooltip-container">
               <PercentPieChart percent={availablePercent} />
               <TooltipThumbnail withThumbnail>
-                <>
-                  <TooltipText>{totalSuppliedAmount} Total Supplied</TooltipText>
-                  <TooltipText>{Math.floor(totalBorrowed)} Total Borrowed</TooltipText>
-                  <TooltipText>{Math.floor(reserved)} Reserved</TooltipText>
-                  <TooltipText>{availableToBorrowAmount} Available to Borrow</TooltipText>
-                </>
+                <TooltipText>{totalSuppliedAmount} Total Supplied</TooltipText>
+                <TooltipText>{Math.floor(totalBorrowed)} Total Borrowed</TooltipText>
+                <TooltipText>{Math.floor(reserved)} Reserved</TooltipText>
+                <TooltipText>{availableToBorrowAmount} Available to Borrow</TooltipText>
               </TooltipThumbnail>
             </div>
           </div>

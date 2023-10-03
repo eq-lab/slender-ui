@@ -8,7 +8,7 @@ export function TooltipThumbnail({
   children,
 }: {
   withThumbnail?: boolean
-  children: React.ReactElement
+  children: React.ReactNode
 }) {
   const renderTooltipIcon = () => {
     if (withThumbnail)

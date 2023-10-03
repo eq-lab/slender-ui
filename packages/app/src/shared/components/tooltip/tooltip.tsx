@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { ReactNode } from 'react'
 import TooltipUi, { TooltipProps } from '@mui/material/Tooltip'
 import * as S from './styled'
 
@@ -7,8 +7,8 @@ export function Tooltip({
   content,
   placement,
 }: {
-  children: ReactElement
-  content: ReactElement
+  children: ReactNode
+  content: ReactNode
   placement?: TooltipProps['placement']
 }) {
   return (
