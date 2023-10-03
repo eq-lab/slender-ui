@@ -143,7 +143,7 @@ export function LendStepModal({
         title="Add collateral"
         description={renderDescription()}
         buttonProps={{
-          label: `Borrow ${formatCompactCryptoCurrency(Number(debtValue))} ${getTokenByTokenName(
+          label: `Borrow ${formatCompactCryptoCurrency(debtValue)} ${getTokenByTokenName(
             debtTokenName,
           )?.symbol}`,
           onClick: () =>

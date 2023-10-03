@@ -72,7 +72,7 @@ export function BorrowDecreaseModal({
       <FormLayout
         title="How much to pay off"
         buttonProps={{
-          label: `Pay off ${formatCompactCryptoCurrency(Number(value))} ${tokenSymbol}`,
+          label: `Pay off ${formatCompactCryptoCurrency(value)} ${tokenSymbol}`,
           onClick: () => onSend(sendValue),
           disabled: formError,
         }}

@@ -87,7 +87,7 @@ export function LendDecreaseModal({
           formError ? "Can't withdraw, not enough collateral to cover the debt" : undefined
         }
         buttonProps={{
-          label: `Withdraw ${formatCompactCryptoCurrency(Number(value))} ${tokenSymbol}`,
+          label: `Withdraw ${formatCompactCryptoCurrency(value)} ${tokenSymbol}`,
           onClick: () => onSend(positionUpdate),
           disabled: formError,
         }}

@@ -66,7 +66,7 @@ export function TokenSuperField({
       {Number(badgeValue) && badgeValue ? (
         <FieldContainer className={Suggestion}>
           <Label badge onClick={() => onChange(badgeValue)}>
-            Max {formatCompactCryptoCurrency(Number(badgeValue))}
+            Max {formatCompactCryptoCurrency(badgeValue)}
           </Label>
         </FieldContainer>
       ) : null}

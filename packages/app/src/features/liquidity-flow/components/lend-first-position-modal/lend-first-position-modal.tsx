@@ -68,7 +68,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
         description={renderDescription()}
         title="How much to lend"
         buttonProps={{
-          label: `Lend ${formatCompactCryptoCurrency(Number(value))} ${tokenSymbol}`,
+          label: `Lend ${formatCompactCryptoCurrency(value)} ${tokenSymbol}`,
           onClick: handleClick,
           disabled: formError,
         }}
