@@ -1,6 +1,6 @@
 import React from 'react'
 import Typography from '@marginly/ui/components/typography'
-import { Tooltip } from '@/shared/components/tooltip'
+import { Tooltip, TooltipText } from '@/shared/components/tooltip'
 import { ReactComponent as InfoIcon } from './info-small.svg'
 import * as S from './styled'
 
@@ -22,11 +22,11 @@ export function HealthMeter({ healthPercent = 0, healthDelta }: Props) {
   return (
     <Tooltip
       content={
-        <S.TooltipTypography caption>
+        <TooltipText>
           Relative Net Position Value.
           <br />
           At 0% You Get Liquidated.
-        </S.TooltipTypography>
+        </TooltipText>
       }
     >
       <S.HealthMeterWrapper>

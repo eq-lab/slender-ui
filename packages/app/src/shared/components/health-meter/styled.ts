@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import Typography from '@marginly/ui/components/typography'
 
 export const HealthMeterWrapper = styled.div`
   display: flex;
@@ -82,9 +81,4 @@ export const HealthPercentCountContainer = styled.div<{ $isRed: boolean }>`
     transition: color 300ms ease-in-out;
     color: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-primary')});
   }
-`
-
-export const TooltipTypography = styled(Typography)`
-  color: var(--text-invert-primary);
-  text-align: center;
 `

@@ -158,6 +158,7 @@ export function LendIncreaseModal({
               onChange={setCoreDepositTokenName}
               assetsInfo={assetsInfo}
               value={coreDepositTokenName}
+              tooltipText="Collateral Asset"
             />
           )}
         </InputLayout>

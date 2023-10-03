@@ -173,6 +173,7 @@ export function BorrowIncreaseModal({
                 onChange={setCoreDebtTokenName}
                 assetsInfo={assetsInfo}
                 value={coreDebtTokenName}
+                tooltipText="Debt Asset"
               />
             )}
           </TokenSuperField>
