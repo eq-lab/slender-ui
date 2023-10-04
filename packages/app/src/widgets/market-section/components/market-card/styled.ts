@@ -88,7 +88,6 @@ export const MarketCardTextCell = styled.div`
   grid-column-gap: 12px;
 
   .tooltip-container {
-    fill: rgba(217, 217, 217, 1);
     margin: auto;
     grid-area: 1 / 1 / 3 / 2;
   }
