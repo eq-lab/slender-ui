@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
-
 import { PositionCell } from '@/entities/position/types'
 import { PositionSummary } from '@/entities/position/components/position-summary'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'

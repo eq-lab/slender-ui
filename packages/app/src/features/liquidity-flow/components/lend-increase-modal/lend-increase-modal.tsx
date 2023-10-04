@@ -152,15 +152,16 @@ export function LendIncreaseModal({
             badgeValue={String(coreInputMax)}
             tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
-          />
-          {!extraDepositTokenName && hasExtraDepositToken && (
-            <AssetSelect
-              onChange={setCoreDepositTokenName}
-              assetsInfo={assetsInfo}
-              value={coreDepositTokenName}
-              tooltipText="Collateral Asset"
-            />
-          )}
+          >
+            {!extraDepositTokenName && hasExtraDepositToken && (
+              <AssetSelect
+                onChange={setCoreDepositTokenName}
+                assetsInfo={assetsInfo}
+                value={coreDepositTokenName}
+                tooltipText="Collateral Asset"
+              />
+            )}
+          </TokenSuperField>
         </InputLayout>
 
         {extraDepositTokenName ? (
