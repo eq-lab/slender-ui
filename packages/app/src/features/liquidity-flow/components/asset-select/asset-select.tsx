@@ -1,4 +1,6 @@
 import { MouseEvent, useState } from 'react'
+import { colorByToken } from '@/entities/token/constants/token-colors'
+import Typography from '@marginly/ui/components/typography'
 import { Tooltip, TooltipText } from '@/shared/components/tooltip'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { ReactComponent as CheckIcon } from '@/shared/icons/check.svg'
@@ -48,20 +50,30 @@ export function AssetSelect({ assetsInfo, onChange, value, tooltipText }: Props)
     <S.ButtonWrapper>
       {renderButton()}
       <S.Menu anchorEl={anchorEl} open={open} onClose={close}>
-        {assetsInfo.map(({ tokenName, tokenBalance, title, symbol, Icon }) => (
-          <S.MenuItem onClick={handleItemClick(tokenName)} key={tokenName}>
-            <S.MenuItemInner>
-              <S.ThumbnailWrapper rectangle md>
-                <Icon />
-              </S.ThumbnailWrapper>
-              <div>
-                <div>{title}</div>
-                {formatCompactCryptoCurrency(tokenBalance)} {symbol}
-              </div>
-              {tokenName === value && <CheckIcon width={24} />}
-            </S.MenuItemInner>
-          </S.MenuItem>
-        ))}
+        {assetsInfo.map(({ tokenName, tokenBalance, title, symbol, Icon }) => {
+          const thumbnailBackgroundColor = colorByToken[tokenName]
+          return (
+            <S.MenuItem onClick={handleItemClick(tokenName)} key={tokenName}>
+              <S.MenuItemInner>
+                <S.ThumbnailWrapper
+                  rectangle
+                  md
+                  darkbg
+                  $thumbnailBackgroundColor={thumbnailBackgroundColor}
+                >
+                  <Icon />
+                </S.ThumbnailWrapper>
+                <S.MenuItemTextWrapper>
+                  <Typography>{title}</Typography>
+                  <Typography caption secondary>
+                    {formatCompactCryptoCurrency(tokenBalance)} {symbol}
+                  </Typography>
+                </S.MenuItemTextWrapper>
+                {tokenName === value && <CheckIcon width={24} />}
+              </S.MenuItemInner>
+            </S.MenuItem>
+          )
+        })}
       </S.Menu>
     </S.ButtonWrapper>
   )

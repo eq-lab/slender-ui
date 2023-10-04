@@ -15,7 +15,11 @@ export function InfoRow({ label, subValue, value, error }: Props) {
       <div>
         <S.ValueSection>
           <S.Typography $error={error}>{value}</S.Typography>
-          {subValue && <S.Typography secondary>{subValue}</S.Typography>}
+          {subValue && (
+            <S.Typography secondary caption>
+              {subValue}
+            </S.Typography>
+          )}
         </S.ValueSection>
       </div>
     </S.Wrapper>

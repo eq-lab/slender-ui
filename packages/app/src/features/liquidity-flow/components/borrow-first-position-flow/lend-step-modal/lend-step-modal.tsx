@@ -164,7 +164,7 @@ export function LendStepModal({
             badgeValue={String(coreInputMax)}
             className={cn(firstInputError && Error)}
           >
-            {!showExtraInput && (
+            {!showExtraInput && assetsInfo.length > 1 && (
               <AssetSelect
                 onChange={setCoreDepositTokenName}
                 assetsInfo={assetsInfo}
