@@ -163,15 +163,16 @@ export function LendStepModal({
             tokenSymbol={coreTokenSymbol}
             badgeValue={String(coreInputMax)}
             className={cn(firstInputError && Error)}
-          />
-          {!showExtraInput && (
-            <AssetSelect
-              onChange={setCoreDepositTokenName}
-              assetsInfo={assetsInfo}
-              value={coreDepositTokenName}
-              tooltipText="Collateral Asset"
-            />
-          )}
+          >
+            {!showExtraInput && (
+              <AssetSelect
+                onChange={setCoreDepositTokenName}
+                assetsInfo={assetsInfo}
+                value={coreDepositTokenName}
+                tooltipText="Collateral Asset"
+              />
+            )}
+          </TokenSuperField>
         </InputLayout>
 
         {!showExtraInput && <AddAssetButton onClick={() => setShowExtraInput(true)} />}
