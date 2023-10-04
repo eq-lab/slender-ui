@@ -1,9 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
-import { SubscriptionSection } from '@/widgets/landing/subscription-section'
+import { SubscriptionSection } from '@/widgets/landing/components/subscription-section/subscription-section'
 import { ReactComponent as LogoIcon } from './images/logo.svg'
-import { ReactComponent as StellarIcon } from './images/stellar.svg'
-import { ReactComponent as FundIcon } from './images/fund.svg'
 import { ReactComponent as SugarIcon } from './images/sugar.svg'
 import { ReactComponent as NoSugarIcon } from './images/nosugar.svg'
 import { ReactComponent as BarcodeIcon } from './images/barcode.svg'
@@ -11,16 +9,12 @@ import decorImage from './images/decor.png'
 import bagImage from './images/bag.png'
 import endImage from './images/end.png'
 import {
-  Container,
-  Fund,
   Header,
   HeaderButton,
   Launch,
   LaunchBg,
   LogoLink,
   Pluses,
-  Protocol,
-  ProtocolRow,
   RatesAside,
   RatesBox,
   RatesDescription,
@@ -29,12 +23,13 @@ import {
   RatesTitle,
   SugarBlock,
   SugarInner,
-  Title,
   Wrapper,
 } from './styled'
-import { Space } from './space'
+import { Space } from './components/space'
+import { Container, Title } from './components/styled'
+import { AppSection } from './components/app-section/app-section'
 
-const LAUNCH_ANCHOR = 'launch'
+const APP_LINK = 'https://app.slender.fi'
 
 export function Landing() {
   return (
@@ -48,7 +43,7 @@ export function Landing() {
             style={{
               objectFit: 'contain',
             }}
-            sizes="(max-width: 1440px) 867px, (max-width: 768px) 712px"
+            sizes="867px"
           />
         </Pluses>
         <Header>
@@ -56,8 +51,8 @@ export function Landing() {
             <LogoLink href="#top-anchor">
               <LogoIcon />
             </LogoLink>
-            <a href={`#${LAUNCH_ANCHOR}`}>
-              <HeaderButton className="md">Subscribe</HeaderButton>
+            <a href={APP_LINK}>
+              <HeaderButton className="md">Enter App</HeaderButton>
             </a>
           </Container>
         </Header>
@@ -67,23 +62,16 @@ export function Landing() {
             <Title>
               Lend & borrow fat stakes{' '}
               <div>
-                at <span className="nobr">a fairer</span> interest
+                at <span className="nobr">a fair</span> interest
               </div>
             </Title>
           </h1>
 
-          <Space $height={116} $heightMobile={74} />
+          <Space $height={96} $heightMobile={64} />
 
-          <ProtocolRow>
-            <Protocol>
-              #1 lending protocol on <StellarIcon />
-            </Protocol>
-            <Fund>
-              <FundIcon /> <span>Supported by Stellar Community Fund</span>
-            </Fund>
-          </ProtocolRow>
+          <AppSection appLink={APP_LINK} />
 
-          <Space $height={98} $heightMobile={96} />
+          <Space $height={98} $heightMobile={64} />
 
           <RatesBox>
             <RatesPack>
@@ -132,7 +120,7 @@ export function Landing() {
           </RatesBox>
         </Container>
 
-        <Launch id={LAUNCH_ANCHOR}>
+        <Launch>
           <LaunchBg>
             <Image
               src={endImage}

@@ -1,11 +1,11 @@
 'use client'
 
 import React, { ChangeEvent, FormEvent, useState } from 'react'
-import { Button, Container, Form, InputBox, InputLabel, Title } from '@/widgets/landing/styled'
 import cn from 'classnames'
-import { sendEmail } from '@/widgets/landing/api'
-import { Space } from '@/widgets/landing/space'
-import { ReactComponent as EmailIcon } from './images/email.svg'
+import { sendEmail } from './api'
+import { Space } from '../space'
+import { ReactComponent as EmailIcon } from '../../images/email.svg'
+import { Button, Container, Form, InputBox, InputLabel, Title } from '../styled'
 
 export function SubscriptionSection() {
   const [email, setEmail] = useState('')
