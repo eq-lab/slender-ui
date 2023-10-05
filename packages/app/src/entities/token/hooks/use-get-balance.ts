@@ -22,8 +22,8 @@ const isArraysEqual = <T>(a?: T[], b?: T[]) =>
 export const useGetBalance = (
   tokenAddresses: TokenAddress[],
   numberUpdate?: number,
-): SorobanTokenRecord[] => {
-  const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
+): SorobanTokenRecord[] | undefined => {
+  const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[] | undefined>()
   const makeInvoke = useMakeInvoke()
   const tokensCache = useTokenCache()
   const { address: userAddress } = useWalletAddress()
@@ -36,7 +36,7 @@ export const useGetBalance = (
   useEffect(() => {
     async function updateBalances() {
       if (!userAddress) {
-        setBalanceInfo([])
+        setBalanceInfo(undefined)
         return
       }
       const balanceTxParams = [addressToScVal(userAddress)]
@@ -59,7 +59,7 @@ export const useGetBalance = (
         })
         setBalanceInfo(balances)
       } catch (error) {
-        setBalanceInfo([])
+        setBalanceInfo(undefined)
       }
     }
     if (

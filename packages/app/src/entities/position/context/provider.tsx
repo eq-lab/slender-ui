@@ -44,6 +44,7 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
     deposits: [],
     debts: [],
   })
+  const [positionIsLoaded, setPositionLoadedStatus] = useState(false)
   const [positionUpdate, setPositionUpdate] = useState(0)
   const updatePosition = () => {
     setPositionUpdate((state) => state + 1)
@@ -64,6 +65,8 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
   )
 
   useEffect(() => {
+    setPositionLoadedStatus(Boolean(debtBalances && lendBalances))
+
     const debtPositions = debtBalances?.reduce(
       (resultArr: PositionCell[], currentItem, currentIndex) => {
         if (currentItem && Number(currentItem.balance)) {
@@ -103,8 +106,8 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
     )
 
     setPosition({
-      deposits: lendPositions,
-      debts: debtPositions,
+      deposits: lendPositions || [],
+      debts: debtPositions || [],
     })
   }, [
     userAddress,
@@ -117,7 +120,7 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
   ])
 
   return (
-    <PositionContext.Provider value={{ position, setPosition, updatePosition }}>
+    <PositionContext.Provider value={{ position, setPosition, updatePosition, positionIsLoaded }}>
       {children}
     </PositionContext.Provider>
   )

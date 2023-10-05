@@ -23,7 +23,7 @@ export function useGetAssetsInfo(
 
   const assetsInfo: AssetInfo[] = tokenNames.reduce((tokens: AssetInfo[], currentToken, index) => {
     const token = getTokenByTokenName(currentToken)
-    const tokenBalance = depositBalances[index]?.balance.toNumber() || 0
+    const tokenBalance = depositBalances?.[index]?.balance.toNumber() || 0
     if (!token || (!tokenBalance && isDeposit)) return tokens
     const { title, symbol } = token
     const Icon = getIconByTokenName(currentToken)
