@@ -48,6 +48,10 @@ export const Title = styled.div`
     color: rgba(242, 237, 235, 0.48);
   }
 
+  &.title {
+    text-align: center;
+  }
+
   @media (min-width: 1024px) {
     font-size: 64px;
     line-height: 72px;
@@ -114,6 +118,8 @@ export const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-width: 675px;
+  margin: 0 auto;
 
   > * {
     width: 100%;

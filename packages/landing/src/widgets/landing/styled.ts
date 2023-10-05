@@ -207,7 +207,6 @@ export const SugarInner = styled.div`
 
 export const Launch = styled.div`
   position: relative;
-  overflow: hidden;
 
   ${Container} {
     display: flex;
