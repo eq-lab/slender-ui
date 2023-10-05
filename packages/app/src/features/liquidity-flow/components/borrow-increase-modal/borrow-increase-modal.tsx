@@ -168,7 +168,7 @@ export function BorrowIncreaseModal({
             tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
           >
-            {!showExtraInput && hasExtraDeptToken && (
+            {!showExtraInput && hasExtraDeptToken && assetsInfo.length > 1 && (
               <AssetSelect
                 onChange={setCoreDebtTokenName}
                 assetsInfo={assetsInfo}

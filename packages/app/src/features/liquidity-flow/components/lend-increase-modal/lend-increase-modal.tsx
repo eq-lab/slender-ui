@@ -153,7 +153,7 @@ export function LendIncreaseModal({
             tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
           >
-            {!extraDepositTokenName && hasExtraDepositToken && (
+            {!extraDepositTokenName && hasExtraDepositToken && assetsInfo.length > 1 && (
               <AssetSelect
                 onChange={setCoreDepositTokenName}
                 assetsInfo={assetsInfo}

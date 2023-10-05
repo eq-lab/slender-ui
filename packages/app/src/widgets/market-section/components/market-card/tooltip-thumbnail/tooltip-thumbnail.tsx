@@ -1,7 +1,7 @@
 import React from 'react'
+import Thumbnail from '@marginly/ui/components/thumbnail'
 import { Tooltip } from '@/shared/components/tooltip'
-import { ReactComponent as InfoIcon } from './info.svg'
-import { Thumbnail } from './styled'
+import { ThumbnailWrapper, InfoIcon } from './styled'
 
 export function TooltipThumbnail({
   withThumbnail,
@@ -13,9 +13,11 @@ export function TooltipThumbnail({
   const renderTooltipIcon = () => {
     if (withThumbnail)
       return (
-        <Thumbnail md darkbg>
-          <InfoIcon />
-        </Thumbnail>
+        <ThumbnailWrapper>
+          <Thumbnail md>
+            <InfoIcon />
+          </Thumbnail>
+        </ThumbnailWrapper>
       )
     return <InfoIcon />
   }
