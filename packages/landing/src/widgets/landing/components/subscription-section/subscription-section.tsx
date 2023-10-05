@@ -38,11 +38,7 @@ export function SubscriptionSection() {
       <Space $height={192} $heightMobile={128} />
 
       <Title className="title">
-        {emailIsSent ? (
-          <>We will send you an email about our&nbsp;launch</>
-        ) : (
-          <>Be the first to&nbsp;know about our&nbsp;launch</>
-        )}
+        {emailIsSent ? <>You will receive our newsletter</> : <>Stay tuned for updates</>}
       </Title>
 
       <Space $height={80} $heightMobile={68} />

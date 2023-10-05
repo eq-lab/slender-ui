@@ -221,12 +221,6 @@ export const Launch = styled.div`
       z-index: 2;
     }
   }
-
-  @media (min-width: 1024px) {
-    .title {
-      max-width: 695px;
-    }
-  }
 `
 
 export const LaunchBg = styled.div`
@@ -235,27 +229,24 @@ export const LaunchBg = styled.div`
   width: 604px;
   object-fit: contain;
   object-position: center;
-  right: 60px;
-  bottom: -60px;
+  right: 90px;
+  top: 80px;
 
   @media (min-width: 768px) {
-    right: auto;
-    left: -110px;
-    bottom: -50px;
+    left: -100px;
+    top: 80px;
     height: 600px;
   }
 
   @media (min-width: 1024px) {
-    height: 976px;
-    bottom: -460px;
     left: -80px;
-    height: 976px;
+    top: 120px;
     width: 936px;
+    height: 976px;
   }
 
   @media (min-width: 1440px) {
     height: 976px;
-    bottom: -460px;
     left: 0;
   }
 `
