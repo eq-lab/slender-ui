@@ -28,8 +28,10 @@ import {
 import { Space } from './components/space'
 import { Container, Title } from './components/styled'
 import { AppSection } from './components/app-section/app-section'
+import { QuestionSection } from './components/question-section/question-section'
 
 const APP_LINK = 'https://app.slender.fi'
+const SUBSCRIPTION_ANCHOR = 'subscription'
 
 export function Landing() {
   return (
@@ -120,7 +122,7 @@ export function Landing() {
           </RatesBox>
         </Container>
 
-        <Launch>
+        <Launch id={SUBSCRIPTION_ANCHOR}>
           <LaunchBg>
             <Image
               src={endImage}
@@ -134,6 +136,10 @@ export function Landing() {
           </LaunchBg>
           <SubscriptionSection />
         </Launch>
+
+        <QuestionSection subscriptionAnchor={SUBSCRIPTION_ANCHOR} />
+
+        <Space $height={192} $heightMobile={128} />
       </Wrapper>
     </main>
   )
