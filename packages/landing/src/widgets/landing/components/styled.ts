@@ -9,6 +9,7 @@ export const Container = styled.div`
   margin: 0 auto;
   position: relative;
   z-index: 2;
+
   @media (min-width: 1024px) {
     padding: 0 80px;
   }
@@ -18,7 +19,7 @@ export const Container = styled.div`
   }
 `
 export const Button = styled.button`
-  background: #faf8f7;
+  background-color: var(--fill-elevated, #fff);
   border-radius: 16px;
   height: 64px;
   padding: 20px 48px;
@@ -30,6 +31,7 @@ export const Button = styled.button`
   font-variation-settings: 'wght' 700;
   color: #000;
   letter-spacing: 0.48px;
+
   &.md {
     height: 48px;
     padding: 12px 24px;
@@ -41,9 +43,11 @@ export const Title = styled.div`
   font-size: 48px;
   font-variation-settings: 'wght' 500;
   line-height: 64px;
+
   > div {
     color: rgba(242, 237, 235, 0.48);
   }
+
   @media (min-width: 1024px) {
     font-size: 64px;
     line-height: 72px;
@@ -96,9 +100,11 @@ export const InputBox = styled.div`
 
   &.error {
     background: rgba(107, 64, 84, 0.72);
+
     ${InputLabel} {
       color: #e54796;
     }
+
     input {
       color: #e54796;
     }
@@ -108,9 +114,11 @@ export const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 16px;
+
   > * {
     width: 100%;
   }
+
   .email {
     width: 64px;
     height: 64px;
@@ -118,12 +126,14 @@ export const Form = styled.form`
     object-position: center;
     margin: 0 auto;
   }
+
   @media (min-width: 1024px) {
     max-width: 675px;
     flex-direction: row;
     gap: 16px;
     justify-content: center;
     align-items: center;
+
     ${Button} {
       max-width: 180px;
     }

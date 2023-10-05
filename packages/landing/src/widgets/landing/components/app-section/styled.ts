@@ -119,4 +119,8 @@ export const AppButton = styled(Button)`
   display: flex;
   flex-direction: row;
   gap: 8px;
+
+  &:hover {
+    background-color: var(--fill-elevated-hover, #faf8f7);
+  }
 `
