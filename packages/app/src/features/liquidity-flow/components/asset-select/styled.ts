@@ -5,8 +5,8 @@ import ThumbnailUi from '@marginly/ui/components/thumbnail'
 
 const MENU_WIDTH_PX = '280px'
 
-export const ButtonWrapper = styled.div`
-  position: absolute;
+export const ButtonWrapper = styled.div<{ $isAddAsset: boolean }>`
+  position: ${({ $isAddAsset }) => ($isAddAsset ? 'static' : 'absolute')};
   top: 24px;
   right: 24px;
 `

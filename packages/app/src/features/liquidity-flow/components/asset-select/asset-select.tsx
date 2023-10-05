@@ -21,6 +21,8 @@ interface Props {
 export function AssetSelect({ assetsInfo, onChange, value, tooltipText }: Props) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
+  const isAddAsset = !value
+
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
@@ -33,7 +35,7 @@ export function AssetSelect({ assetsInfo, onChange, value, tooltipText }: Props)
   }
 
   const renderButton = () => {
-    if (!value) {
+    if (isAddAsset) {
       return <AddAssetButton onClick={handleClick} />
     }
     const ButtonIcon = getIconByTokenName(value)
@@ -47,7 +49,7 @@ export function AssetSelect({ assetsInfo, onChange, value, tooltipText }: Props)
   }
 
   return (
-    <S.ButtonWrapper>
+    <S.ButtonWrapper $isAddAsset={isAddAsset}>
       {renderButton()}
       <S.Menu anchorEl={anchorEl} open={open} onClose={close}>
         {assetsInfo.map(({ tokenName, tokenBalance, title, symbol, Icon }) => {
