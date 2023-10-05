@@ -4,7 +4,7 @@ import React from 'react'
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { ReactComponent as WalletIcon } from '@/shared/icons/wallet.svg'
 import { Button } from './button'
-import { useWalletActions } from '../../utils/use-wallet-action'
+import { useWalletActions } from '../../hooks/use-wallet-action'
 
 const SHORT_ADDRESS_SIZE = 4
 
