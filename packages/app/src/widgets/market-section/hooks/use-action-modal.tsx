@@ -1,5 +1,5 @@
 import { PositionContext } from '@/entities/position/context/context'
-import { checkPosition } from '@/entities/position/utils'
+import { checkPositionExists } from '@/entities/position/utils'
 import { useOpenModalAfterAuthentication } from '@/features/liquidity-flow/hooks/use-open-modal-after-autefication'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { useContextSelector } from 'use-context-selector'
@@ -31,7 +31,7 @@ export const useActionModal = ({
   const { modal: firstPositionModal, open: firstPositionOpen } = useFirstPosition(tokenName)
   const { modal: increaseModal, open: increaseOpen } = useIncrease()
 
-  const havePosition = checkPosition(position)
+  const havePosition = checkPositionExists(position)
 
   const disabled = Boolean(
     position?.[type === 'borrow' ? 'deposits' : 'debts']

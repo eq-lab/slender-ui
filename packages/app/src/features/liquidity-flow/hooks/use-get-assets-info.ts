@@ -17,13 +17,13 @@ export function useGetAssetsInfo(
   isDeposit?: boolean,
 ): AssetInfo[] {
   const getTokenByTokenName = useGetTokenByTokenName()
-  const depositBalances = useGetBalance(
+  const { value: depositBalances } = useGetBalance(
     tokenNames.map((tokenName) => tokenContracts[tokenName].address),
   )
 
   const assetsInfo: AssetInfo[] = tokenNames.reduce((tokens: AssetInfo[], currentToken, index) => {
     const token = getTokenByTokenName(currentToken)
-    const tokenBalance = depositBalances?.[index]?.balance.toNumber() || 0
+    const tokenBalance = depositBalances[index]?.balance.toNumber() || 0
     if (!token || (!tokenBalance && isDeposit)) return tokens
     const { title, symbol } = token
     const Icon = getIconByTokenName(currentToken)

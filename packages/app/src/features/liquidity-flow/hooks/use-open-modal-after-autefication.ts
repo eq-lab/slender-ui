@@ -2,7 +2,7 @@ import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { useEffect } from 'react'
 import { useContextSelector } from 'use-context-selector'
 import { PositionContext } from '@/entities/position/context/context'
-import { checkPosition } from '@/entities/position/utils'
+import { checkPositionExists } from '@/entities/position/utils'
 import { useWalletActions } from '../../../entities/wallet/hooks/use-wallet-action'
 import { useCallbackHandler } from './use-callback-handler'
 
@@ -10,9 +10,9 @@ export const useOpenModalAfterAuthentication = (disabled: boolean) => {
   const { address, isConnected } = useWalletAddress()
   const { connect, getWallet } = useWalletActions()
   const position = useContextSelector(PositionContext, (state) => state.position)
-  const positionIsLoaded = useContextSelector(PositionContext, (state) => state.positionIsLoaded)
+  const isPositionFetched = useContextSelector(PositionContext, (state) => state.isPositionFetched)
 
-  const havePosition = checkPosition(position)
+  const havePosition = checkPositionExists(position)
 
   const { clearCallback, runCallback, setCallback } = useCallbackHandler<boolean>()
 
@@ -23,10 +23,10 @@ export const useOpenModalAfterAuthentication = (disabled: boolean) => {
   }, [disabled, clearCallback])
 
   useEffect(() => {
-    if (address && positionIsLoaded) {
+    if (address && isPositionFetched) {
       runCallback(havePosition)
     }
-  }, [address, havePosition, positionIsLoaded, runCallback])
+  }, [address, havePosition, isPositionFetched, runCallback])
 
   return (cb: (value: boolean) => void): void => {
     if (!isConnected) {

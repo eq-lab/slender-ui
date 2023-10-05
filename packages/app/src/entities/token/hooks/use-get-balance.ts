@@ -22,8 +22,9 @@ const isArraysEqual = <T>(a?: T[], b?: T[]) =>
 export const useGetBalance = (
   tokenAddresses: TokenAddress[],
   numberUpdate?: number,
-): SorobanTokenRecord[] | undefined => {
-  const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[] | undefined>()
+): { value: SorobanTokenRecord[]; isFetched: boolean } => {
+  const [balanceInfo, setBalanceInfo] = useState<SorobanTokenRecord[]>([])
+  const [isFetched, setFetchedStatus] = useState(false)
   const makeInvoke = useMakeInvoke()
   const tokensCache = useTokenCache()
   const { address: userAddress } = useWalletAddress()
@@ -36,7 +37,8 @@ export const useGetBalance = (
   useEffect(() => {
     async function updateBalances() {
       if (!userAddress) {
-        setBalanceInfo(undefined)
+        setBalanceInfo([])
+        setFetchedStatus(false)
         return
       }
       const balanceTxParams = [addressToScVal(userAddress)]
@@ -58,8 +60,10 @@ export const useGetBalance = (
           }
         })
         setBalanceInfo(balances)
+        setFetchedStatus(true)
       } catch (error) {
-        setBalanceInfo(undefined)
+        setBalanceInfo([])
+        setFetchedStatus(false)
       }
     }
     if (
@@ -79,5 +83,5 @@ export const useGetBalance = (
     previousUpdateNumber.current = numberUpdate
   })
 
-  return balanceInfo
+  return { value: balanceInfo, isFetched }
 }

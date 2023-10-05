@@ -15,7 +15,9 @@ export function useTokenInfo(tokenName?: SupportedTokenName): {
   const tokenCache = useTokenCache()
   const priceInUsdList = usePriceInUsd()
   const address = tokenName && tokenContracts[tokenName].address
-  const [balance] = useGetBalance(address ? [address] : []) || []
+  const {
+    value: [balance],
+  } = useGetBalance(address ? [address] : [])
 
   if (tokenName && address) {
     const { discount = 0 } = marketData?.[address] ?? {}

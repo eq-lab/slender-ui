@@ -12,7 +12,7 @@ import Label from '@marginly/ui/components/label'
 import Typography from '@marginly/ui/components/typography'
 import { useMarketData } from '@/entities/token/context/hooks'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
-import { checkPosition } from '@/entities/position/utils'
+import { checkPositionExists } from '@/entities/position/utils'
 import { PositionCell } from './components/position-cell'
 import { MoreButton } from './components/more-button'
 import * as S from './position-section.styled'
@@ -59,7 +59,7 @@ export function PositionSection() {
   const { modal: lendDecreaseModal, open: openLendDecreaseModal } = useLendDecrease()
   const { modal: lendIncreaseModal, open: openLendIncreaseModal } = useLendIncrease()
 
-  if (!checkPosition(position)) return null
+  if (!checkPositionExists(position)) return null
 
   return (
     <S.PositionWrapper>

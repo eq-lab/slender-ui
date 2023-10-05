@@ -25,7 +25,7 @@ interface Props {
 export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Props) {
   const [value, setValue] = useState('')
 
-  const { balance = 0 } = useGetBalance([tokenContracts[depositTokenName].address])?.[0] || {}
+  const { balance = 0 } = useGetBalance([tokenContracts[depositTokenName].address]).value[0] || {}
   const max = Number(balance)
 
   const { lendInterestRate, discount, liquidationPenalty } = useMarketDataForDisplay(
