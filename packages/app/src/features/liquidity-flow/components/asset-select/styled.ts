@@ -31,9 +31,6 @@ export const MenuItem = styled(MenuItemUi)`
 
 export const ThumbnailWrapper = styled(ThumbnailUi)<{ $thumbnailBackgroundColor: string }>`
   &&& {
-    box-shadow:
-      0 4px 8px 0 rgba(51, 20, 0, 0.08),
-      0 2px 1px 0 rgba(51, 20, 0, 0.04);
     cursor: pointer;
     background: ${({ $thumbnailBackgroundColor }) => $thumbnailBackgroundColor};
     svg {
