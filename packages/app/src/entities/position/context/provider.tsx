@@ -10,7 +10,6 @@ import {
   SupportedTokenName,
 } from '@/shared/stellar/constants/tokens'
 import { usePriceInUsd, SupportedTokenRates } from '@/entities/currency-rates/context/hooks'
-import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
 import { Position, PositionCell } from '../types'
 import { PositionContext } from './context'
 
@@ -44,26 +43,28 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
     deposits: [],
     debts: [],
   })
+  const [isPositionFetched, setPositionFetchedStatus] = useState(false)
   const [positionUpdate, setPositionUpdate] = useState(0)
   const updatePosition = () => {
     setPositionUpdate((state) => state + 1)
   }
-  const { address: userAddress } = useWalletAddress()
 
   const cryptocurrencyUsdRates = usePriceInUsd()
 
   const marketData = useMarketData()
 
-  const debtBalances = useGetBalance(
+  const { value: debtBalances, isFetched: debtBalancesIsFetched } = useGetBalance(
     SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].debtAddress),
     positionUpdate,
   )
-  const lendBalances = useGetBalance(
+  const { value: lendBalances, isFetched: lendBalancesIsFetched } = useGetBalance(
     SUPPORTED_TOKEN_NAMES.map((tokenName) => tokenContracts[tokenName].sAddress),
     positionUpdate,
   )
 
   useEffect(() => {
+    setPositionFetchedStatus(debtBalancesIsFetched && lendBalancesIsFetched)
+
     const debtPositions = debtBalances?.reduce(
       (resultArr: PositionCell[], currentItem, currentIndex) => {
         if (currentItem && Number(currentItem.balance)) {
@@ -103,21 +104,20 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
     )
 
     setPosition({
-      deposits: lendPositions,
-      debts: debtPositions,
+      deposits: lendPositions || [],
+      debts: debtPositions || [],
     })
   }, [
-    userAddress,
-    setPosition,
-    positionUpdate,
-    debtBalances,
-    lendBalances,
     cryptocurrencyUsdRates,
+    debtBalances,
+    debtBalancesIsFetched,
+    lendBalances,
+    lendBalancesIsFetched,
     marketData,
   ])
 
   return (
-    <PositionContext.Provider value={{ position, setPosition, updatePosition }}>
+    <PositionContext.Provider value={{ position, setPosition, updatePosition, isPositionFetched }}>
       {children}
     </PositionContext.Provider>
   )

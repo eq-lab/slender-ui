@@ -7,6 +7,7 @@ import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { TokenSuperField } from '@/shared/components/token-super-field'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { getRequiredError } from '../../../utils/get-required-error'
 import { getPositionInfo } from '../../../utils/get-position-info'
 import { getExtraTokenName } from '../../../utils/get-extra-token-name'
@@ -111,7 +112,7 @@ export function LendStepModal({
     if (requiredError) return 'Enter collateral amount first'
     if (lowHealthError) return 'Add more collateral to have 25% health'
     if (firstInputError || secondInputError) return 'You don’t have enough funds'
-    return `With APR ${borrowInterestRate}`
+    return `With APR −${borrowInterestRate}`
   }
 
   const debt = makePosition(debtTokenName, debtValue)
@@ -142,7 +143,9 @@ export function LendStepModal({
         title="Add collateral"
         description={renderDescription()}
         buttonProps={{
-          label: `Borrow ${debtValue} ${getTokenByTokenName(debtTokenName)?.symbol}`,
+          label: `Borrow ${formatCompactCryptoCurrency(debtValue)} ${getTokenByTokenName(
+            debtTokenName,
+          )?.symbol}`,
           onClick: () =>
             onSend({
               debts: [debt],
@@ -160,14 +163,16 @@ export function LendStepModal({
             tokenSymbol={coreTokenSymbol}
             badgeValue={String(coreInputMax)}
             className={cn(firstInputError && Error)}
-          />
-          {!showExtraInput && (
-            <AssetSelect
-              onChange={setCoreDepositTokenName}
-              assetsInfo={assetsInfo}
-              value={coreDepositTokenName}
-            />
-          )}
+          >
+            {!showExtraInput && assetsInfo.length > 1 && (
+              <AssetSelect
+                onChange={setCoreDepositTokenName}
+                assetsInfo={assetsInfo}
+                value={coreDepositTokenName}
+                tooltipText="Collateral Asset"
+              />
+            )}
+          </TokenSuperField>
         </InputLayout>
 
         {!showExtraInput && <AddAssetButton onClick={() => setShowExtraInput(true)} />}

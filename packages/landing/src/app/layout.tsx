@@ -6,7 +6,7 @@ import { StyledComponentsRegistry } from '@/global/styled-registry'
 
 export const metadata: Metadata = {
   title: 'Slender',
-  description: 'Lend & borrow fat stakes at a fairer interest',
+  description: 'Lend & borrow fat stakes at a fair interest',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -17,7 +17,7 @@ export function useGetAssetsInfo(
   isDeposit?: boolean,
 ): AssetInfo[] {
   const getTokenByTokenName = useGetTokenByTokenName()
-  const depositBalances = useGetBalance(
+  const { value: depositBalances } = useGetBalance(
     tokenNames.map((tokenName) => tokenContracts[tokenName].address),
   )
 

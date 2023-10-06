@@ -5,7 +5,7 @@ import { useGetBalance } from '@/entities/token/hooks/use-get-balance'
 import { InfoRow } from '@/shared/components/info-row'
 import { InfoLayout } from '@/shared/components/info-layout'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
-import { formatUsd } from '@/shared/formatters'
+import { formatCompactCryptoCurrency, formatCompactUsd } from '@/shared/formatters'
 import { PositionCell } from '@/entities/position/types'
 import { TokenSuperField } from '@/shared/components/token-super-field'
 import { ModalLayout } from '../modal-layout'
@@ -25,7 +25,7 @@ interface Props {
 export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Props) {
   const [value, setValue] = useState('')
 
-  const { balance = 0 } = useGetBalance([tokenContracts[depositTokenName].address])[0] || {}
+  const { balance = 0 } = useGetBalance([tokenContracts[depositTokenName].address]).value[0] || {}
   const max = Number(balance)
 
   const { lendInterestRate, discount, liquidationPenalty } = useMarketDataForDisplay(
@@ -59,7 +59,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
     if (requiredError) return 'Add deposit amount first'
     if (notEnoughFoundsError) return 'You don’t have enough funds'
     const depositUsd = getDepositUsd(value, tokenInfo.priceInUsd, tokenInfo.discount)
-    return `${formatUsd(depositUsd)} will be counted as collateral`
+    return `${formatCompactUsd(depositUsd)} will be counted as collateral`
   }
 
   return (
@@ -68,7 +68,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
         description={renderDescription()}
         title="How much to lend"
         buttonProps={{
-          label: `Lend ${value} ${tokenSymbol}`,
+          label: `Lend ${formatCompactCryptoCurrency(value)} ${tokenSymbol}`,
           onClick: handleClick,
           disabled: formError,
         }}

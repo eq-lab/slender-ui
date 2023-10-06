@@ -1,6 +1,6 @@
 import { PositionContext } from '@/entities/position/context/context'
-import { useWalletActions } from '@/entities/wallet/utils/use-wallet-action'
-import { useWalletAddress } from '@/shared/contexts/use-wallet-address'
+import { checkPositionExists } from '@/entities/position/utils'
+import { useOpenModalAfterAuthentication } from '@/features/liquidity-flow/hooks/use-open-modal-after-autefication'
 import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
 import { useContextSelector } from 'use-context-selector'
 
@@ -27,13 +27,11 @@ export const useActionModal = ({
   open: () => void
   disabled: boolean
 } => {
-  const { address, isConnected } = useWalletAddress()
-  const { connect, getWallet } = useWalletActions()
   const position = useContextSelector(PositionContext, (state) => state.position)
   const { modal: firstPositionModal, open: firstPositionOpen } = useFirstPosition(tokenName)
   const { modal: increaseModal, open: increaseOpen } = useIncrease()
 
-  const havePosition = Boolean(position.debts.length || position.deposits.length)
+  const havePosition = checkPositionExists(position)
 
   const disabled = Boolean(
     position?.[type === 'borrow' ? 'deposits' : 'debts']
@@ -41,20 +39,16 @@ export const useActionModal = ({
       .includes(tokenName),
   )
 
+  const runAfterAuthentication = useOpenModalAfterAuthentication(disabled)
+
   const open = () => {
-    if (!isConnected) {
-      getWallet()
-      return
-    }
-    if (!address) {
-      connect()
-      return
-    }
-    if (havePosition) {
-      increaseOpen(tokenName)
-      return
-    }
-    firstPositionOpen()
+    runAfterAuthentication((havePositionArg: boolean) => {
+      if (havePositionArg) {
+        increaseOpen(tokenName)
+        return
+      }
+      firstPositionOpen()
+    })
   }
 
   const modal = havePosition ? increaseModal : firstPositionModal

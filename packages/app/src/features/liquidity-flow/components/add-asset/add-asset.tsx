@@ -19,5 +19,11 @@ export function AddAsset({ onChange, excludedTokens, isDeposit }: Props) {
   if (excludedTokens.length === 1) {
     return <AddAssetButton onClick={() => onChange(excludedTokens[0])} />
   }
-  return <AssetSelect onChange={onChange} assetsInfo={assetsInfo} />
+  return (
+    <AssetSelect
+      onChange={onChange}
+      assetsInfo={assetsInfo}
+      tooltipText={isDeposit ? 'Collateral Asset' : 'Debt Asset'}
+    />
+  )
 }

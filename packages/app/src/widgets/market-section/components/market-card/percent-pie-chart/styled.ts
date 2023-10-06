@@ -12,4 +12,8 @@ export const PieChartWrapper = styled.div<{ $percent: number }>`
     var(--fill-secondary) 0%
   );
   border-radius: 50%;
+
+  .percent {
+    color: var(--text-primary-on-dark, #fff);
+  }
 `

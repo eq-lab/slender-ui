@@ -1,0 +1,10 @@
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_140_3647)">
+<mask id="mask0_140_3647" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+<path d="M21 14.5L13 6.5L11 6.5L3 14.5L4.5 16L12 8.5L19.5 16L21 14.5Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_140_3647)">
+<rect width="24" height="24" fill="white"/>
+</g>
+</g>
+</svg>

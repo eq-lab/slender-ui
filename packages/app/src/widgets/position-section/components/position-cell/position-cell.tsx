@@ -7,10 +7,11 @@ import { colorByToken } from '@/entities/token/constants/token-colors'
 import Thumbnail from '@marginly/ui/components/thumbnail'
 import Typography from '@marginly/ui/components/typography'
 import Label from '@marginly/ui/components/label'
-import { formatUsd, formatCryptoCurrency } from '@/shared/formatters'
+import { formatCompactCryptoCurrency, formatCompactUsd } from '@/shared/formatters'
 import { useTokenCache } from '@/entities/token/context/hooks'
 import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
 import { ReactComponent as MinusIcon } from '@/shared/icons/minus.svg'
+import Button from '@marginly/ui/components/button'
 import * as S from './position-cell.styled'
 
 export function PositionCell({
@@ -52,7 +53,7 @@ export function PositionCell({
           </Typography>
           <S.PositionCellTokenAmount>
             <Typography>
-              {formatCryptoCurrency(value.toNumber())} {tokenCache?.symbol}{' '}
+              {formatCompactCryptoCurrency(value.toNumber())} {tokenCache?.symbol}{' '}
             </Typography>
             {interestRate && (
               <Label positive={isLendPosition} negative={!isLendPosition} sm>
@@ -67,17 +68,17 @@ export function PositionCell({
             <Typography caption secondary>
               {discount} discount
             </Typography>
-            {valueInUsd && <Typography>{formatUsd(valueInUsd)}</Typography>}
+            {valueInUsd && <Typography>{formatCompactUsd(valueInUsd)}</Typography>}
           </S.PositionCellInfoItem>
         )}
       </S.PositionCellInfo>
       <S.PositionCellButtons>
-        <S.CellButton md elevated onClick={openDecreaseModal}>
-          <MinusIcon />
-        </S.CellButton>
-        <S.CellButton md elevated onClick={openIncreaseModal}>
-          <PlusIcon />
-        </S.CellButton>
+        <Button md elevated onClick={openDecreaseModal} icon>
+          <MinusIcon width={24} />
+        </Button>
+        <Button md elevated onClick={openIncreaseModal} icon>
+          <PlusIcon width={24} />
+        </Button>
       </S.PositionCellButtons>
     </S.PositionCellWrapper>
   )

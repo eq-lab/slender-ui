@@ -6,12 +6,13 @@ import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-in
 import { useLendDecrease } from '@/features/liquidity-flow/hooks/use-lend-decrease'
 import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
 import { HealthMeter } from '@/shared/components/health-meter'
-import { formatPercent, formatUsd } from '@/shared/formatters'
+import { formatCompactUsd, formatPercent } from '@/shared/formatters'
 import { SUPPORTED_TOKEN_NAMES, tokenContracts } from '@/shared/stellar/constants/tokens'
 import Label from '@marginly/ui/components/label'
 import Typography from '@marginly/ui/components/typography'
 import { useMarketData } from '@/entities/token/context/hooks'
 import { PositionCell as PositionCellType } from '@/entities/position/types'
+import { checkPositionExists } from '@/entities/position/utils'
 import { PositionCell } from './components/position-cell'
 import { MoreButton } from './components/more-button'
 import * as S from './position-section.styled'
@@ -58,7 +59,7 @@ export function PositionSection() {
   const { modal: lendDecreaseModal, open: openLendDecreaseModal } = useLendDecrease()
   const { modal: lendIncreaseModal, open: openLendIncreaseModal } = useLendIncrease()
 
-  if (!position.deposits.length && !position.debts.length) return null
+  if (!checkPositionExists(position)) return null
 
   return (
     <S.PositionWrapper>
@@ -72,7 +73,7 @@ export function PositionSection() {
             <S.PositionSumWrapper>
               <S.PositionSumContainer>
                 {!!depositsSumUsd && (
-                  <S.TitleHeader headerL>{formatUsd(depositsSumUsd)}</S.TitleHeader>
+                  <S.TitleHeader headerL>{formatCompactUsd(depositsSumUsd)}</S.TitleHeader>
                 )}
                 <Label positive lg>
                   +{formatPercent(depositSumInterestRate)} APR
@@ -122,7 +123,7 @@ export function PositionSection() {
               <S.PositionSumWrapper>
                 <S.PositionSumContainer>
                   <S.TitleHeader headerL>
-                    {debtsSumUsd ? formatUsd(debtsSumUsd) : 'No debt'}
+                    {debtsSumUsd ? formatCompactUsd(debtsSumUsd) : 'No debt'}
                   </S.TitleHeader>
                   {!!debtsSumUsd && (
                     <Label negative lg>
@@ -158,7 +159,7 @@ export function PositionSection() {
             {!isFullDeposits && (
               <MoreButton
                 upperText={debtsSumUsd ? 'Borrow More' : 'Borrow'}
-                bottomText={`Up to ${formatUsd(depositsSumUsd - debtsSumUsd)}`}
+                bottomText={`Up to ${formatCompactUsd(depositsSumUsd - debtsSumUsd)}`}
                 onClick={() => openBorrowIncreaseModal()}
               />
             )}

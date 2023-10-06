@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react'
-import { SuperField } from '@marginly/ui/components/input/super-field'
+import SuperField from '@marginly/ui/components/input/super-field'
 import { useFocus } from '@marginly/ui/components/input/use-focus'
 import { FieldContainer } from '@marginly/ui/components/input/text.styled'
 import { Suggestion } from '@marginly/ui/constants/classnames'
 import Label from '@marginly/ui/components/label'
+import { formatCompactCryptoCurrency } from '@/shared/formatters'
 
 const NUMBER_INPUT_REGEX = /^[0-9]+(?:\.[0-9]*)?$/
 
@@ -15,6 +16,7 @@ interface Props {
   initFocus?: boolean
   tokenSymbol?: string
   badgeValue?: string
+  children?: React.ReactNode
 }
 
 export function TokenSuperField({
@@ -25,6 +27,7 @@ export function TokenSuperField({
   initFocus,
   tokenSymbol,
   badgeValue,
+  children,
 }: Props) {
   const { focused, onClick, ref, setInputFocused } = useFocus()
 
@@ -59,10 +62,11 @@ export function TokenSuperField({
       ref={refCallback}
       focused={focused}
     >
+      {children}
       {Number(badgeValue) && badgeValue ? (
         <FieldContainer className={Suggestion}>
           <Label badge onClick={() => onChange(badgeValue)}>
-            Max {badgeValue}
+            Max {formatCompactCryptoCurrency(badgeValue)}
           </Label>
         </FieldContainer>
       ) : null}

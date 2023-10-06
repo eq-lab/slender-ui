@@ -59,11 +59,12 @@ export const MarketCardPoolInfoContainer = styled.div`
     }
   }
   .total-available {
+    margin-top: 2px;
     color: var(--text-on-dark);
     grid-area: 1 / 2 / 2 / 3;
   }
   .total-supplied {
-    color: var(--text-on-dark);
+    color: var(--text-secondary-on-dark, rgba(242, 237, 235, 0.48));
     grid-area: 2 / 2 / 3 / 3;
   }
 `
@@ -87,16 +88,14 @@ export const MarketCardTextCell = styled.div`
   grid-column-gap: 12px;
 
   .tooltip-container {
-    display: none;
-    fill: rgba(217, 217, 217, 1);
     margin: auto;
     grid-area: 1 / 1 / 3 / 2;
   }
   .upper-text-container {
-    grid-area: 1 / 1 / 2 / 3;
+    grid-area: 1 / 2 / 2 / 3;
   }
   .bottom-text-container {
-    grid-area: 2 / 1 / 3 / 3;
+    grid-area: 2 / 2 / 3 / 3;
   }
 `
 
