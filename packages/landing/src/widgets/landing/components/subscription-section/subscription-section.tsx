@@ -1,11 +1,11 @@
 'use client'
 
 import React, { ChangeEvent, FormEvent, useState } from 'react'
-import { Button, Container, Form, InputBox, InputLabel, Title } from '@/widgets/landing/styled'
 import cn from 'classnames'
-import { sendEmail } from '@/widgets/landing/api'
-import { Space } from '@/widgets/landing/space'
-import { ReactComponent as EmailIcon } from './images/email.svg'
+import { sendEmail } from './api'
+import { Space } from '../space'
+import { ReactComponent as EmailIcon } from '../../images/email.svg'
+import { Button, Container, Form, InputBox, InputLabel, Title } from '../styled'
 
 export function SubscriptionSection() {
   const [email, setEmail] = useState('')
@@ -38,11 +38,7 @@ export function SubscriptionSection() {
       <Space $height={192} $heightMobile={128} />
 
       <Title className="title">
-        {emailIsSent ? (
-          <>We will send you an email about our&nbsp;launch</>
-        ) : (
-          <>Be the first to&nbsp;know about our&nbsp;launch</>
-        )}
+        {emailIsSent ? <>You will receive our newsletter</> : <>Stay tuned for updates</>}
       </Title>
 
       <Space $height={80} $heightMobile={68} />

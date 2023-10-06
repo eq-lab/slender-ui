@@ -45,7 +45,7 @@ export declare class Err<E extends Error_ = Error_> implements Result<any, E> {
 export declare const networks: {
     readonly futurenet: {
         readonly networkPassphrase: "Test SDF Future Network ; October 2022";
-        readonly contractId: "CC7LAQ3NZZZ36RFHUIASBOWJ6TEWKBPMKXHVO6CQTZEXBD547HNRBV6V";
+        readonly contractId: "CABDHBZBFUOMDVVYE2ZYZKAYNUSFXSDUVM4G6LDL47PFCU4BIMPP63GD";
     };
 };
 export type DataKey = {
@@ -94,12 +94,15 @@ export type DataKey = {
 export interface LiquidationCollateral {
     asset: Address;
     collat_coeff: i128;
+    compounded_collat: i128;
+    is_last_collateral: boolean;
     reserve_data: ReserveData;
     s_token_balance: i128;
 }
 export interface Asset {
     amount: i128;
     asset: Address;
+    borrow: boolean;
     premium: i128;
 }
 export interface AccountPosition {
@@ -798,9 +801,10 @@ export declare class Contract {
          */
         secondsToWait?: number;
     }): Promise<Err<Error_> | (R extends undefined ? Err<Error_> | Ok<AccountPosition, Error_> : R extends "simulated" ? SorobanClient.SorobanRpc.SimulateTransactionResponse : R extends "full" ? SorobanClient.SorobanRpc.SimulateTransactionResponse | SorobanClient.SorobanRpc.SendTransactionResponse | SorobanClient.SorobanRpc.GetTransactionResponse : Err<Error_> | Ok<AccountPosition, Error_>)>;
-    liquidate<R extends ResponseTypes = undefined>({ liquidator, who, receive_stoken }: {
+    liquidate<R extends ResponseTypes = undefined>({ liquidator, who, debt_asset, receive_stoken }: {
         liquidator: Address;
         who: Address;
+        debt_asset: Address;
         receive_stoken: boolean;
     }, options?: {
         /**
