@@ -2,7 +2,7 @@ import { Title } from '../styled'
 import { Wrapper } from './styled'
 import { Faq } from './faq'
 import { FaqLink } from './FaqLink'
-import { DISCORD_LINK } from '../../links'
+import { DISCORD_LINK, NOTION_LINK } from '../../links'
 
 export function QuestionSection({ subscriptionAnchor }: { subscriptionAnchor: string }) {
   return (
@@ -16,11 +16,7 @@ export function QuestionSection({ subscriptionAnchor }: { subscriptionAnchor: st
         <Faq title="What is Slender?">
           Slender is the first non-custodial Lending protocol on Stellar’s Soroban. Slender allows
           users to lend and borrow any crypto asset supported by the Soroban network. Learn more
-          about how Slender works by reading the{' '}
-          <FaqLink href="https://www.notion.so/eq-lab/Slender-technical-specification-ac9644adb9284a8f88cfc0146990b119">
-            docs here
-          </FaqLink>
-          .
+          about how Slender works by reading the <FaqLink href={NOTION_LINK}>docs here</FaqLink>.
         </Faq>
         <Faq title="What can I do on Slender?">
           Lend or Borrow Soroban-native crypto assets. Use flash loans to borrow atomically without
