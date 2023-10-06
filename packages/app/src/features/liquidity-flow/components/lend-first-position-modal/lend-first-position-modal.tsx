@@ -8,7 +8,7 @@ import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-
 import { formatCompactCryptoCurrency, formatCompactUsd } from '@/shared/formatters'
 import { PositionCell } from '@/entities/position/types'
 import { TokenSuperField } from '@/shared/components/token-super-field'
-import { ModalLayout } from '../modal-layout'
+import { LiquidityModal } from '../modal/liquidity-modal'
 import { FormLayout } from '../form-layout'
 import { useTokenInfo } from '../../hooks/use-token-info'
 import { getDepositUsd } from '../../utils/get-deposit-usd'
@@ -63,7 +63,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   }
 
   return (
-    <ModalLayout onClose={onClose} infoSlot={infoSlot}>
+    <LiquidityModal onClose={onClose} infoSlot={infoSlot}>
       <FormLayout
         description={renderDescription()}
         title="How much to lend"
@@ -82,6 +82,6 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
           tokenSymbol={tokenSymbol}
         />
       </FormLayout>
-    </ModalLayout>
+    </LiquidityModal>
   )
 }

@@ -1,23 +1,20 @@
 import React from 'react'
+import { DialogProps } from '@mui/material/Dialog'
 import { ReactComponent as CrossIcon } from './cross.svg'
 import { ReactComponent as ArrowLeft } from './arrow-left.svg'
 import * as S from './styled'
 
-interface Props {
-  onClose: () => void
+interface Props extends DialogProps {
   onBack?: () => void
-  children: React.ReactNode
-  infoSlot?: React.ReactNode
-  clean?: boolean
+  children?: React.ReactNode
+  onClose: () => void
 }
 
-export function ModalLayout({ onClose, onBack, children, infoSlot, clean = false }: Props) {
+export function Modal({ children, onBack, onClose, ...muiProps }: Props) {
   return (
-    <S.Dialog open onClose={onClose} maxWidth={clean ? undefined : 'md'} $clean={clean}>
-      <S.Inner $clean={clean}>
-        <div>{children}</div>
-        {infoSlot && <div>{infoSlot}</div>}
-      </S.Inner>
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <S.Dialog {...muiProps} onClose={onClose}>
+      {children}
       <S.CloseButton sm tertiary onClick={onClose}>
         <CrossIcon />
       </S.CloseButton>

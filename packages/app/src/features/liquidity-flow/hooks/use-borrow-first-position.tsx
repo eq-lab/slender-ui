@@ -8,6 +8,7 @@ import { LendStepModal } from '../components/borrow-first-position-flow/lend-ste
 import { useTokenInfo } from './use-token-info'
 import { getDepositUsd } from '../utils/get-deposit-usd'
 import { DEFAULT_HEALTH_VALUE } from '../constants'
+import { Modal } from '../components/modal'
 
 enum Step {
   Borrow = 'Borrow',
@@ -71,7 +72,6 @@ export const useBorrowFirstPosition = (
     [Step.Borrow]: (
       <BorrowStepModal
         value={debtValue}
-        onClose={close}
         onContinue={() => setStep(Step.Deposit)}
         maxDepositUsd={maxDepositUsd}
         onBorrowValueChange={setDebtValue}
@@ -91,7 +91,18 @@ export const useBorrowFirstPosition = (
     ),
   }
 
-  const modal = (step && modalByStep[step]) || null
+  const modal =
+    (step && (
+      <Modal
+        onClose={close}
+        onBack={step === Step.Deposit ? () => setStep(Step.Borrow) : undefined}
+        open
+        maxWidth="md"
+      >
+        {modalByStep[step]}
+      </Modal>
+    )) ||
+    null
 
   const open = () => {
     setStep(Step.Borrow)

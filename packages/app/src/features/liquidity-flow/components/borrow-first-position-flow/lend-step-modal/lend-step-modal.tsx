@@ -2,25 +2,25 @@ import React, { useEffect, useState } from 'react'
 import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
 import { Position } from '@/entities/position/types'
 import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
-import { PositionSummary } from '@/entities/position/components/position-summary'
 import { Error } from '@marginly/ui/constants/classnames'
 import cn from 'classnames'
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
 import { TokenSuperField } from '@/shared/components/token-super-field'
 import { formatCompactCryptoCurrency } from '@/shared/formatters'
+import { PositionSummary } from '@/entities/position/components/position-summary'
 import { getRequiredError } from '../../../utils/get-required-error'
 import { getPositionInfo } from '../../../utils/get-position-info'
 import { getExtraTokenName } from '../../../utils/get-extra-token-name'
 import { getDepositUsd } from '../../../utils/get-deposit-usd'
 import { InputLayout } from '../../../styled'
 import { useTokenInfo } from '../../../hooks/use-token-info'
-import { ModalLayout } from '../../modal-layout'
 import { DEFAULT_HEALTH_VALUE } from '../../../constants'
 import { FormLayout } from '../../form-layout'
 import { AddAssetButton } from '../../add-asset-button'
 import { AssetSelect } from '../../asset-select'
 import { makePosition } from '../../../utils/make-position'
 import { useGetAssetsInfo } from '../../../hooks/use-get-assets-info'
+import { LiquidityModalLayout } from '../../modal/liquidity-modal-layout'
 
 interface Props {
   onClose: () => void
@@ -125,20 +125,17 @@ export function LendStepModal({
   const extraTokenSymbol = extraToken?.symbol
   const extraDeposit = makePosition(extraDepositTokenName, extraValue)
 
+  const infoSlot = (
+    <PositionSummary
+      health={health}
+      borrowCapacity={borrowCapacityInterface}
+      depositSumUsd={depositUsd}
+      debtUsd={debtUsd}
+      collateralError={borrowCapacityError}
+    />
+  )
   return (
-    <ModalLayout
-      onClose={onClose}
-      onBack={onBack}
-      infoSlot={
-        <PositionSummary
-          health={health}
-          borrowCapacity={borrowCapacityInterface}
-          depositSumUsd={depositUsd}
-          debtUsd={debtUsd}
-          collateralError={borrowCapacityError}
-        />
-      }
-    >
+    <LiquidityModalLayout infoSlot={infoSlot}>
       <FormLayout
         title="Add collateral"
         description={renderDescription()}
@@ -189,6 +186,6 @@ export function LendStepModal({
           />
         )}
       </FormLayout>
-    </ModalLayout>
+    </LiquidityModalLayout>
   )
 }
