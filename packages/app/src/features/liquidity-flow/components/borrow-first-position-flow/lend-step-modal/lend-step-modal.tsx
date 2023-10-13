@@ -23,25 +23,23 @@ import { useGetAssetsInfo } from '../../../hooks/use-get-assets-info'
 import { LiquidityModalLayout } from '../../modal/liquidity-modal-layout'
 
 interface Props {
-  onClose: () => void
-  onBack: () => void
   debtValue: string
   debtTokenName: SupportedTokenName
   depositTokenNames: [SupportedTokenName, SupportedTokenName]
   depositTokenName: SupportedTokenName
   onSend: (value: Position) => void
+  className?: string
 }
 
 const MIN_HEALTH_VALUE = 25
 
 export function LendStepModal({
-  onClose,
-  onBack,
   debtValue,
   debtTokenName,
   depositTokenNames,
   onSend,
   depositTokenName,
+  className,
 }: Props) {
   const [coreValue, setCoreValue] = useState('')
   const [extraValue, setExtraValue] = useState('')
@@ -135,7 +133,7 @@ export function LendStepModal({
     />
   )
   return (
-    <LiquidityModalLayout infoSlot={infoSlot}>
+    <LiquidityModalLayout infoSlot={infoSlot} className={className}>
       <FormLayout
         title="Add collateral"
         description={renderDescription()}

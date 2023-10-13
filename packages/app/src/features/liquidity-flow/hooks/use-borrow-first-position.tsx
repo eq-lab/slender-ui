@@ -9,6 +9,7 @@ import { useTokenInfo } from './use-token-info'
 import { getDepositUsd } from '../utils/get-deposit-usd'
 import { DEFAULT_HEALTH_VALUE } from '../constants'
 import { Modal } from '../components/modal'
+import { OpacityCssTransition } from '../components/opacity-css-transition'
 
 enum Step {
   Borrow = 'Borrow',
@@ -80,8 +81,6 @@ export const useBorrowFirstPosition = (
     ),
     [Step.Deposit]: (
       <LendStepModal
-        onClose={close}
-        onBack={() => setStep(Step.Borrow)}
         debtValue={debtValue}
         debtTokenName={token}
         depositTokenName={depositTokenName}
@@ -99,7 +98,10 @@ export const useBorrowFirstPosition = (
         open
         maxWidth="md"
       >
-        {modalByStep[step]}
+        <OpacityCssTransition inTransition={step === Step.Deposit}>
+          {modalByStep[step]}
+        </OpacityCssTransition>
+        {/* <CSSTransition in={step === Step.Deposit} timeout={300} classNames="dialog" /> */}
       </Modal>
     )) ||
     null

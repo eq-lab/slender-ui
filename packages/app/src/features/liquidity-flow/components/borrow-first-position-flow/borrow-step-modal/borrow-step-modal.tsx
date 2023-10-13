@@ -19,6 +19,7 @@ interface Props {
   onBorrowValueChange: (value: string) => void
   maxDepositUsd: number
   debtTokenName: SupportedTokenName
+  className?: string
 }
 
 export function BorrowStepModal({
@@ -27,6 +28,7 @@ export function BorrowStepModal({
   onBorrowValueChange,
   debtTokenName,
   maxDepositUsd,
+  className,
 }: Props) {
   const borrowCoinInfo = useTokenInfo(debtTokenName)
 
@@ -56,7 +58,7 @@ export function BorrowStepModal({
     getRequiredError({ value, valueDecimals: borrowCoinInfo.decimals }) || Number(value) > maxDebt
 
   return (
-    <LiquidityModalLayout infoSlot={infoSlot}>
+    <LiquidityModalLayout infoSlot={infoSlot} className={className}>
       <FormLayout
         title="How much to borrow"
         description={formError ? 'Add borrow amount first' : 'Add collateral on the next step'}
