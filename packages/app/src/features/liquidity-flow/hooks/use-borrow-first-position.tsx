@@ -90,21 +90,18 @@ export const useBorrowFirstPosition = (
     ),
   }
 
-  const modal =
-    (step && (
-      <Modal
-        onClose={close}
-        onBack={step === Step.Deposit ? () => setStep(Step.Borrow) : undefined}
-        open
-        maxWidth="md"
-      >
-        <OpacityCssTransition inTransition={step === Step.Deposit}>
-          {modalByStep[step]}
-        </OpacityCssTransition>
-        {/* <CSSTransition in={step === Step.Deposit} timeout={300} classNames="dialog" /> */}
-      </Modal>
-    )) ||
-    null
+  const modal = step ? (
+    <Modal
+      onClose={close}
+      onBack={step === Step.Deposit ? () => setStep(Step.Borrow) : undefined}
+      open
+      maxWidth="md"
+    >
+      <OpacityCssTransition inTransition={step === Step.Deposit}>
+        {modalByStep[step]}
+      </OpacityCssTransition>
+    </Modal>
+  ) : null
 
   const open = () => {
     setStep(Step.Borrow)
