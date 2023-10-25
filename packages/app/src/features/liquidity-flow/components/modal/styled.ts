@@ -2,22 +2,10 @@ import styled, { css } from 'styled-components'
 import Button from '@marginly/ui/components/button'
 import DialogMui from '@mui/material/Dialog'
 
-export const Inner = styled.div<{ $clean?: boolean }>`
-  min-height: 476px;
-  display: flex;
-  padding: ${({ $clean }) => ($clean ? '32px 48px 48px' : '32px 32px 32px 48px')};
-  gap: 48px;
-
-  > div {
-    width: 100%;
-  }
-`
-
-export const Dialog = styled(DialogMui)<{ $clean?: boolean }>`
+export const Dialog = styled(DialogMui)`
   .MuiPaper-root {
     position: static;
     border-radius: 48px;
-    ${({ $clean }) => ($clean ? 'width: 520px;' : '')};
     box-shadow: 0px 8px 32px 0px rgba(51, 20, 0, 0.16);
   }
   .MuiBackdrop-root {

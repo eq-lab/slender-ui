@@ -9,7 +9,7 @@ import { formatCompactUsd } from '@/shared/formatters'
 import BigNumber from 'bignumber.js'
 import { TokenSuperField } from '@/shared/components/token-super-field'
 import { useTokenInfo } from '../../hooks/use-token-info'
-import { ModalLayout } from '../modal-layout'
+import { LiquidityModal } from '../modal/liquidity-modal'
 import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { PositionUpdate } from '../../types'
@@ -119,7 +119,7 @@ export function LendIncreaseModal({
   }
 
   return (
-    <ModalLayout
+    <LiquidityModal
       infoSlot={
         <PositionSummary
           debtUsd={debtSumUsd}
@@ -177,6 +177,6 @@ export function LendIncreaseModal({
           <AddAsset excludedTokens={excludedTokens} onChange={setExtraDepositTokenName} isDeposit />
         )}
       </FormLayout>
-    </ModalLayout>
+    </LiquidityModal>
   )
 }

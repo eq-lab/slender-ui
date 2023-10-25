@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js'
 import { TokenSuperField } from '@/shared/components/token-super-field'
 import { formatCompactCryptoCurrency } from '@/shared/formatters'
 import { useTokenInfo } from '../../hooks/use-token-info'
-import { ModalLayout } from '../modal-layout'
+import { LiquidityModal } from '../modal/liquidity-modal'
 import { getPositionInfo } from '../../utils/get-position-info'
 import { FormLayout } from '../form-layout'
 import { getRequiredError } from '../../utils/get-required-error'
@@ -53,7 +53,7 @@ export function BorrowDecreaseModal({
   const tokenSymbol = token?.symbol
 
   return (
-    <ModalLayout
+    <LiquidityModal
       infoSlot={
         <PositionSummary
           debtUsd={actualDebtUsd}
@@ -85,6 +85,6 @@ export function BorrowDecreaseModal({
           badgeValue={debt.toString(10)}
         />
       </FormLayout>
-    </ModalLayout>
+    </LiquidityModal>
   )
 }

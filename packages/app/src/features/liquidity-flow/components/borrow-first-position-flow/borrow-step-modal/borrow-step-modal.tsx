@@ -9,26 +9,26 @@ import { TokenSuperField } from '@/shared/components/token-super-field'
 import { getMaxDebt } from '../../../utils/get-max-debt'
 import { getRequiredError } from '../../../utils/get-required-error'
 import { useTokenInfo } from '../../../hooks/use-token-info'
-import { ModalLayout } from '../../modal-layout'
 import { FormLayout } from '../../form-layout'
 import { TokenThumbnail } from '../../token-thumbnail'
+import { LiquidityModalLayout } from '../../modal/liquidity-modal-layout'
 
 interface Props {
-  onClose: () => void
   onContinue: () => void
   value: string
   onBorrowValueChange: (value: string) => void
   maxDepositUsd: number
   debtTokenName: SupportedTokenName
+  className?: string
 }
 
 export function BorrowStepModal({
-  onClose,
   onContinue,
   value,
   onBorrowValueChange,
   debtTokenName,
   maxDepositUsd,
+  className,
 }: Props) {
   const borrowCoinInfo = useTokenInfo(debtTokenName)
 
@@ -58,7 +58,7 @@ export function BorrowStepModal({
     getRequiredError({ value, valueDecimals: borrowCoinInfo.decimals }) || Number(value) > maxDebt
 
   return (
-    <ModalLayout onClose={onClose} infoSlot={infoSlot}>
+    <LiquidityModalLayout infoSlot={infoSlot} className={className}>
       <FormLayout
         title="How much to borrow"
         description={formError ? 'Add borrow amount first' : 'Add collateral on the next step'}
@@ -77,6 +77,6 @@ export function BorrowStepModal({
           tokenSymbol={debtTokenSymbol}
         />
       </FormLayout>
-    </ModalLayout>
+    </LiquidityModalLayout>
   )
 }
