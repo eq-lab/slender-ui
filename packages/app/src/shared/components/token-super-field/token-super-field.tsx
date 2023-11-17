@@ -40,7 +40,7 @@ export function TokenSuperField({
   }
 
   const refCallback = useCallback(
-    (el: HTMLInputElement | null) => {
+    (el: HTMLLabelElement | null) => {
       ref.current = el
       if (initFocus) {
         el?.focus()
