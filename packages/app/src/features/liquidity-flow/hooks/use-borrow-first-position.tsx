@@ -8,6 +8,8 @@ import { LendStepModal } from '../components/borrow-first-position-flow/lend-ste
 import { useTokenInfo } from './use-token-info'
 import { getDepositUsd } from '../utils/get-deposit-usd'
 import { DEFAULT_HEALTH_VALUE } from '../constants'
+import { Modal } from '../components/modal'
+import { OpacityCssTransition } from '../components/opacity-css-transition'
 
 enum Step {
   Borrow = 'Borrow',
@@ -71,7 +73,6 @@ export const useBorrowFirstPosition = (
     [Step.Borrow]: (
       <BorrowStepModal
         value={debtValue}
-        onClose={close}
         onContinue={() => setStep(Step.Deposit)}
         maxDepositUsd={maxDepositUsd}
         onBorrowValueChange={setDebtValue}
@@ -80,8 +81,6 @@ export const useBorrowFirstPosition = (
     ),
     [Step.Deposit]: (
       <LendStepModal
-        onClose={close}
-        onBack={() => setStep(Step.Borrow)}
         debtValue={debtValue}
         debtTokenName={token}
         depositTokenName={depositTokenName}
@@ -91,7 +90,18 @@ export const useBorrowFirstPosition = (
     ),
   }
 
-  const modal = (step && modalByStep[step]) || null
+  const modal = step ? (
+    <Modal
+      onClose={close}
+      onBack={step === Step.Deposit ? () => setStep(Step.Borrow) : undefined}
+      open
+      maxWidth="md"
+    >
+      <OpacityCssTransition inTransition={step === Step.Deposit}>
+        {modalByStep[step]}
+      </OpacityCssTransition>
+    </Modal>
+  ) : null
 
   const open = () => {
     setStep(Step.Borrow)
