@@ -10,6 +10,8 @@ import {
   SupportedTokenName,
 } from '@/shared/stellar/constants/tokens'
 import { usePriceInUsd, SupportedTokenRates } from '@/entities/currency-rates/context/hooks'
+import { useCoefficients } from '@/entities/token/hooks/use-coefficients'
+import BigNumber from 'bignumber.js'
 import { Position, PositionCell } from '../types'
 import { PositionContext } from './context'
 
@@ -17,23 +19,21 @@ const sorobanTokenRecordToPositionCell = ({
   tokenRecord: { balance },
   tokenName,
   cryptocurrencyUsdRates,
+  coefficient = new BigNumber(1),
   discount = 1,
 }: {
   tokenRecord: SorobanTokenRecord
   tokenName: SupportedTokenName
   cryptocurrencyUsdRates?: SupportedTokenRates
+  coefficient?: BigNumber
   discount?: number
 }): PositionCell => {
   const usdRate = cryptocurrencyUsdRates?.[tokenName]
+  const balanceNow = balance.times(coefficient)
 
   return {
-    value: balance,
-    valueInUsd: usdRate
-      ? balance
-          .div(usdRate)
-          .times(discount ?? 1)
-          .toNumber()
-      : 1,
+    value: balanceNow,
+    valueInUsd: usdRate ? balanceNow.div(usdRate).times(discount).toNumber() : 1,
     tokenName,
   }
 }
@@ -50,6 +50,7 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
   }
 
   const cryptocurrencyUsdRates = usePriceInUsd()
+  const coefficients = useCoefficients()
 
   const marketData = useMarketData()
 
@@ -63,8 +64,6 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
   )
 
   useEffect(() => {
-    setPositionFetchedStatus(debtBalancesIsFetched && lendBalancesIsFetched)
-
     const debtPositions = debtBalances?.reduce(
       (resultArr: PositionCell[], currentItem, currentIndex) => {
         if (currentItem && Number(currentItem.balance)) {
@@ -74,6 +73,7 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
               tokenRecord: currentItem,
               tokenName,
               cryptocurrencyUsdRates,
+              coefficient: coefficients?.[tokenName].debtCoefficient,
             }),
           )
         }
@@ -94,6 +94,7 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
               tokenRecord: currentItem,
               tokenName,
               cryptocurrencyUsdRates,
+              coefficient: coefficients?.[tokenName].collateralCoefficient,
               discount: discountInDecimal,
             }),
           )
@@ -107,7 +108,9 @@ export function PositionProvider({ children }: { children: JSX.Element }) {
       deposits: lendPositions || [],
       debts: debtPositions || [],
     })
+    setPositionFetchedStatus(debtBalancesIsFetched && lendBalancesIsFetched)
   }, [
+    coefficients,
     cryptocurrencyUsdRates,
     debtBalances,
     debtBalancesIsFetched,
