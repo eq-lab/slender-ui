@@ -3,7 +3,7 @@ import { ReactComponent as GithubLogo } from '@slender/shared/icons/logo/github.
 import { ReactComponent as NotionLogo } from '@slender/shared/icons/logo/notion.svg'
 import { ButtonsWrapper, Wrapper } from './footer.styled'
 import { Title } from '../styled'
-import { DISCORD_LINK, GITHUB_LINK, NOTION_LINK } from '../../links'
+import { DISCORD_LINK, GITHUB_PROTOCOL_LINK, GITHUB_UI_LINK, NOTION_LINK } from '../../links'
 import { FooterLink } from './footer-link'
 
 export function Footer() {
@@ -14,7 +14,10 @@ export function Footer() {
         <FooterLink href={DISCORD_LINK} title="Discord">
           <DiscordLogo width={24} />
         </FooterLink>
-        <FooterLink href={GITHUB_LINK} title="GitHub">
+        <FooterLink href={GITHUB_UI_LINK} title="GitHub">
+          <GithubLogo width={24} />
+        </FooterLink>
+        <FooterLink href={GITHUB_PROTOCOL_LINK} title="GitHub">
           <GithubLogo width={24} />
         </FooterLink>
         <FooterLink href={NOTION_LINK} title="Notion">
