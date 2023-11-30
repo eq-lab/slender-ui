@@ -1,44 +1,36 @@
-enum NETWORK_NAMES {
-  PUBNET = 'Main Net',
+enum NETWORK_NAME {
+  PUBLIC = 'Main Net',
   TESTNET = 'Test Net',
   FUTURENET = 'Future Net',
 }
 
-enum NETWORKS {
-  PUBLIC = 'PUBLIC',
-  TESTNET = 'TESTNET',
-  FUTURENET = 'FUTURENET',
-}
-
-enum NETWORK_URLS {
+enum NETWORK_URL {
   PUBLIC = 'https://horizon.stellar.org',
   TESTNET = 'https://horizon-testnet.stellar.org',
   FUTURENET = 'https://horizon-futurenet.stellar.org',
 }
 
-enum FRIENDBOT_URLS {
-  TESTNET = 'https://friendbot.stellar.org',
-  FUTURENET = 'https://friendbot-futurenet.stellar.org',
+enum NETWORK_PASSPHRASE {
+  PUBLIC = 'Public Global Stellar Network ; September 2015',
+  TESTNET = 'Test SDF Network ; September 2015',
+  FUTURENET = 'Test SDF Future Network ; October 2022',
 }
 
-const SOROBAN_RPC_URLS = {
+const SOROBAN_RPC_URL = {
+  TESTNET: 'https://soroban-testnet.stellar.org',
   FUTURENET: 'https://rpc-futurenet.stellar.org',
 }
 
 interface NetworkDetails {
-  network: string
   networkName: string
   networkUrl: string
   networkPassphrase: string
-  friendbotUrl?: string
   rpcUrl: string
 }
 
 export const NETWORK_DETAILS: NetworkDetails = {
-  network: NETWORKS.FUTURENET,
-  networkName: NETWORK_NAMES.FUTURENET,
-  networkUrl: NETWORK_URLS.FUTURENET,
-  networkPassphrase: 'Test SDF Future Network ; October 2022',
-  friendbotUrl: FRIENDBOT_URLS.FUTURENET,
-  rpcUrl: SOROBAN_RPC_URLS.FUTURENET,
+  networkName: NETWORK_NAME.TESTNET,
+  networkUrl: NETWORK_URL.TESTNET,
+  networkPassphrase: NETWORK_PASSPHRASE.TESTNET,
+  rpcUrl: SOROBAN_RPC_URL.TESTNET,
 }
