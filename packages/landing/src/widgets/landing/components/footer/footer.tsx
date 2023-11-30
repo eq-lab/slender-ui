@@ -14,10 +14,10 @@ export function Footer() {
         <FooterLink href={DISCORD_LINK} title="Discord">
           <DiscordLogo width={24} />
         </FooterLink>
-        <FooterLink href={GITHUB_UI_LINK} title="GitHub">
+        <FooterLink href={GITHUB_UI_LINK} title="UI GitHub">
           <GithubLogo width={24} />
         </FooterLink>
-        <FooterLink href={GITHUB_PROTOCOL_LINK} title="GitHub">
+        <FooterLink href={GITHUB_PROTOCOL_LINK} title="Protocol GitHub">
           <GithubLogo width={24} />
         </FooterLink>
         <FooterLink href={NOTION_LINK} title="Notion">
