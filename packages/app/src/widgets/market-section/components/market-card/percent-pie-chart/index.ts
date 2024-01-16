@@ -1,1 +1,1 @@
-export { PercentPieChart } from './percent-pie-chart'
+export { PercentPieChart } from './percent-pie-chart';

@@ -1,6 +1,6 @@
-import styled, { css } from 'styled-components'
-import Button from '@marginly/ui/components/button'
-import DialogMui from '@mui/material/Dialog'
+import styled, { css } from 'styled-components';
+import Button from '@marginly/ui/components/button';
+import DialogMui from '@mui/material/Dialog';
 
 export const Dialog = styled(DialogMui)`
   .MuiPaper-root {
@@ -12,7 +12,7 @@ export const Dialog = styled(DialogMui)`
     background: var(--background-overlay);
     backdrop-filter: blur(12px);
   }
-`
+`;
 
 const modalButtonDefaultStyles = css`
   &&& {
@@ -27,18 +27,18 @@ const modalButtonDefaultStyles = css`
       margin: auto;
     }
   }
-`
+`;
 
 export const CloseButton = styled(Button)`
   ${modalButtonDefaultStyles}
   &&& {
     right: 32px;
   }
-`
+`;
 
 export const BackButton = styled(Button)`
   ${modalButtonDefaultStyles}
   &&& {
     left: 32px;
   }
-`
+`;

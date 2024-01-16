@@ -1,1 +1,1 @@
-export { TokenThumbnail } from './token-thumbnail'
+export { TokenThumbnail } from './token-thumbnail';

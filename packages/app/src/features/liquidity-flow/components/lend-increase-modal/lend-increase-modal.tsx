@@ -1,33 +1,33 @@
-import React, { useEffect, useState } from 'react'
-import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
-import { PositionSummary } from '@/entities/position/components/position-summary'
-import cn from 'classnames'
-import { Error } from '@marginly/ui/constants/classnames'
-import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
-import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
-import { formatCompactUsd } from '@/shared/formatters'
-import BigNumber from 'bignumber.js'
-import { TokenSuperField } from '@/shared/components/token-super-field'
-import { useTokenInfo } from '../../hooks/use-token-info'
-import { LiquidityModal } from '../modal/liquidity-modal'
-import { getPositionInfo } from '../../utils/get-position-info'
-import { FormLayout } from '../form-layout'
-import { PositionUpdate } from '../../types'
-import { AssetSelect } from '../asset-select'
-import { InputLayout } from '../../styled'
-import { getDepositUsd } from '../../utils/get-deposit-usd'
-import { getRequiredError } from '../../utils/get-required-error'
-import { excludeSupportedTokens } from '../../utils/exclude-supported-tokens'
-import { AddAsset } from '../add-asset/add-asset'
-import { useGetAssetsInfo } from '../../hooks/use-get-assets-info'
+import React, { useEffect, useState } from 'react';
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens';
+import { PositionSummary } from '@/entities/position/components/position-summary';
+import cn from 'classnames';
+import { Error } from '@marginly/ui/constants/classnames';
+import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name';
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display';
+import { formatCompactUsd } from '@/shared/formatters';
+import BigNumber from 'bignumber.js';
+import { TokenSuperField } from '@/shared/components/token-super-field';
+import { useTokenInfo } from '../../hooks/use-token-info';
+import { LiquidityModal } from '../modal/liquidity-modal';
+import { getPositionInfo } from '../../utils/get-position-info';
+import { FormLayout } from '../form-layout';
+import { PositionUpdate } from '../../types';
+import { AssetSelect } from '../asset-select';
+import { InputLayout } from '../../styled';
+import { getDepositUsd } from '../../utils/get-deposit-usd';
+import { getRequiredError } from '../../utils/get-required-error';
+import { excludeSupportedTokens } from '../../utils/exclude-supported-tokens';
+import { AddAsset } from '../add-asset/add-asset';
+import { useGetAssetsInfo } from '../../hooks/use-get-assets-info';
 
 interface Props {
-  debtSumUsd: number
-  depositSumUsd: number
-  onClose: () => void
-  tokenName: SupportedTokenName
-  onSend: (value: PositionUpdate) => void
-  depositTokenNames: SupportedTokenName[]
+  debtSumUsd: number;
+  depositSumUsd: number;
+  onClose: () => void;
+  tokenName: SupportedTokenName;
+  onSend: (value: PositionUpdate) => void;
+  depositTokenNames: SupportedTokenName[];
 }
 
 export function LendIncreaseModal({
@@ -38,26 +38,26 @@ export function LendIncreaseModal({
   depositTokenNames,
   debtSumUsd,
 }: Props) {
-  const [value, setValue] = useState('')
-  const [extraValue, setExtraValue] = useState('')
+  const [value, setValue] = useState('');
+  const [extraValue, setExtraValue] = useState('');
 
-  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedTokenName>(tokenName)
-  const [extraDepositTokenName, setExtraDepositTokenName] = useState<SupportedTokenName>()
+  const [coreDepositTokenName, setCoreDepositTokenName] = useState<SupportedTokenName>(tokenName);
+  const [extraDepositTokenName, setExtraDepositTokenName] = useState<SupportedTokenName>();
 
   useEffect(() => {
-    setCoreDepositTokenName(tokenName)
-  }, [tokenName])
+    setCoreDepositTokenName(tokenName);
+  }, [tokenName]);
 
-  const coreDepositInfo = useTokenInfo(coreDepositTokenName)
-  const extraDepositInfo = useTokenInfo(extraDepositTokenName)
+  const coreDepositInfo = useTokenInfo(coreDepositTokenName);
+  const extraDepositInfo = useTokenInfo(extraDepositTokenName);
 
-  const assetsInfo = useGetAssetsInfo(depositTokenNames, true)
+  const assetsInfo = useGetAssetsInfo(depositTokenNames, true);
 
   const inputDepositSumUsd =
     getDepositUsd(value, coreDepositInfo.priceInUsd, coreDepositInfo.discount) +
-    getDepositUsd(extraValue, extraDepositInfo.priceInUsd, extraDepositInfo.discount)
+    getDepositUsd(extraValue, extraDepositInfo.priceInUsd, extraDepositInfo.discount);
 
-  const actualDepositUsd = depositSumUsd + inputDepositSumUsd
+  const actualDepositUsd = depositSumUsd + inputDepositSumUsd;
 
   const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError, health, healthDelta } =
     getPositionInfo({
@@ -65,40 +65,40 @@ export function LendIncreaseModal({
       actualDepositUsd,
       debtUsd: debtSumUsd,
       actualDebtUsd: debtSumUsd,
-    })
+    });
 
-  const excludedTokens = excludeSupportedTokens([coreDepositTokenName], depositTokenNames)
-  const hasExtraDepositToken = Boolean(excludedTokens.length)
+  const excludedTokens = excludeSupportedTokens([coreDepositTokenName], depositTokenNames);
+  const hasExtraDepositToken = Boolean(excludedTokens.length);
 
-  const coreInputMax = coreDepositInfo.userBalance
-  const extraInputMax = extraDepositInfo.userBalance
+  const coreInputMax = coreDepositInfo.userBalance;
+  const extraInputMax = extraDepositInfo.userBalance;
 
-  const coreInputError = coreDepositInfo.userBalance.lt(value)
-  const extraInputError = extraDepositInfo.userBalance.lt(extraValue)
+  const coreInputError = coreDepositInfo.userBalance.lt(value);
+  const extraInputError = extraDepositInfo.userBalance.lt(extraValue);
 
-  const getTokenByTokenName = useGetTokenByTokenName()
-  const coreToken = getTokenByTokenName(coreDepositTokenName)
-  const coreTokenSymbol = coreToken?.symbol
+  const getTokenByTokenName = useGetTokenByTokenName();
+  const coreToken = getTokenByTokenName(coreDepositTokenName);
+  const coreTokenSymbol = coreToken?.symbol;
 
-  const extraToken = getTokenByTokenName(extraDepositTokenName)
-  const extraTokenSymbol = extraToken?.symbol
+  const extraToken = getTokenByTokenName(extraDepositTokenName);
+  const extraTokenSymbol = extraToken?.symbol;
 
-  const marketData = useMarketDataForDisplay(tokenContracts[coreDepositTokenName])
+  const marketData = useMarketDataForDisplay(tokenContracts[coreDepositTokenName]);
 
   const getSaveData = (): PositionUpdate => {
     const core = {
       [coreDepositTokenName]: BigNumber(value),
-    }
+    };
 
     if (extraDepositTokenName && extraDepositTokenName) {
       return {
         ...core,
         [extraDepositTokenName]: BigNumber(value),
-      }
+      };
     }
 
-    return core
-  }
+    return core;
+  };
 
   const formError =
     borrowCapacityError ||
@@ -110,13 +110,13 @@ export function LendIncreaseModal({
       extraValue,
       extraValueDecimals: extraDepositInfo.decimals,
       showExtraInput: Boolean(extraDepositTokenName),
-    })
+    });
 
   const renderDescription = () => {
-    if (!formError) return `${formatCompactUsd(inputDepositSumUsd)} will be counted as collateral`
-    if (hasExtraDepositToken) return 'Add deposit amount first'
-    return `With ${marketData.discount} discount`
-  }
+    if (!formError) return `${formatCompactUsd(inputDepositSumUsd)} will be counted as collateral`;
+    if (hasExtraDepositToken) return 'Add deposit amount first';
+    return `With ${marketData.discount} discount`;
+  };
 
   return (
     <LiquidityModal
@@ -178,5 +178,5 @@ export function LendIncreaseModal({
         )}
       </FormLayout>
     </LiquidityModal>
-  )
+  );
 }

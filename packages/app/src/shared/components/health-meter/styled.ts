@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const HealthMeterWrapper = styled.div`
   display: flex;
@@ -6,13 +6,13 @@ export const HealthMeterWrapper = styled.div`
   align-items: center;
   width: 96px;
   height: 96px;
-`
+`;
 
 export const HealthMeterContainer = styled.div`
   position: relative;
   width: 76px;
   height: 56px;
-`
+`;
 
 export const MeterContainer = styled.div`
   display: flex;
@@ -23,7 +23,7 @@ export const MeterContainer = styled.div`
   transform: rotate(165deg);
   width: 100%;
   height: 100%;
-`
+`;
 
 export const HealthTooltipContainer = styled.div<{ $isRed: boolean }>`
   display: flex;
@@ -44,7 +44,7 @@ export const HealthTooltipContainer = styled.div<{ $isRed: boolean }>`
     transition: fill 300ms ease-in-out;
     fill: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-tertiary')});
   }
-`
+`;
 
 export const MeterDash = styled.i<{ index: number; $shaded: boolean; $isRed: boolean }>`
   position: absolute;
@@ -64,11 +64,11 @@ export const MeterDash = styled.i<{ index: number; $shaded: boolean; $isRed: boo
     transform-origin: top;
     transition: background-color 300ms ease-in-out;
     background-color: ${({ $shaded, $isRed }) => {
-      if (!$shaded) return 'var(--color-transparent-gray4)'
-      return $isRed ? 'var(--icon-negative)' : 'var(--icon-primary)'
+      if (!$shaded) return 'var(--color-transparent-gray4)';
+      return $isRed ? 'var(--icon-negative)' : 'var(--icon-primary)';
     }};
   }
-`
+`;
 
 export const HealthPercentCountContainer = styled.div<{ $isRed: boolean }>`
   top: 14px;
@@ -81,4 +81,4 @@ export const HealthPercentCountContainer = styled.div<{ $isRed: boolean }>`
     transition: color 300ms ease-in-out;
     color: var(${({ $isRed }) => ($isRed ? '--text-negative' : '--text-primary')});
   }
-`
+`;

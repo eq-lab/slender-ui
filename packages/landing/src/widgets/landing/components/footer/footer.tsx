@@ -1,10 +1,10 @@
-import { ReactComponent as DiscordLogo } from '@slender/shared/icons/logo/discord.svg'
-import { ReactComponent as GithubLogo } from '@slender/shared/icons/logo/github.svg'
-import { ReactComponent as NotionLogo } from '@slender/shared/icons/logo/notion.svg'
-import { ButtonsWrapper, Wrapper } from './footer.styled'
-import { Title } from '../styled'
-import { DISCORD_LINK, GITHUB_PROTOCOL_LINK, GITHUB_UI_LINK, NOTION_LINK } from '../../links'
-import { FooterLink } from './footer-link'
+import { ReactComponent as DiscordLogo } from '@slender/shared/icons/logo/discord.svg';
+import { ReactComponent as GithubLogo } from '@slender/shared/icons/logo/github.svg';
+import { ReactComponent as NotionLogo } from '@slender/shared/icons/logo/notion.svg';
+import { ButtonsWrapper, Wrapper } from './footer.styled';
+import { Title } from '../styled';
+import { DISCORD_LINK, GITHUB_PROTOCOL_LINK, GITHUB_UI_LINK, NOTION_LINK } from '../../links';
+import { FooterLink } from './footer-link';
 
 export function Footer() {
   return (
@@ -25,5 +25,5 @@ export function Footer() {
         </FooterLink>
       </ButtonsWrapper>
     </Wrapper>
-  )
+  );
 }

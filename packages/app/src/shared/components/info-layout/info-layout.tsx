@@ -1,11 +1,11 @@
-import React from 'react'
-import Typography from '@marginly/ui/components/typography'
-import * as S from './styled'
+import React from 'react';
+import Typography from '@marginly/ui/components/typography';
+import * as S from './styled';
 
 interface Props {
-  title?: string
-  mediaSection: React.ReactNode
-  children: React.ReactNode
+  title?: string;
+  mediaSection: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export function InfoLayout({ title, mediaSection, children }: Props) {
@@ -15,5 +15,5 @@ export function InfoLayout({ title, mediaSection, children }: Props) {
       {mediaSection}
       <S.List>{children}</S.List>
     </S.Wrapper>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { isProduction } from '@slender/shared/config'
+import { isProduction } from '@slender/shared/config';
 
 function writeToDevConsole<T extends 'info' | 'log' | 'error'>(
   method: T,
@@ -7,14 +7,14 @@ function writeToDevConsole<T extends 'info' | 'log' | 'error'>(
   if (!isProduction) {
     // only in dev envs
     // eslint-disable-next-line no-console
-    console[method](...args)
+    console[method](...args);
   }
 }
 
 export function logInfo(...args: unknown[]) {
-  writeToDevConsole('info', ...args)
+  writeToDevConsole('info', ...args);
 }
 
 export function logError(...args: unknown[]) {
-  writeToDevConsole('error', ...args)
+  writeToDevConsole('error', ...args);
 }

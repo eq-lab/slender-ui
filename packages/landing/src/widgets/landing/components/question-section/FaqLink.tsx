@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
 export function FaqLink({
   href,
   children,
   sameTab,
 }: {
-  href: string
-  sameTab?: boolean
-  children: React.ReactNode
+  href: string;
+  sameTab?: boolean;
+  children: React.ReactNode;
 }) {
   return (
     <a
@@ -18,5 +18,5 @@ export function FaqLink({
     >
       {children}
     </a>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import React from 'react'
-import { ReactComponent as SlenderLogo } from '@/shared/icons/logo/slender.svg'
-import { ConnectButton } from '@/entities/wallet/components/connect-button'
-import * as S from './styled'
+import React from 'react';
+import { ReactComponent as SlenderLogo } from '@/shared/icons/logo/slender.svg';
+import { ConnectButton } from '@/entities/wallet/components/connect-button';
+import * as S from './styled';
 
 export function Header() {
   return (
@@ -11,5 +11,5 @@ export function Header() {
         <ConnectButton />
       </S.Inner>
     </S.Wrapper>
-  )
+  );
 }

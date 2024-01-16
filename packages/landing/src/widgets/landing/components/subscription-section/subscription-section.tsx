@@ -1,37 +1,37 @@
-'use client'
+'use client';
 
-import React, { ChangeEvent, FormEvent, useState } from 'react'
-import cn from 'classnames'
-import { sendEmail } from './api'
-import { Space } from '../space'
-import { ReactComponent as EmailIcon } from '../../images/email.svg'
-import { Button, Container, Form, InputBox, InputLabel, Title } from '../styled'
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import cn from 'classnames';
+import { sendEmail } from './api';
+import { Space } from '../space';
+import { ReactComponent as EmailIcon } from '../../images/email.svg';
+import { Button, Container, Form, InputBox, InputLabel, Title } from '../styled';
 
 export function SubscriptionSection() {
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState('');
 
-  const [emailIsFocused, setEmailIsFocused] = useState(false)
-  const [emailHasError, setEmailHasError] = useState(false)
-  const [emailIsSent, setEmailIsSent] = useState(false)
+  const [emailIsFocused, setEmailIsFocused] = useState(false);
+  const [emailHasError, setEmailHasError] = useState(false);
+  const [emailIsSent, setEmailIsSent] = useState(false);
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-    setEmailHasError(false)
-  }
+    setEmail(e.target.value);
+    setEmailHasError(false);
+  };
 
   const handleSubscribe = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const emailIsValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
-    setEmailHasError(!emailIsValid)
+    event.preventDefault();
+    const emailIsValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
+    setEmailHasError(!emailIsValid);
     if (emailIsValid) {
       sendEmail(email).then(() => {
-        setEmailIsSent(true)
-        setEmail('')
-      })
+        setEmailIsSent(true);
+        setEmail('');
+      });
     } else {
-      setEmailHasError(true)
+      setEmailHasError(true);
     }
-  }
+  };
 
   return (
     <Container>
@@ -62,5 +62,5 @@ export function SubscriptionSection() {
       )}
       <Space $height={192} $heightMobile={192} />
     </Container>
-  )
+  );
 }

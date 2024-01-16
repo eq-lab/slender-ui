@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { styled } from 'styled-components'
-import { Button, Container } from '@/widgets/landing/components/styled'
+import { styled } from 'styled-components';
+import { Button, Container } from '@/widgets/landing/components/styled';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
   .nobr {
     white-space: nowrap;
   }
-`
+`;
 
 export const Header = styled.header`
   position: fixed;
@@ -32,7 +32,7 @@ export const Header = styled.header`
   @media (min-width: 1024px) {
     padding: 0 64px;
   }
-`
+`;
 
 export const LogoLink = styled.a`
   padding: 0 16px;
@@ -42,7 +42,7 @@ export const LogoLink = styled.a`
     height: 24px;
     object-fit: contain;
   }
-`
+`;
 
 export const HeaderButton = styled(Button)`
   box-shadow:
@@ -53,7 +53,7 @@ export const HeaderButton = styled(Button)`
   &:hover {
     background: rgba(178, 162, 162, 0.32);
   }
-`
+`;
 
 export const Pluses = styled.div`
   position: absolute;
@@ -74,7 +74,7 @@ export const Pluses = styled.div`
     height: 438px;
     right: 0;
   }
-`
+`;
 
 export const RatesBox = styled.div`
   background: #252222;
@@ -89,7 +89,7 @@ export const RatesBox = styled.div`
     gap: 64px;
     padding: 48px;
   }
-`
+`;
 
 export const RatesPack = styled.div`
   position: relative;
@@ -101,7 +101,7 @@ export const RatesPack = styled.div`
     width: 436px;
     height: 630px;
   }
-`
+`;
 
 export const RatesAside = styled.div`
   @media (min-width: 1440px) {
@@ -109,7 +109,7 @@ export const RatesAside = styled.div`
     flex-direction: column;
     justify-content: space-between;
   }
-`
+`;
 
 export const RatesInfoUnit = styled.div`
   padding-top: 22px;
@@ -139,7 +139,7 @@ export const RatesInfoUnit = styled.div`
     grid-template-columns: 1fr 1fr;
     gap: 32px;
   }
-`
+`;
 export const RatesTitle = styled.div`
   color: #faf8f7;
   font-size: 32px;
@@ -158,7 +158,7 @@ export const RatesTitle = styled.div`
       white-space: normal;
     }
   }
-`
+`;
 export const RatesDescription = styled.div`
   color: #faf8f7;
   font-size: 16px;
@@ -172,7 +172,7 @@ export const RatesDescription = styled.div`
   @media (min-width: 1920px) {
     max-width: 100%;
   }
-`
+`;
 
 export const SugarBlock = styled.div`
   display: flex;
@@ -191,7 +191,7 @@ export const SugarBlock = styled.div`
     justify-content: space-between;
     align-items: center;
   }
-`
+`;
 
 export const SugarInner = styled.div`
   display: flex;
@@ -203,7 +203,7 @@ export const SugarInner = styled.div`
   @media (min-width: 1024px) {
     flex-direction: row;
   }
-`
+`;
 
 export const Launch = styled.div`
   position: relative;
@@ -220,7 +220,7 @@ export const Launch = styled.div`
       z-index: 2;
     }
   }
-`
+`;
 
 export const LaunchBg = styled.div`
   position: absolute;
@@ -248,4 +248,4 @@ export const LaunchBg = styled.div`
     height: 976px;
     left: 0;
   }
-`
+`;

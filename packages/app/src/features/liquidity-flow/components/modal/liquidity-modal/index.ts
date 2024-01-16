@@ -1,1 +1,1 @@
-export { LiquidityModal } from './liquidity-modal'
+export { LiquidityModal } from './liquidity-modal';

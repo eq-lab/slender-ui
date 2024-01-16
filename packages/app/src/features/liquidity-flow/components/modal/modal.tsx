@@ -1,13 +1,13 @@
-import React from 'react'
-import { DialogProps } from '@mui/material/Dialog'
-import { ReactComponent as CrossIcon } from './cross.svg'
-import { ReactComponent as ArrowLeft } from './arrow-left.svg'
-import * as S from './styled'
+import React from 'react';
+import { DialogProps } from '@mui/material/Dialog';
+import { ReactComponent as CrossIcon } from './cross.svg';
+import { ReactComponent as ArrowLeft } from './arrow-left.svg';
+import * as S from './styled';
 
 interface Props extends DialogProps {
-  onBack?: () => void
-  children?: React.ReactNode
-  onClose: () => void
+  onBack?: () => void;
+  children?: React.ReactNode;
+  onClose: () => void;
 }
 
 export function Modal({ children, onBack, onClose, ...muiProps }: Props) {
@@ -24,5 +24,5 @@ export function Modal({ children, onBack, onClose, ...muiProps }: Props) {
         </S.BackButton>
       )}
     </S.Dialog>
-  )
+  );
 }

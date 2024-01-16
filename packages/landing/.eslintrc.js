@@ -1,5 +1,5 @@
-const parentConfig = require('../../.eslintrc')
+const parentConfig = require('../../.eslintrc');
 
 module.exports = {
   ...parentConfig,
-}
+};

@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const InputLayout = styled.div`
   display: flex;
@@ -7,4 +7,4 @@ export const InputLayout = styled.div`
   & > * {
     min-width: 0;
   }
-`
+`;

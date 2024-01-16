@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const PieChartWrapper = styled.div<{ $percent: number }>`
   display: flex;
@@ -16,4 +16,4 @@ export const PieChartWrapper = styled.div<{ $percent: number }>`
   .percent {
     color: var(--text-primary-on-dark, #fff);
   }
-`
+`;

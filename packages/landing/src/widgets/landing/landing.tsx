@@ -1,13 +1,13 @@
-import React from 'react'
-import Image from 'next/image'
-import { SubscriptionSection } from '@/widgets/landing/components/subscription-section/subscription-section'
-import { ReactComponent as LogoIcon } from './images/logo.svg'
-import { ReactComponent as SugarIcon } from './images/sugar.svg'
-import { ReactComponent as NoSugarIcon } from './images/nosugar.svg'
-import { ReactComponent as BarcodeIcon } from './images/barcode.svg'
-import decorImage from './images/decor.png'
-import bagImage from './images/bag.png'
-import endImage from './images/end.png'
+import React from 'react';
+import Image from 'next/image';
+import { SubscriptionSection } from '@/widgets/landing/components/subscription-section/subscription-section';
+import { ReactComponent as LogoIcon } from './images/logo.svg';
+import { ReactComponent as SugarIcon } from './images/sugar.svg';
+import { ReactComponent as NoSugarIcon } from './images/nosugar.svg';
+import { ReactComponent as BarcodeIcon } from './images/barcode.svg';
+import decorImage from './images/decor.png';
+import bagImage from './images/bag.png';
+import endImage from './images/end.png';
 import {
   Header,
   HeaderButton,
@@ -24,15 +24,15 @@ import {
   SugarBlock,
   SugarInner,
   Wrapper,
-} from './styled'
-import { Space } from './components/space'
-import { Container, Title } from './components/styled'
-import { AppSection } from './components/app-section/app-section'
-import { QuestionSection } from './components/question-section/question-section'
-import { Footer } from './components/footer/footer'
+} from './styled';
+import { Space } from './components/space';
+import { Container, Title } from './components/styled';
+import { AppSection } from './components/app-section/app-section';
+import { QuestionSection } from './components/question-section/question-section';
+import { Footer } from './components/footer/footer';
 
-const APP_LINK = 'https://app.slender.fi'
-const SUBSCRIPTION_ANCHOR = 'subscription'
+const APP_LINK = 'https://app.slender.fi';
+const SUBSCRIPTION_ANCHOR = 'subscription';
 
 export function Landing() {
   return (
@@ -147,5 +147,5 @@ export function Landing() {
         <Space $height={128} $heightMobile={128} />
       </Wrapper>
     </main>
-  )
+  );
 }

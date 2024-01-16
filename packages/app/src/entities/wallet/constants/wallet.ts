@@ -1,1 +1,1 @@
-export const FREIGHTER_WALLET_URL = 'https://www.freighter.app/'
+export const FREIGHTER_WALLET_URL = 'https://www.freighter.app/';

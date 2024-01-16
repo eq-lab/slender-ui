@@ -1,1 +1,1 @@
-export { MoreButton } from './more-button'
+export { MoreButton } from './more-button';

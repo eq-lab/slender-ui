@@ -1,6 +1,6 @@
-import { MarketCard } from '@/widgets/market-section/components/market-card/market-card'
-import { SUPPORTED_TOKEN_NAMES } from '@/shared/stellar/constants/tokens'
-import * as S from './styled'
+import { MarketCard } from '@/widgets/market-section/components/market-card/market-card';
+import { SUPPORTED_TOKEN_NAMES } from '@/shared/stellar/constants/tokens';
+import * as S from './styled';
 
 export function MarketSection() {
   return (
@@ -12,5 +12,5 @@ export function MarketSection() {
         ))}
       </S.MarketSectionItemsWrapper>
     </S.MarketSectionWrapper>
-  )
+  );
 }

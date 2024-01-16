@@ -8,4 +8,4 @@ module.exports = {
   rootDir: '.',
   testTimeout: 10_000,
   testRegex: '.spec.ts$',
-}
+};
