@@ -8,7 +8,7 @@ import {
   SupportedTokenName,
   tokenContracts,
 } from '@/shared/stellar/constants/tokens'
-import * as SorobanClient from 'soroban-client'
+import * as StellarSdk from '@stellar/stellar-sdk'
 import { CONTRACT_MATH_PRECISION } from '@/entities/token/constants/contract-constants'
 
 type TokenCoefficients = Record<
@@ -19,7 +19,7 @@ type TokenCoefficients = Record<
   }
 >
 
-const getArgFromTokenName = (tokenName: SupportedTokenName): [SorobanClient.xdr.ScVal] => [
+const getArgFromTokenName = (tokenName: SupportedTokenName): [StellarSdk.xdr.ScVal] => [
   addressToScVal(tokenContracts[tokenName].address),
 ]
 

@@ -18,6 +18,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.8",
     "@stellar/freighter-api": "^1.6.0",
+    "@stellar/stellar-sdk": "^11.2.0",
     "@types/styled-components": "^5.1.26",
     "bignumber.js": "^9.1.2",
     "classnames": "^2.3.2",
