@@ -1,93 +1,31 @@
-import * as SorobanClient from 'soroban-client';
-import { ContractSpec, Address } from 'soroban-client';
+import { ContractSpec, Address } from 'stellar-sdk';
 import { Buffer } from "buffer";
-import { invoke } from './invoke.js';
-import type { ResponseTypes, Wallet, ClassOptions } from './method-options.js'
+import { AssembledTransaction, Ok, Err } from './assembled-tx.js';
+import type {
+  u32,
+  i32,
+  u64,
+  i64,
+  u128,
+  i128,
+  u256,
+  i256,
+  Option,
+  Typepoint,
+  Duration,
+  Error_,
+  Result,
+} from './assembled-tx.js';
+import type { ClassOptions, XDR_BASE64 } from './method-options.js';
 
-export * from './invoke.js'
-export * from './method-options.js'
-
-export type u32 = number;
-export type i32 = number;
-export type u64 = bigint;
-export type i64 = bigint;
-export type u128 = bigint;
-export type i128 = bigint;
-export type u256 = bigint;
-export type i256 = bigint;
-export type Option<T> = T | undefined;
-export type Typepoint = bigint;
-export type Duration = bigint;
-export {Address};
-
-/// Error interface containing the error message
-export interface Error_ { message: string };
-
-export interface Result<T, E extends Error_> {
-    unwrap(): T,
-    unwrapErr(): E,
-    isOk(): boolean,
-    isErr(): boolean,
-};
-
-export class Ok<T, E extends Error_ = Error_> implements Result<T, E> {
-    constructor(readonly value: T) { }
-    unwrapErr(): E {
-        throw new Error('No error');
-    }
-    unwrap(): T {
-        return this.value;
-    }
-
-    isOk(): boolean {
-        return true;
-    }
-
-    isErr(): boolean {
-        return !this.isOk()
-    }
-}
-
-export class Err<E extends Error_ = Error_> implements Result<any, E> {
-    constructor(readonly error: E) { }
-    unwrapErr(): E {
-        return this.error;
-    }
-    unwrap(): never {
-        throw new Error(this.error.message);
-    }
-
-    isOk(): boolean {
-        return false;
-    }
-
-    isErr(): boolean {
-        return !this.isOk()
-    }
-}
+export * from './assembled-tx.js';
+export * from './method-options.js';
 
 if (typeof window !== 'undefined') {
     //@ts-ignore Buffer exists
     window.Buffer = window.Buffer || Buffer;
 }
 
-const regex = /Error\(Contract, #(\d+)\)/;
-
-function parseError(message: string): Err | undefined {
-    const match = message.match(regex);
-    if (!match) {
-        return undefined;
-    }
-    if (Errors === undefined) {
-        return undefined;
-    }
-    let i = parseInt(match[1], 10);
-    let err = Errors[i];
-    if (err) {
-        return new Err(err);
-    }
-    return undefined;
-}
 
 export const networks = {
     futurenet: {
@@ -96,57 +34,117 @@ export const networks = {
     }
 } as const
 
+/**
+    
+    */
 export interface AllowanceValue {
-  amount: i128;
-  expiration_ledger: u32;
-}
-
-export interface AllowanceDataKey {
-  from: Address;
-  spender: Address;
-}
-
-export type DataKey = {tag: "Allowance", values: readonly [AllowanceDataKey]} | {tag: "UnderlyingAsset", values: void};
-
-export type CommonDataKey = {tag: "Balance", values: readonly [Address]} | {tag: "State", values: readonly [Address]} | {tag: "Pool", values: void} | {tag: "TotalSupply", values: void};
-
-export interface AccountPosition {
-  debt: i128;
-  discounted_collateral: i128;
-  npv: i128;
-}
-
-export interface AssetBalance {
-  asset: Address;
-  balance: i128;
-}
-
-export interface BaseAssetConfig {
-  address: Address;
-  decimals: u32;
+  /**
+    
+    */
+amount: i128;
+  /**
+    
+    */
+expiration_ledger: u32;
 }
 
 /**
- * Collateralization parameters
- */
-export interface CollateralParamsInput {
+    
+    */
+export interface AllowanceDataKey {
   /**
- * Specifies what fraction of the underlying asset counts toward
- * the portfolio collateral value [0%, 100%].
- */
-discount: u32;
+    
+    */
+from: string;
   /**
- * The bonus liquidators receive to liquidate this asset. The values is always above 100%. A value of 105% means the liquidator will receive a 5% bonus
- */
-liq_bonus: u32;
-  /**
- * The total amount of an asset the protocol accepts into the market.
- */
-liq_cap: i128;
-  util_cap: u32;
+    
+    */
+spender: string;
 }
 
-const Errors = {
+/**
+    
+    */
+export type DataKey = {tag: "Allowance", values: readonly [AllowanceDataKey]} | {tag: "UnderlyingAsset", values: void};
+
+/**
+    
+    */
+export type CommonDataKey = {tag: "Balance", values: readonly [string]} | {tag: "State", values: readonly [string]} | {tag: "Pool", values: void} | {tag: "TotalSupply", values: void};
+
+/**
+    
+    */
+export interface AccountPosition {
+  /**
+    
+    */
+debt: i128;
+  /**
+    
+    */
+discounted_collateral: i128;
+  /**
+    
+    */
+npv: i128;
+}
+
+/**
+    
+    */
+export interface AssetBalance {
+  /**
+    
+    */
+asset: string;
+  /**
+    
+    */
+balance: i128;
+}
+
+/**
+    
+    */
+export interface BaseAssetConfig {
+  /**
+    
+    */
+address: string;
+  /**
+    
+    */
+decimals: u32;
+}
+
+/**
+    Collateralization parameters
+    */
+export interface CollateralParamsInput {
+  /**
+    Specifies what fraction of the underlying asset counts toward
+    * the portfolio collateral value [0%, 100%].
+    */
+discount: u32;
+  /**
+    The bonus liquidators receive to liquidate this asset. The values is always above 100%. A value of 105% means the liquidator will receive a 5% bonus
+    */
+liq_bonus: u32;
+  /**
+    The total amount of an asset the protocol accepts into the market.
+    */
+liq_cap: i128;
+  /**
+    
+    */
+util_cap: u32;
+}
+
+/**
+    
+    */
+export const Errors = {
 0: {message:""},
   1: {message:""},
   2: {message:""},
@@ -187,82 +185,199 @@ const Errors = {
   501: {message:""},
   502: {message:""}
 }
+/**
+    
+    */
 export interface FlashLoanAsset {
-  amount: i128;
-  asset: Address;
-  borrow: boolean;
+  /**
+    
+    */
+amount: i128;
+  /**
+    
+    */
+asset: string;
+  /**
+    
+    */
+borrow: boolean;
 }
 
+/**
+    
+    */
 export interface InitReserveInput {
-  debt_token_address: Address;
-  s_token_address: Address;
+  /**
+    
+    */
+debt_token_address: string;
+  /**
+    
+    */
+s_token_address: string;
 }
 
 /**
- * Interest rate parameters
- */
+    Interest rate parameters
+    */
 export interface IRParams {
-  alpha: u32;
-  initial_rate: u32;
-  max_rate: u32;
-  scaling_coeff: u32;
-}
-
-export interface PriceFeedConfig {
-  asset_decimals: u32;
-  feed: Address;
-  feed_decimals: u32;
-}
-
-export interface PriceFeedInput {
-  asset: Address;
-  asset_decimals: u32;
-  feed: Address;
-  feed_decimals: u32;
-}
-
-export interface ReserveConfiguration {
-  borrowing_enabled: boolean;
   /**
- * Specifies what fraction of the underlying asset counts toward
- * the portfolio collateral value [0%, 100%].
- */
-discount: u32;
-  is_active: boolean;
-  liq_bonus: u32;
-  liq_cap: i128;
-  util_cap: u32;
-}
-
-export interface ReserveData {
-  borrower_ar: i128;
-  borrower_ir: i128;
-  configuration: ReserveConfiguration;
-  debt_token_address: Address;
+    
+    */
+alpha: u32;
   /**
- * The id of the reserve (position in the list of the active reserves).
- */
-id: Buffer;
-  last_update_timestamp: u64;
-  lender_ar: i128;
-  lender_ir: i128;
-  s_token_address: Address;
+    
+    */
+initial_rate: u32;
+  /**
+    
+    */
+max_rate: u32;
+  /**
+    
+    */
+scaling_coeff: u32;
 }
 
 /**
- * Implements the bitmap logic to handle the user configuration.
- * Even positions is collateral flags and uneven is borrowing flags.
- */
+    
+    */
+export interface PriceFeedConfig {
+  /**
+    
+    */
+asset_decimals: u32;
+  /**
+    
+    */
+feed: string;
+  /**
+    
+    */
+feed_decimals: u32;
+}
+
+/**
+    
+    */
+export interface PriceFeedInput {
+  /**
+    
+    */
+asset: string;
+  /**
+    
+    */
+asset_decimals: u32;
+  /**
+    
+    */
+feed: string;
+  /**
+    
+    */
+feed_decimals: u32;
+}
+
+/**
+    
+    */
+export interface ReserveConfiguration {
+  /**
+    
+    */
+borrowing_enabled: boolean;
+  /**
+    Specifies what fraction of the underlying asset counts toward
+    * the portfolio collateral value [0%, 100%].
+    */
+discount: u32;
+  /**
+    
+    */
+is_active: boolean;
+  /**
+    
+    */
+liq_bonus: u32;
+  /**
+    
+    */
+liq_cap: i128;
+  /**
+    
+    */
+util_cap: u32;
+}
+
+/**
+    
+    */
+export interface ReserveData {
+  /**
+    
+    */
+borrower_ar: i128;
+  /**
+    
+    */
+borrower_ir: i128;
+  /**
+    
+    */
+configuration: ReserveConfiguration;
+  /**
+    
+    */
+debt_token_address: string;
+  /**
+    The id of the reserve (position in the list of the active reserves).
+    */
+id: Buffer;
+  /**
+    
+    */
+last_update_timestamp: u64;
+  /**
+    
+    */
+lender_ar: i128;
+  /**
+    
+    */
+lender_ir: i128;
+  /**
+    
+    */
+s_token_address: string;
+}
+
+/**
+    Implements the bitmap logic to handle the user configuration.
+    * Even positions is collateral flags and uneven is borrowing flags.
+    */
 export type UserConfiguration = readonly [u128];
+/**
+    
+    */
 export interface TokenMetadata {
-  decimal: u32;
-  name: string;
-  symbol: string;
+  /**
+    
+    */
+decimal: u32;
+  /**
+    
+    */
+name: string;
+  /**
+    
+    */
+symbol: string;
 }
 
 
 export class Contract {
-            spec: ContractSpec;
+    spec: ContractSpec;
     constructor(public readonly options: ClassOptions) {
         this.spec = new ContractSpec([
             "AAAAAQAAAAAAAAAAAAAADkFsbG93YW5jZVZhbHVlAAAAAAACAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAAEWV4cGlyYXRpb25fbGVkZ2VyAAAAAAAABA==",
@@ -306,919 +421,714 @@ export class Contract {
         "AAAAAQAAAAAAAAAAAAAAC1Jlc2VydmVEYXRhAAAAAAkAAAAAAAAAC2JvcnJvd2VyX2FyAAAAAAsAAAAAAAAAC2JvcnJvd2VyX2lyAAAAAAsAAAAAAAAADWNvbmZpZ3VyYXRpb24AAAAAAAfQAAAAFFJlc2VydmVDb25maWd1cmF0aW9uAAAAAAAAABJkZWJ0X3Rva2VuX2FkZHJlc3MAAAAAABMAAABEVGhlIGlkIG9mIHRoZSByZXNlcnZlIChwb3NpdGlvbiBpbiB0aGUgbGlzdCBvZiB0aGUgYWN0aXZlIHJlc2VydmVzKS4AAAACaWQAAAAAA+4AAAABAAAAAAAAABVsYXN0X3VwZGF0ZV90aW1lc3RhbXAAAAAAAAAGAAAAAAAAAAlsZW5kZXJfYXIAAAAAAAALAAAAAAAAAAlsZW5kZXJfaXIAAAAAAAALAAAAAAAAAA9zX3Rva2VuX2FkZHJlc3MAAAAAEw==",
         "AAAAAQAAAH9JbXBsZW1lbnRzIHRoZSBiaXRtYXAgbG9naWMgdG8gaGFuZGxlIHRoZSB1c2VyIGNvbmZpZ3VyYXRpb24uCkV2ZW4gcG9zaXRpb25zIGlzIGNvbGxhdGVyYWwgZmxhZ3MgYW5kIHVuZXZlbiBpcyBib3Jyb3dpbmcgZmxhZ3MuAAAAAAAAAAARVXNlckNvbmZpZ3VyYXRpb24AAAAAAAABAAAAAAAAAAEwAAAAAAAACg==",
         "AAAAAQAAAAAAAAAAAAAADVRva2VuTWV0YWRhdGEAAAAAAAADAAAAAAAAAAdkZWNpbWFsAAAAAAQAAAAAAAAABG5hbWUAAAAQAAAAAAAAAAZzeW1ib2wAAAAAABA="
-            ]);
+        ]);
     }
-    /**
- * Initializes the Stoken contract.
- * 
- * # Arguments
- * 
- * - name - The name of the token.
- * - symbol - The symbol of the token.
- * - pool - The address of the pool contract.
- * - underlying_asset - The address of the underlying asset associated with the token.
- * 
- * # Panics
- * 
- * Panics with if the specified decimal value exceeds the maximum value of u8.
- * Panics with if the contract has already been initialized.
- * Panics if name or symbol is empty
- * 
- */
-async initialize<R extends ResponseTypes = undefined>({name, symbol, pool, underlying_asset}: {name: string, symbol: string, pool: Address, underlying_asset: Address}, options: {
+    private readonly parsers = {
+        initialize: () => {},
+        upgrade: () => {},
+        version: (result: XDR_BASE64): u32 => this.spec.funcResToNative("version", result),
+        allowance: (result: XDR_BASE64): i128 => this.spec.funcResToNative("allowance", result),
+        approve: () => {},
+        balance: (result: XDR_BASE64): i128 => this.spec.funcResToNative("balance", result),
+        spendableBalance: (result: XDR_BASE64): i128 => this.spec.funcResToNative("spendable_balance", result),
+        authorized: (result: XDR_BASE64): boolean => this.spec.funcResToNative("authorized", result),
+        transfer: () => {},
+        transferFrom: () => {},
+        burnFrom: () => {},
+        clawback: () => {},
+        setAuthorized: () => {},
+        mint: () => {},
+        burn: () => {},
+        decimals: (result: XDR_BASE64): u32 => this.spec.funcResToNative("decimals", result),
+        name: (result: XDR_BASE64): string => this.spec.funcResToNative("name", result),
+        symbol: (result: XDR_BASE64): string => this.spec.funcResToNative("symbol", result),
+        totalSupply: (result: XDR_BASE64): i128 => this.spec.funcResToNative("total_supply", result),
+        transferOnLiquidation: () => {},
+        transferUnderlyingTo: () => {},
+        underlyingAsset: (result: XDR_BASE64): string => this.spec.funcResToNative("underlying_asset", result),
+        pool: (result: XDR_BASE64): string => this.spec.funcResToNative("pool", result)
+    };
+    private txFromJSON = <T>(json: string): AssembledTransaction<T> => {
+        const { method, ...tx } = JSON.parse(json)
+        return AssembledTransaction.fromJSON(
+            {
+                ...this.options,
+                method,
+                parseResultXdr: this.parsers[method],
+            },
+            tx,
+        );
+    }
+    public readonly fromJSON = {
+        initialize: this.txFromJSON<ReturnType<typeof this.parsers['initialize']>>,
+        upgrade: this.txFromJSON<ReturnType<typeof this.parsers['upgrade']>>,
+        version: this.txFromJSON<ReturnType<typeof this.parsers['version']>>,
+        allowance: this.txFromJSON<ReturnType<typeof this.parsers['allowance']>>,
+        approve: this.txFromJSON<ReturnType<typeof this.parsers['approve']>>,
+        balance: this.txFromJSON<ReturnType<typeof this.parsers['balance']>>,
+        spendableBalance: this.txFromJSON<ReturnType<typeof this.parsers['spendableBalance']>>,
+        authorized: this.txFromJSON<ReturnType<typeof this.parsers['authorized']>>,
+        transfer: this.txFromJSON<ReturnType<typeof this.parsers['transfer']>>,
+        transferFrom: this.txFromJSON<ReturnType<typeof this.parsers['transferFrom']>>,
+        burnFrom: this.txFromJSON<ReturnType<typeof this.parsers['burnFrom']>>,
+        clawback: this.txFromJSON<ReturnType<typeof this.parsers['clawback']>>,
+        setAuthorized: this.txFromJSON<ReturnType<typeof this.parsers['setAuthorized']>>,
+        mint: this.txFromJSON<ReturnType<typeof this.parsers['mint']>>,
+        burn: this.txFromJSON<ReturnType<typeof this.parsers['burn']>>,
+        decimals: this.txFromJSON<ReturnType<typeof this.parsers['decimals']>>,
+        name: this.txFromJSON<ReturnType<typeof this.parsers['name']>>,
+        symbol: this.txFromJSON<ReturnType<typeof this.parsers['symbol']>>,
+        totalSupply: this.txFromJSON<ReturnType<typeof this.parsers['totalSupply']>>,
+        transferOnLiquidation: this.txFromJSON<ReturnType<typeof this.parsers['transferOnLiquidation']>>,
+        transferUnderlyingTo: this.txFromJSON<ReturnType<typeof this.parsers['transferUnderlyingTo']>>,
+        underlyingAsset: this.txFromJSON<ReturnType<typeof this.parsers['underlyingAsset']>>,
+        pool: this.txFromJSON<ReturnType<typeof this.parsers['pool']>>
+    }
+        /**
+    * Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Initializes the Stoken contract.
+    * 
+    * # Arguments
+    * 
+    * - name - The name of the token.
+    * - symbol - The symbol of the token.
+    * - pool - The address of the pool contract.
+    * - underlying_asset - The address of the underlying asset associated with the token.
+    * 
+    * # Panics
+    * 
+    * Panics with if the specified decimal value exceeds the maximum value of u8.
+    * Panics with if the contract has already been initialized.
+    * Panics if name or symbol is empty
+    * 
+    */
+    initialize = async ({name, symbol, pool, underlying_asset}: {name: string, symbol: string, pool: string, underlying_asset: string}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'initialize',
-            args: this.spec.funcArgsToScVals("initialize", {name, symbol, pool, underlying_asset}),
+            args: this.spec.funcArgsToScVals("initialize", {name, symbol, pool: new Address(pool), underlying_asset: new Address(underlying_asset)}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['initialize'],
         });
     }
 
 
-    async upgrade<R extends ResponseTypes = undefined>({new_wasm_hash}: {new_wasm_hash: Buffer}, options: {
+        /**
+    * Construct and simulate a upgrade transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+    */
+    upgrade = async ({new_wasm_hash}: {new_wasm_hash: Buffer}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'upgrade',
             args: this.spec.funcArgsToScVals("upgrade", {new_wasm_hash}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['upgrade'],
         });
     }
 
 
-    async version<R extends ResponseTypes = undefined>(options: {
+        /**
+    * Construct and simulate a version transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+    */
+    version = async (options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `u32`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'version',
             args: this.spec.funcArgsToScVals("version", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): u32 => {
-                return this.spec.funcResToNative("version", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['version'],
         });
     }
 
 
-    /**
- * Returns the amount of tokens that the `spender` is allowed to withdraw from the `from` address.
- * 
- * # Arguments
- * 
- * - from - The address of the token owner.
- * - spender - The address of the spender.
- * 
- * # Returns
- * 
- * The amount of tokens that the `spender` is allowed to withdraw from the `from` address.
- * 
- */
-async allowance<R extends ResponseTypes = undefined>({from, spender}: {from: Address, spender: Address}, options: {
+        /**
+    * Construct and simulate a allowance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Returns the amount of tokens that the `spender` is allowed to withdraw from the `from` address.
+    * 
+    * # Arguments
+    * 
+    * - from - The address of the token owner.
+    * - spender - The address of the spender.
+    * 
+    * # Returns
+    * 
+    * The amount of tokens that the `spender` is allowed to withdraw from the `from` address.
+    * 
+    */
+    allowance = async ({from, spender}: {from: string, spender: string}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `i128`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'allowance',
-            args: this.spec.funcArgsToScVals("allowance", {from, spender}),
+            args: this.spec.funcArgsToScVals("allowance", {from: new Address(from), spender: new Address(spender)}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): i128 => {
-                return this.spec.funcResToNative("allowance", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['allowance'],
         });
     }
 
 
-    /**
- * Set the allowance for a spender to withdraw from the `from` address by a specified amount of tokens.
- * 
- * # Arguments
- * 
- * - from - The address of the token owner.
- * - spender - The address of the spender.
- * - amount - The amount of tokens to increase the allowance by.
- * - expiration_ledger - The time when allowance will be expired.
- * 
- * # Panics
- * 
- * Panics if the caller is not authorized.
- * Panics if the amount is negative.
- * Panics if the updated allowance exceeds the maximum value of i128.
- * 
- */
-async approve<R extends ResponseTypes = undefined>({from, spender, amount, expiration_ledger}: {from: Address, spender: Address, amount: i128, expiration_ledger: u32}, options: {
+        /**
+    * Construct and simulate a approve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Set the allowance for a spender to withdraw from the `from` address by a specified amount of tokens.
+    * 
+    * # Arguments
+    * 
+    * - from - The address of the token owner.
+    * - spender - The address of the spender.
+    * - amount - The amount of tokens to increase the allowance by.
+    * - expiration_ledger - The time when allowance will be expired.
+    * 
+    * # Panics
+    * 
+    * Panics if the caller is not authorized.
+    * Panics if the amount is negative.
+    * Panics if the updated allowance exceeds the maximum value of i128.
+    * 
+    */
+    approve = async ({from, spender, amount, expiration_ledger}: {from: string, spender: string, amount: i128, expiration_ledger: u32}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'approve',
-            args: this.spec.funcArgsToScVals("approve", {from, spender, amount, expiration_ledger}),
+            args: this.spec.funcArgsToScVals("approve", {from: new Address(from), spender: new Address(spender), amount, expiration_ledger}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['approve'],
         });
     }
 
 
-    /**
- * Returns the balance of tokens for a specified `id`.
- * 
- * # Arguments
- * 
- * - id - The address of the account.
- * 
- * # Returns
- * 
- * The balance of tokens for the specified `id`.
- * 
- */
-async balance<R extends ResponseTypes = undefined>({id}: {id: Address}, options: {
+        /**
+    * Construct and simulate a balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Returns the balance of tokens for a specified `id`.
+    * 
+    * # Arguments
+    * 
+    * - id - The address of the account.
+    * 
+    * # Returns
+    * 
+    * The balance of tokens for the specified `id`.
+    * 
+    */
+    balance = async ({id}: {id: string}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `i128`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'balance',
-            args: this.spec.funcArgsToScVals("balance", {id}),
+            args: this.spec.funcArgsToScVals("balance", {id: new Address(id)}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): i128 => {
-                return this.spec.funcResToNative("balance", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['balance'],
         });
     }
 
 
-    /**
- * Returns the spendable balance of tokens for a specified id.
- * 
- * # Arguments
- * 
- * - id - The address of the account.
- * 
- * # Returns
- * 
- * The spendable balance of tokens for the specified id.
- * 
- * Currently the same as `balance(id)`
- */
-async spendableBalance<R extends ResponseTypes = undefined>({id}: {id: Address}, options: {
+        /**
+    * Construct and simulate a spendable_balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Returns the spendable balance of tokens for a specified id.
+    * 
+    * # Arguments
+    * 
+    * - id - The address of the account.
+    * 
+    * # Returns
+    * 
+    * The spendable balance of tokens for the specified id.
+    * 
+    * Currently the same as `balance(id)`
+    */
+    spendableBalance = async ({id}: {id: string}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `i128`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'spendable_balance',
-            args: this.spec.funcArgsToScVals("spendable_balance", {id}),
+            args: this.spec.funcArgsToScVals("spendable_balance", {id: new Address(id)}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): i128 => {
-                return this.spec.funcResToNative("spendable_balance", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['spendableBalance'],
         });
     }
 
 
-    /**
- * Checks whether a specified `id` is authorized.
- * 
- * # Arguments
- * 
- * - id - The address to check for authorization.
- * 
- * # Returns
- * 
- * Returns true if the id is authorized, otherwise returns false
- */
-async authorized<R extends ResponseTypes = undefined>({id}: {id: Address}, options: {
+        /**
+    * Construct and simulate a authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Checks whether a specified `id` is authorized.
+    * 
+    * # Arguments
+    * 
+    * - id - The address to check for authorization.
+    * 
+    * # Returns
+    * 
+    * Returns true if the id is authorized, otherwise returns false
+    */
+    authorized = async ({id}: {id: string}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `boolean`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'authorized',
-            args: this.spec.funcArgsToScVals("authorized", {id}),
+            args: this.spec.funcArgsToScVals("authorized", {id: new Address(id)}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): boolean => {
-                return this.spec.funcResToNative("authorized", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['authorized'],
         });
     }
 
 
-    /**
- * Transfers a specified amount of tokens from one account (`from`) to another account (`to`).
- * 
- * # Arguments
- * 
- * - from - The address of the token sender.
- * - to - The address of the token recipient.
- * - amount - The amount of tokens to transfer.
- * 
- * # Panics
- * 
- * Panics if the caller (`from`) is not authorized.
- * Panics if the amount is negative.
- * 
- */
-async transfer<R extends ResponseTypes = undefined>({from, to, amount}: {from: Address, to: Address, amount: i128}, options: {
+        /**
+    * Construct and simulate a transfer transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Transfers a specified amount of tokens from one account (`from`) to another account (`to`).
+    * 
+    * # Arguments
+    * 
+    * - from - The address of the token sender.
+    * - to - The address of the token recipient.
+    * - amount - The amount of tokens to transfer.
+    * 
+    * # Panics
+    * 
+    * Panics if the caller (`from`) is not authorized.
+    * Panics if the amount is negative.
+    * 
+    */
+    transfer = async ({from, to, amount}: {from: string, to: string, amount: i128}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'transfer',
-            args: this.spec.funcArgsToScVals("transfer", {from, to, amount}),
+            args: this.spec.funcArgsToScVals("transfer", {from: new Address(from), to: new Address(to), amount}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['transfer'],
         });
     }
 
 
-    /**
- * Transfers a specified amount of tokens from the from account to the to account on behalf of the spender account.
- * 
- * # Arguments
- * 
- * - spender - The address of the account that is authorized to spend tokens.
- * - from - The address of the token sender.
- * - to - The address of the token recipient.
- * - amount - The amount of tokens to transfer.
- * 
- * # Panics
- * 
- * Panics if the spender is not authorized.
- * Panics if the spender is not allowed to spend `amount`.
- * Panics if the amount is negative.
- * 
- */
-async transferFrom<R extends ResponseTypes = undefined>({spender, from, to, amount}: {spender: Address, from: Address, to: Address, amount: i128}, options: {
+        /**
+    * Construct and simulate a transfer_from transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Transfers a specified amount of tokens from the from account to the to account on behalf of the spender account.
+    * 
+    * # Arguments
+    * 
+    * - spender - The address of the account that is authorized to spend tokens.
+    * - from - The address of the token sender.
+    * - to - The address of the token recipient.
+    * - amount - The amount of tokens to transfer.
+    * 
+    * # Panics
+    * 
+    * Panics if the spender is not authorized.
+    * Panics if the spender is not allowed to spend `amount`.
+    * Panics if the amount is negative.
+    * 
+    */
+    transferFrom = async ({spender, from, to, amount}: {spender: string, from: string, to: string, amount: i128}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'transfer_from',
-            args: this.spec.funcArgsToScVals("transfer_from", {spender, from, to, amount}),
+            args: this.spec.funcArgsToScVals("transfer_from", {spender: new Address(spender), from: new Address(from), to: new Address(to), amount}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['transferFrom'],
         });
     }
 
 
-    async burnFrom<R extends ResponseTypes = undefined>({_spender, _from, _amount}: {_spender: Address, _from: Address, _amount: i128}, options: {
+        /**
+    * Construct and simulate a burn_from transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+    */
+    burnFrom = async ({_spender, _from, _amount}: {_spender: string, _from: string, _amount: i128}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'burn_from',
-            args: this.spec.funcArgsToScVals("burn_from", {_spender, _from, _amount}),
+            args: this.spec.funcArgsToScVals("burn_from", {_spender: new Address(_spender), _from: new Address(_from), _amount}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['burnFrom'],
         });
     }
 
 
-    /**
- * Clawbacks a specified amount of tokens from the from account.
- * 
- * # Arguments
- * 
- * - from - The address of the token holder to clawback tokens from.
- * - amount - The amount of tokens to clawback.
- * 
- * # Panics
- * 
- * Panics if the amount is negative.
- * Panics if the caller is not the pool associated with this token.
- * Panics if overflow happens
- * 
- */
-async clawback<R extends ResponseTypes = undefined>({from, amount}: {from: Address, amount: i128}, options: {
+        /**
+    * Construct and simulate a clawback transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Clawbacks a specified amount of tokens from the from account.
+    * 
+    * # Arguments
+    * 
+    * - from - The address of the token holder to clawback tokens from.
+    * - amount - The amount of tokens to clawback.
+    * 
+    * # Panics
+    * 
+    * Panics if the amount is negative.
+    * Panics if the caller is not the pool associated with this token.
+    * Panics if overflow happens
+    * 
+    */
+    clawback = async ({from, amount}: {from: string, amount: i128}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'clawback',
-            args: this.spec.funcArgsToScVals("clawback", {from, amount}),
+            args: this.spec.funcArgsToScVals("clawback", {from: new Address(from), amount}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['clawback'],
         });
     }
 
 
-    /**
- * Sets the authorization status for a specified `id`.
- * 
- * # Arguments
- * 
- * - id - The address to set the authorization status for.
- * - authorize - A boolean value indicating whether to authorize (true) or deauthorize (false) the id.
- * 
- * # Panics
- * 
- * Panics if the caller is not the pool associated with this token.
- * 
- */
-async setAuthorized<R extends ResponseTypes = undefined>({id, authorize}: {id: Address, authorize: boolean}, options: {
+        /**
+    * Construct and simulate a set_authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Sets the authorization status for a specified `id`.
+    * 
+    * # Arguments
+    * 
+    * - id - The address to set the authorization status for.
+    * - authorize - A boolean value indicating whether to authorize (true) or deauthorize (false) the id.
+    * 
+    * # Panics
+    * 
+    * Panics if the caller is not the pool associated with this token.
+    * 
+    */
+    setAuthorized = async ({id, authorize}: {id: string, authorize: boolean}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'set_authorized',
-            args: this.spec.funcArgsToScVals("set_authorized", {id, authorize}),
+            args: this.spec.funcArgsToScVals("set_authorized", {id: new Address(id), authorize}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setAuthorized'],
         });
     }
 
 
-    /**
- * Mints a specified amount of tokens for a given `id` and returns total supply
- * 
- * # Arguments
- * 
- * - id - The address of the user to mint tokens for.
- * - amount - The amount of tokens to mint.
- * 
- * # Panics
- * 
- * Panics if the amount is negative.
- * Panics if the caller is not the pool associated with this token.
- * 
- */
-async mint<R extends ResponseTypes = undefined>({to, amount}: {to: Address, amount: i128}, options: {
+        /**
+    * Construct and simulate a mint transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Mints a specified amount of tokens for a given `id` and returns total supply
+    * 
+    * # Arguments
+    * 
+    * - id - The address of the user to mint tokens for.
+    * - amount - The amount of tokens to mint.
+    * 
+    * # Panics
+    * 
+    * Panics if the amount is negative.
+    * Panics if the caller is not the pool associated with this token.
+    * 
+    */
+    mint = async ({to, amount}: {to: string, amount: i128}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'mint',
-            args: this.spec.funcArgsToScVals("mint", {to, amount}),
+            args: this.spec.funcArgsToScVals("mint", {to: new Address(to), amount}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['mint'],
         });
     }
 
 
-    /**
- * Burns a specified amount of tokens from the from account and returns total supply
- * 
- * # Arguments
- * 
- * - from - The address of the token holder to burn tokens from.
- * - amount_to_burn - The amount of tokens to burn.
- * - amount_to_withdraw - The amount of underlying token to withdraw.
- * - to - The address who accepts underlying token.
- * 
- * # Panics
- * 
- * Panics if the amount_to_burn is negative.
- * Panics if the caller is not the pool associated with this token.
- * 
- */
-async burn<R extends ResponseTypes = undefined>({from, amount_to_burn, amount_to_withdraw, to}: {from: Address, amount_to_burn: i128, amount_to_withdraw: i128, to: Address}, options: {
+        /**
+    * Construct and simulate a burn transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Burns a specified amount of tokens from the from account and returns total supply
+    * 
+    * # Arguments
+    * 
+    * - from - The address of the token holder to burn tokens from.
+    * - amount_to_burn - The amount of tokens to burn.
+    * - amount_to_withdraw - The amount of underlying token to withdraw.
+    * - to - The address who accepts underlying token.
+    * 
+    * # Panics
+    * 
+    * Panics if the amount_to_burn is negative.
+    * Panics if the caller is not the pool associated with this token.
+    * 
+    */
+    burn = async ({from, amount_to_burn, amount_to_withdraw, to}: {from: string, amount_to_burn: i128, amount_to_withdraw: i128, to: string}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'burn',
-            args: this.spec.funcArgsToScVals("burn", {from, amount_to_burn, amount_to_withdraw, to}),
+            args: this.spec.funcArgsToScVals("burn", {from: new Address(from), amount_to_burn, amount_to_withdraw, to: new Address(to)}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['burn'],
         });
     }
 
 
-    /**
- * Returns the number of decimal places used by the token.
- * 
- * # Returns
- * 
- * The number of decimal places used by the token.
- * 
- */
-async decimals<R extends ResponseTypes = undefined>(options: {
+        /**
+    * Construct and simulate a decimals transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Returns the number of decimal places used by the token.
+    * 
+    * # Returns
+    * 
+    * The number of decimal places used by the token.
+    * 
+    */
+    decimals = async (options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `u32`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'decimals',
             args: this.spec.funcArgsToScVals("decimals", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): u32 => {
-                return this.spec.funcResToNative("decimals", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['decimals'],
         });
     }
 
 
-    /**
- * Returns the name of the token.
- * 
- * # Returns
- * 
- * The name of the token as a `soroban_sdk::Bytes` value.
- * 
- */
-async name<R extends ResponseTypes = undefined>(options: {
+        /**
+    * Construct and simulate a name transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Returns the name of the token.
+    * 
+    * # Returns
+    * 
+    * The name of the token as a `soroban_sdk::Bytes` value.
+    * 
+    */
+    name = async (options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `string`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'name',
             args: this.spec.funcArgsToScVals("name", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): string => {
-                return this.spec.funcResToNative("name", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['name'],
         });
     }
 
 
-    /**
- * Returns the symbol of the token.
- * 
- * # Returns
- * 
- * The symbol of the token as a `soroban_sdk::Bytes` value.
- * 
- */
-async symbol<R extends ResponseTypes = undefined>(options: {
+        /**
+    * Construct and simulate a symbol transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Returns the symbol of the token.
+    * 
+    * # Returns
+    * 
+    * The symbol of the token as a `soroban_sdk::Bytes` value.
+    * 
+    */
+    symbol = async (options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `string`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'symbol',
             args: this.spec.funcArgsToScVals("symbol", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): string => {
-                return this.spec.funcResToNative("symbol", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['symbol'],
         });
     }
 
 
-    /**
- * Returns the total supply of tokens.
- * 
- * # Returns
- * 
- * The total supply of tokens.
- * 
- */
-async totalSupply<R extends ResponseTypes = undefined>(options: {
+        /**
+    * Construct and simulate a total_supply transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Returns the total supply of tokens.
+    * 
+    * # Returns
+    * 
+    * The total supply of tokens.
+    * 
+    */
+    totalSupply = async (options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `i128`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'total_supply',
             args: this.spec.funcArgsToScVals("total_supply", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): i128 => {
-                return this.spec.funcResToNative("total_supply", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['totalSupply'],
         });
     }
 
 
-    /**
- * Transfers tokens during a liquidation.
- * 
- * # Arguments
- * 
- * - from - The address of the sender.
- * - to - The address of the recipient.
- * - amount - The amount of tokens to transfer.
- * 
- * # Panics
- * 
- * Panics if caller is not associated pool.
- * 
- */
-async transferOnLiquidation<R extends ResponseTypes = undefined>({from, to, amount}: {from: Address, to: Address, amount: i128}, options: {
+        /**
+    * Construct and simulate a transfer_on_liquidation transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Transfers tokens during a liquidation.
+    * 
+    * # Arguments
+    * 
+    * - from - The address of the sender.
+    * - to - The address of the recipient.
+    * - amount - The amount of tokens to transfer.
+    * 
+    * # Panics
+    * 
+    * Panics if caller is not associated pool.
+    * 
+    */
+    transferOnLiquidation = async ({from, to, amount}: {from: string, to: string, amount: i128}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'transfer_on_liquidation',
-            args: this.spec.funcArgsToScVals("transfer_on_liquidation", {from, to, amount}),
+            args: this.spec.funcArgsToScVals("transfer_on_liquidation", {from: new Address(from), to: new Address(to), amount}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['transferOnLiquidation'],
         });
     }
 
 
-    /**
- * Transfers the underlying asset to the specified recipient.
- * 
- * # Arguments
- * 
- * - to - The address of the recipient.
- * - amount - The amount of underlying asset to transfer.
- * 
- * # Panics
- * 
- * Panics if the amount is negative.
- * Panics if caller is not associated pool.
- * 
- */
-async transferUnderlyingTo<R extends ResponseTypes = undefined>({to, amount}: {to: Address, amount: i128}, options: {
+        /**
+    * Construct and simulate a transfer_underlying_to transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Transfers the underlying asset to the specified recipient.
+    * 
+    * # Arguments
+    * 
+    * - to - The address of the recipient.
+    * - amount - The amount of underlying asset to transfer.
+    * 
+    * # Panics
+    * 
+    * Panics if the amount is negative.
+    * Panics if caller is not associated pool.
+    * 
+    */
+    transferUnderlyingTo = async ({to, amount}: {to: string, amount: i128}, options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `void`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'transfer_underlying_to',
-            args: this.spec.funcArgsToScVals("transfer_underlying_to", {to, amount}),
+            args: this.spec.funcArgsToScVals("transfer_underlying_to", {to: new Address(to), amount}),
             ...options,
             ...this.options,
-            parseResultXdr: () => {},
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['transferUnderlyingTo'],
         });
     }
 
 
-    /**
- * Retrieves the address of the underlying asset.
- * 
- * # Returns
- * 
- * The address of the underlying asset.
- * 
- */
-async underlyingAsset<R extends ResponseTypes = undefined>(options: {
+        /**
+    * Construct and simulate a underlying_asset transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Retrieves the address of the underlying asset.
+    * 
+    * # Returns
+    * 
+    * The address of the underlying asset.
+    * 
+    */
+    underlyingAsset = async (options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `Address`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'underlying_asset',
             args: this.spec.funcArgsToScVals("underlying_asset", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): Address => {
-                return this.spec.funcResToNative("underlying_asset", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['underlyingAsset'],
         });
     }
 
 
-    /**
- * Retrieves the address of the pool.
- * 
- * # Returns
- * 
- * The address of the associated pool.
- * 
- */
-async pool<R extends ResponseTypes = undefined>(options: {
+        /**
+    * Construct and simulate a pool transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.Retrieves the address of the pool.
+    * 
+    * # Returns
+    * 
+    * The address of the associated pool.
+    * 
+    */
+    pool = async (options: {
         /**
          * The fee to pay for the transaction. Default: 100.
          */
-        fee?: number
-        /**
-         * What type of response to return.
-         *
-         *   - `undefined`, the default, parses the returned XDR as `Address`. Runs preflight, checks to see if auth/signing is required, and sends the transaction if so. If there's no error and `secondsToWait` is positive, awaits the finalized transaction.
-         *   - `'simulated'` will only simulate/preflight the transaction, even if it's a change/set method that requires auth/signing. Returns full preflight info.
-         *   - `'full'` return the full RPC response, meaning either 1. the preflight info, if it's a view/read method that doesn't require auth/signing, or 2. the `sendTransaction` response, if there's a problem with sending the transaction or if you set `secondsToWait` to 0, or 3. the `getTransaction` response, if it's a change method with no `sendTransaction` errors and a positive `secondsToWait`.
-         */
-        responseType?: R
-        /**
-         * If the simulation shows that this invocation requires auth/signing, `invoke` will wait `secondsToWait` seconds for the transaction to complete before giving up and returning the incomplete {@link SorobanClient.SorobanRpc.GetTransactionResponse} results (or attempting to parse their probably-missing XDR with `parseResultXdr`, depending on `responseType`). Set this to `0` to skip waiting altogether, which will return you {@link SorobanClient.SorobanRpc.SendTransactionResponse} more quickly, before the transaction has time to be included in the ledger. Default: 10.
-         */
-        secondsToWait?: number
-    } = {}) {
-                    return await invoke({
+        fee?: number,
+    } = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'pool',
             args: this.spec.funcArgsToScVals("pool", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr): Address => {
-                return this.spec.funcResToNative("pool", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['pool'],
         });
     }
 
