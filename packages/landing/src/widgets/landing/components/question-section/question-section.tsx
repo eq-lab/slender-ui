@@ -1,8 +1,8 @@
-import { Title } from '../styled'
-import { Wrapper } from './styled'
-import { Faq } from './faq'
-import { FaqLink } from './FaqLink'
-import { DISCORD_LINK, NOTION_LINK } from '../../links'
+import { Title } from '../styled';
+import { Wrapper } from './styled';
+import { Faq } from './faq';
+import { FaqLink } from './FaqLink';
+import { DISCORD_LINK, NOTION_LINK } from '../../links';
 
 export function QuestionSection({ subscriptionAnchor }: { subscriptionAnchor: string }) {
   return (
@@ -36,5 +36,5 @@ export function QuestionSection({ subscriptionAnchor }: { subscriptionAnchor: st
         </Faq>
       </div>
     </Wrapper>
-  )
+  );
 }

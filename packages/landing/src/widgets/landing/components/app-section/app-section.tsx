@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
-import React from 'react'
-import { ReactComponent as LogoSlenderIcon } from '@slender/shared/icons/logo/slender.svg'
-import cn from 'classnames'
-import { ReactComponent as StellarIcon } from '../../images/stellar.svg'
-import { ReactComponent as FundIcon } from '../../images/fund.svg'
-import screenAppImage from './screenapp.png'
-import screenAppMobileImage from './screenapp-mobile.png'
+import Image from 'next/image';
+import React from 'react';
+import { ReactComponent as LogoSlenderIcon } from '@slender/shared/icons/logo/slender.svg';
+import cn from 'classnames';
+import { ReactComponent as StellarIcon } from '../../images/stellar.svg';
+import { ReactComponent as FundIcon } from '../../images/fund.svg';
+import screenAppImage from './screenapp.png';
+import screenAppMobileImage from './screenapp-mobile.png';
 import {
   AppButton,
   Fund,
@@ -17,10 +17,10 @@ import {
   ScreenApp,
   DesktopWrapper,
   ImageWrapper,
-} from './styled'
+} from './styled';
 
 export function AppSection({ appLink }: { appLink: string }) {
-  const [isHovered, setIsHovered] = React.useState(false)
+  const [isHovered, setIsHovered] = React.useState(false);
 
   return (
     <>
@@ -76,5 +76,5 @@ export function AppSection({ appLink }: { appLink: string }) {
         </Fund>
       </MobileWrapper>
     </>
-  )
+  );
 }

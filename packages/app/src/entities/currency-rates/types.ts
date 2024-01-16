@@ -1,3 +1,3 @@
 export interface CurrencyRates {
-  [key: string]: string
+  [key: string]: string;
 }

@@ -1,1 +1,1 @@
-export { TokenSuperField } from './token-super-field'
+export { TokenSuperField } from './token-super-field';

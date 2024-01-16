@@ -1,27 +1,27 @@
-import React, { useState } from 'react'
-import { SupportedTokenName } from '@/shared/stellar/constants/tokens'
+import React, { useState } from 'react';
+import { SupportedTokenName } from '@/shared/stellar/constants/tokens';
 
-import { PositionCell } from '@/entities/position/types'
-import { PositionSummary } from '@/entities/position/components/position-summary'
-import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name'
-import BigNumber from 'bignumber.js'
-import { formatCompactCryptoCurrency } from '@/shared/formatters'
-import { TokenSuperField } from '@/shared/components/token-super-field'
-import { useTokenInfo } from '../../hooks/use-token-info'
-import { LiquidityModal } from '../modal/liquidity-modal'
-import { getPositionInfo } from '../../utils/get-position-info'
-import { FormLayout } from '../form-layout'
-import { getDepositUsd } from '../../utils/get-deposit-usd'
-import { getRequiredError } from '../../utils/get-required-error'
-import { makePosition } from '../../utils/make-position'
+import { PositionCell } from '@/entities/position/types';
+import { PositionSummary } from '@/entities/position/components/position-summary';
+import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name';
+import BigNumber from 'bignumber.js';
+import { formatCompactCryptoCurrency } from '@/shared/formatters';
+import { TokenSuperField } from '@/shared/components/token-super-field';
+import { useTokenInfo } from '../../hooks/use-token-info';
+import { LiquidityModal } from '../modal/liquidity-modal';
+import { getPositionInfo } from '../../utils/get-position-info';
+import { FormLayout } from '../form-layout';
+import { getDepositUsd } from '../../utils/get-deposit-usd';
+import { getRequiredError } from '../../utils/get-required-error';
+import { makePosition } from '../../utils/make-position';
 
 interface Props {
-  deposit: BigNumber
-  depositSumUsd: number
-  onClose: () => void
-  tokenName: SupportedTokenName
-  onSend: (value: PositionCell) => void
-  debtSumUsd: number
+  deposit: BigNumber;
+  depositSumUsd: number;
+  onClose: () => void;
+  tokenName: SupportedTokenName;
+  onSend: (value: PositionCell) => void;
+  debtSumUsd: number;
 }
 
 export function LendDecreaseModal({
@@ -32,17 +32,17 @@ export function LendDecreaseModal({
   onSend,
   debtSumUsd,
 }: Props) {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState('');
 
-  const depositTokenInfo = useTokenInfo(tokenName)
+  const depositTokenInfo = useTokenInfo(tokenName);
 
   const inputDepositSumUsd = getDepositUsd(
     value,
     depositTokenInfo.priceInUsd,
     depositTokenInfo.discount,
-  )
+  );
 
-  const actualDepositUsd = Math.max(depositSumUsd - inputDepositSumUsd, 0)
+  const actualDepositUsd = Math.max(depositSumUsd - inputDepositSumUsd, 0);
 
   const { borrowCapacityDelta, borrowCapacityInterface, borrowCapacityError, health, healthDelta } =
     getPositionInfo({
@@ -50,20 +50,20 @@ export function LendDecreaseModal({
       actualDepositUsd,
       debtUsd: debtSumUsd,
       actualDebtUsd: debtSumUsd,
-    })
+    });
 
-  const depositError = Number(deposit) < Math.floor(+value)
+  const depositError = Number(deposit) < Math.floor(+value);
 
   const formError =
     depositError ||
     borrowCapacityError ||
-    getRequiredError({ value, valueDecimals: depositTokenInfo.decimals })
+    getRequiredError({ value, valueDecimals: depositTokenInfo.decimals });
 
-  const getTokenByTokenName = useGetTokenByTokenName()
-  const token = getTokenByTokenName(tokenName)
-  const tokenSymbol = token?.symbol
+  const getTokenByTokenName = useGetTokenByTokenName();
+  const token = getTokenByTokenName(tokenName);
+  const tokenSymbol = token?.symbol;
 
-  const positionUpdate = makePosition(tokenName, value)
+  const positionUpdate = makePosition(tokenName, value);
 
   return (
     <LiquidityModal
@@ -102,5 +102,5 @@ export function LendDecreaseModal({
         />
       </FormLayout>
     </LiquidityModal>
-  )
+  );
 }

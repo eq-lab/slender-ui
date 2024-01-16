@@ -1,1 +1,1 @@
-export { BorrowIncreaseModal } from './borrow-increase-modal'
+export { BorrowIncreaseModal } from './borrow-increase-modal';

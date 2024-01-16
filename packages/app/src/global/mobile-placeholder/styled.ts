@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { styled } from 'styled-components'
-import { ReactComponent as LogoIcon } from './images/logo.svg'
+import { styled } from 'styled-components';
+import { ReactComponent as LogoIcon } from './images/logo.svg';
 
 export const LayoutSwitcherStyled = styled.div`
   .desktop {
@@ -18,7 +18,7 @@ export const LayoutSwitcherStyled = styled.div`
       display: none;
     }
   }
-`
+`;
 
 export const Wrapper = styled.div`
   background: #000;
@@ -70,12 +70,12 @@ export const Wrapper = styled.div`
       }
     }
   }
-`
+`;
 
 export const Logo = styled(LogoIcon)`
   display: block;
   margin: auto;
-`
+`;
 
 export const Container = styled.div`
   position: relative;
@@ -89,4 +89,4 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   min-height: 100vh;
-`
+`;

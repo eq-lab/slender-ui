@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { styled } from 'styled-components'
+import { styled } from 'styled-components';
 
 export const FooterButton = styled.div`
   display: flex;
@@ -13,4 +13,4 @@ export const FooterButton = styled.div`
 
   border-radius: var(--rounding-radius-m, 16px);
   background: var(--fill-primary, #faf8f7);
-`
+`;

@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const Space = styled.div<{
-  $height?: number
-  $heightMobile?: number
+  $height?: number;
+  $heightMobile?: number;
 }>(
   ({ $height, $heightMobile }) => `
     ${$height !== undefined ? `height: ${$height}px;` : ''}
@@ -13,4 +13,4 @@ export const Space = styled.div<{
       ${$heightMobile !== undefined ? `height: ${$heightMobile}px;` : ''}
     }
   `,
-)
+);

@@ -1,1 +1,1 @@
-export { WaitModal } from './wait-modal'
+export { WaitModal } from './wait-modal';

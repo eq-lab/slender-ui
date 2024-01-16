@@ -1,5 +1,5 @@
-import Typography from '@marginly/ui/components/typography'
-import { PieChartWrapper } from './styled'
+import Typography from '@marginly/ui/components/typography';
+import { PieChartWrapper } from './styled';
 
 export function PercentPieChart({ percent = 0 }: { percent?: number }) {
   return (
@@ -8,5 +8,5 @@ export function PercentPieChart({ percent = 0 }: { percent?: number }) {
         {percent}%
       </Typography>
     </PieChartWrapper>
-  )
+  );
 }

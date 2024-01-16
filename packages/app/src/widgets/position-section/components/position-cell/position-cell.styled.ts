@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const PositionCellWrapper = styled.div<{ $backgroundColor: string }>`
   display: flex;
@@ -8,14 +8,14 @@ export const PositionCellWrapper = styled.div<{ $backgroundColor: string }>`
     background: ${({ $backgroundColor }) => $backgroundColor};
     fill: var(--icon-on-dark);
   }
-`
+`;
 
 export const PositionCellInfo = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-`
+`;
 
 export const PositionCellInfoItem = styled.div<{ $isBorrowPosition?: boolean }>`
   display: flex;
@@ -27,15 +27,15 @@ export const PositionCellInfoItem = styled.div<{ $isBorrowPosition?: boolean }>`
     min-width: 50%;
     width: auto;
   }
-`
+`;
 
 export const PositionCellTokenAmount = styled.div`
   display: flex;
   gap: 4px;
   align-items: center;
-`
+`;
 
 export const PositionCellButtons = styled.div`
   display: flex;
   gap: 8px;
-`
+`;

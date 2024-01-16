@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import { ReactComponent as InfoIconRaw } from './info.svg'
+import styled from 'styled-components';
+import { ReactComponent as InfoIconRaw } from './info.svg';
 
 export const ThumbnailWrapper = styled.div`
   width: 100%;
@@ -12,11 +12,11 @@ export const ThumbnailWrapper = styled.div`
       fill: var(--icon-on-dark);
     }
   }
-`
+`;
 
 export const InfoIcon = styled(InfoIconRaw)`
   fill: var(--icon-tertiary, rgba(140, 129, 126, 0.48));
   &:hover {
     fill: var(--icon-secondary, rgba(66, 61, 60, 0.64));
   }
-`
+`;

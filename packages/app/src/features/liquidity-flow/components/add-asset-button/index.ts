@@ -1,1 +1,1 @@
-export { AddAssetButton } from './add-asset-button'
+export { AddAssetButton } from './add-asset-button';

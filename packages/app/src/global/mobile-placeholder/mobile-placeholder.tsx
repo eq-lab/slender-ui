@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import React from 'react'
-import Image from 'next/image'
-import { Container, Logo, Wrapper } from './styled'
-import backgroundImage from './images/bg.png'
-import smPlaceholderImage from './images/mobile-placeholder-sm.jpg'
-import mdPlaceholderImage from './images/mobile-placeholder-md.jpg'
+import React from 'react';
+import Image from 'next/image';
+import { Container, Logo, Wrapper } from './styled';
+import backgroundImage from './images/bg.png';
+import smPlaceholderImage from './images/mobile-placeholder-sm.jpg';
+import mdPlaceholderImage from './images/mobile-placeholder-md.jpg';
 
 export function MobilePlaceholder() {
   return (
@@ -47,5 +47,5 @@ export function MobilePlaceholder() {
         </div>
       </Container>
     </Wrapper>
-  )
+  );
 }

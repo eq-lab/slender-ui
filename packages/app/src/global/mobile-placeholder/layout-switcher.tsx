@@ -1,9 +1,9 @@
-import React from 'react'
-import { LayoutSwitcherStyled } from './styled'
+import React from 'react';
+import { LayoutSwitcherStyled } from './styled';
 
 interface Props {
-  mobile: React.ReactNode
-  desktop: React.ReactNode
+  mobile: React.ReactNode;
+  desktop: React.ReactNode;
 }
 
 export function LayoutSwitcher({ desktop, mobile }: Props) {
@@ -12,5 +12,5 @@ export function LayoutSwitcher({ desktop, mobile }: Props) {
       <div className="desktop">{desktop}</div>
       <div className="mobile">{mobile}</div>
     </LayoutSwitcherStyled>
-  )
+  );
 }

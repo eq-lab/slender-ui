@@ -19,13 +19,13 @@ enum NETWORK_PASSPHRASE {
 const SOROBAN_RPC_URL = {
   TESTNET: 'https://soroban-testnet.stellar.org',
   FUTURENET: 'https://rpc-futurenet.stellar.org',
-}
+};
 
 interface NetworkDetails {
-  networkName: string
-  networkUrl: string
-  networkPassphrase: string
-  rpcUrl: string
+  networkName: string;
+  networkUrl: string;
+  networkPassphrase: string;
+  rpcUrl: string;
 }
 
 export const NETWORK_DETAILS: NetworkDetails = {
@@ -33,4 +33,4 @@ export const NETWORK_DETAILS: NetworkDetails = {
   networkUrl: NETWORK_URL.TESTNET,
   networkPassphrase: NETWORK_PASSPHRASE.TESTNET,
   rpcUrl: SOROBAN_RPC_URL.TESTNET,
-}
+};

@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { styled } from 'styled-components'
+import { styled } from 'styled-components';
 
 export const Container = styled.div`
   padding: 0 24px;
@@ -17,7 +17,7 @@ export const Container = styled.div`
   @media (min-width: 1920px) {
     padding: 0 24px;
   }
-`
+`;
 export const Button = styled.button`
   background-color: var(--fill-elevated, #fff);
   border-radius: 16px;
@@ -37,7 +37,7 @@ export const Button = styled.button`
     padding: 12px 24px;
     border-radius: 8px;
   }
-`
+`;
 export const Title = styled.div`
   color: #faf8f7;
   font-size: 48px;
@@ -56,7 +56,7 @@ export const Title = styled.div`
     font-size: 64px;
     line-height: 72px;
   }
-`
+`;
 export const InputLabel = styled.div`
   color: rgba(242, 237, 235, 0.48);
   letter-spacing: 0.16px;
@@ -65,7 +65,7 @@ export const InputLabel = styled.div`
   transition: 200ms ease-out;
   position: absolute;
   transform: translateY(-50%);
-`
+`;
 export const InputBox = styled.div`
   background-color: rgba(204, 187, 184, 0.16);
   padding: 20px 16px;
@@ -113,7 +113,7 @@ export const InputBox = styled.div`
       color: #e54796;
     }
   }
-`
+`;
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -144,4 +144,4 @@ export const Form = styled.form`
       max-width: 180px;
     }
   }
-`
+`;

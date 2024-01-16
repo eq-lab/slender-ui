@@ -1,1 +1,1 @@
-export const TRANSITION_CLASS_NAME = 'opacity'
+export const TRANSITION_CLASS_NAME = 'opacity';

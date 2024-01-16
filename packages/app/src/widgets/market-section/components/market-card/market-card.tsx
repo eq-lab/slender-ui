@@ -1,22 +1,22 @@
-import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens'
-import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display'
-import { useTokenCache } from '@/entities/token/context/hooks'
-import Typography from '@marginly/ui/components/typography'
-import { useLendFirstPosition } from '@/features/liquidity-flow/hooks/use-lend-first-position'
-import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
-import { useBorrowFirstPosition } from '@/features/liquidity-flow/hooks/use-borrow-first-position'
-import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
-import { colorByToken } from '@/entities/token/constants/token-colors'
-import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name'
-import { TooltipText } from '@/shared/components/tooltip'
-import { formatCompactCryptoCurrency } from '@/shared/formatters'
-import { PercentPieChart } from './percent-pie-chart'
-import { useActionModal } from '../../hooks/use-action-modal'
-import { TooltipThumbnail } from './tooltip-thumbnail'
-import * as S from './styled'
+import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens';
+import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-for-display';
+import { useTokenCache } from '@/entities/token/context/hooks';
+import Typography from '@marginly/ui/components/typography';
+import { useLendFirstPosition } from '@/features/liquidity-flow/hooks/use-lend-first-position';
+import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase';
+import { useBorrowFirstPosition } from '@/features/liquidity-flow/hooks/use-borrow-first-position';
+import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase';
+import { colorByToken } from '@/entities/token/constants/token-colors';
+import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name';
+import { TooltipText } from '@/shared/components/tooltip';
+import { formatCompactCryptoCurrency } from '@/shared/formatters';
+import { PercentPieChart } from './percent-pie-chart';
+import { useActionModal } from '../../hooks/use-action-modal';
+import { TooltipThumbnail } from './tooltip-thumbnail';
+import * as S from './styled';
 
 export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
-  const token = tokenContracts[tokenName]
+  const token = tokenContracts[tokenName];
 
   const {
     modal: lendModal,
@@ -27,7 +27,7 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
     useFirstPosition: useLendFirstPosition,
     useIncrease: useLendIncrease,
     type: 'lend',
-  })
+  });
 
   const {
     modal: borrowModal,
@@ -38,7 +38,7 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
     useFirstPosition: useBorrowFirstPosition,
     useIncrease: useBorrowIncrease,
     type: 'borrow',
-  })
+  });
 
   const {
     discount,
@@ -49,19 +49,19 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
     totalBorrowed,
     reserved,
     availableToBorrow,
-  } = useMarketDataForDisplay(token)
-  const tokenCache = useTokenCache()?.[token.address]
+  } = useMarketDataForDisplay(token);
+  const tokenCache = useTokenCache()?.[token.address];
 
-  const tokenBackgroundColor = colorByToken[tokenName]
-  const TokenIcon = getIconByTokenName(tokenName)
+  const tokenBackgroundColor = colorByToken[tokenName];
+  const TokenIcon = getIconByTokenName(tokenName);
 
-  const availablePercent = +Number((availableToBorrow / totalSupplied) * 100).toFixed() || 0
+  const availablePercent = +Number((availableToBorrow / totalSupplied) * 100).toFixed() || 0;
 
-  const totalSuppliedAmount = Math.floor(totalSupplied)
-  const availableToBorrowAmount = Math.floor(availableToBorrow)
+  const totalSuppliedAmount = Math.floor(totalSupplied);
+  const availableToBorrowAmount = Math.floor(availableToBorrow);
 
   if (discount === undefined) {
-    return 'Loading...'
+    return 'Loading...';
   }
 
   return (
@@ -141,5 +141,5 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
       {lendModal}
       {borrowModal}
     </S.MarketCardWrapper>
-  )
+  );
 }

@@ -1,1 +1,1 @@
-export { PositionCell } from './position-cell'
+export { PositionCell } from './position-cell';

@@ -1,11 +1,11 @@
-import React from 'react'
-import * as S from './styled'
+import React from 'react';
+import * as S from './styled';
 
 interface Props {
-  label: string
-  value: string
-  subValue?: string
-  error?: boolean
+  label: string;
+  value: string;
+  subValue?: string;
+  error?: boolean;
 }
 
 export function InfoRow({ label, subValue, value, error }: Props) {
@@ -23,5 +23,5 @@ export function InfoRow({ label, subValue, value, error }: Props) {
         </S.ValueSection>
       </div>
     </S.Wrapper>
-  )
+  );
 }

@@ -1,1 +1,1 @@
-export { PositionSection } from './position-section'
+export { PositionSection } from './position-section';
