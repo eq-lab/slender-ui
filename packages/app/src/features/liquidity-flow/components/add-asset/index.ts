@@ -1,1 +1,1 @@
-export { AddAsset } from './add-asset'
+export { AddAsset } from './add-asset';

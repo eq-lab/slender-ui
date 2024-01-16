@@ -1,8 +1,8 @@
-import { Position as PositionType } from '@/entities/position/types'
-import { usePriceInUsd } from '@/entities/currency-rates/context/hooks'
+import { Position as PositionType } from '@/entities/position/types';
+import { usePriceInUsd } from '@/entities/currency-rates/context/hooks';
 
 export const useDebtUsd = (debts: PositionType['debts'] = []): number => {
-  const priceInUsd = usePriceInUsd()
+  const priceInUsd = usePriceInUsd();
 
   return priceInUsd
     ? debts.reduce(
@@ -10,5 +10,5 @@ export const useDebtUsd = (debts: PositionType['debts'] = []): number => {
           priceInUsd[tokenName] ? sum + Number(value) / priceInUsd[tokenName] : sum,
         0,
       )
-    : 0
-}
+    : 0;
+};

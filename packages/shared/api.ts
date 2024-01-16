@@ -11,10 +11,10 @@ export async function postRequest<T>(url = '', method = 'GET', data = {}): Promi
     redirect: 'manual', // manual, *follow, error
     referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     body: method === 'GET' ? undefined : JSON.stringify(data), // body data type must match "Content-Type" header
-  })
+  });
 
   if (!response.ok) {
-    throw new Error(response.statusText)
+    throw new Error(response.statusText);
   }
-  return response.json()
+  return response.json();
 }

@@ -1,22 +1,22 @@
-import React, { useCallback } from 'react'
-import SuperField from '@marginly/ui/components/input/super-field'
-import { useFocus } from '@marginly/ui/components/input/use-focus'
-import { FieldContainer } from '@marginly/ui/components/input/text.styled'
-import { Suggestion } from '@marginly/ui/constants/classnames'
-import Label from '@marginly/ui/components/label'
-import { formatCompactCryptoCurrency } from '@/shared/formatters'
+import React, { useCallback } from 'react';
+import SuperField from '@marginly/ui/components/input/super-field';
+import { useFocus } from '@marginly/ui/components/input/use-focus';
+import { FieldContainer } from '@marginly/ui/components/input/text.styled';
+import { Suggestion } from '@marginly/ui/constants/classnames';
+import Label from '@marginly/ui/components/label';
+import { formatCompactCryptoCurrency } from '@/shared/formatters';
 
-const NUMBER_INPUT_REGEX = /^[0-9]+(?:\.[0-9]*)?$/
+const NUMBER_INPUT_REGEX = /^[0-9]+(?:\.[0-9]*)?$/;
 
 interface Props {
-  onChange: (value: string) => void
-  value: string
-  title: string
-  className?: string
-  initFocus?: boolean
-  tokenSymbol?: string
-  badgeValue?: string
-  children?: React.ReactNode
+  onChange: (value: string) => void;
+  value: string;
+  title: string;
+  className?: string;
+  initFocus?: boolean;
+  tokenSymbol?: string;
+  badgeValue?: string;
+  children?: React.ReactNode;
 }
 
 export function TokenSuperField({
@@ -29,26 +29,26 @@ export function TokenSuperField({
   badgeValue,
   children,
 }: Props) {
-  const { focused, onClick, ref, setInputFocused } = useFocus()
+  const { focused, onClick, ref, setInputFocused } = useFocus();
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    const changedValue = event.target.value
-    const changedModifiedValue = changedValue.startsWith('.') ? `0${changedValue}` : changedValue
-    const isCorrectValue = (changedModifiedValue || '0').match(NUMBER_INPUT_REGEX)
-    if (!isCorrectValue) return
-    onChange(changedModifiedValue)
-  }
+    const changedValue = event.target.value;
+    const changedModifiedValue = changedValue.startsWith('.') ? `0${changedValue}` : changedValue;
+    const isCorrectValue = (changedModifiedValue || '0').match(NUMBER_INPUT_REGEX);
+    if (!isCorrectValue) return;
+    onChange(changedModifiedValue);
+  };
 
   const refCallback = useCallback(
     (el: HTMLLabelElement | null) => {
-      ref.current = el
+      ref.current = el;
       if (initFocus) {
-        el?.focus()
-        setInputFocused(true)
+        el?.focus();
+        setInputFocused(true);
       }
     },
     [initFocus, ref, setInputFocused],
-  )
+  );
 
   return (
     <SuperField
@@ -71,5 +71,5 @@ export function TokenSuperField({
         </FieldContainer>
       ) : null}
     </SuperField>
-  )
+  );
 }

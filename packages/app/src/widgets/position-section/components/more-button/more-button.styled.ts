@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const MoreButtonWrapper = styled.div`
   display: grid;
@@ -20,4 +20,4 @@ export const MoreButtonWrapper = styled.div`
   .bottom-text {
     grid-area: 2 / 2 / 3 / 3;
   }
-`
+`;

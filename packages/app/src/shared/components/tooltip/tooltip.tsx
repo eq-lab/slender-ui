@@ -1,15 +1,15 @@
-import React, { ReactNode } from 'react'
-import TooltipUi, { TooltipProps } from '@mui/material/Tooltip'
-import * as S from './styled'
+import React, { ReactNode } from 'react';
+import TooltipUi, { TooltipProps } from '@mui/material/Tooltip';
+import * as S from './styled';
 
 export function Tooltip({
   children,
   content,
   placement,
 }: {
-  children: ReactNode
-  content: ReactNode
-  placement?: TooltipProps['placement']
+  children: ReactNode;
+  content: ReactNode;
+  placement?: TooltipProps['placement'];
 }) {
   return (
     <S.GeneratePopperClassName>
@@ -24,5 +24,5 @@ export function Tooltip({
         </TooltipUi>
       )}
     </S.GeneratePopperClassName>
-  )
+  );
 }

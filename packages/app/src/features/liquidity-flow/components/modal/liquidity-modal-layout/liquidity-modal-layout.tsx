@@ -1,10 +1,10 @@
-import React from 'react'
-import * as S from './styled'
+import React from 'react';
+import * as S from './styled';
 
 interface Props {
-  infoSlot?: React.ReactNode
-  children?: React.ReactNode
-  className?: string
+  infoSlot?: React.ReactNode;
+  children?: React.ReactNode;
+  className?: string;
 }
 
 export function LiquidityModalLayout({ children, infoSlot, className }: Props) {
@@ -13,5 +13,5 @@ export function LiquidityModalLayout({ children, infoSlot, className }: Props) {
       <S.Inner>{children}</S.Inner>
       {infoSlot && <S.Inner>{infoSlot}</S.Inner>}
     </S.Wrapper>
-  )
+  );
 }

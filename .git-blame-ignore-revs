@@ -1,0 +1,5 @@
+# Run this command to always ignore formatting commits in `git blame`
+# git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Update with semicolons
+f0317f4a0b96d960be3249cc99684198486f3fb7

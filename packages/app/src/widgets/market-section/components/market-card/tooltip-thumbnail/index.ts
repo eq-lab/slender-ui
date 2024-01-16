@@ -1,1 +1,1 @@
-export { TooltipThumbnail } from './tooltip-thumbnail'
+export { TooltipThumbnail } from './tooltip-thumbnail';

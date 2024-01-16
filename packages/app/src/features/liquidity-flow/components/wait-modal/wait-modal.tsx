@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { ReactComponent as FreighterLogo } from '@/shared/icons/logo/freighter.svg'
-import Thumbnail from '@marginly/ui/components/thumbnail'
-import Typography from '@marginly/ui/components/typography'
-import { useSetWaitModalIsOpen, useWaitModalIsOpen } from '../../context/hooks'
-import { Wrapper } from './wait-modal.styled'
-import { Modal } from '../modal'
+import React from 'react';
+import { ReactComponent as FreighterLogo } from '@/shared/icons/logo/freighter.svg';
+import Thumbnail from '@marginly/ui/components/thumbnail';
+import Typography from '@marginly/ui/components/typography';
+import { useSetWaitModalIsOpen, useWaitModalIsOpen } from '../../context/hooks';
+import { Wrapper } from './wait-modal.styled';
+import { Modal } from '../modal';
 
 export function WaitModal() {
-  const setWaitModalIsOpen = useSetWaitModalIsOpen()
+  const setWaitModalIsOpen = useSetWaitModalIsOpen();
   const handleClose = () => {
-    setWaitModalIsOpen(false)
-  }
+    setWaitModalIsOpen(false);
+  };
 
-  const waitModalIsOpen = useWaitModalIsOpen()
-  if (!waitModalIsOpen) return null
+  const waitModalIsOpen = useWaitModalIsOpen();
+  if (!waitModalIsOpen) return null;
 
   return (
     <Modal onClose={handleClose} open>
@@ -31,5 +31,5 @@ export function WaitModal() {
         </Typography>
       </Wrapper>
     </Modal>
-  )
+  );
 }

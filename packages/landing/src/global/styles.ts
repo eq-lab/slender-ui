@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { Plus_Jakarta_Sans as PlusJakartaSans } from 'next/font/google'
-import { createGlobalStyle } from 'styled-components'
+import { Plus_Jakarta_Sans as PlusJakartaSans } from 'next/font/google';
+import { createGlobalStyle } from 'styled-components';
 
-export const primaryFont = PlusJakartaSans({ subsets: ['latin'] })
+export const primaryFont = PlusJakartaSans({ subsets: ['latin'] });
 
 export const GlobalStyle = createGlobalStyle`
 :root {
@@ -133,4 +133,4 @@ textarea:moz-submit-invalid {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-`
+`;

@@ -9,4 +9,4 @@ module.exports = {
     ],
     'scope-enum': [2, 'always', ['global', 'landing', 'app']],
   },
-}
+};

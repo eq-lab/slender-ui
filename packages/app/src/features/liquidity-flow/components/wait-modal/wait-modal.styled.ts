@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   width: 520px;
@@ -17,4 +17,4 @@ export const Wrapper = styled.div`
     margin-top: 20px;
     color: var(--text-secondary, rgba(66, 61, 60, 0.64));
   }
-`
+`;

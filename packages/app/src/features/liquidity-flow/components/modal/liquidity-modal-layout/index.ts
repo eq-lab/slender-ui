@@ -1,1 +1,1 @@
-export { LiquidityModalLayout } from './liquidity-modal-layout'
+export { LiquidityModalLayout } from './liquidity-modal-layout';

@@ -77,32 +77,19 @@ jobs:
         repository: ${{ env.HELM_REPOSITORY }}
         ref: 'main'
         token: ${{ secrets.PAT }}
-    # - name: 'Prep extraEnv'
-    #   run: |
-    #       cat <<EOF >extraEnv.yml
-    #       imagePullSecrets: [name: $GH_SECR ]
-    #       EOF
     - name: Set Kubernetes Context
       uses: azure/k8s-set-context@v3
       with:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG }}
           context: ${{ env.CLUSTER }}
-    - name: Set imagePullSecret
-      uses: azure/k8s-create-secret@v4
-      with:
-        namespace: ${{ env.NAMESPACE }}
-        secret-name: ${{ env.GH_SECR }}
-        container-registry-url: ${{ env.REGISTRY }}
-        container-registry-username: ${{ github.actor }}
-        container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-      id: create-secret
     - name: 'deploy'
       run: |
         helm upgrade -i $SERVICE_NAME \
           -n $NAMESPACE \
           --set fullnameOverride=$SERVICE_NAME \
           --set service.enabled=true \
+          --set imagePullSecrets[0].name=$GH_SECR \
           --set image.repository=$REGISTRY \
           --set image.name=$REGISTRY/$IMAGE_NAME \
           --set image.tag=${{ needs.build-image-landing.outputs.output_tag }} \

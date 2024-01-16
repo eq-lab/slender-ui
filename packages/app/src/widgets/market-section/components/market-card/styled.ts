@@ -1,18 +1,18 @@
-import styled from 'styled-components'
-import Button from '@marginly/ui/components/button'
+import styled from 'styled-components';
+import Button from '@marginly/ui/components/button';
 
 export const MarketCardWrapper = styled.div`
   width: 100%;
   background-color: var(--fill-secondary);
   border-radius: var(--rounding-radius-xl);
   overflow: hidden;
-`
+`;
 
 export const MarketCardUpperContainer = styled.div<{ $backgroundColor: string }>`
   color: var(--text-on-dark);
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   padding: 32px 24px 24px 24px;
-`
+`;
 
 export const MarketCardHeadingContainer = styled.div`
   display: grid;
@@ -35,7 +35,7 @@ export const MarketCardHeadingContainer = styled.div`
     fill: var(--icon-on-dark);
     grid-area: 1 / 2 / 3 / 3;
   }
-`
+`;
 
 export const MarketCardPoolInfoContainer = styled.div`
   display: grid;
@@ -67,19 +67,19 @@ export const MarketCardPoolInfoContainer = styled.div`
     color: var(--text-secondary-on-dark, rgba(242, 237, 235, 0.48));
     grid-area: 2 / 2 / 3 / 3;
   }
-`
+`;
 
 export const MarketCardBottomContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
   padding: 24px;
-`
+`;
 
 export const MarketCardBottomInfo = styled.div`
   display: flex;
   gap: 32px;
-`
+`;
 
 export const MarketCardTextCell = styled.div`
   display: grid;
@@ -97,17 +97,17 @@ export const MarketCardTextCell = styled.div`
   .bottom-text-container {
     grid-area: 2 / 2 / 3 / 3;
   }
-`
+`;
 
 export const MarketCardButtonsContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 8px;
-`
+`;
 
 export const MarketCardButton = styled(Button)<{ $isLend?: boolean }>`
   &&& {
     color: var(${({ $isLend }) => ($isLend ? '--text-positive' : '--text-primary')});
     font-weight: 700;
   }
-`
+`;

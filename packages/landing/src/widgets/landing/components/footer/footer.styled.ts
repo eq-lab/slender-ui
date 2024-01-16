@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { styled } from 'styled-components'
+import { styled } from 'styled-components';
 
 export const Wrapper = styled.footer`
   position: relative;
@@ -19,10 +19,10 @@ export const Wrapper = styled.footer`
   @media (min-width: 1024px) {
     margin: 0 88px;
   }
-`
+`;
 
 export const ButtonsWrapper = styled.div`
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-space-16, 16px);
-`
+`;

@@ -1,13 +1,13 @@
-import React from 'react'
-import '@/global/globals.css'
-import type { Metadata } from 'next'
-import { GlobalStyle } from '@/global/styles'
-import { StyledComponentsRegistry } from '@/global/styled-registry'
+import React from 'react';
+import '@/global/globals.css';
+import type { Metadata } from 'next';
+import { GlobalStyle } from '@/global/styles';
+import { StyledComponentsRegistry } from '@/global/styled-registry';
 
 export const metadata: Metadata = {
   title: 'Slender',
   description: 'Lend & borrow fat stakes at a fair interest',
-}
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -23,5 +23,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body>{children}</body>
       </html>
     </StyledComponentsRegistry>
-  )
+  );
 }

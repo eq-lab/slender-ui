@@ -1,9 +1,9 @@
-import * as StellarSdk from '@stellar/stellar-sdk'
+import * as StellarSdk from '@stellar/stellar-sdk';
 
-import { scValToJs } from '../decoders'
+import { scValToJs } from '../decoders';
 
 export function parseMetaXdrToJs<T>(meta: StellarSdk.xdr.TransactionMeta): T | undefined {
-  const value = meta.v3().sorobanMeta()?.returnValue()
+  const value = meta.v3().sorobanMeta()?.returnValue();
 
-  return value && scValToJs(value)
+  return value && scValToJs(value);
 }

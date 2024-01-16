@@ -1,1 +1,1 @@
-export { FormLayout } from './form-layout'
+export { FormLayout } from './form-layout';

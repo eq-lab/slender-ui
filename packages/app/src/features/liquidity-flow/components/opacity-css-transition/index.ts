@@ -1,1 +1,1 @@
-export { OpacityCssTransition } from './opacity-css-transition'
+export { OpacityCssTransition } from './opacity-css-transition';

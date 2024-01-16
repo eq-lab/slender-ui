@@ -1,1 +1,1 @@
-export { BorrowStepModal } from './borrow-step-modal'
+export { BorrowStepModal } from './borrow-step-modal';
