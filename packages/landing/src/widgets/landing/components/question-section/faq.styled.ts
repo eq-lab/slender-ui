@@ -1,4 +1,4 @@
-import { styled } from 'styled-components'
+import { styled } from 'styled-components';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -14,7 +14,7 @@ export const Wrapper = styled.div`
   backdrop-filter: blur(12px);
 
   margin-bottom: 8px;
-`
+`;
 
 export const FaqHeader = styled.header`
   display: flex;
@@ -34,7 +34,7 @@ export const FaqHeader = styled.header`
       transform: rotate(0deg);
     }
   }
-`
+`;
 
 export const Section = styled.section`
   padding: 0 48px 32px 0;
@@ -44,4 +44,4 @@ export const Section = styled.section`
     color: inherit;
     text-decoration: underline;
   }
-`
+`;

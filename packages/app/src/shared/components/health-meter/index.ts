@@ -1,1 +1,1 @@
-export { HealthMeter } from './health-meter'
+export { HealthMeter } from './health-meter';

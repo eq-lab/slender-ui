@@ -1,1 +1,1 @@
-export { LendStepModal } from './lend-step-modal'
+export { LendStepModal } from './lend-step-modal';

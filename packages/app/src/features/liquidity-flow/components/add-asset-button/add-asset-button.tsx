@@ -1,10 +1,10 @@
-import React, { MouseEvent } from 'react'
-import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
-import Typography from '@marginly/ui/components/typography'
-import * as S from './styled'
+import React, { MouseEvent } from 'react';
+import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg';
+import Typography from '@marginly/ui/components/typography';
+import * as S from './styled';
 
 interface Props {
-  onClick?: (event: MouseEvent<HTMLElement>) => void
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
 }
 
 export function AddAssetButton({ onClick }: Props) {
@@ -15,5 +15,5 @@ export function AddAssetButton({ onClick }: Props) {
       </S.Thumbnail>
       <Typography secondary>Add Asset</Typography>
     </S.Wrapper>
-  )
+  );
 }

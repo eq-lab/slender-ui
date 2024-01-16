@@ -1,1 +1,1 @@
-export { PositionSummary } from './position-summary'
+export { PositionSummary } from './position-summary';

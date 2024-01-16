@@ -1,27 +1,27 @@
-import React from 'react'
-import { HealthMeter } from '@/shared/components/health-meter'
-import { InfoRow } from '@/shared/components/info-row'
-import { InfoLayout } from '@/shared/components/info-layout'
-import { formatCompactUsd } from '@/shared/formatters'
+import React from 'react';
+import { HealthMeter } from '@/shared/components/health-meter';
+import { InfoRow } from '@/shared/components/info-row';
+import { InfoLayout } from '@/shared/components/info-layout';
+import { formatCompactUsd } from '@/shared/formatters';
 
 const getSubValue = (value?: number) => {
-  if (!value) return undefined
-  if (value < 0) return formatCompactUsd(value)
-  return `+${formatCompactUsd(value)}`
-}
+  if (!value) return undefined;
+  if (value < 0) return formatCompactUsd(value);
+  return `+${formatCompactUsd(value)}`;
+};
 
 interface Props {
-  health: number
-  healthDelta?: number
-  debtUsd: number
-  debtUsdDelta?: number
-  depositSumUsd: number
-  depositSumUsdDelta?: number
-  borrowCapacityError?: boolean
-  debtError?: boolean
-  borrowCapacity: number
-  borrowCapacityDelta?: number
-  collateralError?: boolean
+  health: number;
+  healthDelta?: number;
+  debtUsd: number;
+  debtUsdDelta?: number;
+  depositSumUsd: number;
+  depositSumUsdDelta?: number;
+  borrowCapacityError?: boolean;
+  debtError?: boolean;
+  borrowCapacity: number;
+  borrowCapacityDelta?: number;
+  collateralError?: boolean;
 }
 
 export function PositionSummary({
@@ -61,5 +61,5 @@ export function PositionSummary({
         error={borrowCapacityError}
       />
     </InfoLayout>
-  )
+  );
 }

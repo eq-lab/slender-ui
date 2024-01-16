@@ -1,12 +1,12 @@
-import React from 'react'
-import { CSSTransition } from 'react-transition-group'
-import * as S from './styled'
-import { TRANSITION_CLASS_NAME } from './constants'
+import React from 'react';
+import { CSSTransition } from 'react-transition-group';
+import * as S from './styled';
+import { TRANSITION_CLASS_NAME } from './constants';
 
-const TRANSITION_TIMEOUT_MS = 300
+const TRANSITION_TIMEOUT_MS = 300;
 interface Props {
-  inTransition: boolean
-  children?: React.ReactNode
+  inTransition: boolean;
+  children?: React.ReactNode;
 }
 
 export function OpacityCssTransition({ inTransition, children }: Props) {
@@ -18,5 +18,5 @@ export function OpacityCssTransition({ inTransition, children }: Props) {
     >
       <S.Wrapper>{children}</S.Wrapper>
     </CSSTransition>
-  )
+  );
 }

@@ -1,23 +1,23 @@
-import React from 'react'
-import Typography from '@marginly/ui/components/typography'
-import { Tooltip, TooltipText } from '@/shared/components/tooltip'
-import { ReactComponent as InfoIcon } from './info-small.svg'
-import * as S from './styled'
+import React from 'react';
+import Typography from '@marginly/ui/components/typography';
+import { Tooltip, TooltipText } from '@/shared/components/tooltip';
+import { ReactComponent as InfoIcon } from './info-small.svg';
+import * as S from './styled';
 
-const DASHES_AMOUNT = 45
+const DASHES_AMOUNT = 45;
 
-const getDashesCount = (percent: number) => (DASHES_AMOUNT * percent) / 100
+const getDashesCount = (percent: number) => (DASHES_AMOUNT * percent) / 100;
 
 interface Props {
-  healthPercent?: number
-  healthDelta?: number
+  healthPercent?: number;
+  healthDelta?: number;
 }
 
 export function HealthMeter({ healthPercent = 0, healthDelta }: Props) {
-  const percent = healthPercent > 0 ? healthPercent : 0
-  const isRed = percent < 25
-  const dashesCount = getDashesCount(percent)
-  const healthDeltaText = healthDelta && `${healthDelta > 0 ? '+' : ''}${healthDelta}%`
+  const percent = healthPercent > 0 ? healthPercent : 0;
+  const isRed = percent < 25;
+  const dashesCount = getDashesCount(percent);
+  const healthDeltaText = healthDelta && `${healthDelta > 0 ? '+' : ''}${healthDelta}%`;
 
   return (
     <Tooltip
@@ -55,5 +55,5 @@ export function HealthMeter({ healthPercent = 0, healthDelta }: Props) {
         </S.HealthMeterContainer>
       </S.HealthMeterWrapper>
     </Tooltip>
-  )
+  );
 }

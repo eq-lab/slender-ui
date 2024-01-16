@@ -1,12 +1,12 @@
-import styled from 'styled-components'
-import TypographyUi from '@marginly/ui/components/typography'
+import styled from 'styled-components';
+import TypographyUi from '@marginly/ui/components/typography';
 
 export const Wrapper = styled.div`
   width: 352px;
   display: flex;
   flex-direction: column;
   height: 100%;
-`
+`;
 
 export const Typography = styled(TypographyUi)`
   &&& {
@@ -15,14 +15,14 @@ export const Typography = styled(TypographyUi)`
     letter-spacing: 0em;
     margin-bottom: 24px;
   }
-`
+`;
 
 export const Inner = styled.div`
   display: grid;
   grid-template-columns: 100%;
   gap: 32px;
   margin-bottom: 64px;
-`
+`;
 
 export const Button = styled.button`
   display: flex;
@@ -40,7 +40,7 @@ export const Button = styled.button`
     opacity: 0.24;
     cursor: auto;
   }
-`
+`;
 
 export const BottomSection = styled.div`
   grid-template-columns: 100%;
@@ -48,4 +48,4 @@ export const BottomSection = styled.div`
   display: grid;
   gap: 16px;
   justify-items: center;
-`
+`;

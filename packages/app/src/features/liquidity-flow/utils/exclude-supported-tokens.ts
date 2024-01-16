@@ -1,4 +1,4 @@
-import { SupportedTokenName, SUPPORTED_TOKEN_NAMES } from '@/shared/stellar/constants/tokens'
+import { SupportedTokenName, SUPPORTED_TOKEN_NAMES } from '@/shared/stellar/constants/tokens';
 
 export const excludeSupportedTokens = (
   token: SupportedTokenName[],
@@ -6,4 +6,4 @@ export const excludeSupportedTokens = (
 ): SupportedTokenName[] =>
   (tokens || SUPPORTED_TOKEN_NAMES).filter(
     (element) => !token.includes(element),
-  ) as SupportedTokenName[]
+  ) as SupportedTokenName[];

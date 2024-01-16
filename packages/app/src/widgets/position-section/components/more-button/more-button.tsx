@@ -1,17 +1,17 @@
-import React from 'react'
-import Typography from '@marginly/ui/components/typography'
-import Thumbnail from '@marginly/ui/components/thumbnail'
-import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg'
-import * as S from './more-button.styled'
+import React from 'react';
+import Typography from '@marginly/ui/components/typography';
+import Thumbnail from '@marginly/ui/components/thumbnail';
+import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg';
+import * as S from './more-button.styled';
 
 export function MoreButton({
   upperText,
   bottomText,
   onClick,
 }: {
-  upperText: string
-  bottomText: string
-  onClick: () => void
+  upperText: string;
+  bottomText: string;
+  onClick: () => void;
 }) {
   return (
     <S.MoreButtonWrapper onClick={onClick}>
@@ -25,5 +25,5 @@ export function MoreButton({
         {bottomText}
       </Typography>
     </S.MoreButtonWrapper>
-  )
+  );
 }

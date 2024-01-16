@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { styled } from 'styled-components'
-import { Title } from '../styled'
+import { styled } from 'styled-components';
+import { Title } from '../styled';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -24,4 +24,4 @@ export const Wrapper = styled.div`
     gap: 64px;
     margin: 0 88px;
   }
-`
+`;

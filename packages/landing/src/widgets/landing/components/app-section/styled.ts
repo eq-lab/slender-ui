@@ -1,7 +1,7 @@
-import { styled } from 'styled-components'
-import { Button } from '../styled'
+import { styled } from 'styled-components';
+import { Button } from '../styled';
 
-const MOBILE_SIZE = '864px'
+const MOBILE_SIZE = '864px';
 
 export const DesktopWrapper = styled.div`
   border-radius: var(--rounding-radius-xxxl, 48px);
@@ -14,7 +14,7 @@ export const DesktopWrapper = styled.div`
   @media (min-width: ${MOBILE_SIZE}) {
     display: block;
   }
-`
+`;
 
 export const ScreenApp = styled.div`
   position: relative;
@@ -32,7 +32,7 @@ export const ScreenApp = styled.div`
       backdrop-filter: blur(12px);
     }
   }
-`
+`;
 
 export const ProtocolRow = styled.div`
   display: none;
@@ -60,13 +60,13 @@ export const ProtocolRow = styled.div`
     align-items: center;
     padding-top: 52px;
   }
-`
+`;
 
 export const MobileWrapper = styled.div`
   @media (min-width: ${MOBILE_SIZE}) {
     display: none;
   }
-`
+`;
 
 export const ImageWrapper = styled.div`
   position: relative;
@@ -75,7 +75,7 @@ export const ImageWrapper = styled.div`
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
   overflow: hidden;
-`
+`;
 
 export const Protocol = styled.div`
   font-size: 32px;
@@ -101,7 +101,7 @@ export const Protocol = styled.div`
   @media (min-width: ${MOBILE_SIZE}) {
     max-width: 100%;
   }
-`
+`;
 export const Fund = styled.div`
   font-size: 16px;
   line-height: 150%;
@@ -112,7 +112,7 @@ export const Fund = styled.div`
   span {
     color: var(--text-secondary, rgba(242, 237, 235, 0.48));
   }
-`
+`;
 export const AppButton = styled(Button)`
   margin-top: 48px;
   white-space: nowrap;
@@ -123,4 +123,4 @@ export const AppButton = styled(Button)`
   &:hover {
     background-color: var(--fill-elevated-hover, #faf8f7);
   }
-`
+`;

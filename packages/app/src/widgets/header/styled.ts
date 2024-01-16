@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   position: fixed;
@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
   left: 0;
   width: 100%;
   padding: 0 64px;
-`
+`;
 
 export const Inner = styled.div`
   max-width: 1472px;
@@ -22,4 +22,4 @@ export const Inner = styled.div`
   justify-content: space-between;
   border-radius: 12px;
   background: var(--fill-secondary);
-`
+`;

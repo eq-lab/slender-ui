@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   width: 320px;
@@ -11,11 +11,11 @@ export const Wrapper = styled.div`
   height: 100%;
   gap: 24px;
   overflow: hidden;
-`
+`;
 
 export const List = styled.div`
   width: 100%;
   display: grid;
   gap: 16px;
   grid-template-columns: 100%;
-`
+`;

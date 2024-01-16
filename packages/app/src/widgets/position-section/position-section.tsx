@@ -1,65 +1,65 @@
-import React from 'react'
-import { PositionContext } from '@/entities/position/context/context'
-import { useContextSelector } from 'use-context-selector'
-import { useBorrowDecrease } from '@/features/liquidity-flow/hooks/use-borrow-decrease'
-import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase'
-import { useLendDecrease } from '@/features/liquidity-flow/hooks/use-lend-decrease'
-import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase'
-import { HealthMeter } from '@/shared/components/health-meter'
-import { formatCompactUsd, formatPercent } from '@/shared/formatters'
-import { SUPPORTED_TOKEN_NAMES, tokenContracts } from '@/shared/stellar/constants/tokens'
-import Label from '@marginly/ui/components/label'
-import Typography from '@marginly/ui/components/typography'
-import { useMarketData } from '@/entities/token/context/hooks'
-import { PositionCell as PositionCellType } from '@/entities/position/types'
-import { checkPositionExists } from '@/entities/position/utils'
-import { PositionCell } from './components/position-cell'
-import { MoreButton } from './components/more-button'
-import * as S from './position-section.styled'
+import React from 'react';
+import { PositionContext } from '@/entities/position/context/context';
+import { useContextSelector } from 'use-context-selector';
+import { useBorrowDecrease } from '@/features/liquidity-flow/hooks/use-borrow-decrease';
+import { useBorrowIncrease } from '@/features/liquidity-flow/hooks/use-borrow-increase';
+import { useLendDecrease } from '@/features/liquidity-flow/hooks/use-lend-decrease';
+import { useLendIncrease } from '@/features/liquidity-flow/hooks/use-lend-increase';
+import { HealthMeter } from '@/shared/components/health-meter';
+import { formatCompactUsd, formatPercent } from '@/shared/formatters';
+import { SUPPORTED_TOKEN_NAMES, tokenContracts } from '@/shared/stellar/constants/tokens';
+import Label from '@marginly/ui/components/label';
+import Typography from '@marginly/ui/components/typography';
+import { useMarketData } from '@/entities/token/context/hooks';
+import { PositionCell as PositionCellType } from '@/entities/position/types';
+import { checkPositionExists } from '@/entities/position/utils';
+import { PositionCell } from './components/position-cell';
+import { MoreButton } from './components/more-button';
+import * as S from './position-section.styled';
 
 export function PositionSection() {
-  const position = useContextSelector(PositionContext, (state) => state.position)
+  const position = useContextSelector(PositionContext, (state) => state.position);
 
-  const marketData = useMarketData()
+  const marketData = useMarketData();
 
   const isFullPosition =
-    (position.debts.length || 0) + (position.deposits.length || 0) === SUPPORTED_TOKEN_NAMES.length
-  const isFullDeposits = position.deposits.length === SUPPORTED_TOKEN_NAMES.length
+    (position.debts.length || 0) + (position.deposits.length || 0) === SUPPORTED_TOKEN_NAMES.length;
+  const isFullDeposits = position.deposits.length === SUPPORTED_TOKEN_NAMES.length;
 
   const depositsSumUsd =
-    position.deposits.reduce((sum, { valueInUsd }) => sum + (valueInUsd || 0), 0) || 0
+    position.deposits.reduce((sum, { valueInUsd }) => sum + (valueInUsd || 0), 0) || 0;
 
   const debtsSumUsd =
-    position.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0
+    position.debts.reduce((sum, currentCell) => sum + (currentCell.valueInUsd || 0), 0) || 0;
 
   const positionHealth =
     depositsSumUsd &&
-    Math.max(Math.round(depositsSumUsd && (1 - debtsSumUsd / depositsSumUsd) * 100), 0)
+    Math.max(Math.round(depositsSumUsd && (1 - debtsSumUsd / depositsSumUsd) * 100), 0);
 
   const makeGetSumInterestRate =
     (isDeposit: boolean) => (sum: number, currentDebt: PositionCellType) => {
-      const { valueInUsd, tokenName } = currentDebt
-      if (!marketData) return sum
-      const { address } = tokenContracts[tokenName]
-      const { borrowInterestRate, lendInterestRate } = marketData[address] || {}
+      const { valueInUsd, tokenName } = currentDebt;
+      if (!marketData) return sum;
+      const { address } = tokenContracts[tokenName];
+      const { borrowInterestRate, lendInterestRate } = marketData[address] || {};
       const interestRatePercentNum =
-        parseInt((isDeposit ? lendInterestRate : borrowInterestRate) || '', 10) || 0
+        parseInt((isDeposit ? lendInterestRate : borrowInterestRate) || '', 10) || 0;
       const fractionInSumUsd = valueInUsd
         ? valueInUsd / (isDeposit ? depositsSumUsd : debtsSumUsd)
-        : 0
-      return sum + interestRatePercentNum * fractionInSumUsd
-    }
+        : 0;
+      return sum + interestRatePercentNum * fractionInSumUsd;
+    };
 
-  const debtSumInterestRate = position.debts.reduce(makeGetSumInterestRate(false), 0) ?? 0
+  const debtSumInterestRate = position.debts.reduce(makeGetSumInterestRate(false), 0) ?? 0;
 
-  const depositSumInterestRate = position.deposits.reduce(makeGetSumInterestRate(true), 0) ?? 0
+  const depositSumInterestRate = position.deposits.reduce(makeGetSumInterestRate(true), 0) ?? 0;
 
-  const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease()
-  const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease()
-  const { modal: lendDecreaseModal, open: openLendDecreaseModal } = useLendDecrease()
-  const { modal: lendIncreaseModal, open: openLendIncreaseModal } = useLendIncrease()
+  const { modal: borrowDecreaseModal, open: openBorrowDecreaseModal } = useBorrowDecrease();
+  const { modal: borrowIncreaseModal, open: openBorrowIncreaseModal } = useBorrowIncrease();
+  const { modal: lendDecreaseModal, open: openLendDecreaseModal } = useLendDecrease();
+  const { modal: lendIncreaseModal, open: openLendIncreaseModal } = useLendIncrease();
 
-  if (!checkPositionExists(position)) return null
+  if (!checkPositionExists(position)) return null;
 
   return (
     <S.PositionWrapper>
@@ -84,11 +84,11 @@ export function PositionSection() {
           </S.PositionHeadingContainer>
           <S.PositionCellContainer>
             {position.deposits.map((deposit) => {
-              const { tokenName, valueInUsd = 1 } = deposit
+              const { tokenName, valueInUsd = 1 } = deposit;
               const depositPercentage =
                 valueInUsd && depositsSumUsd
                   ? +Number((valueInUsd / depositsSumUsd) * 100).toFixed(1)
-                  : undefined
+                  : undefined;
               return (
                 <PositionCell
                   key={tokenName}
@@ -99,7 +99,7 @@ export function PositionSection() {
                   openIncreaseModal={() => openLendIncreaseModal(tokenName)}
                   isLendPosition
                 />
-              )
+              );
             })}
             {!isFullPosition && (
               <MoreButton
@@ -139,11 +139,11 @@ export function PositionSection() {
           </S.PositionHeadingContainer>
           <S.PositionCellContainer>
             {position.debts.map((debt) => {
-              const { tokenName, valueInUsd = 1 } = debt
+              const { tokenName, valueInUsd = 1 } = debt;
               const debtPercentage =
                 valueInUsd && debtsSumUsd
                   ? +Number((valueInUsd / debtsSumUsd) * 100).toFixed(1)
-                  : undefined
+                  : undefined;
 
               return (
                 <PositionCell
@@ -154,7 +154,7 @@ export function PositionSection() {
                   openDecreaseModal={() => openBorrowDecreaseModal(tokenName)}
                   openIncreaseModal={() => openBorrowIncreaseModal(tokenName)}
                 />
-              )
+              );
             })}
             {!isFullDeposits && (
               <MoreButton
@@ -171,5 +171,5 @@ export function PositionSection() {
       {lendDecreaseModal}
       {lendIncreaseModal}
     </S.PositionWrapper>
-  )
+  );
 }
