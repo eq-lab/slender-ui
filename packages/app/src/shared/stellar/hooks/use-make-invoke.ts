@@ -93,7 +93,6 @@ export function useMakeInvoke() {
         const wallet = await import('@stellar/freighter-api')
 
         // getAccount gives an error if stellar account is not activated (does not have 1 XML)
-        // @ts-ignore
         const walletAccount = await getAccount(wallet).catch(() => null)
 
         const sourceAccount = walletAccount ?? new StellarSdk.Account(userAddress, ACCOUNT_SEQUENCE)
@@ -135,7 +134,6 @@ export function useMakeInvoke() {
           simulated,
         ).build()
 
-        // @ts-ignore
         tx = await signTx(wallet, operation, NETWORK_DETAILS.networkPassphrase)
 
         const raw = await sendTx(tx, secondsToWait)
