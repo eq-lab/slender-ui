@@ -56,7 +56,7 @@ export function useCoefficients(): TokenCoefficients | undefined {
 
       setData(result);
     })();
-  }, []);
+  }, [makeInvoke]);
 
   return data;
 }
