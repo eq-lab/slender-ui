@@ -128,12 +128,7 @@ export function useMakeInvoke() {
           throw new Error('Not connected to Freighter');
         }
 
-        const operation = SorobanRpc.assembleTransaction(
-          tx,
-          NETWORK_DETAILS.networkPassphrase,
-          // @ts-ignore
-          simulated,
-        ).build();
+        const operation = SorobanRpc.assembleTransaction(tx, simulated).build();
 
         tx = await signTx(wallet, operation, NETWORK_DETAILS.networkPassphrase);
 
