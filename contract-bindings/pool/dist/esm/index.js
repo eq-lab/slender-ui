@@ -1,74 +1,22 @@
-import { ContractSpec, Address } from 'soroban-client';
+import { ContractSpec, Address } from 'stellar-sdk';
 import { Buffer } from "buffer";
-import { invoke } from './invoke.js';
-export * from './invoke.js';
+import { AssembledTransaction, Ok, Err } from './assembled-tx.js';
+export * from './assembled-tx.js';
 export * from './method-options.js';
-export { Address };
-;
-;
-export class Ok {
-    value;
-    constructor(value) {
-        this.value = value;
-    }
-    unwrapErr() {
-        throw new Error('No error');
-    }
-    unwrap() {
-        return this.value;
-    }
-    isOk() {
-        return true;
-    }
-    isErr() {
-        return !this.isOk();
-    }
-}
-export class Err {
-    error;
-    constructor(error) {
-        this.error = error;
-    }
-    unwrapErr() {
-        return this.error;
-    }
-    unwrap() {
-        throw new Error(this.error.message);
-    }
-    isOk() {
-        return false;
-    }
-    isErr() {
-        return !this.isOk();
-    }
-}
 if (typeof window !== 'undefined') {
     //@ts-ignore Buffer exists
     window.Buffer = window.Buffer || Buffer;
 }
-const regex = /Error\(Contract, #(\d+)\)/;
-function parseError(message) {
-    const match = message.match(regex);
-    if (!match) {
-        return undefined;
-    }
-    if (Errors === undefined) {
-        return undefined;
-    }
-    let i = parseInt(match[1], 10);
-    let err = Errors[i];
-    if (err) {
-        return new Err(err);
-    }
-    return undefined;
-}
 export const networks = {
     futurenet: {
         networkPassphrase: "Test SDF Future Network ; October 2022",
-        contractId: "CBX4TH7NR5OXD5HCBYY23TAE4AQ7RUX2TJ527QGKYPUYEGZKGHQJUNSL",
+        contractId: "CAWOA5OINQDN7BAPPY5TLKEHZP7WDKDC5DWGW72LS5RQSCEE7U65AQMI",
     }
 };
-const Errors = {
+/**
+    
+    */
+export const Errors = {
     0: { message: "" },
     1: { message: "" },
     2: { message: "" },
@@ -155,7 +103,7 @@ export class Contract {
             "AAAAAAAAAAAAAAASc2V0X2ZsYXNoX2xvYW5fZmVlAAAAAAABAAAAAAAAAANmZWUAAAAABAAAAAEAAAPpAAAD7QAAAAAAAAAD",
             "AAAAAAAAAAAAAAAOZmxhc2hfbG9hbl9mZWUAAAAAAAAAAAABAAAABA==",
             "AAAAAAAAAAAAAAAKZmxhc2hfbG9hbgAAAAAABAAAAAAAAAADd2hvAAAAABMAAAAAAAAACHJlY2VpdmVyAAAAEwAAAAAAAAALbG9hbl9hc3NldHMAAAAD6gAAB9AAAAAORmxhc2hMb2FuQXNzZXQAAAAAAAAAAAAGcGFyYW1zAAAAAAAOAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
-            "AAAAAQAAAAAAAAAAAAAABUFzc2V0AAAAAAAABAAAAAAAAAAGYW1vdW50AAAAAAALAAAAAAAAAAVhc3NldAAAAAAAABMAAAAAAAAABmJvcnJvdwAAAAAAAQAAAAAAAAAHcHJlbWl1bQAAAAAL",
+            "AAAAAQAAAAAAAAAAAAAACUxvYW5Bc3NldAAAAAAAAAQAAAAAAAAABmFtb3VudAAAAAAACwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZib3Jyb3cAAAAAAAEAAAAAAAAAB3ByZW1pdW0AAAAACw==",
             "AAAAAQAAAAAAAAAAAAAAD0FjY291bnRQb3NpdGlvbgAAAAADAAAAAAAAAARkZWJ0AAAACwAAAAAAAAAVZGlzY291bnRlZF9jb2xsYXRlcmFsAAAAAAAACwAAAAAAAAADbnB2AAAAAAs=",
             "AAAAAQAAAAAAAAAAAAAADEFzc2V0QmFsYW5jZQAAAAIAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAHYmFsYW5jZQAAAAAL",
             "AAAAAQAAAAAAAAAAAAAAD0Jhc2VBc3NldENvbmZpZwAAAAACAAAAAAAAAAdhZGRyZXNzAAAAABMAAAAAAAAACGRlY2ltYWxzAAAABA==",
@@ -169,695 +117,698 @@ export class Contract {
             "AAAAAQAAAAAAAAAAAAAAFFJlc2VydmVDb25maWd1cmF0aW9uAAAABgAAAAAAAAARYm9ycm93aW5nX2VuYWJsZWQAAAAAAAABAAAAaFNwZWNpZmllcyB3aGF0IGZyYWN0aW9uIG9mIHRoZSB1bmRlcmx5aW5nIGFzc2V0IGNvdW50cyB0b3dhcmQKdGhlIHBvcnRmb2xpbyBjb2xsYXRlcmFsIHZhbHVlIFswJSwgMTAwJV0uAAAACGRpc2NvdW50AAAABAAAAAAAAAAJaXNfYWN0aXZlAAAAAAAAAQAAAAAAAAAJbGlxX2JvbnVzAAAAAAAABAAAAAAAAAAHbGlxX2NhcAAAAAALAAAAAAAAAAh1dGlsX2NhcAAAAAQ=",
             "AAAAAQAAAAAAAAAAAAAAC1Jlc2VydmVEYXRhAAAAAAkAAAAAAAAAC2JvcnJvd2VyX2FyAAAAAAsAAAAAAAAAC2JvcnJvd2VyX2lyAAAAAAsAAAAAAAAADWNvbmZpZ3VyYXRpb24AAAAAAAfQAAAAFFJlc2VydmVDb25maWd1cmF0aW9uAAAAAAAAABJkZWJ0X3Rva2VuX2FkZHJlc3MAAAAAABMAAABEVGhlIGlkIG9mIHRoZSByZXNlcnZlIChwb3NpdGlvbiBpbiB0aGUgbGlzdCBvZiB0aGUgYWN0aXZlIHJlc2VydmVzKS4AAAACaWQAAAAAA+4AAAABAAAAAAAAABVsYXN0X3VwZGF0ZV90aW1lc3RhbXAAAAAAAAAGAAAAAAAAAAlsZW5kZXJfYXIAAAAAAAALAAAAAAAAAAlsZW5kZXJfaXIAAAAAAAALAAAAAAAAAA9zX3Rva2VuX2FkZHJlc3MAAAAAEw==",
             "AAAAAQAAAH9JbXBsZW1lbnRzIHRoZSBiaXRtYXAgbG9naWMgdG8gaGFuZGxlIHRoZSB1c2VyIGNvbmZpZ3VyYXRpb24uCkV2ZW4gcG9zaXRpb25zIGlzIGNvbGxhdGVyYWwgZmxhZ3MgYW5kIHVuZXZlbiBpcyBib3Jyb3dpbmcgZmxhZ3MuAAAAAAAAAAARVXNlckNvbmZpZ3VyYXRpb24AAAAAAAABAAAAAAAAAAEwAAAAAAAACg==",
-            "AAAAAQAAAC9QcmljZSBkYXRhIGZvciBhbiBhc3NldCBhdCBhIHNwZWNpZmljIHRpbWVzdGFtcAAAAAAAAAAACVByaWNlRGF0YQAAAAAAAAIAAAAAAAAABXByaWNlAAAAAAAACwAAAAAAAAAJdGltZXN0YW1wAAAAAAAABg=="
+            "AAAAAQAAAC9QcmljZSBkYXRhIGZvciBhbiBhc3NldCBhdCBhIHNwZWNpZmljIHRpbWVzdGFtcAAAAAAAAAAACVByaWNlRGF0YQAAAAAAAAIAAAAAAAAABXByaWNlAAAAAAAACwAAAAAAAAAJdGltZXN0YW1wAAAAAAAABg==",
+            "AAAAAgAAAAAAAAAAAAAABUFzc2V0AAAAAAAAAgAAAAEAAAAAAAAAB1N0ZWxsYXIAAAAAAQAAABMAAAABAAAAAAAAAAVPdGhlcgAAAAAAAAEAAAAR"
         ]);
     }
-    async initialize({ admin, treasury, flash_loan_fee, ir_params }, options = {}) {
-        try {
-            return await invoke({
-                method: 'initialize',
-                args: this.spec.funcArgsToScVals("initialize", { admin, treasury, flash_loan_fee, ir_params }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("initialize", xdr));
-                },
-            });
+    parsers = {
+        initialize: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("initialize", result));
+        },
+        upgrade: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("upgrade", result));
+        },
+        upgradeSToken: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("upgrade_s_token", result));
+        },
+        upgradeDebtToken: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("upgrade_debt_token", result));
+        },
+        version: (result) => this.spec.funcResToNative("version", result),
+        initReserve: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("init_reserve", result));
+        },
+        setReserveStatus: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("set_reserve_status", result));
+        },
+        setIrParams: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("set_ir_params", result));
+        },
+        reserveTimestampWindow: (result) => this.spec.funcResToNative("reserve_timestamp_window", result),
+        setReserveTimestampWindow: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("set_reserve_timestamp_window", result));
+        },
+        irParams: (result) => this.spec.funcResToNative("ir_params", result),
+        enableBorrowingOnReserve: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("enable_borrowing_on_reserve", result));
+        },
+        configureAsCollateral: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("configure_as_collateral", result));
+        },
+        getReserve: (result) => this.spec.funcResToNative("get_reserve", result),
+        collatCoeff: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("collat_coeff", result));
+        },
+        debtCoeff: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("debt_coeff", result));
+        },
+        baseAsset: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("base_asset", result));
+        },
+        setBaseAsset: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("set_base_asset", result));
+        },
+        setPriceFeed: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("set_price_feed", result));
+        },
+        priceFeed: (result) => this.spec.funcResToNative("price_feed", result),
+        deposit: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("deposit", result));
+        },
+        repay: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("repay", result));
+        },
+        finalizeTransfer: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("finalize_transfer", result));
+        },
+        withdraw: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("withdraw", result));
+        },
+        borrow: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("borrow", result));
+        },
+        setPause: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("set_pause", result));
+        },
+        paused: (result) => this.spec.funcResToNative("paused", result),
+        treasury: (result) => this.spec.funcResToNative("treasury", result),
+        accountPosition: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("account_position", result));
+        },
+        liquidate: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("liquidate", result));
+        },
+        setAsCollateral: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("set_as_collateral", result));
+        },
+        userConfiguration: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("user_configuration", result));
+        },
+        stokenUnderlyingBalance: (result) => this.spec.funcResToNative("stoken_underlying_balance", result),
+        tokenBalance: (result) => this.spec.funcResToNative("token_balance", result),
+        tokenTotalSupply: (result) => this.spec.funcResToNative("token_total_supply", result),
+        setFlashLoanFee: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("set_flash_loan_fee", result));
+        },
+        flashLoanFee: (result) => this.spec.funcResToNative("flash_loan_fee", result),
+        flashLoan: (result) => {
+            if (result instanceof Err)
+                return result;
+            return new Ok(this.spec.funcResToNative("flash_loan", result));
         }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async upgrade({ new_wasm_hash }, options = {}) {
-        try {
-            return await invoke({
-                method: 'upgrade',
-                args: this.spec.funcArgsToScVals("upgrade", { new_wasm_hash }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("upgrade", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async upgradeSToken({ asset, new_wasm_hash }, options = {}) {
-        try {
-            return await invoke({
-                method: 'upgrade_s_token',
-                args: this.spec.funcArgsToScVals("upgrade_s_token", { asset, new_wasm_hash }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("upgrade_s_token", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async upgradeDebtToken({ asset, new_wasm_hash }, options = {}) {
-        try {
-            return await invoke({
-                method: 'upgrade_debt_token',
-                args: this.spec.funcArgsToScVals("upgrade_debt_token", { asset, new_wasm_hash }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("upgrade_debt_token", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async version(options = {}) {
-        return await invoke({
+    };
+    txFromJSON = (json) => {
+        const { method, ...tx } = JSON.parse(json);
+        return AssembledTransaction.fromJSON({
+            ...this.options,
+            method,
+            parseResultXdr: this.parsers[method],
+        }, tx);
+    };
+    fromJSON = {
+        initialize: (this.txFromJSON),
+        upgrade: (this.txFromJSON),
+        upgradeSToken: (this.txFromJSON),
+        upgradeDebtToken: (this.txFromJSON),
+        version: (this.txFromJSON),
+        initReserve: (this.txFromJSON),
+        setReserveStatus: (this.txFromJSON),
+        setIrParams: (this.txFromJSON),
+        reserveTimestampWindow: (this.txFromJSON),
+        setReserveTimestampWindow: (this.txFromJSON),
+        irParams: (this.txFromJSON),
+        enableBorrowingOnReserve: (this.txFromJSON),
+        configureAsCollateral: (this.txFromJSON),
+        getReserve: (this.txFromJSON),
+        collatCoeff: (this.txFromJSON),
+        debtCoeff: (this.txFromJSON),
+        baseAsset: (this.txFromJSON),
+        setBaseAsset: (this.txFromJSON),
+        setPriceFeed: (this.txFromJSON),
+        priceFeed: (this.txFromJSON),
+        deposit: (this.txFromJSON),
+        repay: (this.txFromJSON),
+        finalizeTransfer: (this.txFromJSON),
+        withdraw: (this.txFromJSON),
+        borrow: (this.txFromJSON),
+        setPause: (this.txFromJSON),
+        paused: (this.txFromJSON),
+        treasury: (this.txFromJSON),
+        accountPosition: (this.txFromJSON),
+        liquidate: (this.txFromJSON),
+        setAsCollateral: (this.txFromJSON),
+        userConfiguration: (this.txFromJSON),
+        stokenUnderlyingBalance: (this.txFromJSON),
+        tokenBalance: (this.txFromJSON),
+        tokenTotalSupply: (this.txFromJSON),
+        setFlashLoanFee: (this.txFromJSON),
+        flashLoanFee: (this.txFromJSON),
+        flashLoan: (this.txFromJSON)
+    };
+    /**
+* Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    initialize = async ({ admin, treasury, flash_loan_fee, ir_params }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'initialize',
+            args: this.spec.funcArgsToScVals("initialize", { admin: new Address(admin), treasury: new Address(treasury), flash_loan_fee, ir_params }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['initialize'],
+        });
+    };
+    /**
+* Construct and simulate a upgrade transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    upgrade = async ({ new_wasm_hash }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'upgrade',
+            args: this.spec.funcArgsToScVals("upgrade", { new_wasm_hash }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['upgrade'],
+        });
+    };
+    /**
+* Construct and simulate a upgrade_s_token transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    upgradeSToken = async ({ asset, new_wasm_hash }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'upgrade_s_token',
+            args: this.spec.funcArgsToScVals("upgrade_s_token", { asset: new Address(asset), new_wasm_hash }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['upgradeSToken'],
+        });
+    };
+    /**
+* Construct and simulate a upgrade_debt_token transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    upgradeDebtToken = async ({ asset, new_wasm_hash }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'upgrade_debt_token',
+            args: this.spec.funcArgsToScVals("upgrade_debt_token", { asset: new Address(asset), new_wasm_hash }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['upgradeDebtToken'],
+        });
+    };
+    /**
+* Construct and simulate a version transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    version = async (options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'version',
             args: this.spec.funcArgsToScVals("version", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("version", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['version'],
         });
-    }
-    async initReserve({ asset, input }, options = {}) {
-        try {
-            return await invoke({
-                method: 'init_reserve',
-                args: this.spec.funcArgsToScVals("init_reserve", { asset, input }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("init_reserve", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async setReserveStatus({ asset, is_active }, options = {}) {
-        try {
-            return await invoke({
-                method: 'set_reserve_status',
-                args: this.spec.funcArgsToScVals("set_reserve_status", { asset, is_active }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("set_reserve_status", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async setIrParams({ input }, options = {}) {
-        try {
-            return await invoke({
-                method: 'set_ir_params',
-                args: this.spec.funcArgsToScVals("set_ir_params", { input }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("set_ir_params", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async reserveTimestampWindow(options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a init_reserve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    initReserve = async ({ asset, input }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'init_reserve',
+            args: this.spec.funcArgsToScVals("init_reserve", { asset: new Address(asset), input }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['initReserve'],
+        });
+    };
+    /**
+* Construct and simulate a set_reserve_status transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setReserveStatus = async ({ asset, is_active }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'set_reserve_status',
+            args: this.spec.funcArgsToScVals("set_reserve_status", { asset: new Address(asset), is_active }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setReserveStatus'],
+        });
+    };
+    /**
+* Construct and simulate a set_ir_params transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setIrParams = async ({ input }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'set_ir_params',
+            args: this.spec.funcArgsToScVals("set_ir_params", { input }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setIrParams'],
+        });
+    };
+    /**
+* Construct and simulate a reserve_timestamp_window transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    reserveTimestampWindow = async (options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'reserve_timestamp_window',
             args: this.spec.funcArgsToScVals("reserve_timestamp_window", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("reserve_timestamp_window", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['reserveTimestampWindow'],
         });
-    }
-    async setReserveTimestampWindow({ window }, options = {}) {
-        try {
-            return await invoke({
-                method: 'set_reserve_timestamp_window',
-                args: this.spec.funcArgsToScVals("set_reserve_timestamp_window", { window }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("set_reserve_timestamp_window", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async irParams(options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a set_reserve_timestamp_window transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setReserveTimestampWindow = async ({ window }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'set_reserve_timestamp_window',
+            args: this.spec.funcArgsToScVals("set_reserve_timestamp_window", { window }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setReserveTimestampWindow'],
+        });
+    };
+    /**
+* Construct and simulate a ir_params transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    irParams = async (options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'ir_params',
             args: this.spec.funcArgsToScVals("ir_params", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("ir_params", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['irParams'],
         });
-    }
-    async enableBorrowingOnReserve({ asset, enabled }, options = {}) {
-        try {
-            return await invoke({
-                method: 'enable_borrowing_on_reserve',
-                args: this.spec.funcArgsToScVals("enable_borrowing_on_reserve", { asset, enabled }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("enable_borrowing_on_reserve", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async configureAsCollateral({ asset, params }, options = {}) {
-        try {
-            return await invoke({
-                method: 'configure_as_collateral',
-                args: this.spec.funcArgsToScVals("configure_as_collateral", { asset, params }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("configure_as_collateral", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async getReserve({ asset }, options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a enable_borrowing_on_reserve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    enableBorrowingOnReserve = async ({ asset, enabled }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'enable_borrowing_on_reserve',
+            args: this.spec.funcArgsToScVals("enable_borrowing_on_reserve", { asset: new Address(asset), enabled }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['enableBorrowingOnReserve'],
+        });
+    };
+    /**
+* Construct and simulate a configure_as_collateral transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    configureAsCollateral = async ({ asset, params }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'configure_as_collateral',
+            args: this.spec.funcArgsToScVals("configure_as_collateral", { asset: new Address(asset), params }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['configureAsCollateral'],
+        });
+    };
+    /**
+* Construct and simulate a get_reserve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    getReserve = async ({ asset }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'get_reserve',
-            args: this.spec.funcArgsToScVals("get_reserve", { asset }),
+            args: this.spec.funcArgsToScVals("get_reserve", { asset: new Address(asset) }),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("get_reserve", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['getReserve'],
         });
-    }
-    async collatCoeff({ asset }, options = {}) {
-        try {
-            return await invoke({
-                method: 'collat_coeff',
-                args: this.spec.funcArgsToScVals("collat_coeff", { asset }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("collat_coeff", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async debtCoeff({ asset }, options = {}) {
-        try {
-            return await invoke({
-                method: 'debt_coeff',
-                args: this.spec.funcArgsToScVals("debt_coeff", { asset }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("debt_coeff", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async baseAsset(options = {}) {
-        try {
-            return await invoke({
-                method: 'base_asset',
-                args: this.spec.funcArgsToScVals("base_asset", {}),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("base_asset", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async setBaseAsset({ asset, decimals }, options = {}) {
-        try {
-            return await invoke({
-                method: 'set_base_asset',
-                args: this.spec.funcArgsToScVals("set_base_asset", { asset, decimals }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("set_base_asset", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async setPriceFeed({ inputs }, options = {}) {
-        try {
-            return await invoke({
-                method: 'set_price_feed',
-                args: this.spec.funcArgsToScVals("set_price_feed", { inputs }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("set_price_feed", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async priceFeed({ asset }, options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a collat_coeff transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    collatCoeff = async ({ asset }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'collat_coeff',
+            args: this.spec.funcArgsToScVals("collat_coeff", { asset: new Address(asset) }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['collatCoeff'],
+        });
+    };
+    /**
+* Construct and simulate a debt_coeff transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    debtCoeff = async ({ asset }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'debt_coeff',
+            args: this.spec.funcArgsToScVals("debt_coeff", { asset: new Address(asset) }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['debtCoeff'],
+        });
+    };
+    /**
+* Construct and simulate a base_asset transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    baseAsset = async (options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'base_asset',
+            args: this.spec.funcArgsToScVals("base_asset", {}),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['baseAsset'],
+        });
+    };
+    /**
+* Construct and simulate a set_base_asset transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setBaseAsset = async ({ asset, decimals }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'set_base_asset',
+            args: this.spec.funcArgsToScVals("set_base_asset", { asset: new Address(asset), decimals }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setBaseAsset'],
+        });
+    };
+    /**
+* Construct and simulate a set_price_feed transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setPriceFeed = async ({ inputs }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'set_price_feed',
+            args: this.spec.funcArgsToScVals("set_price_feed", { inputs }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setPriceFeed'],
+        });
+    };
+    /**
+* Construct and simulate a price_feed transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    priceFeed = async ({ asset }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'price_feed',
-            args: this.spec.funcArgsToScVals("price_feed", { asset }),
+            args: this.spec.funcArgsToScVals("price_feed", { asset: new Address(asset) }),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("price_feed", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['priceFeed'],
         });
-    }
-    async deposit({ who, asset, amount }, options = {}) {
-        try {
-            return await invoke({
-                method: 'deposit',
-                args: this.spec.funcArgsToScVals("deposit", { who, asset, amount }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("deposit", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async repay({ who, asset, amount }, options = {}) {
-        try {
-            return await invoke({
-                method: 'repay',
-                args: this.spec.funcArgsToScVals("repay", { who, asset, amount }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("repay", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async finalizeTransfer({ asset, from, to, amount, balance_from_before, balance_to_before, s_token_supply }, options = {}) {
-        try {
-            return await invoke({
-                method: 'finalize_transfer',
-                args: this.spec.funcArgsToScVals("finalize_transfer", { asset, from, to, amount, balance_from_before, balance_to_before, s_token_supply }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("finalize_transfer", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async withdraw({ who, asset, amount, to }, options = {}) {
-        try {
-            return await invoke({
-                method: 'withdraw',
-                args: this.spec.funcArgsToScVals("withdraw", { who, asset, amount, to }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("withdraw", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async borrow({ who, asset, amount }, options = {}) {
-        try {
-            return await invoke({
-                method: 'borrow',
-                args: this.spec.funcArgsToScVals("borrow", { who, asset, amount }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("borrow", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async setPause({ value }, options = {}) {
-        try {
-            return await invoke({
-                method: 'set_pause',
-                args: this.spec.funcArgsToScVals("set_pause", { value }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("set_pause", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async paused(options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a deposit transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    deposit = async ({ who, asset, amount }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'deposit',
+            args: this.spec.funcArgsToScVals("deposit", { who: new Address(who), asset: new Address(asset), amount }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['deposit'],
+        });
+    };
+    /**
+* Construct and simulate a repay transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    repay = async ({ who, asset, amount }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'repay',
+            args: this.spec.funcArgsToScVals("repay", { who: new Address(who), asset: new Address(asset), amount }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['repay'],
+        });
+    };
+    /**
+* Construct and simulate a finalize_transfer transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    finalizeTransfer = async ({ asset, from, to, amount, balance_from_before, balance_to_before, s_token_supply }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'finalize_transfer',
+            args: this.spec.funcArgsToScVals("finalize_transfer", { asset: new Address(asset), from: new Address(from), to: new Address(to), amount, balance_from_before, balance_to_before, s_token_supply }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['finalizeTransfer'],
+        });
+    };
+    /**
+* Construct and simulate a withdraw transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    withdraw = async ({ who, asset, amount, to }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'withdraw',
+            args: this.spec.funcArgsToScVals("withdraw", { who: new Address(who), asset: new Address(asset), amount, to: new Address(to) }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['withdraw'],
+        });
+    };
+    /**
+* Construct and simulate a borrow transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    borrow = async ({ who, asset, amount }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'borrow',
+            args: this.spec.funcArgsToScVals("borrow", { who: new Address(who), asset: new Address(asset), amount }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['borrow'],
+        });
+    };
+    /**
+* Construct and simulate a set_pause transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setPause = async ({ value }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'set_pause',
+            args: this.spec.funcArgsToScVals("set_pause", { value }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setPause'],
+        });
+    };
+    /**
+* Construct and simulate a paused transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    paused = async (options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'paused',
             args: this.spec.funcArgsToScVals("paused", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("paused", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['paused'],
         });
-    }
-    async treasury(options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a treasury transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    treasury = async (options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'treasury',
             args: this.spec.funcArgsToScVals("treasury", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("treasury", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['treasury'],
         });
-    }
-    async accountPosition({ who }, options = {}) {
-        try {
-            return await invoke({
-                method: 'account_position',
-                args: this.spec.funcArgsToScVals("account_position", { who }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("account_position", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async liquidate({ liquidator, who, debt_asset, receive_stoken }, options = {}) {
-        try {
-            return await invoke({
-                method: 'liquidate',
-                args: this.spec.funcArgsToScVals("liquidate", { liquidator, who, debt_asset, receive_stoken }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("liquidate", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async setAsCollateral({ who, asset, use_as_collateral }, options = {}) {
-        try {
-            return await invoke({
-                method: 'set_as_collateral',
-                args: this.spec.funcArgsToScVals("set_as_collateral", { who, asset, use_as_collateral }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("set_as_collateral", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async userConfiguration({ who }, options = {}) {
-        try {
-            return await invoke({
-                method: 'user_configuration',
-                args: this.spec.funcArgsToScVals("user_configuration", { who }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("user_configuration", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async stokenUnderlyingBalance({ stoken_address }, options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a account_position transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    accountPosition = async ({ who }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'account_position',
+            args: this.spec.funcArgsToScVals("account_position", { who: new Address(who) }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['accountPosition'],
+        });
+    };
+    /**
+* Construct and simulate a liquidate transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    liquidate = async ({ liquidator, who, debt_asset, receive_stoken }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'liquidate',
+            args: this.spec.funcArgsToScVals("liquidate", { liquidator: new Address(liquidator), who: new Address(who), debt_asset: new Address(debt_asset), receive_stoken }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['liquidate'],
+        });
+    };
+    /**
+* Construct and simulate a set_as_collateral transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setAsCollateral = async ({ who, asset, use_as_collateral }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'set_as_collateral',
+            args: this.spec.funcArgsToScVals("set_as_collateral", { who: new Address(who), asset: new Address(asset), use_as_collateral }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setAsCollateral'],
+        });
+    };
+    /**
+* Construct and simulate a user_configuration transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    userConfiguration = async ({ who }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'user_configuration',
+            args: this.spec.funcArgsToScVals("user_configuration", { who: new Address(who) }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['userConfiguration'],
+        });
+    };
+    /**
+* Construct and simulate a stoken_underlying_balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    stokenUnderlyingBalance = async ({ stoken_address }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'stoken_underlying_balance',
-            args: this.spec.funcArgsToScVals("stoken_underlying_balance", { stoken_address }),
+            args: this.spec.funcArgsToScVals("stoken_underlying_balance", { stoken_address: new Address(stoken_address) }),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("stoken_underlying_balance", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['stokenUnderlyingBalance'],
         });
-    }
-    async tokenBalance({ token, account }, options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a token_balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    tokenBalance = async ({ token, account }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'token_balance',
-            args: this.spec.funcArgsToScVals("token_balance", { token, account }),
+            args: this.spec.funcArgsToScVals("token_balance", { token: new Address(token), account: new Address(account) }),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("token_balance", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['tokenBalance'],
         });
-    }
-    async tokenTotalSupply({ token }, options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a token_total_supply transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    tokenTotalSupply = async ({ token }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'token_total_supply',
-            args: this.spec.funcArgsToScVals("token_total_supply", { token }),
+            args: this.spec.funcArgsToScVals("token_total_supply", { token: new Address(token) }),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("token_total_supply", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['tokenTotalSupply'],
         });
-    }
-    async setFlashLoanFee({ fee }, options = {}) {
-        try {
-            return await invoke({
-                method: 'set_flash_loan_fee',
-                args: this.spec.funcArgsToScVals("set_flash_loan_fee", { fee }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("set_flash_loan_fee", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
-    async flashLoanFee(options = {}) {
-        return await invoke({
+    };
+    /**
+* Construct and simulate a set_flash_loan_fee transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setFlashLoanFee = async ({ fee }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'set_flash_loan_fee',
+            args: this.spec.funcArgsToScVals("set_flash_loan_fee", { fee }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['setFlashLoanFee'],
+        });
+    };
+    /**
+* Construct and simulate a flash_loan_fee transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    flashLoanFee = async (options = {}) => {
+        return await AssembledTransaction.fromSimulation({
             method: 'flash_loan_fee',
             args: this.spec.funcArgsToScVals("flash_loan_fee", {}),
             ...options,
             ...this.options,
-            parseResultXdr: (xdr) => {
-                return this.spec.funcResToNative("flash_loan_fee", xdr);
-            },
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['flashLoanFee'],
         });
-    }
-    async flashLoan({ who, receiver, loan_assets, params }, options = {}) {
-        try {
-            return await invoke({
-                method: 'flash_loan',
-                args: this.spec.funcArgsToScVals("flash_loan", { who, receiver, loan_assets, params }),
-                ...options,
-                ...this.options,
-                parseResultXdr: (xdr) => {
-                    return new Ok(this.spec.funcResToNative("flash_loan", xdr));
-                },
-            });
-        }
-        catch (e) {
-            if (typeof e === 'string') {
-                let err = parseError(e);
-                if (err)
-                    return err;
-            }
-            throw e;
-        }
-    }
+    };
+    /**
+* Construct and simulate a flash_loan transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    flashLoan = async ({ who, receiver, loan_assets, params }, options = {}) => {
+        return await AssembledTransaction.fromSimulation({
+            method: 'flash_loan',
+            args: this.spec.funcArgsToScVals("flash_loan", { who: new Address(who), receiver: new Address(receiver), loan_assets, params }),
+            ...options,
+            ...this.options,
+            errorTypes: Errors,
+            parseResultXdr: this.parsers['flashLoan'],
+        });
+    };
 }

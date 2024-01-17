@@ -1,5 +1,6 @@
-import * as SorobanClient from 'soroban-client';
-import { Account, SorobanRpc } from 'soroban-client';
+import * as StellarSdk from '@stellar/stellar-sdk';
+import { SorobanRpc } from '@stellar/stellar-sdk';
+
 import { useContextSelector } from 'use-context-selector';
 import { WalletContext } from '@/shared/contexts/wallet';
 import { useCallback } from 'react';
@@ -14,7 +15,7 @@ const FEE = '100';
 const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
 const ACCOUNT_SEQUENCE = '0';
 
-async function getAccount(wallet: Wallet): Promise<Account | null> {
+async function getAccount(wallet: Wallet): Promise<StellarSdk.Account | null> {
   if (!(await wallet.isConnected()) || !(await wallet.isAllowed())) {
     return null;
   }
@@ -30,11 +31,11 @@ async function signTx(wallet: Wallet, tx: Tx, networkPassphrase: string): Promis
     networkPassphrase,
   });
 
-  return SorobanClient.TransactionBuilder.fromXDR(signed, networkPassphrase) as Tx;
+  return StellarSdk.TransactionBuilder.fromXDR(signed, networkPassphrase) as Tx;
 }
 
-type SendTx = SorobanRpc.SendTransactionResponse;
-type GetTx = SorobanRpc.GetTransactionResponse;
+type SendTx = SorobanRpc.Api.SendTransactionResponse;
+type GetTx = SorobanRpc.Api.GetTransactionResponse;
 
 async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
   const sendTransactionResponse = await server.sendTransaction(tx);
@@ -52,7 +53,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
 
   while (
     Date.now() < waitUntil &&
-    getTransactionResponse.status === SorobanRpc.GetTransactionStatus.NOT_FOUND
+    getTransactionResponse.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND
   ) {
     // Wait a beat
     // eslint-disable-next-line no-await-in-loop,no-loop-func
@@ -65,7 +66,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
     getTransactionResponse = await server.getTransaction(sendTransactionResponse.hash);
   }
 
-  if (getTransactionResponse.status === SorobanRpc.GetTransactionStatus.NOT_FOUND) {
+  if (getTransactionResponse.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
     logError(
       `Waited ${secondsToWait} seconds for transaction to complete, but it did not. Returning anyway. Check the transaction status manually. Info: ${JSON.stringify(
         sendTransactionResponse,
@@ -84,10 +85,10 @@ export function useMakeInvoke() {
 
   return useCallback(
     (contractAddress: string, { secondsToWait = 10 }: { secondsToWait?: number } = {}) => {
-      const contract = new SorobanClient.Contract(contractAddress);
+      const contract = new StellarSdk.Contract(contractAddress);
       return async <T>(
         methodName: string,
-        txParams: SorobanClient.xdr.ScVal[] = [],
+        txParams: StellarSdk.xdr.ScVal[] = [],
       ): Promise<T | undefined> => {
         const wallet = await import('@stellar/freighter-api');
 
@@ -95,18 +96,18 @@ export function useMakeInvoke() {
         const walletAccount = await getAccount(wallet).catch(() => null);
 
         const sourceAccount =
-          walletAccount ?? new SorobanClient.Account(userAddress, ACCOUNT_SEQUENCE);
+          walletAccount ?? new StellarSdk.Account(userAddress, ACCOUNT_SEQUENCE);
 
-        let tx = new SorobanClient.TransactionBuilder(sourceAccount, {
+        let tx = new StellarSdk.TransactionBuilder(sourceAccount, {
           fee: FEE,
           networkPassphrase: NETWORK_DETAILS.networkPassphrase,
         })
           .addOperation(contract.call(methodName, ...txParams))
-          .setTimeout(SorobanClient.TimeoutInfinite)
+          .setTimeout(StellarSdk.TimeoutInfinite)
           .build();
         const simulated = await server.simulateTransaction(tx);
 
-        if (SorobanRpc.isSimulationError(simulated)) {
+        if (SorobanRpc.Api.isSimulationError(simulated)) {
           throw new Error(simulated.error);
         } else if (!simulated.result) {
           throw new Error(`invalid simulation: no result in ${simulated}`);
@@ -127,9 +128,10 @@ export function useMakeInvoke() {
           throw new Error('Not connected to Freighter');
         }
 
-        const operation = SorobanClient.assembleTransaction(
+        const operation = SorobanRpc.assembleTransaction(
           tx,
           NETWORK_DETAILS.networkPassphrase,
+          // @ts-ignore
           simulated,
         ).build();
 
@@ -139,7 +141,7 @@ export function useMakeInvoke() {
         // if `sendTx` awaited the inclusion of the tx in the ledger, it used
         // `getTransaction`, which has a `resultXdr` field
         if ('resultXdr' in raw) {
-          if (raw.status !== SorobanRpc.GetTransactionStatus.SUCCESS) {
+          if (raw.status !== SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
             throw new Error('Transaction submission failed! Returning full RPC response.');
           }
 

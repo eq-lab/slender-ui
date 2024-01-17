@@ -1,8 +1,8 @@
-import * as SorobanClient from 'soroban-client';
 import BigNumber from 'bignumber.js';
+import * as StellarSdk from '@stellar/stellar-sdk';
 
-export const addressToScVal = (account: string): SorobanClient.xdr.ScVal =>
-  SorobanClient.nativeToScVal(account, { type: 'address' });
+export const addressToScVal = (account: string): StellarSdk.xdr.ScVal =>
+  StellarSdk.nativeToScVal(account, { type: 'address' });
 
-export const bigintToScVal = (i: BigNumber): SorobanClient.xdr.ScVal =>
-  new SorobanClient.ScInt(i.toFixed(0)).toI128();
+export const bigintToScVal = (i: BigNumber): StellarSdk.xdr.ScVal =>
+  new StellarSdk.ScInt(i.toFixed(0)).toI128();
