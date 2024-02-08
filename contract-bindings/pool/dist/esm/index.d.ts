@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { ContractSpec } from 'stellar-sdk';
+import { ContractSpec } from '@stellar/stellar-sdk';
 import { Buffer } from "buffer";
 import { AssembledTransaction, Ok, Err } from './assembled-tx.js';
 import type { u32, u64, u128, i128, Option, Error_ } from './assembled-tx.js';
@@ -7,9 +7,9 @@ import type { ClassOptions } from './method-options.js';
 export * from './assembled-tx.js';
 export * from './method-options.js';
 export declare const networks: {
-    readonly futurenet: {
-        readonly networkPassphrase: "Test SDF Future Network ; October 2022";
-        readonly contractId: "CAWOA5OINQDN7BAPPY5TLKEHZP7WDKDC5DWGW72LS5RQSCEE7U65AQMI";
+    readonly testnet: {
+        readonly networkPassphrase: "Test SDF Network ; September 2015";
+        readonly contractId: "CCRLT4DYOWQYDO3W33CL2F6SIURAY35QXSQAGGXFQLM4YHZQJPR6NFVR";
     };
 };
 /**
@@ -57,11 +57,14 @@ export type DataKey = {
 } | {
     tag: "TokenBalance";
     values: readonly [string, string];
+} | {
+    tag: "InitialHealth";
+    values: void;
 };
 /**
     
     */
-export interface LiquidationCollateral {
+export interface LiquidationAsset {
     /**
       
       */
@@ -69,23 +72,19 @@ export interface LiquidationCollateral {
     /**
       
       */
-    collat_coeff: i128;
+    coeff: Option<i128>;
     /**
       
       */
-    compounded_collat: i128;
+    comp_balance: i128;
     /**
       
       */
-    is_last_collateral: boolean;
+    lp_balance: Option<i128>;
     /**
       
       */
-    reserve_data: ReserveData;
-    /**
-      
-      */
-    s_token_balance: i128;
+    reserve: ReserveData;
 }
 /**
     
@@ -161,13 +160,13 @@ export interface CollateralParamsInput {
       */
     discount: u32;
     /**
-      The bonus liquidators receive to liquidate this asset. The values is always above 100%. A value of 105% means the liquidator will receive a 5% bonus
-      */
-    liq_bonus: u32;
-    /**
       The total amount of an asset the protocol accepts into the market.
       */
     liq_cap: i128;
+    /**
+      Liquidation order
+      */
+    pen_order: u32;
     /**
       
       */
@@ -213,6 +212,15 @@ export declare const Errors: {
     107: {
         message: string;
     };
+    108: {
+        message: string;
+    };
+    109: {
+        message: string;
+    };
+    110: {
+        message: string;
+    };
     200: {
         message: string;
     };
@@ -247,12 +255,6 @@ export declare const Errors: {
         message: string;
     };
     306: {
-        message: string;
-    };
-    307: {
-        message: string;
-    };
-    308: {
         message: string;
     };
     309: {
@@ -313,19 +315,6 @@ export interface FlashLoanAsset {
     borrow: boolean;
 }
 /**
-    
-    */
-export interface InitReserveInput {
-    /**
-      
-      */
-    debt_token_address: string;
-    /**
-      
-      */
-    s_token_address: string;
-}
-/**
     Interest rate parameters
     */
 export interface IRParams {
@@ -349,6 +338,37 @@ export interface IRParams {
 /**
     
     */
+export type OracleAsset = {
+    tag: "Stellar";
+    values: readonly [string];
+} | {
+    tag: "Other";
+    values: readonly [string];
+};
+/**
+    
+    */
+export interface PriceFeed {
+    /**
+      
+      */
+    feed: string;
+    /**
+      
+      */
+    feed_asset: OracleAsset;
+    /**
+      
+      */
+    feed_decimals: u32;
+    /**
+      
+      */
+    twap_records: u32;
+}
+/**
+    
+    */
 export interface PriceFeedConfig {
     /**
       
@@ -357,16 +377,12 @@ export interface PriceFeedConfig {
     /**
       
       */
-    feed: string;
-    /**
-      
-      */
-    feed_decimals: u32;
+    feeds: Array<PriceFeed>;
 }
 /**
     
     */
-export interface PriceFeedInput {
+export interface PriceFeedConfigInput {
     /**
       
       */
@@ -378,11 +394,7 @@ export interface PriceFeedInput {
     /**
       
       */
-    feed: string;
-    /**
-      
-      */
-    feed_decimals: u32;
+    feeds: Array<PriceFeed>;
 }
 /**
     
@@ -404,11 +416,11 @@ export interface ReserveConfiguration {
     /**
       
       */
-    liq_bonus: u32;
+    liquidity_cap: i128;
     /**
       
       */
-    liq_cap: i128;
+    pen_order: u32;
     /**
       
       */
@@ -431,10 +443,6 @@ export interface ReserveData {
       */
     configuration: ReserveConfiguration;
     /**
-      
-      */
-    debt_token_address: string;
-    /**
       The id of the reserve (position in the list of the active reserves).
       */
     id: Buffer;
@@ -453,15 +461,35 @@ export interface ReserveData {
     /**
       
       */
-    s_token_address: string;
+    reserve_type: ReserveType;
 }
+/**
+    
+    */
+export type ReserveType = {
+    tag: "Fungible";
+    values: readonly [string, string];
+} | {
+    tag: "RWA";
+    values: void;
+};
 /**
     Implements the bitmap logic to handle the user configuration.
     * Even positions is collateral flags and uneven is borrowing flags.
     */
 export type UserConfiguration = readonly [u128];
 /**
-    Price data for an asset at a specific timestamp
+    
+    */
+export type Asset = {
+    tag: "Stellar";
+    values: readonly [string];
+} | {
+    tag: "Other";
+    values: readonly [string];
+};
+/**
+    
     */
 export interface PriceData {
     /**
@@ -473,16 +501,6 @@ export interface PriceData {
       */
     timestamp: u64;
 }
-/**
-    
-    */
-export type Asset = {
-    tag: "Stellar";
-    values: readonly [string];
-} | {
-    tag: "Other";
-    values: readonly [string];
-};
 export declare class Contract {
     readonly options: ClassOptions;
     spec: ContractSpec;
@@ -508,8 +526,10 @@ export declare class Contract {
         debtCoeff: (json: string) => AssembledTransaction<Err<Error_> | Ok<bigint, Error_>>;
         baseAsset: (json: string) => AssembledTransaction<Err<Error_> | Ok<BaseAssetConfig, Error_>>;
         setBaseAsset: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
-        setPriceFeed: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
-        priceFeed: (json: string) => AssembledTransaction<Option<PriceFeedConfig>>;
+        initialHealth: (json: string) => AssembledTransaction<Err<Error_> | Ok<number, Error_>>;
+        setInitialHealth: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
+        setPriceFeeds: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
+        priceFeeds: (json: string) => AssembledTransaction<Option<PriceFeedConfig>>;
         deposit: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
         repay: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
         finalizeTransfer: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
@@ -528,14 +548,16 @@ export declare class Contract {
         setFlashLoanFee: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
         flashLoanFee: (json: string) => AssembledTransaction<number>;
         flashLoan: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
+        twapMedianPrice: (json: string) => AssembledTransaction<Err<Error_> | Ok<bigint, Error_>>;
     };
     /**
 * Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
 */
-    initialize: ({ admin, treasury, flash_loan_fee, ir_params }: {
+    initialize: ({ admin, treasury, flash_loan_fee, initial_health, ir_params }: {
         admin: string;
         treasury: string;
         flash_loan_fee: u32;
+        initial_health: u32;
         ir_params: IRParams;
     }, options?: {
         /**
@@ -590,9 +612,9 @@ export declare class Contract {
     /**
 * Construct and simulate a init_reserve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
 */
-    initReserve: ({ asset, input }: {
+    initReserve: ({ asset, reserve_type }: {
         asset: string;
-        input: InitReserveInput;
+        reserve_type: ReserveType;
     }, options?: {
         /**
          * The fee to pay for the transaction. Default: 100.
@@ -730,10 +752,19 @@ export declare class Contract {
         fee?: number;
     }) => Promise<AssembledTransaction<Err<Error_> | Ok<void, Error_>>>;
     /**
-* Construct and simulate a set_price_feed transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+* Construct and simulate a initial_health transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
 */
-    setPriceFeed: ({ inputs }: {
-        inputs: Array<PriceFeedInput>;
+    initialHealth: (options?: {
+        /**
+         * The fee to pay for the transaction. Default: 100.
+         */
+        fee?: number;
+    }) => Promise<AssembledTransaction<Err<Error_> | Ok<number, Error_>>>;
+    /**
+* Construct and simulate a set_initial_health transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    setInitialHealth: ({ value }: {
+        value: u32;
     }, options?: {
         /**
          * The fee to pay for the transaction. Default: 100.
@@ -741,9 +772,20 @@ export declare class Contract {
         fee?: number;
     }) => Promise<AssembledTransaction<Err<Error_> | Ok<void, Error_>>>;
     /**
-* Construct and simulate a price_feed transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+* Construct and simulate a set_price_feeds transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
 */
-    priceFeed: ({ asset }: {
+    setPriceFeeds: ({ inputs }: {
+        inputs: Array<PriceFeedConfigInput>;
+    }, options?: {
+        /**
+         * The fee to pay for the transaction. Default: 100.
+         */
+        fee?: number;
+    }) => Promise<AssembledTransaction<Err<Error_> | Ok<void, Error_>>>;
+    /**
+* Construct and simulate a price_feeds transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    priceFeeds: ({ asset }: {
         asset: string;
     }, options?: {
         /**
@@ -864,10 +906,9 @@ export declare class Contract {
     /**
 * Construct and simulate a liquidate transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
 */
-    liquidate: ({ liquidator, who, debt_asset, receive_stoken }: {
+    liquidate: ({ liquidator, who, receive_stoken }: {
         liquidator: string;
         who: string;
-        debt_asset: string;
         receive_stoken: boolean;
     }, options?: {
         /**
@@ -967,4 +1008,16 @@ export declare class Contract {
          */
         fee?: number;
     }) => Promise<AssembledTransaction<Err<Error_> | Ok<void, Error_>>>;
+    /**
+* Construct and simulate a twap_median_price transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    twapMedianPrice: ({ asset, amount }: {
+        asset: string;
+        amount: i128;
+    }, options?: {
+        /**
+         * The fee to pay for the transaction. Default: 100.
+         */
+        fee?: number;
+    }) => Promise<AssembledTransaction<Err<Error_> | Ok<bigint, Error_>>>;
 }
