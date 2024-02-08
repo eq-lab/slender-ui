@@ -6,7 +6,7 @@ import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke';
 import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens';
 import { addressToScVal } from '@/shared/stellar/encoders';
 import { CachedTokens, MarketContext, PoolData } from './context';
-import { PERCENT_PRECISION, CONTRACT_MATH_PRECISION } from '../constants/contract-constants';
+import { CONTRACT_MATH_PRECISION } from '../constants/contract-constants';
 import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision';
 
 const NATIVE_ID = 'native';
@@ -42,7 +42,7 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
           invoke<u32>('decimals'),
         ];
       }, []);
-      const poolInvoke = makeInvoke(networks.futurenet.contractId);
+      const poolInvoke = makeInvoke(networks.testnet.contractId);
       const marketTxs = CACHED_POOL_ADDRESSES.map((asset) =>
         poolInvoke<ReserveData>('get_reserve', [addressToScVal(asset)]),
       );
@@ -71,8 +71,6 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
         cached[CACHED_POOL_ADDRESSES[currentIndex]!] = {
           // @ts-ignore
           discount: poolReserve.configuration.get('discount'),
-          // @ts-ignore
-          liquidationPenalty: poolReserve.configuration.get('liq_bonus') - PERCENT_PRECISION,
           // @ts-ignore
           utilizationCapacity: poolReserve.configuration.get('util_cap'),
           borrowInterestRate: formatInterestRate(poolReserve.borrower_ir),

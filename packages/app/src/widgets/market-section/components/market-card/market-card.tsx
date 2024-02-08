@@ -42,7 +42,6 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
 
   const {
     discount,
-    liquidationPenalty,
     borrowInterestRate,
     lendInterestRate,
     totalSupplied,
@@ -116,17 +115,6 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
               Discount:
             </Typography>
             <Typography className="bottom-text-container">{discount}</Typography>
-          </S.MarketCardTextCell>
-          <S.MarketCardTextCell>
-            <div className="tooltip-container">
-              <TooltipThumbnail>
-                <TooltipText>Penalty Percentage</TooltipText>
-              </TooltipThumbnail>
-            </div>
-            <Typography className="upper-text-container" caption secondary>
-              Liquidation penalty:
-            </Typography>
-            <Typography className="bottom-text-container">{liquidationPenalty}</Typography>
           </S.MarketCardTextCell>
         </S.MarketCardBottomInfo>
         <S.MarketCardButtonsContainer>

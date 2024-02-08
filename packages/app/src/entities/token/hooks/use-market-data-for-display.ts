@@ -6,7 +6,6 @@ import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-wit
 
 export function useMarketDataForDisplay(token: TokenContracts): {
   discount: string;
-  liquidationPenalty: string;
   borrowInterestRate: string;
   lendInterestRate: string;
   totalSupplied: number;
@@ -17,7 +16,7 @@ export function useMarketDataForDisplay(token: TokenContracts): {
   const { percentMultiplier, borrowInterestRate, lendInterestRate, contractMultiplier } =
     usePoolData(token.address);
   const marketData = useMarketData();
-  const { discount, liquidationPenalty } = marketData?.[token.address] ?? {};
+  const { discount } = marketData?.[token.address] ?? {};
 
   const { availableToBorrow, reserved, totalBorrowed, totalSupplied } = useAvailableToBorrow(token);
 
@@ -26,7 +25,6 @@ export function useMarketDataForDisplay(token: TokenContracts): {
 
   return {
     discount: formatPercentage(discount),
-    liquidationPenalty: formatPercentage(liquidationPenalty),
     borrowInterestRate: formatInterestRate(borrowInterestRate?.toNumber()),
     lendInterestRate: formatInterestRate(lendInterestRate?.toNumber()),
     totalSupplied,
