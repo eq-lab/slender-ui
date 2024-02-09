@@ -1,4 +1,4 @@
-import { ContractSpec, Address } from 'stellar-sdk';
+import { ContractSpec, Address } from '@stellar/stellar-sdk';
 import { Buffer } from "buffer";
 import { AssembledTransaction, Ok, Err } from './assembled-tx.js';
 import type {
@@ -28,9 +28,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-    futurenet: {
-        networkPassphrase: "Test SDF Future Network ; October 2022",
-        contractId: "",
+    testnet: {
+        networkPassphrase: "Test SDF Network ; September 2015",
+        contractId: "CBGXR6EZLO5S6QBL66XUQRX7XKHKIPMEHAF556PKNSC3MLLWXKTFPL6D",
     }
 } as const
 

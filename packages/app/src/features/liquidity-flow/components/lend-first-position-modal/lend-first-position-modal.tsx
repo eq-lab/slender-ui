@@ -28,9 +28,7 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   const { balance = 0 } = useGetBalance([tokenContracts[depositTokenName].address]).value[0] || {};
   const max = Number(balance);
 
-  const { lendInterestRate, discount, liquidationPenalty } = useMarketDataForDisplay(
-    tokenContracts[depositTokenName],
-  );
+  const { lendInterestRate, discount } = useMarketDataForDisplay(tokenContracts[depositTokenName]);
   const tokenInfo = useTokenInfo(depositTokenName);
 
   const getTokenByTokenName = useGetTokenByTokenName();
@@ -46,7 +44,6 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
     <InfoLayout title={token?.title} mediaSection={<TokenThumbnail tokenName={depositTokenName} />}>
       <InfoRow label="Lend APR" value={lendInterestRate} />
       <InfoRow label="Discount" value={discount} />
-      <InfoRow label="Liquidation penalty" value={liquidationPenalty} />
     </InfoLayout>
   );
 

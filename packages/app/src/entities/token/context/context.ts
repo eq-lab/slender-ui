@@ -13,7 +13,6 @@ export type PoolData = Record<
   string,
   {
     discount: number;
-    liquidationPenalty: number;
     utilizationCapacity: number;
     borrowInterestRate: string;
     lendInterestRate: string;

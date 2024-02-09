@@ -16,7 +16,7 @@ const WITH_TO: PoolMethodName = 'withdraw';
 
 export const useSubmit = (methodName: PoolMethodName) => {
   const makeInvoke = useMakeInvoke();
-  const invoke = makeInvoke(networks.futurenet.contractId);
+  const invoke = makeInvoke(networks.testnet.contractId);
   const getTokenByTokenName = useGetTokenByTokenName();
 
   const runLiquidityBinding = async ({
@@ -28,6 +28,7 @@ export const useSubmit = (methodName: PoolMethodName) => {
     asset: string;
     amount: BigNumber;
   }) =>
+    // console.log('invoke'.toUpperCase(), methodName, who, asset, amount.toFixed(0));
     invoke<
       | string
       | SorobanRpc.Api.SimulateTransactionResponse
@@ -39,7 +40,6 @@ export const useSubmit = (methodName: PoolMethodName) => {
       bigintToScVal(amount),
       ...(methodName === WITH_TO ? [addressToScVal(who)] : []),
     ]);
-
   return async (address: string, sendValue: PositionUpdate): Promise<'fulfilled' | never> => {
     // we have to sign and send transactions one by one
     // eslint-disable-next-line no-restricted-syntax
