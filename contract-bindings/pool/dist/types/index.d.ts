@@ -7,9 +7,9 @@ import type { ClassOptions } from './method-options.js';
 export * from './assembled-tx.js';
 export * from './method-options.js';
 export declare const networks: {
-    readonly testnet: {
-        readonly networkPassphrase: "Test SDF Network ; September 2015";
-        readonly contractId: "CCRLT4DYOWQYDO3W33CL2F6SIURAY35QXSQAGGXFQLM4YHZQJPR6NFVR";
+    readonly futurenet: {
+        readonly networkPassphrase: "Test SDF Future Network ; October 2022";
+        readonly contractId: "CCI76MPI6D2UFKXYNRDMS25K3AM7JYC33X42Q4MNYY65I4NV3DQEAVAG";
     };
 };
 /**
@@ -549,6 +549,7 @@ export declare class Contract {
         flashLoanFee: (json: string) => AssembledTransaction<number>;
         flashLoan: (json: string) => AssembledTransaction<Err<Error_> | Ok<void, Error_>>;
         twapMedianPrice: (json: string) => AssembledTransaction<Err<Error_> | Ok<bigint, Error_>>;
+        balance: (json: string) => AssembledTransaction<bigint>;
     };
     /**
 * Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -1020,4 +1021,16 @@ export declare class Contract {
          */
         fee?: number;
     }) => Promise<AssembledTransaction<Err<Error_> | Ok<bigint, Error_>>>;
+    /**
+* Construct and simulate a balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    balance: ({ id, asset }: {
+        id: string;
+        asset: string;
+    }, options?: {
+        /**
+         * The fee to pay for the transaction. Default: 100.
+         */
+        fee?: number;
+    }) => Promise<AssembledTransaction<bigint>>;
 }

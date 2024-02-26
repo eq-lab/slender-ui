@@ -106,7 +106,6 @@ export function useMakeInvoke() {
           .setTimeout(StellarSdk.TimeoutInfinite)
           .build();
         const simulated = await server.simulateTransaction(tx);
-
         if (SorobanRpc.Api.isSimulationError(simulated)) {
           throw new Error(simulated.error);
         } else if (!simulated.result) {

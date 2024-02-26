@@ -25,9 +25,9 @@ if (typeof window !== 'undefined') {
     window.Buffer = window.Buffer || buffer_1.Buffer;
 }
 exports.networks = {
-    testnet: {
-        networkPassphrase: "Test SDF Network ; September 2015",
-        contractId: "CCRLT4DYOWQYDO3W33CL2F6SIURAY35QXSQAGGXFQLM4YHZQJPR6NFVR",
+    futurenet: {
+        networkPassphrase: "Test SDF Future Network ; October 2022",
+        contractId: "CCI76MPI6D2UFKXYNRDMS25K3AM7JYC33X42Q4MNYY65I4NV3DQEAVAG",
     }
 };
 /**
@@ -124,6 +124,7 @@ class Contract {
             "AAAAAAAAAAAAAAAOZmxhc2hfbG9hbl9mZWUAAAAAAAAAAAABAAAABA==",
             "AAAAAAAAAAAAAAAKZmxhc2hfbG9hbgAAAAAABAAAAAAAAAADd2hvAAAAABMAAAAAAAAACHJlY2VpdmVyAAAAEwAAAAAAAAALbG9hbl9hc3NldHMAAAAD6gAAB9AAAAAORmxhc2hMb2FuQXNzZXQAAAAAAAAAAAAGcGFyYW1zAAAAAAAOAAAAAQAAA+kAAAPtAAAAAAAAAAM=",
             "AAAAAAAAAAAAAAARdHdhcF9tZWRpYW5fcHJpY2UAAAAAAAACAAAAAAAAAAVhc3NldAAAAAAAABMAAAAAAAAABmFtb3VudAAAAAAACwAAAAEAAAPpAAAACwAAAAM=",
+            "AAAAAAAAAAAAAAAHYmFsYW5jZQAAAAACAAAAAAAAAAJpZAAAAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAQAAAAs=",
             "AAAAAQAAAAAAAAAAAAAACUxvYW5Bc3NldAAAAAAAAAQAAAAAAAAABmFtb3VudAAAAAAACwAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAZib3Jyb3cAAAAAAAEAAAAAAAAAB3ByZW1pdW0AAAAACw==",
             "AAAAAQAAAAAAAAAAAAAAD0FjY291bnRQb3NpdGlvbgAAAAADAAAAAAAAAARkZWJ0AAAACwAAAAAAAAAVZGlzY291bnRlZF9jb2xsYXRlcmFsAAAAAAAACwAAAAAAAAADbnB2AAAAAAs=",
             "AAAAAQAAAAAAAAAAAAAADEFzc2V0QmFsYW5jZQAAAAIAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAHYmFsYW5jZQAAAAAL",
@@ -305,7 +306,8 @@ class Contract {
             if (result instanceof assembled_tx_js_1.Err)
                 return result;
             return new assembled_tx_js_1.Ok(this.spec.funcResToNative("twap_median_price", result));
-        }
+        },
+        balance: (result) => this.spec.funcResToNative("balance", result)
     };
     txFromJSON = (json) => {
         const { method, ...tx } = JSON.parse(json);
@@ -356,7 +358,8 @@ class Contract {
         setFlashLoanFee: (this.txFromJSON),
         flashLoanFee: (this.txFromJSON),
         flashLoan: (this.txFromJSON),
-        twapMedianPrice: (this.txFromJSON)
+        twapMedianPrice: (this.txFromJSON),
+        balance: (this.txFromJSON)
     };
     /**
 * Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -889,6 +892,19 @@ class Contract {
             ...this.options,
             errorTypes: exports.Errors,
             parseResultXdr: this.parsers['twapMedianPrice'],
+        });
+    };
+    /**
+* Construct and simulate a balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+*/
+    balance = async ({ id, asset }, options = {}) => {
+        return await assembled_tx_js_1.AssembledTransaction.fromSimulation({
+            method: 'balance',
+            args: this.spec.funcArgsToScVals("balance", { id: new stellar_sdk_1.Address(id), asset: new stellar_sdk_1.Address(asset) }),
+            ...options,
+            ...this.options,
+            errorTypes: exports.Errors,
+            parseResultXdr: this.parsers['balance'],
         });
     };
 }
