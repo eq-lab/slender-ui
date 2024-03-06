@@ -29,8 +29,8 @@ interface NetworkDetails {
 }
 
 export const NETWORK_DETAILS: NetworkDetails = {
-  networkName: NETWORK_NAME.FUTURENET,
-  networkUrl: NETWORK_URL.FUTURENET,
-  networkPassphrase: NETWORK_PASSPHRASE.FUTURENET,
-  rpcUrl: SOROBAN_RPC_URL.FUTURENET,
+  networkName: NETWORK_NAME.TESTNET,
+  networkUrl: NETWORK_URL.TESTNET,
+  networkPassphrase: NETWORK_PASSPHRASE.TESTNET,
+  rpcUrl: SOROBAN_RPC_URL.TESTNET,
 };

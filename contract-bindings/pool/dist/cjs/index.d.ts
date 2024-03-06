@@ -7,9 +7,9 @@ import type { ClassOptions } from './method-options.js';
 export * from './assembled-tx.js';
 export * from './method-options.js';
 export declare const networks: {
-    readonly futurenet: {
-        readonly networkPassphrase: "Test SDF Future Network ; October 2022";
-        readonly contractId: "CBUN7Z2OU3W7O5G6CRQW2J6V4CVLFSBWQPKD5NWIHGRYRT6N6TUQM2YI";
+    readonly testnet: {
+        readonly networkPassphrase: "Test SDF Network ; September 2015";
+        readonly contractId: "CC2XUP23MLB6SM3F5DKR4XSNMR3O5QY66ZHPYFSVWFAHOZYP6RBMYVTK";
     };
 };
 /**
