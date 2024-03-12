@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import TypographyUi from '@marginly/ui/components/typography';
 
 export const PositionWrapper = styled.section`
-  margin: 64px 0 128px;
+  margin: 48px 0 128px;
 `;
 
 export const PositionHeaderWrapper = styled.section`
