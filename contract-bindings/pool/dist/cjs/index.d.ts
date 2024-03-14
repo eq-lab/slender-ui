@@ -9,7 +9,7 @@ export * from './method-options.js';
 export declare const networks: {
     readonly testnet: {
         readonly networkPassphrase: "Test SDF Network ; September 2015";
-        readonly contractId: "CC2XUP23MLB6SM3F5DKR4XSNMR3O5QY66ZHPYFSVWFAHOZYP6RBMYVTK";
+        readonly contractId: "CDHDJFJRKK2N44NCUC4C2G56T5SQ5SVRVGSIT4XE4CJIEAESPFVOHYUY";
     };
 };
 /**
@@ -364,6 +364,10 @@ export interface PriceFeed {
     /**
       
       */
+    timestamp_precision: TimestampPrecision;
+    /**
+      
+      */
     twap_records: u32;
 }
 /**
@@ -471,6 +475,16 @@ export type ReserveType = {
     values: readonly [string, string];
 } | {
     tag: "RWA";
+    values: void;
+};
+/**
+    
+    */
+export type TimestampPrecision = {
+    tag: "Msec";
+    values: void;
+} | {
+    tag: "Sec";
     values: void;
 };
 /**
