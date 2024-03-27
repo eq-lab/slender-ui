@@ -7,9 +7,9 @@ import type { ClassOptions } from './method-options.js';
 export * from './assembled-tx.js';
 export * from './method-options.js';
 export declare const networks: {
-    readonly testnet: {
-        readonly networkPassphrase: "Test SDF Network ; September 2015";
-        readonly contractId: "CDHDJFJRKK2N44NCUC4C2G56T5SQ5SVRVGSIT4XE4CJIEAESPFVOHYUY";
+    readonly unknown: {
+        readonly networkPassphrase: "Public Global Stellar Network ; September 2015";
+        readonly contractId: "CD7HT7MRX7AKX3Q5BXSF37NERHDILQOR6BNN26NDDR2LRULEMGZGNAJT";
     };
 };
 /**

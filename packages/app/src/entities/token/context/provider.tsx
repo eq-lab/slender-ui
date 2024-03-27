@@ -42,7 +42,7 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
           invoke<u32>('decimals'),
         ];
       }, []);
-      const poolInvoke = makeInvoke(networks.testnet.contractId);
+      const poolInvoke = makeInvoke(networks.unknown.contractId);
       const marketTxs = CACHED_POOL_ADDRESSES.map((asset) =>
         poolInvoke<ReserveData>('get_reserve', [addressToScVal(asset)]),
       );
