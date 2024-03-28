@@ -16,7 +16,7 @@ const WITH_TO: PoolMethodName = 'withdraw';
 
 export const useSubmit = (methodName: PoolMethodName) => {
   const makeInvoke = useMakeInvoke();
-  const invoke = makeInvoke(networks.testnet.contractId);
+  const invoke = makeInvoke(networks.unknown.contractId);
   const getTokenByTokenName = useGetTokenByTokenName();
 
   const runLiquidityBinding = async ({

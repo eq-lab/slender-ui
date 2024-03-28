@@ -17,6 +17,8 @@ enum NETWORK_PASSPHRASE {
 }
 
 const SOROBAN_RPC_URL = {
+  PUBLIC:
+    'https://mainnet.stellar.validationcloud.io/v1/axt6y1emcT4E56HTwpP2HWdwY_jV2xLAX3wZDEpDxbQ',
   TESTNET: 'https://soroban-testnet.stellar.org',
   FUTURENET: 'https://rpc-futurenet.stellar.org',
 };
@@ -29,8 +31,8 @@ interface NetworkDetails {
 }
 
 export const NETWORK_DETAILS: NetworkDetails = {
-  networkName: NETWORK_NAME.TESTNET,
-  networkUrl: NETWORK_URL.TESTNET,
-  networkPassphrase: NETWORK_PASSPHRASE.TESTNET,
-  rpcUrl: SOROBAN_RPC_URL.TESTNET,
+  networkName: NETWORK_NAME.PUBLIC,
+  networkUrl: NETWORK_URL.PUBLIC,
+  networkPassphrase: NETWORK_PASSPHRASE.PUBLIC,
+  rpcUrl: SOROBAN_RPC_URL.PUBLIC,
 };

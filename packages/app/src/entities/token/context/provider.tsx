@@ -42,7 +42,7 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
           invoke<u32>('decimals'),
         ];
       }, []);
-      const poolInvoke = makeInvoke(networks.testnet.contractId);
+      const poolInvoke = makeInvoke(networks.unknown.contractId);
       const marketTxs = CACHED_POOL_ADDRESSES.map((asset) =>
         poolInvoke<ReserveData>('get_reserve', [addressToScVal(asset)]),
       );
@@ -54,10 +54,11 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
       const newCachedTokens = CACHED_TOKEN_ADDRESSES.reduce<CachedTokens>(
         (cached, tokenAddress) => {
           const title = restValues.shift() as string;
+
           const symbol = restValues.shift() as string;
           const decimals = restValues.shift() as number;
           cached[tokenAddress] = {
-            title: title === NATIVE_ID ? NATIVE_TITLE : title,
+            title: title === NATIVE_ID ? NATIVE_TITLE : title.replace(/:.+/, ''),
             symbol: symbol === NATIVE_ID ? NATIVE_SYMBOL : symbol,
             decimals,
           };

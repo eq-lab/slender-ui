@@ -32,7 +32,7 @@ export function useCoefficients(): TokenCoefficients | undefined {
 
   useEffect(() => {
     (async () => {
-      const invoke = makeInvoke(networks.testnet.contractId);
+      const invoke = makeInvoke(networks.unknown.contractId);
       const collateralPromises = SUPPORTED_TOKEN_NAMES.map((tokenName) =>
         invoke<i128>('collat_coeff', getArgFromTokenName(tokenName)),
       );

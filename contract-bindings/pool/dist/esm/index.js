@@ -8,9 +8,9 @@ if (typeof window !== 'undefined') {
     window.Buffer = window.Buffer || Buffer;
 }
 export const networks = {
-    testnet: {
-        networkPassphrase: "Test SDF Network ; September 2015",
-        contractId: "CDHDJFJRKK2N44NCUC4C2G56T5SQ5SVRVGSIT4XE4CJIEAESPFVOHYUY",
+    unknown: {
+        networkPassphrase: "Public Global Stellar Network ; September 2015",
+        contractId: "CD7HT7MRX7AKX3Q5BXSF37NERHDILQOR6BNN26NDDR2LRULEMGZGNAJT",
     }
 };
 /**
