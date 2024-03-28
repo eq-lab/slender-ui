@@ -17,7 +17,8 @@ enum NETWORK_PASSPHRASE {
 }
 
 const SOROBAN_RPC_URL = {
-  PUBLIC: 'https://rpc.eu-central-1.gateway.fm/v4/soroban/non-archival/mainnet',
+  PUBLIC:
+    'https://mainnet.stellar.validationcloud.io/v1/axt6y1emcT4E56HTwpP2HWdwY_jV2xLAX3wZDEpDxbQ',
   TESTNET: 'https://soroban-testnet.stellar.org',
   FUTURENET: 'https://rpc-futurenet.stellar.org',
 };
