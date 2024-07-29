@@ -31,8 +31,8 @@ interface NetworkDetails {
 }
 
 export const NETWORK_DETAILS: NetworkDetails = {
-  networkName: NETWORK_NAME.PUBLIC,
-  networkUrl: NETWORK_URL.PUBLIC,
-  networkPassphrase: NETWORK_PASSPHRASE.PUBLIC,
-  rpcUrl: SOROBAN_RPC_URL.PUBLIC,
+  networkName: NETWORK_NAME.TESTNET,
+  networkUrl: NETWORK_URL.TESTNET,
+  networkPassphrase: NETWORK_PASSPHRASE.TESTNET,
+  rpcUrl: SOROBAN_RPC_URL.TESTNET,
 };

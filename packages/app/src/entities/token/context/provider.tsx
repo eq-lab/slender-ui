@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { networks, ReserveData, u32 } from '@bindings/pool';
+import { networks, ReserveData } from '@bindings/pool';
+import { u32 } from '@stellar/stellar-sdk/lib/contract';
 import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke';
 import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens';
 import { addressToScVal } from '@/shared/stellar/encoders';
@@ -42,7 +43,7 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
           invoke<u32>('decimals'),
         ];
       }, []);
-      const poolInvoke = makeInvoke(networks.unknown.contractId);
+      const poolInvoke = makeInvoke(networks.testnet.contractId);
       const marketTxs = CACHED_POOL_ADDRESSES.map((asset) =>
         poolInvoke<ReserveData>('get_reserve', [addressToScVal(asset)]),
       );
