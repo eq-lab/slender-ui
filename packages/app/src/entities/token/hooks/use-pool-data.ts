@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { networks, i128, ReserveData } from '@bindings/pool';
+import { networks, ReserveData } from '@bindings/pool';
+import { i128 } from '@stellar/stellar-sdk/lib/contract';
 import { TokenAddress } from '@/shared/stellar/constants/tokens';
 import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke';
 import { addressToScVal } from '@/shared/stellar/encoders';
@@ -24,7 +25,7 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
 
   useEffect(() => {
     (async () => {
-      const invoke = makeInvoke(networks.unknown.contractId);
+      const invoke = makeInvoke(networks.testnet.contractId);
       const assetArg = [addressToScVal(tokenAddress)];
       const [poolReserve, collateralCoefficient, debtCoefficient] = await Promise.all([
         invoke<ReserveData>('get_reserve', assetArg),

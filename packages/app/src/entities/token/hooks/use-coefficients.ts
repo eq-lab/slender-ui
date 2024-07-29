@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { i128, networks } from '@bindings/pool';
+import { networks } from '@bindings/pool';
+import { i128 } from '@stellar/stellar-sdk/lib/contract';
 import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke';
 import { addressToScVal } from '@/shared/stellar/encoders';
 import BigNumber from 'bignumber.js';
@@ -32,7 +33,7 @@ export function useCoefficients(): TokenCoefficients | undefined {
 
   useEffect(() => {
     (async () => {
-      const invoke = makeInvoke(networks.unknown.contractId);
+      const invoke = makeInvoke(networks.testnet.contractId);
       const collateralPromises = SUPPORTED_TOKEN_NAMES.map((tokenName) =>
         invoke<i128>('collat_coeff', getArgFromTokenName(tokenName)),
       );

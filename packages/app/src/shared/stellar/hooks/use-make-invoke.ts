@@ -6,8 +6,9 @@ import { WalletContext } from '@/shared/contexts/wallet';
 import { useCallback } from 'react';
 import { server } from '@/shared/stellar/server';
 import { scValToJs } from '@/shared/stellar/decoders';
-import { Tx, Wallet } from '@bindings/pool';
+import { Wallet } from '@bindings/pool/src/method-options';
 import { logError } from '@/shared/logger';
+import { Tx } from '@stellar/stellar-sdk/lib/contract';
 import { NETWORK_DETAILS } from '../constants/networks';
 import { parseMetaXdrToJs } from './parse-result-xdr';
 
