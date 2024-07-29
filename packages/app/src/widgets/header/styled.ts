@@ -1,6 +1,7 @@
 'use client';
 
 import styled from 'styled-components';
+import LabelUnstyled from '@marginly/ui/components/label';
 
 export const Wrapper = styled.div`
   position: fixed;
@@ -22,4 +23,10 @@ export const Inner = styled.div`
   justify-content: space-between;
   border-radius: 12px;
   background: var(--fill-secondary);
+`;
+
+export const Label = styled(LabelUnstyled)`
+  &&& {
+    padding: 12px 8px;
+  }
 `;
