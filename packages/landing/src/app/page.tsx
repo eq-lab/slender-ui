@@ -44,12 +44,6 @@ import { PostOrPage } from '@tryghost/content-api';
 //   };
 // }
 
-// const api = new GhostContentAPI({
-//   url: 'https://marginly.ghost.io',
-//   key: '058e253a4681b854b7163ee0e6',
-//   version: 'v5.0',
-//   makeRequest,
-// });
 // const POSTS_LIMIT = 100;
 const POSTS_WITH_ALLOWED_TAG_AMOUNT = 3;
 
