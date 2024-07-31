@@ -31,9 +31,9 @@ if (typeof window !== 'undefined') {
 
 
 export const networks = {
-  testnet: {
-    networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CBQ2YPEPMH2JB5IX53NZVKJXPT3VGLOKME3XSX7MPXRPLVMHF5W4RYTR",
+  unknown: {
+    networkPassphrase: "Public Global Stellar Network ; September 2015",
+    contractId: "CAUE3RVG6QPXZJHHI6VW24SCCRA2DIYEDAAPSUGZ2PRPCF6EM74U3CUU",
   }
 } as const
 
@@ -94,36 +94,65 @@ pen_order: u32;
 }
 
 export const Errors = {
-  0: {message:""},
-  1: {message:""},
-  2: {message:""},
-  3: {message:""},
-  4: {message:""},
-  5: {message:""},
-  100: {message:""},
-  101: {message:""},
-  102: {message:""},
-  103: {message:""},
-  104: {message:""},
-  105: {message:""},
-  200: {message:""},
-  201: {message:""},
-  300: {message:""},
-  301: {message:""},
-  302: {message:""},
-  303: {message:""},
-  304: {message:""},
-  305: {message:""},
-  306: {message:""},
-  307: {message:""},
-  400: {message:""},
-  401: {message:""},
-  402: {message:""},
-  403: {message:""},
-  404: {message:""},
-  500: {message:""},
-  501: {message:""},
-  502: {message:""}
+  0: {message:"AlreadyInitialized"},
+
+  1: {message:"Uninitialized"},
+
+  2: {message:"Paused"},
+
+  3: {message:"BellowMinValue"},
+
+  4: {message:"ExceededMaxValue"},
+
+  5: {message:"GracePeriod"},
+
+  100: {message:"NoActiveReserve"},
+
+  101: {message:"ReservesMaxCapacityExceeded"},
+
+  102: {message:"NoPriceForAsset"},
+
+  103: {message:"InvalidAssetPrice"},
+
+  104: {message:"LiquidationOrderMustBeUnique"},
+
+  105: {message:"NotFungible"},
+
+  200: {message:"NotEnoughAvailableUserBalance"},
+
+  201: {message:"DebtError"},
+
+  300: {message:"BorrowingDisabled"},
+
+  301: {message:"GoodPosition"},
+
+  302: {message:"InvalidAmount"},
+
+  303: {message:"ValidateBorrowMathError"},
+
+  304: {message:"CalcAccountDataMathError"},
+
+  305: {message:"LiquidateMathError"},
+
+  306: {message:"MustNotBeInCollateralAsset"},
+
+  307: {message:"FlashLoanReceiverError"},
+
+  400: {message:"MathOverflowError"},
+
+  401: {message:"MustBeLtePercentageFactor"},
+
+  402: {message:"MustBeLtPercentageFactor"},
+
+  403: {message:"MustBeGtPercentageFactor"},
+
+  404: {message:"MustBeNonNegative"},
+
+  500: {message:"AccruedRateMathError"},
+
+  501: {message:"CollateralCoeffMathError"},
+
+  502: {message:"DebtCoeffMathError"}
 }
 
 export interface FlashLoanAsset {
@@ -238,7 +267,7 @@ export interface TokenMetadata {
 
 export interface Client {
   /**
-   * Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a initialize transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Initializes the Stoken contract.
    * 
    * # Arguments
@@ -313,7 +342,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<u32>>
 
   /**
-   * Construct and simulate a allowance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a allowance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns the amount of tokens that the `spender` is allowed to withdraw from the `from` address.
    * 
    * # Arguments
@@ -344,7 +373,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<i128>>
 
   /**
-   * Construct and simulate a approve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a approve transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Set the allowance for a spender to withdraw from the `from` address by a specified amount of tokens.
    * 
    * # Arguments
@@ -379,7 +408,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns the balance of tokens for a specified `id`.
    * 
    * # Arguments
@@ -409,7 +438,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<i128>>
 
   /**
-   * Construct and simulate a spendable_balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a spendable_balance transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns the spendable balance of tokens for a specified id.
    * 
    * # Arguments
@@ -440,7 +469,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<i128>>
 
   /**
-   * Construct and simulate a authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Checks whether a specified `id` is authorized.
    * 
    * # Arguments
@@ -469,7 +498,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<boolean>>
 
   /**
-   * Construct and simulate a transfer transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a transfer transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Transfers a specified amount of tokens from one account (`from`) to another account (`to`).
    * 
    * # Arguments
@@ -502,7 +531,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a transfer_from transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a transfer_from transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Transfers a specified amount of tokens from the from account to the to account on behalf of the spender account.
    * 
    * # Arguments
@@ -557,7 +586,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a clawback transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a clawback transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Clawbacks a specified amount of tokens from the from account.
    * 
    * # Arguments
@@ -590,7 +619,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a set_authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a set_authorized transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Sets the authorization status for a specified `id`.
    * 
    * # Arguments
@@ -621,7 +650,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a mint transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a mint transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Mints a specified amount of tokens for a given `id` and returns total supply
    * 
    * # Arguments
@@ -653,7 +682,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a burn transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a burn transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Burns a specified amount of tokens from the from account and returns total supply
    * 
    * # Arguments
@@ -687,7 +716,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a decimals transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a decimals transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns the number of decimal places used by the token.
    * 
    * # Returns
@@ -713,7 +742,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<u32>>
 
   /**
-   * Construct and simulate a name transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a name transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns the name of the token.
    * 
    * # Returns
@@ -739,7 +768,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<string>>
 
   /**
-   * Construct and simulate a symbol transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a symbol transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns the symbol of the token.
    * 
    * # Returns
@@ -765,7 +794,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<string>>
 
   /**
-   * Construct and simulate a total_supply transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a total_supply transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Returns the total supply of tokens.
    * 
    * # Returns
@@ -791,7 +820,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<i128>>
 
   /**
-   * Construct and simulate a transfer_on_liquidation transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a transfer_on_liquidation transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Transfers tokens during a liquidation.
    * 
    * # Arguments
@@ -823,7 +852,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a transfer_underlying_to transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a transfer_underlying_to transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Transfers the underlying asset to the specified recipient.
    * 
    * # Arguments
@@ -855,7 +884,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<null>>
 
   /**
-   * Construct and simulate a underlying_asset transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a underlying_asset transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Retrieves the address of the underlying asset.
    * 
    * # Returns
@@ -881,7 +910,7 @@ export interface Client {
   }) => Promise<AssembledTransaction<string>>
 
   /**
-   * Construct and simulate a pool transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.   *
+   * Construct and simulate a pool transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Retrieves the address of the pool.
    * 
    * # Returns
