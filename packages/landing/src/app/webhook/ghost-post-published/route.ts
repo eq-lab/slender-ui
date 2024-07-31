@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { BLOG_TAG } from '@/global/constants';
 
-export const isError = (e: unknown): e is Error => !!e && Reflect.has(e, 'message');
+const isError = (e: unknown): e is Error => !!e && Reflect.has(e, 'message');
 
 export async function GET(req: NextRequest) {
   try {
