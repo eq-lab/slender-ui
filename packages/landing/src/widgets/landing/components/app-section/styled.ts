@@ -1,5 +1,4 @@
 import { styled } from 'styled-components';
-import { Button } from '../styled';
 
 const MOBILE_SIZE = '864px';
 
@@ -20,9 +19,14 @@ export const ScreenApp = styled.div`
   position: relative;
   aspect-ratio: 864/486;
   background: #fff;
-
   @media (min-width: ${MOBILE_SIZE}) {
-    &.hovered:before {
+    img {
+      transform: scale(1);
+      transition: transform 0.4s ease-out;
+    }
+    &::before {
+      transition: opacity 0.4s ease-out;
+      opacity: 0;
       content: '';
       z-index: 1;
       position: absolute;
@@ -30,6 +34,12 @@ export const ScreenApp = styled.div`
       height: 100%;
       background: var(--background-overlay, rgba(20, 16, 15, 0.8));
       backdrop-filter: blur(12px);
+    }
+    &.hovered:before {
+      opacity: 1;
+    }
+    &.hovered img {
+      transform: scale(1.1);
     }
   }
 `;
@@ -44,14 +54,15 @@ export const ProtocolRow = styled.div`
 
     > * {
       opacity: 0;
+      transition: opacity 0.4s ease-out;
     }
 
     &.hovered {
       > * {
         opacity: 1;
+        transition: opacity 0.4s ease-out;
       }
     }
-
     position: absolute;
     top: 25%;
     width: 100%;
@@ -109,18 +120,8 @@ export const Fund = styled.div`
   display: flex;
   gap: 8px;
   margin-top: 34px;
+  margin-bottom: 48px;
   span {
     color: var(--text-secondary, rgba(242, 237, 235, 0.48));
-  }
-`;
-export const AppButton = styled(Button)`
-  margin-top: 48px;
-  white-space: nowrap;
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-
-  &:hover {
-    background-color: var(--fill-elevated-hover, #faf8f7);
   }
 `;

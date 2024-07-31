@@ -25,7 +25,7 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
 
   useEffect(() => {
     (async () => {
-      const invoke = makeInvoke(networks.testnet.contractId);
+      const invoke = makeInvoke(networks.unknown.contractId);
       const assetArg = [addressToScVal(tokenAddress)];
       const [poolReserve, collateralCoefficient, debtCoefficient] = await Promise.all([
         invoke<ReserveData>('get_reserve', assetArg),

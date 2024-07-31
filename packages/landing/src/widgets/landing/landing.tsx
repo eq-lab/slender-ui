@@ -1,6 +1,13 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import { SubscriptionSection } from '@/widgets/landing/components/subscription-section/subscription-section';
+import Typography from '@marginly/ui/components/typography';
+import Button from '@marginly/ui/components/button';
+import NextLink from 'next/link';
+
+import { PostOrPage } from '@tryghost/content-api';
 import { ReactComponent as LogoIcon } from './images/logo.svg';
 import { ReactComponent as SugarIcon } from './images/sugar.svg';
 import { ReactComponent as NoSugarIcon } from './images/nosugar.svg';
@@ -8,7 +15,18 @@ import { ReactComponent as BarcodeIcon } from './images/barcode.svg';
 import decorImage from './images/decor.png';
 import bagImage from './images/bag.png';
 import endImage from './images/end.png';
+import auditBg from './images/audit-bg.png';
+
 import {
+  AuditBg,
+  AuditBgWrapper,
+  AuditLabel,
+  AuditLabelInner,
+  AuditSection,
+  BlogGrid,
+  BlogOverflow,
+  BlogSection,
+  BlogTitle,
   Header,
   HeaderButton,
   Launch,
@@ -25,16 +43,36 @@ import {
   SugarInner,
   Wrapper,
 } from './styled';
+
 import { Space } from './components/space';
 import { Container, Title } from './components/styled';
 import { AppSection } from './components/app-section/app-section';
 import { QuestionSection } from './components/question-section/question-section';
 import { Footer } from './components/footer/footer';
+import { AuditIcon } from './images/audit-icon';
+import BlockItem from './components/blog-item';
 
 const APP_LINK = 'https://app.slender.fi';
 const SUBSCRIPTION_ANCHOR = 'subscription';
 
-export function Landing() {
+interface Props {
+  posts?: PostOrPage[];
+}
+
+function ShowAllButton({ className }: { className?: string }) {
+  return (
+    <NextLink href="https://marginly.ghost.io/" target="_black" className={className}>
+      <Button text fullWidth lg>
+        <Typography action secondary>
+          Show All
+        </Typography>
+      </Button>
+    </NextLink>
+  );
+}
+
+export function Landing({ posts }: Props) {
+  const showPosts = false;
   return (
     <main id="top-anchor">
       <Wrapper>
@@ -70,7 +108,13 @@ export function Landing() {
             </Title>
           </h1>
 
-          <Space $height={96} $heightMobile={64} />
+          <Space $height={48} $heightMobile={48} />
+          <AuditLabel>
+            <AuditLabelInner>
+              <AuditIcon /> <span>Security Audit by Certora</span>
+            </AuditLabelInner>
+          </AuditLabel>
+          <Space $height={48} $heightMobile={48} />
 
           <AppSection appLink={APP_LINK} />
 
@@ -122,6 +166,30 @@ export function Landing() {
             </RatesAside>
           </RatesBox>
         </Container>
+        <Space $height={208} $heightMobile={150} />
+        <AuditBgWrapper>
+          <AuditBg>
+            <Image
+              src={auditBg}
+              alt=""
+              fill
+              style={{
+                objectFit: 'contain',
+                objectPosition: 'center',
+              }}
+            />
+          </AuditBg>
+          <Container>
+            <AuditSection>
+              <Typography title>Slender is robust and secure</Typography>
+              <a href="Slender_security_report_by_Certora.pdf" target="_blank" rel="nofollow">
+                <Button lg secondary icon={<AuditIcon />}>
+                  Audit Report
+                </Button>
+              </a>
+            </AuditSection>
+          </Container>
+        </AuditBgWrapper>
 
         <Launch id={SUBSCRIPTION_ANCHOR}>
           <LaunchBg>
@@ -137,8 +205,32 @@ export function Landing() {
           </LaunchBg>
           <SubscriptionSection />
         </Launch>
+        <Container>
+          <QuestionSection subscriptionAnchor={SUBSCRIPTION_ANCHOR} />
+        </Container>
+        {showPosts && (
+          <>
+            <Space $height={192} $heightMobile={128} />
+            <Container>
+              <BlogSection>
+                <BlogTitle>
+                  <Typography title>Latest articles</Typography>
+                  <ShowAllButton className="show-desktop" />
+                </BlogTitle>
 
-        <QuestionSection subscriptionAnchor={SUBSCRIPTION_ANCHOR} />
+                <Space $height={40} $heightMobile={40} />
+
+                <BlogOverflow>
+                  <BlogGrid>
+                    {posts?.map((post) => <BlockItem key={post.url} post={post} />)}
+                  </BlogGrid>
+                </BlogOverflow>
+
+                <ShowAllButton className="show-mobile" />
+              </BlogSection>
+            </Container>
+          </>
+        )}
 
         <Space $height={192} $heightMobile={128} />
 

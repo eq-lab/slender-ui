@@ -1,5 +1,5 @@
 import React from 'react';
-import '@/global/globals.css';
+import '@marginly/ui/styles/theme.css';
 import type { Metadata } from 'next';
 import { GlobalStyle } from '@/global/styles';
 import { StyledComponentsRegistry } from '@/global/styled-registry';
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <StyledComponentsRegistry>
-      <html lang="en">
+      <html lang="en" data-theme="dark">
         <head>
           <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
           <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />

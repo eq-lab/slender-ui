@@ -5,7 +5,6 @@ import { Title } from '../styled';
 
 export const Wrapper = styled.div`
   position: relative;
-  margin: 0 24px;
 
   ${Title} {
     margin: 16px 0 80px;
@@ -22,6 +21,5 @@ export const Wrapper = styled.div`
     display: grid;
     grid-template-columns: 500px 1fr;
     gap: 64px;
-    margin: 0 88px;
   }
 `;
