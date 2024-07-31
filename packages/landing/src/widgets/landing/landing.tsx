@@ -56,7 +56,7 @@ const APP_LINK = 'https://app.slender.fi';
 const SUBSCRIPTION_ANCHOR = 'subscription';
 
 interface Props {
-  posts: PostOrPage[];
+  posts?: PostOrPage[];
 }
 
 function ShowAllButton({ className }: { className?: string }) {
