@@ -2,10 +2,11 @@
 
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import cn from 'classnames';
+import Button from '@marginly/ui/components/button';
 import { sendEmail } from './api';
 import { Space } from '../space';
 import { ReactComponent as EmailIcon } from '../../images/email.svg';
-import { Button, Container, Form, InputBox, InputLabel, Title } from '../styled';
+import { Container, Form, InputBox, InputLabel, Title } from '../styled';
 
 export function SubscriptionSection() {
   const [email, setEmail] = useState('');
@@ -57,10 +58,12 @@ export function SubscriptionSection() {
             <input value={email} className="input" onChange={handleEmailChange} />
           </InputBox>
 
-          <Button type="submit">Subscribe</Button>
+          <Button lg fit>
+            Subscribe
+          </Button>
         </Form>
       )}
-      <Space $height={192} $heightMobile={192} />
+      <Space $height={192} $heightMobile={144} />
     </Container>
   );
 }

@@ -249,3 +249,177 @@ export const LaunchBg = styled.div`
     left: 0;
   }
 `;
+
+export const AuditLabelInner = styled.div`
+  display: flex;
+  gap: 4px;
+  span {
+    color: #f2edeb7a;
+  }
+`;
+
+export const AuditLabel = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+export const AuditSection = styled.div`
+  && {
+    p {
+      max-width: 330px;
+      font-weight: normal;
+      line-height: 72px;
+      margin-bottom: 64px;
+    }
+    @media (min-width: 1024px) {
+      max-width: 480px;
+    }
+  }
+`;
+
+export const AuditBg = styled.div`
+  position: absolute;
+  width: 366px;
+  height: 216px;
+  top: -170px;
+  right: 0px;
+  object-fit: contain;
+  object-position: center;
+  @media (min-width: 1024px) {
+    top: -210px;
+    height: 544px;
+    width: 923px;
+  }
+`;
+
+export const AuditBgWrapper = styled.div`
+  position: relative;
+`;
+
+export const BlogTitle = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0;
+  .secondary {
+    white-space: nowrap;
+  }
+  @media (max-width: 1023px) {
+    padding: 0 16px;
+    align-items: center;
+    a {
+      margin-top: -34px;
+    }
+  }
+  && {
+    .title {
+      font-weight: normal;
+    }
+  }
+`;
+
+export const BlogOverflow = styled.div`
+  @media (max-width: 1023px) {
+    padding: 0 16px 16px;
+    overflow: scroll;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    scrollbar-color: transparent;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 0 !important;
+      height: 0 !important;
+      display: none !important;
+      opacity: 0;
+      background-color: transparent;
+    }
+
+    &::-moz-scrollbar {
+      width: 0 !important;
+      height: 0 !important;
+      display: none !important;
+      opacity: 0;
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar:horizontal {
+      width: 0 !important;
+      height: 0 !important;
+      display: none !important;
+      opacity: 0;
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      width: 0 !important;
+      height: 0 !important;
+      opacity: 0;
+      background: rgba(255, 255, 255, 0);
+      background-color: transparent;
+      display: none !important;
+    }
+    &::-webkit-scrollbar-track-piece {
+      width: 0 !important;
+      height: 0 !important;
+      opacity: 0;
+      background: rgba(255, 255, 255, 0);
+      background-color: transparent;
+      display: none !important;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: transparent;
+      opacity: 0;
+    }
+
+    &::-webkit-scrollbar-track {
+      opacity: 0;
+      background: transparent;
+      background-color: transparent;
+      width: 0 !important;
+      height: 0 !important;
+      display: none !important;
+    }
+  }
+`;
+
+export const BlogGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  @media (max-width: 1023px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    &::after {
+      content: ' ';
+      width: 16px;
+      display: block;
+    }
+  }
+`;
+
+export const BlogSection = styled.div`
+  padding: 26px 0 16px;
+  background: var(--background-secondary);
+  border-radius: 48px;
+  overflow: hidden;
+  .show-desktop {
+    display: none;
+  }
+  .show-mobile {
+    display: block;
+    padding: 0 16px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 48px;
+    .show-desktop {
+      display: block;
+    }
+    .show-mobile {
+      display: none;
+    }
+  }
+`;

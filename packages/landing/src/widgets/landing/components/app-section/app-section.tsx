@@ -4,12 +4,13 @@ import Image from 'next/image';
 import React from 'react';
 import { ReactComponent as LogoSlenderIcon } from '@slender/shared/icons/logo/slender.svg';
 import cn from 'classnames';
+import Button from '@marginly/ui/components/button';
 import { ReactComponent as StellarIcon } from '../../images/stellar.svg';
 import { ReactComponent as FundIcon } from '../../images/fund.svg';
 import screenAppImage from './screenapp.png';
 import screenAppMobileImage from './screenapp-mobile.png';
+
 import {
-  AppButton,
   Fund,
   MobileWrapper,
   Protocol,
@@ -48,10 +49,10 @@ export function AppSection({ appLink }: { appLink: string }) {
               <FundIcon /> <span>Supported by Stellar Community Fund</span>
             </Fund>
             <a href={appLink}>
-              <AppButton>
+              <Button lg>
                 <LogoSlenderIcon width={24} />
                 Enter App
-              </AppButton>
+              </Button>
             </a>
           </ProtocolRow>
         </ScreenApp>
