@@ -43,28 +43,34 @@ export const useGetBalance = (
       }
       const balanceTxParams = [addressToScVal(userAddress)];
 
-      try {
-        const balances: SorobanTokenRecord[] = (
-          await Promise.all(
-            tokenAddresses.map((tokenAddress) => {
-              const invoke = makeInvoke(tokenAddress);
-              return invoke<string>('balance', balanceTxParams);
-            }),
-          )
-        ).map((balance, index) => {
-          const tokenCache =
-            tokensCache?.[tokenAddresses[index] as TokenAddress] ?? defaultTokenRecord;
-          return {
-            balance: BigNumber(balance ?? 0).div(10 ** tokenCache.decimals),
-            ...tokenCache,
-          };
-        });
-        setBalanceInfo(balances);
-        setFetchedStatus(true);
-      } catch (error) {
-        setBalanceInfo([]);
-        setFetchedStatus(false);
-      }
+      const balances: SorobanTokenRecord[] = await Promise.all(
+        tokenAddresses.map(async (tokenAddress) => {
+          try {
+            console.log('tokenAddress', tokenAddress);
+
+            const invoke = makeInvoke(tokenAddress);
+            const balance = await invoke<string>('balance', balanceTxParams);
+
+            const tokenCache = tokensCache?.[tokenAddress as TokenAddress] ?? defaultTokenRecord;
+
+            return {
+              balance: BigNumber(balance ?? 0).div(10 ** tokenCache.decimals),
+              ...tokenCache,
+            };
+          } catch (error) {
+            console.error(`Error fetching balance for tokenAddress ${tokenAddress}`, error);
+            const tokenCache = tokensCache?.[tokenAddress as TokenAddress] ?? defaultTokenRecord;
+            return {
+              balance: BigNumber(0),
+              ...tokenCache,
+            };
+          }
+        }),
+      );
+
+      console.log('2');
+      setBalanceInfo(balances);
+      setFetchedStatus(true);
     }
     if (
       !isArraysEqual(tokenAddresses, previousTokenAddresses.current) ||
