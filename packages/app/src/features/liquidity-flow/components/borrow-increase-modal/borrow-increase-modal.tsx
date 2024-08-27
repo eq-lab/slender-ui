@@ -96,7 +96,10 @@ export function BorrowIncreaseModal({
   const coreInputError = Number(value) > coreInputMax;
   const extraInputError = Number(extraValue) > (extraInputMax || 0);
 
-  const formError =
+  const isMinimumDebtRequired = depositSumUsd >= 10;
+
+  const isButtonDisabled =
+    !isMinimumDebtRequired ||
     borrowCapacityError ||
     coreInputError ||
     extraInputError ||
@@ -157,7 +160,7 @@ export function BorrowIncreaseModal({
         buttonProps={{
           label: `Borrow`,
           onClick: () => onSend(getSaveData()),
-          disabled: formError,
+          disabled: isButtonDisabled,
         }}
       >
         <InputLayout>

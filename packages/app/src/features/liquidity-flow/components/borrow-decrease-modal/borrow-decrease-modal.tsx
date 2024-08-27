@@ -45,12 +45,18 @@ export function BorrowDecreaseModal({
 
   const debtError = Number(debt) < Math.floor(+value);
 
-  const formError = debtError || getRequiredError({ value, valueDecimals: tokenInfo.decimals });
+  const isDebtMinimumRequired = actualDebtUsd > 10 || actualDebtUsd === 0;
+
+  const isButtonDisabled =
+    !isDebtMinimumRequired ||
+    debtError ||
+    getRequiredError({ value, valueDecimals: tokenInfo.decimals });
 
   const getTokenByTokenName = useGetTokenByTokenName();
   const token = getTokenByTokenName(tokenName);
   const sendValue = makePosition(tokenName, value);
   const tokenSymbol = token?.symbol;
+  console.log('geg', actualDebtUsd);
 
   return (
     <LiquidityModal
@@ -73,7 +79,7 @@ export function BorrowDecreaseModal({
         buttonProps={{
           label: `Pay off ${formatCompactCryptoCurrency(value)} ${tokenSymbol}`,
           onClick: () => onSend(sendValue),
-          disabled: formError,
+          disabled: isButtonDisabled,
         }}
       >
         <TokenSuperField
