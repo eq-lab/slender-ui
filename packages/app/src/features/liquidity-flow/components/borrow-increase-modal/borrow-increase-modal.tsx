@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/tokens';
 import { useAvailableToBorrow } from '@/entities/token/hooks/use-available-to-borrow';
+import { useContextSelector } from 'use-context-selector';
+import { CurrencyRatesContext } from '@/entities/currency-rates/context/context';
 import { PositionSummary } from '@/entities/position/components/position-summary';
 import cn from 'classnames';
 import { Error } from '@marginly/ui/constants/classnames';
@@ -43,10 +45,6 @@ export function BorrowIncreaseModal({
 
   const [coreDebtTokenName, setCoreDebtTokenName] = useState<SupportedTokenName>(tokenName);
   const [showExtraInput, setShowExtraInput] = useState(false);
-
-  useEffect(() => {
-    setCoreDebtTokenName(tokenName);
-  }, [tokenName]);
 
   const extraDebtTokenName = getExtraTokenName(debtTokenNames, coreDebtTokenName);
 
@@ -96,10 +94,28 @@ export function BorrowIncreaseModal({
   const coreInputError = Number(value) > coreInputMax;
   const extraInputError = Number(extraValue) > (extraInputMax || 0);
 
-  const isMinimumDebtRequired = depositSumUsd >= 10;
+  const getTokenByTokenName = useGetTokenByTokenName();
+  const coreToken = getTokenByTokenName(coreDebtTokenName);
+  const coreTokenSymbol = coreToken?.symbol;
+  const extraToken = getTokenByTokenName(extraDebtTokenName);
+  const extraTokenSymbol = extraToken?.symbol;
+
+  const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates);
+  const minimumRequired = currencyRates ? Number(currencyRates[tokenName.toUpperCase()]) * 10 : 0;
+
+  const extraMinimumRequired = currencyRates
+    ? Number(currencyRates[extraTokenSymbol?.toUpperCase() || '']) * 10
+    : 0;
+
+  const isDebtBiggerThanMinimum = Number(value) >= minimumRequired;
+
+  const isExtraDebtBiggerThanMinimum = showExtraInput
+    ? Number(extraValue) >= extraMinimumRequired
+    : true;
 
   const isButtonDisabled =
-    !isMinimumDebtRequired ||
+    !isExtraDebtBiggerThanMinimum ||
+    !isDebtBiggerThanMinimum ||
     borrowCapacityError ||
     coreInputError ||
     extraInputError ||
@@ -110,12 +126,6 @@ export function BorrowIncreaseModal({
       extraValue,
       extraValueDecimals: extraDebtInfo.decimals,
     });
-
-  const getTokenByTokenName = useGetTokenByTokenName();
-  const coreToken = getTokenByTokenName(coreDebtTokenName);
-  const coreTokenSymbol = coreToken?.symbol;
-  const extraToken = getTokenByTokenName(extraDebtTokenName);
-  const extraTokenSymbol = extraToken?.symbol;
 
   const getSaveData = (): PositionUpdate => {
     const core = {
@@ -137,6 +147,10 @@ export function BorrowIncreaseModal({
     : `${formatCompactCryptoCurrency(
         coreAvailableToBorrow,
       )} ${coreTokenSymbol} available to borrow`;
+
+  useEffect(() => {
+    setCoreDebtTokenName(tokenName);
+  }, [tokenName]);
 
   return (
     <LiquidityModal
@@ -168,7 +182,7 @@ export function BorrowIncreaseModal({
             initFocus
             onChange={setValue}
             value={value}
-            title="To borrow"
+            title={minimumRequired ? `Min ${minimumRequired.toFixed(2)} to borrow` : 'To borrow'}
             badgeValue={String(coreInputMax)}
             tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
@@ -192,7 +206,11 @@ export function BorrowIncreaseModal({
           <TokenSuperField
             onChange={setExtraValue}
             value={extraValue}
-            title="To borrow"
+            title={
+              extraMinimumRequired
+                ? `Min ${extraMinimumRequired.toFixed(2)} to borrow`
+                : 'To borrow'
+            }
             badgeValue={String(extraInputMax)}
             tokenSymbol={extraTokenSymbol}
             className={cn(extraInputError && Error)}

@@ -6,6 +6,8 @@ import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-
 import BigNumber from 'bignumber.js';
 import { TokenSuperField } from '@/shared/components/token-super-field';
 import { formatCompactCryptoCurrency } from '@/shared/formatters';
+import { useContextSelector } from 'use-context-selector';
+import { CurrencyRatesContext } from '@/entities/currency-rates/context/context';
 import { useTokenInfo } from '../../hooks/use-token-info';
 import { LiquidityModal } from '../modal/liquidity-modal';
 import { getPositionInfo } from '../../utils/get-position-info';
@@ -33,6 +35,14 @@ export function BorrowDecreaseModal({
   const [value, setValue] = useState('');
 
   const tokenInfo = useTokenInfo(tokenName);
+  const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates);
+
+  const minimumRequired = currencyRates ? Number(currencyRates[tokenName.toUpperCase()]) * 10 : 0;
+
+  const maximumPart = debt.toNumber() - minimumRequired;
+
+  const isValidValue = Number(value) > minimumRequired || debt.toNumber() - Number(value) <= 0;
+
   const inputDebtUsd = Number(value) / tokenInfo.priceInUsd;
   const actualDebtUsd = Math.max(debtSumUsd - inputDebtUsd, 0);
 
@@ -87,7 +97,9 @@ export function BorrowDecreaseModal({
           onChange={setValue}
           tokenSymbol={tokenSymbol}
           value={value}
-          title="To pay off"
+          title={
+            maximumPart ? `Up to ${maximumPart.toFixed(2)} to pay off partially` : 'To pay off'
+          }
           badgeValue={debt.toString(10)}
         />
       </FormLayout>
