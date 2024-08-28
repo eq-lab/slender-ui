@@ -41,8 +41,6 @@ export function BorrowDecreaseModal({
 
   const maximumPart = debt.toNumber() - minimumRequired;
 
-  const isValidValue = Number(value) > minimumRequired || debt.toNumber() - Number(value) <= 0;
-
   const inputDebtUsd = Number(value) / tokenInfo.priceInUsd;
   const actualDebtUsd = Math.max(debtSumUsd - inputDebtUsd, 0);
 
@@ -55,7 +53,7 @@ export function BorrowDecreaseModal({
 
   const debtError = Number(debt) < Math.floor(+value);
 
-  const isDebtMinimumRequired = actualDebtUsd > 10 || actualDebtUsd === 0;
+  const isDebtMinimumRequired = actualDebtUsd >= 10 || actualDebtUsd === 0;
 
   const isButtonDisabled =
     !isDebtMinimumRequired ||
@@ -66,7 +64,6 @@ export function BorrowDecreaseModal({
   const token = getTokenByTokenName(tokenName);
   const sendValue = makePosition(tokenName, value);
   const tokenSymbol = token?.symbol;
-  console.log('geg', actualDebtUsd);
 
   return (
     <LiquidityModal
