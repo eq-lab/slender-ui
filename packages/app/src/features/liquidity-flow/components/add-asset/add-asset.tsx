@@ -13,17 +13,19 @@ interface Props {
 export function AddAsset({ onChange, excludedTokens, isDeposit }: Props) {
   const assetsInfo = useGetAssetsInfo(excludedTokens, isDeposit);
 
-  if (excludedTokens.length === 0) {
-    return null;
-  }
-  if (excludedTokens.length === 1) {
+  if (assetsInfo.length === 1) {
     return <AddAssetButton onClick={() => onChange(excludedTokens[0])} />;
   }
-  return (
-    <AssetSelect
-      onChange={onChange}
-      assetsInfo={assetsInfo}
-      tooltipText={isDeposit ? 'Collateral Asset' : 'Debt Asset'}
-    />
-  );
+
+  if (assetsInfo.length > 1) {
+    return (
+      <AssetSelect
+        onChange={onChange}
+        assetsInfo={assetsInfo}
+        tooltipText={isDeposit ? 'Collateral Asset' : 'Debt Asset'}
+      />
+    );
+  }
+
+  return null;
 }
