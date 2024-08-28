@@ -46,8 +46,6 @@ export const useGetBalance = (
       const balances: SorobanTokenRecord[] = await Promise.all(
         tokenAddresses.map(async (tokenAddress) => {
           try {
-            console.log('tokenAddress', tokenAddress);
-
             const invoke = makeInvoke(tokenAddress);
             const balance = await invoke<string>('balance', balanceTxParams);
 
@@ -58,6 +56,7 @@ export const useGetBalance = (
               ...tokenCache,
             };
           } catch (error) {
+            // eslint-disable-next-line no-console
             console.error(`Error fetching balance for tokenAddress ${tokenAddress}`, error);
             const tokenCache = tokensCache?.[tokenAddress as TokenAddress] ?? defaultTokenRecord;
             return {
@@ -68,7 +67,6 @@ export const useGetBalance = (
         }),
       );
 
-      console.log('2');
       setBalanceInfo(balances);
       setFetchedStatus(true);
     }

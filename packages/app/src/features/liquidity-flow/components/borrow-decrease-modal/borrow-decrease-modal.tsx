@@ -56,7 +56,6 @@ export function BorrowDecreaseModal({
   const token = getTokenByTokenName(tokenName);
   const sendValue = makePosition(tokenName, value);
   const tokenSymbol = token?.symbol;
-  console.log('geg', actualDebtUsd);
 
   return (
     <LiquidityModal
