@@ -19,7 +19,6 @@ export const Typography = styled(TypographyUi)`
 
 export const Inner = styled.div`
   display: grid;
-  min-height: 224px;
   grid-template-columns: 100%;
   gap: 32px;
   margin-bottom: 64px;
