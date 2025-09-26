@@ -1,5 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { SorobanRpc } from '@stellar/stellar-sdk';
+import { Api } from "@stellar/stellar-sdk/rpc";
 
 import { useContextSelector } from 'use-context-selector';
 import { WalletContext } from '@/shared/contexts/wallet';
@@ -9,6 +9,7 @@ import { scValToJs } from '@/shared/stellar/decoders';
 import { Wallet } from '@bindings/pool/src/method-options';
 import { logError } from '@/shared/logger';
 import { Tx } from '@stellar/stellar-sdk/lib/contract';
+import  * as wallet from '@stellar/freighter-api';
 import { NETWORK_DETAILS } from '../constants/networks';
 import { parseMetaXdrToJs } from './parse-result-xdr';
 
@@ -16,32 +17,33 @@ const FEE = '100';
 const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
 const ACCOUNT_SEQUENCE = '0';
 
-async function getAccount(wallet: Wallet): Promise<StellarSdk.Account | null> {
-  if (!(await wallet.isConnected()) || !(await wallet.isAllowed())) {
+async function getAccount(userWallet: Wallet): Promise<StellarSdk.Account | null> {
+  if (!(await userWallet.isConnected()) || !(await userWallet.isAllowed())) {
     return null;
   }
-  const { publicKey } = await wallet.getUserInfo();
-  if (!publicKey) {
+  const { address } = await userWallet.getAddress();
+  if (!address) {
     return null;
   }
-  return server.getAccount(publicKey);
+  return server.getAccount(address);
 }
 
-async function signTx(wallet: Wallet, tx: Tx, networkPassphrase: string): Promise<Tx> {
-  const signed = await wallet.signTransaction(tx.toXDR(), {
+async function signTx(userWallet: Wallet, tx: Tx, networkPassphrase: string): Promise<Tx> {
+  const signed = await userWallet.signTransaction(tx.toXDR(), {
     networkPassphrase,
   });
 
   return StellarSdk.TransactionBuilder.fromXDR(signed, networkPassphrase) as Tx;
 }
 
-type SendTx = SorobanRpc.Api.SendTransactionResponse;
-type GetTx = SorobanRpc.Api.GetTransactionResponse;
+type SendTx = Api.SendTransactionResponse;
+type GetTx = Api.GetTransactionResponse;
 
 async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
-  const sendTransactionResponse = await server.sendTransaction(tx);
+  const sendTransactionResponse = await server.submitAsyncTransaction(tx);
 
-  if (sendTransactionResponse.status !== 'PENDING' || secondsToWait === 0) {
+  // FIXME: Check available statuses
+  if (sendTransactionResponse.tx_status !== 'PENDING' || secondsToWait === 0) {
     return sendTransactionResponse;
   }
 
@@ -54,7 +56,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
 
   while (
     Date.now() < waitUntil &&
-    getTransactionResponse.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND
+    getTransactionResponse.status === Api.GetTransactionStatus.NOT_FOUND
   ) {
     // Wait a beat
     // eslint-disable-next-line no-await-in-loop,no-loop-func
@@ -67,7 +69,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
     getTransactionResponse = await server.getTransaction(sendTransactionResponse.hash);
   }
 
-  if (getTransactionResponse.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
+  if (getTransactionResponse.status === Api.GetTransactionStatus.NOT_FOUND) {
     logError(
       `Waited ${secondsToWait} seconds for transaction to complete, but it did not. Returning anyway. Check the transaction status manually. Info: ${JSON.stringify(
         sendTransactionResponse,
@@ -91,8 +93,6 @@ export function useMakeInvoke() {
         methodName: string,
         txParams: StellarSdk.xdr.ScVal[] = [],
       ): Promise<T | undefined> => {
-        const wallet = await import('@stellar/freighter-api');
-
         // getAccount gives an error if stellar account is not activated (does not have 1 XML)
         const walletAccount = await getAccount(wallet).catch(() => null);
 
@@ -107,7 +107,7 @@ export function useMakeInvoke() {
           .setTimeout(StellarSdk.TimeoutInfinite)
           .build();
         const simulated = await server.simulateTransaction(tx);
-        if (SorobanRpc.Api.isSimulationError(simulated)) {
+        if (Api.isSimulationError(simulated)) {
           throw new Error(simulated.error);
         } else if (!simulated.result) {
           throw new Error(`invalid simulation: no result in ${simulated}`);
@@ -124,11 +124,12 @@ export function useMakeInvoke() {
           throw new Error('Multiple auths not yet supported');
         }
 
+        // TODO: Maybe we should handle this case at UI? Render link to extension or smth like that
         if (!walletAccount) {
           throw new Error('Not connected to Freighter');
         }
 
-        const operation = SorobanRpc.assembleTransaction(tx, simulated).build();
+        const operation = Api.assembleTransaction(tx, simulated).build();
 
         tx = await signTx(wallet, operation, NETWORK_DETAILS.networkPassphrase);
 
@@ -136,7 +137,7 @@ export function useMakeInvoke() {
         // if `sendTx` awaited the inclusion of the tx in the ledger, it used
         // `getTransaction`, which has a `resultXdr` field
         if ('resultXdr' in raw) {
-          if (raw.status !== SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+          if (raw.status !== Api.GetTransactionStatus.SUCCESS) {
             throw new Error('Transaction submission failed! Returning full RPC response.');
           }
 
