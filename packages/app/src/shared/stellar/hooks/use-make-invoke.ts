@@ -1,5 +1,4 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { Api } from '@stellar/stellar-sdk/rpc';
 import { rpc as StellarRpc } from '@stellar/stellar-sdk';
 
 import { useContextSelector } from 'use-context-selector';
@@ -35,8 +34,8 @@ async function getAccount(userWallet: Wallet): Promise<StellarSdk.Account | null
   return server.getAccount(address);
 }
 
-type SendTx = Api.SendTransactionResponse;
-type GetTx = Api.GetTransactionResponse;
+type SendTx = StellarRpc.Api.SendTransactionResponse;
+type GetTx = StellarRpc.Api.GetTransactionResponse;
 
 async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
   const sendTransactionResponse = await server.sendTransaction(tx);
@@ -54,7 +53,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
 
   while (
     Date.now() < waitUntil &&
-    getTransactionResponse.status === Api.GetTransactionStatus.NOT_FOUND
+    getTransactionResponse.status === StellarRpc.Api.GetTransactionStatus.NOT_FOUND
   ) {
     // Wait a beat
     // eslint-disable-next-line no-await-in-loop,no-loop-func
@@ -67,7 +66,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
     getTransactionResponse = await server.getTransaction(sendTransactionResponse.hash);
   }
 
-  if (getTransactionResponse.status === Api.GetTransactionStatus.NOT_FOUND) {
+  if (getTransactionResponse.status === StellarRpc.Api.GetTransactionStatus.NOT_FOUND) {
     logError(
       `Waited ${secondsToWait} seconds for transaction to complete, but it did not. Returning anyway. Check the transaction status manually. Info: ${JSON.stringify(
         sendTransactionResponse,
@@ -109,7 +108,7 @@ export function useMakeInvoke() {
           .setTimeout(StellarSdk.TimeoutInfinite)
           .build();
         const simulated = await server.simulateTransaction(tx);
-        if (Api.isSimulationError(simulated)) {
+        if (StellarRpc.Api.isSimulationError(simulated)) {
           throw new Error(simulated.error);
         } else if (!simulated.result) {
           throw new Error(`invalid simulation: no result in ${simulated}`);
@@ -140,7 +139,7 @@ export function useMakeInvoke() {
         // if `sendTx` awaited the inclusion of the tx in the ledger, it used
         // `getTransaction`, which has a `resultXdr` field
         if ('resultXdr' in raw) {
-          if (raw.status !== Api.GetTransactionStatus.SUCCESS) {
+          if (raw.status !== StellarRpc.Api.GetTransactionStatus.SUCCESS) {
             throw new Error('Transaction submission failed! Returning full RPC response.');
           }
 
