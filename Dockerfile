@@ -16,7 +16,7 @@ COPY ./lib lib
 COPY ./contract-bindings contract-bindings
 COPY ./packages/shared packages/shared
 
-RUN yarn --frozen-lockfile
+RUN yarn --immutable
 
 COPY ./packages/$BUILD_CONTEXT packages/$BUILD_CONTEXT
 
