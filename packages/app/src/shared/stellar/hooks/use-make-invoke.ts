@@ -1,6 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { Api } from "@stellar/stellar-sdk/rpc";
-import {rpc as StellarRpc} from "@stellar/stellar-sdk";
+import { Api } from '@stellar/stellar-sdk/rpc';
+import { rpc as StellarRpc } from '@stellar/stellar-sdk';
 
 import { useContextSelector } from 'use-context-selector';
 import { WalletContext } from '@/shared/contexts/wallet';
@@ -10,7 +10,7 @@ import { scValToJs } from '@/shared/stellar/decoders';
 import { Wallet } from '@bindings/pool/src/method-options';
 import { logError } from '@/shared/logger';
 import { Tx } from '@stellar/stellar-sdk/lib/contract';
-import  * as wallet from '@stellar/freighter-api';
+import * as wallet from '@stellar/freighter-api';
 import { NETWORK_DETAILS } from '../constants/networks';
 import { parseMetaXdrToJs } from './parse-result-xdr';
 
@@ -80,7 +80,6 @@ export function useMakeInvoke() {
 
   return useCallback(
     (contractAddress: string, { secondsToWait = 25 }: { secondsToWait?: number } = {}) => {
-
       const contract = new StellarSdk.Contract(contractAddress);
       return async <T>(
         methodName: string,
@@ -112,7 +111,7 @@ export function useMakeInvoke() {
 
         const authsCount = simulated.result.auth.length;
         const isViewCall = !simulated.stateChanges?.length;
-        if (isViewCall || methodName === "collat_coeff") {
+        if (isViewCall || methodName === 'collat_coeff') {
           return scValToJs(simulated.result.retval);
         }
 
@@ -123,10 +122,13 @@ export function useMakeInvoke() {
         const operation = StellarRpc.assembleTransaction(tx, simulated).build();
 
         const signed = await wallet.signTransaction(operation.toXDR(), {
-          networkPassphrase: NETWORK_DETAILS.networkPassphrase
+          networkPassphrase: NETWORK_DETAILS.networkPassphrase,
         });
 
-        tx =  StellarSdk.TransactionBuilder.fromXDR(signed.signedTxXdr, NETWORK_DETAILS.networkPassphrase) as Tx;
+        tx = StellarSdk.TransactionBuilder.fromXDR(
+          signed.signedTxXdr,
+          NETWORK_DETAILS.networkPassphrase,
+        ) as Tx;
 
         const raw = await sendTx(tx, secondsToWait);
         // if `sendTx` awaited the inclusion of the tx in the ledger, it used
