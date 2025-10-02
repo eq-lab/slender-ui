@@ -9,7 +9,6 @@ import {
   TransactionBuilder,
   authorizeEntry,
   hash,
-  nativeToScVal,
   xdr,
   BASE_FEE,
 } from "@stellar/stellar-sdk";
@@ -48,14 +47,14 @@ export type Duration = bigint;
 export {Address};
 
 /// Error interface containing the error message
-export interface Error_ { message: string };
+export interface Error_ { message: string }
 
 export interface Result<T, E extends Error_> {
     unwrap(): T,
     unwrapErr(): E,
     isOk(): boolean,
     isErr(): boolean,
-};
+}
 
 export class Ok<T, E extends Error_ = Error_> implements Result<T, E> {
     constructor(readonly value: T) { }
@@ -240,7 +239,7 @@ export class AssembledTransaction<T> {
   getPublicKey = async (): Promise<string | undefined> => {
     const wallet = await this.getWallet()
     if (await wallet.isConnected() && await wallet.isAllowed()) {
-      return (await wallet.getUserInfo()).publicKey
+      return (await wallet.getAddress()).address
     }
   }
 
@@ -320,7 +319,7 @@ export class AssembledTransaction<T> {
    * This function returns a list of accounts that need to sign auth entries,
    * assuming that the same invoker/source account will sign the final
    * transaction envelope as signed the initial simulation.
-   * 
+   *
    * One at a time, for each public key in this array, you will need to
    * serialize this transaction with `toJSON`, send to the owner of that key,
    * deserialize the transaction with `txFromJson`, and call

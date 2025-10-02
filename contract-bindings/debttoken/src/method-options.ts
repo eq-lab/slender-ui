@@ -7,7 +7,7 @@ export type XDR_BASE64 = string
 export interface Wallet {
   isConnected: () => Promise<boolean>,
   isAllowed: () => Promise<boolean>,
-  getUserInfo: () => Promise<{ publicKey?: string }>,
+  getAddress: () => Promise<{ address?: string }>,
   signTransaction: (tx: XDR_BASE64, opts?: {
     network?: string,
     networkPassphrase?: string,
