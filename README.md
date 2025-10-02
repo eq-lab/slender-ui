@@ -10,7 +10,7 @@ Slender is the first noncustodial Lending protocol on Stellar Soroban. Slender a
 
 You will need:
 
-- [Node.js](https://nodejs.org/en/download) (>=18.17.1)
+- [Node.js](https://nodejs.org/en/download) (>=20.18.2)
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install) (>=1.0.0 <2.0.0)
 - Git
 
