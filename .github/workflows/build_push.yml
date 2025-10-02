@@ -1,0 +1,60 @@
+---
+name: Build and Push Docker
+on:
+  workflow_dispatch:
+    inputs:
+      service_name:
+        description: "Service"
+        required: true
+        type: choice
+        options:
+          - app
+          - landing
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io/${{ github.repository }}
+
+jobs:
+  build-and-push:
+    name: Build and Push ${{inputs.service_name }}
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ env.REGISTRY }}/${{ inputs.service_name }}:${{ steps.meta.outputs.version }}
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ inputs.service_name }}
+          tags: |
+            type=match,pattern=${{ inputs.service_name }}/v(.+),group=1,prefix=v
+            type=semver,pattern={{raw}}
+            type=sha,format=short,prefix=
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BUILD_CONTEXT=landing
