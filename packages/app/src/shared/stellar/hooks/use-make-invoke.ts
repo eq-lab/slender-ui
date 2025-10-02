@@ -6,7 +6,6 @@ import { WalletContext } from '@/shared/contexts/wallet';
 import { useCallback } from 'react';
 import { server } from '@/shared/stellar/server';
 import { scValToJs } from '@/shared/stellar/decoders';
-import { Wallet } from '@bindings/pool/src/method-options';
 import { logError } from '@/shared/logger';
 import { Tx } from '@stellar/stellar-sdk/lib/contract';
 import * as wallet from '@stellar/freighter-api';
@@ -17,17 +16,17 @@ const FEE = '100';
 const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
 const ACCOUNT_SEQUENCE = '0';
 
-async function getAccount(userWallet: Wallet): Promise<StellarSdk.Account | null> {
-  const { isConnected, error: isConnectedError } = await userWallet.isConnected();
+async function getAccount(): Promise<StellarSdk.Account | null> {
+  const { isConnected, error: isConnectedError } = await wallet.isConnected();
   if (isConnectedError || !isConnected) {
     return null;
   }
-  const { isAllowed, error: isAllowedError } = await userWallet.isAllowed();
+  const { isAllowed, error: isAllowedError } = await wallet.isAllowed();
   if (isAllowedError || !isAllowed) {
     return null;
   }
 
-  const { address, error: addressError } = await userWallet.getAddress();
+  const { address, error: addressError } = await wallet.getAddress();
   if (addressError || !address) {
     return null;
   }
@@ -91,7 +90,7 @@ export function useMakeInvoke() {
         txParams: StellarSdk.xdr.ScVal[] = [],
       ): Promise<T | null | undefined> => {
         // getAccount gives an error if stellar account is not activated (does not have 1 XML)
-        const walletAccount = await getAccount(wallet).catch(() => null);
+        const walletAccount = await getAccount().catch(() => null);
 
         if (!walletAccount) {
           throw new Error('Not connected to Freighter');
