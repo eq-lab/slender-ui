@@ -1,5 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { Api } from "@stellar/stellar-sdk/rpc";
+import {rpc as StellarRpc} from "@stellar/stellar-sdk";
 
 import { useContextSelector } from 'use-context-selector';
 import { WalletContext } from '@/shared/contexts/wallet';
@@ -28,22 +29,13 @@ async function getAccount(userWallet: Wallet): Promise<StellarSdk.Account | null
   return server.getAccount(address);
 }
 
-async function signTx(userWallet: Wallet, tx: Tx, networkPassphrase: string): Promise<Tx> {
-  const signed = await userWallet.signTransaction(tx.toXDR(), {
-    networkPassphrase,
-  });
-
-  return StellarSdk.TransactionBuilder.fromXDR(signed, networkPassphrase) as Tx;
-}
-
 type SendTx = Api.SendTransactionResponse;
 type GetTx = Api.GetTransactionResponse;
 
 async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
-  const sendTransactionResponse = await server.submitAsyncTransaction(tx);
+  const sendTransactionResponse = await server.sendTransaction(tx);
 
-  // FIXME: Check available statuses
-  if (sendTransactionResponse.tx_status !== 'PENDING' || secondsToWait === 0) {
+  if (sendTransactionResponse.status !== 'PENDING' || secondsToWait === 0) {
     return sendTransactionResponse;
   }
 
@@ -87,14 +79,19 @@ export function useMakeInvoke() {
     useContextSelector(WalletContext, (state) => state.address) || PLACEHOLDER_NULL_ACCOUNT;
 
   return useCallback(
-    (contractAddress: string, { secondsToWait = 10 }: { secondsToWait?: number } = {}) => {
+    (contractAddress: string, { secondsToWait = 25 }: { secondsToWait?: number } = {}) => {
+
       const contract = new StellarSdk.Contract(contractAddress);
       return async <T>(
         methodName: string,
         txParams: StellarSdk.xdr.ScVal[] = [],
-      ): Promise<T | undefined> => {
+      ): Promise<T | null | undefined> => {
         // getAccount gives an error if stellar account is not activated (does not have 1 XML)
         const walletAccount = await getAccount(wallet).catch(() => null);
+
+        if (!walletAccount) {
+          throw new Error('Not connected to Freighter');
+        }
 
         const sourceAccount =
           walletAccount ?? new StellarSdk.Account(userAddress, ACCOUNT_SEQUENCE);
@@ -114,9 +111,8 @@ export function useMakeInvoke() {
         }
 
         const authsCount = simulated.result.auth.length;
-        const writeLength = simulated.transactionData.getReadWrite().length;
-        const isViewCall = authsCount === 0 && writeLength === 0;
-        if (isViewCall) {
+        const isViewCall = !simulated.stateChanges?.length;
+        if (isViewCall || methodName === "collat_coeff") {
           return scValToJs(simulated.result.retval);
         }
 
@@ -124,14 +120,13 @@ export function useMakeInvoke() {
           throw new Error('Multiple auths not yet supported');
         }
 
-        // TODO: Maybe we should handle this case at UI? Render link to extension or smth like that
-        if (!walletAccount) {
-          throw new Error('Not connected to Freighter');
-        }
+        const operation = StellarRpc.assembleTransaction(tx, simulated).build();
 
-        const operation = Api.assembleTransaction(tx, simulated).build();
+        const signed = await wallet.signTransaction(operation.toXDR(), {
+          networkPassphrase: NETWORK_DETAILS.networkPassphrase
+        });
 
-        tx = await signTx(wallet, operation, NETWORK_DETAILS.networkPassphrase);
+        tx =  StellarSdk.TransactionBuilder.fromXDR(signed.signedTxXdr, NETWORK_DETAILS.networkPassphrase) as Tx;
 
         const raw = await sendTx(tx, secondsToWait);
         // if `sendTx` awaited the inclusion of the tx in the ledger, it used
