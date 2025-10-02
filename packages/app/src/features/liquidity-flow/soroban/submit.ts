@@ -3,7 +3,7 @@ import { SupportedTokenName, tokenContracts } from '@/shared/stellar/constants/t
 import { logInfo } from '@/shared/logger';
 import { addressToScVal, bigintToScVal } from '@/shared/stellar/encoders';
 import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke';
-import { SorobanRpc } from '@stellar/stellar-sdk';
+import { Api } from '@stellar/stellar-sdk/rpc';
 
 import BigNumber from 'bignumber.js';
 import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-token-name';
@@ -31,9 +31,9 @@ export const useSubmit = (methodName: PoolMethodName) => {
     // console.log('invoke'.toUpperCase(), methodName, who, asset, amount.toFixed(0));
     invoke<
       | string
-      | SorobanRpc.Api.SimulateTransactionResponse
-      | SorobanRpc.Api.SendTransactionResponse
-      | SorobanRpc.Api.GetTransactionResponse
+      | Api.SimulateTransactionResponse
+      | Api.SendTransactionResponse
+      | Api.GetTransactionResponse
     >(methodName, [
       addressToScVal(who),
       addressToScVal(asset),
