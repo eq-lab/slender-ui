@@ -48,7 +48,9 @@ export function useCoefficients(): TokenCoefficients | undefined {
         (all, tokenName, index) => ({
           ...all,
           [tokenName]: {
-            collateralCoefficient: getBigNumberCoefficient(collateralCoefficient[index] ?? undefined),
+            collateralCoefficient: getBigNumberCoefficient(
+              collateralCoefficient[index] ?? undefined,
+            ),
             debtCoefficient: getBigNumberCoefficient(debtCoefficient[index] ?? undefined),
           },
         }),
