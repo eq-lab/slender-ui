@@ -71,9 +71,7 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
 
       const newMarketData = marketValues.reduce<PoolData>((cached, poolReserve, currentIndex) => {
         cached[CACHED_POOL_ADDRESSES[currentIndex]!] = {
-          // @ts-ignore
           discount: poolReserve.configuration.discount,
-          // @ts-ignore
           utilizationCapacity: poolReserve.configuration.util_cap,
           borrowInterestRate: formatInterestRate(poolReserve.borrower_ir),
           lendInterestRate: formatInterestRate(poolReserve.lender_ir),

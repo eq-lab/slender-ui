@@ -19,11 +19,17 @@ const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 const ACCOUNT_SEQUENCE = '0';
 
 async function getAccount(userWallet: Wallet): Promise<StellarSdk.Account | null> {
-  if (!(await userWallet.isConnected()) || !(await userWallet.isAllowed())) {
+  const { isConnected, error: isConnectedError } = await userWallet.isConnected();
+  if (isConnectedError || !isConnected) {
     return null;
   }
-  const { address } = await userWallet.getAddress();
-  if (!address) {
+  const { isAllowed, error: isAllowedError } = await userWallet.isAllowed();
+  if (isAllowedError || !isAllowed) {
+    return null;
+  }
+
+  const { address, error: addressError } = await userWallet.getAddress();
+  if (addressError || !address) {
     return null;
   }
   return server.getAccount(address);
