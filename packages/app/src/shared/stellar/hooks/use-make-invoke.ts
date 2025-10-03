@@ -12,9 +12,51 @@ import * as wallet from '@stellar/freighter-api';
 import { NETWORK_DETAILS } from '../constants/networks';
 import { parseMetaXdrToJs } from './parse-result-xdr';
 
-const FEE = '100';
 const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
 const ACCOUNT_SEQUENCE = '0';
+
+const readPoolFuncNames: Set<string> = new Set([
+  'protocol_fee',
+  'twap_median_price',
+  'user_configuration',
+  'account_position',
+  'pause_info',
+  'token_total_supply',
+  'token_balance',
+  'price_feeds',
+  'pool_configuration',
+  'debt_coeff',
+  'collat_coeff',
+  'get_reserve',
+  'version',
+]);
+const readPoolSTokenNames: Set<string> = new Set([
+  'pool',
+  'underlying_asset',
+  'total_supply',
+  'symbol',
+  'name',
+  'decimals',
+  'authorized',
+  'spendable_balance',
+  'balance',
+  'allowance',
+  'version',
+]);
+const readPoolDebtTokenNames: Set<string> = new Set([
+  'total_supply',
+  'symbol',
+  'name',
+  'decimals',
+  'authorized',
+  'spendable_balance',
+  'balance',
+  'version',
+]);
+
+function isReadOnlyFunction(name: string): boolean {
+  return readPoolFuncNames.has(name) || readPoolSTokenNames.has(name) || readPoolDebtTokenNames.has(name);
+}
 
 async function getAccount(): Promise<StellarSdk.Account | null> {
   const { isConnected, error: isConnectedError } = await wallet.isConnected();
@@ -100,7 +142,7 @@ export function useMakeInvoke() {
           walletAccount ?? new StellarSdk.Account(userAddress, ACCOUNT_SEQUENCE);
 
         let tx = new StellarSdk.TransactionBuilder(sourceAccount, {
-          fee: FEE,
+          fee: StellarSdk.BASE_FEE,
           networkPassphrase: NETWORK_DETAILS.networkPassphrase,
         })
           .addOperation(contract.call(methodName, ...txParams))
@@ -115,7 +157,8 @@ export function useMakeInvoke() {
 
         const authsCount = simulated.result.auth.length;
         const isViewCall = !simulated.stateChanges?.length;
-        if (isViewCall || methodName === 'collat_coeff') {
+
+        if (isViewCall || isReadOnlyFunction(methodName)) {
           return scValToJs(simulated.result.retval);
         }
 
