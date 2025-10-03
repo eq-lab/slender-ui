@@ -36,8 +36,8 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
       setData({
         borrowInterestRate: getBigNumber(poolReserve?.borrower_ir),
         lendInterestRate: getBigNumber(poolReserve?.lender_ir),
-        collateralCoefficient: getBigNumber(collateralCoefficient),
-        debtCoefficient: getBigNumber(debtCoefficient),
+        collateralCoefficient: getBigNumber(collateralCoefficient ?? undefined),
+        debtCoefficient: getBigNumber(debtCoefficient ?? undefined),
       });
     })();
   }, [tokenAddress, makeInvoke]);

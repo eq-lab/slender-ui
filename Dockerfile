@@ -1,4 +1,4 @@
-FROM node:18.17.1-alpine3.18 AS build
+FROM node:20.18.2-alpine AS build
 ARG BUILD_CONTEXT
 ARG DEPLOY_ENVIRONMENT_ARG
 ARG NEXT_PUBLIC_BUILD_NUMBER_ARG
@@ -16,12 +16,12 @@ COPY ./lib lib
 COPY ./contract-bindings contract-bindings
 COPY ./packages/shared packages/shared
 
-RUN yarn --frozen-lockfile
+RUN yarn install --frozen-lockfile
 
 COPY ./packages/$BUILD_CONTEXT packages/$BUILD_CONTEXT
 
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 ENV NEXT_PUBLIC_DEPLOY_ENVIRONMENT=$DEPLOY_ENVIRONMENT_ARG
 ENV NEXT_PUBLIC_BUILD_NUMBER=$NEXT_PUBLIC_BUILD_NUMBER_ARG
 RUN addgroup -g 1001 -S nodejs
@@ -32,8 +32,8 @@ RUN chown -R nextjs:nodejs packages/$BUILD_CONTEXT/.next
 
 USER nextjs
 EXPOSE 3000
-ENV PORT 3000
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV PORT=3000
+ENV NEXT_TELEMETRY_DISABLED=1
 ENV PACKAGE_NAME=$BUILD_CONTEXT
 
 CMD ["sh", "-c", "yarn workspace @slender/$PACKAGE_NAME start"]

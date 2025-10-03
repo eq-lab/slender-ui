@@ -4,21 +4,38 @@ export type ResponseTypes = typeof responseTypes
 
 export type XDR_BASE64 = string
 
+export interface FreighterApiError extends Error {
+  message: string;
+}
+
 export interface Wallet {
-  isConnected: () => Promise<boolean>,
-  isAllowed: () => Promise<boolean>,
-  getUserInfo: () => Promise<{ publicKey?: string }>,
+  isConnected: () => Promise<{ isConnected: boolean }  & { error?: FreighterApiError }>,
+  isAllowed: () => Promise<{ isAllowed: boolean }  & { error?: FreighterApiError }>,
+  getAddress: () => Promise<{ address: string }  & { error?: FreighterApiError }>,
   signTransaction: (tx: XDR_BASE64, opts?: {
-    network?: string,
-    networkPassphrase?: string,
-    accountToSign?: string,
-  }) => Promise<XDR_BASE64>,
-  signAuthEntry: (
-    entryXdr: XDR_BASE64,
+    transactionXdr: string,
     opts?: {
-      accountToSign?: string;
-    }
-  ) => Promise<XDR_BASE64>
+      networkPassphrase?: string;
+      address?: string;
+    },
+  } & {
+    error?: FreighterApiError;
+  }) => Promise<  {
+    signedTxXdr: string;
+    signerAddress: string;
+  }>,
+  signAuthEntry: (
+    entryXdr: string,
+    opts?: {
+      networkPassphrase?: string;
+      address?: string;
+    },
+  ) => Promise<{
+    signedAuthEntry: Buffer | null;
+    signerAddress: string
+  } & {
+    error?: FreighterApiError;
+  }>
 }
 
 export type ClassOptions = {

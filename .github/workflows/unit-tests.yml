@@ -11,10 +11,10 @@ jobs:
         - uses: actions/checkout@v3
           with:
             submodules: recursive
-        - name: Use Node.js 18.17.1
-          uses: actions/setup-node@v3
+        - name: Use Node.js 20.18.2
+          uses: actions/setup-node@v4
           with:
-            node-version: 18.17.1
+            node-version: 20.18.2
         - name: Build for testing
           run: |
             yarn

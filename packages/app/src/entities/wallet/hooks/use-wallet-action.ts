@@ -1,5 +1,5 @@
 import { useWalletAddress } from '@/shared/contexts/use-wallet-address';
-import { getPublicKey } from '@stellar/freighter-api';
+import { getAddress } from '@stellar/freighter-api';
 import { FREIGHTER_WALLET_URL } from '../constants/wallet';
 
 export const useWalletActions = () => {
@@ -10,7 +10,7 @@ export const useWalletActions = () => {
   };
 
   const connect = async () => {
-    const publicKey = await getPublicKey();
+    const publicKey = (await getAddress()).address;
     setAddress(publicKey);
   };
 

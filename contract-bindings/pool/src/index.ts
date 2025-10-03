@@ -4,6 +4,7 @@ import {
   AssembledTransaction,
   Client as ContractClient,
   ClientOptions as ContractClientOptions,
+  MethodOptions,
   Result,
   Spec as ContractSpec,
 } from '@stellar/stellar-sdk/contract';
@@ -81,82 +82,54 @@ export interface BaseAssetConfig {
  */
 export interface CollateralParamsInput {
   /**
- * Specifies what fraction of the underlying asset counts toward
- * the portfolio collateral value [0%, 100%].
- */
-discount: u32;
+   * Specifies what fraction of the underlying asset counts toward
+   * the portfolio collateral value [0%, 100%].
+   */
+  discount: u32;
   /**
- * The total amount of an asset the protocol accepts into the market.
- */
-liq_cap: i128;
+   * The total amount of an asset the protocol accepts into the market.
+   */
+  liq_cap: i128;
   /**
- * Liquidation order
- */
-pen_order: u32;
+   * Liquidation order
+   */
+  pen_order: u32;
   util_cap: u32;
 }
 
 export const Errors = {
   0: {message:"AlreadyInitialized"},
-
   1: {message:"Uninitialized"},
-
   2: {message:"Paused"},
-
   3: {message:"BellowMinValue"},
-
   4: {message:"ExceededMaxValue"},
-
   5: {message:"GracePeriod"},
-
   100: {message:"NoActiveReserve"},
-
   101: {message:"ReservesMaxCapacityExceeded"},
-
   102: {message:"NoPriceForAsset"},
-
   103: {message:"InvalidAssetPrice"},
-
   104: {message:"LiquidationOrderMustBeUnique"},
-
   105: {message:"NotFungible"},
-
   200: {message:"NotEnoughAvailableUserBalance"},
-
   201: {message:"DebtError"},
-
   300: {message:"BorrowingDisabled"},
-
   301: {message:"GoodPosition"},
-
   302: {message:"InvalidAmount"},
-
   303: {message:"ValidateBorrowMathError"},
-
   304: {message:"CalcAccountDataMathError"},
-
   305: {message:"LiquidateMathError"},
-
   306: {message:"MustNotBeInCollateralAsset"},
-
   307: {message:"FlashLoanReceiverError"},
-
   400: {message:"MathOverflowError"},
-
   401: {message:"MustBeLtePercentageFactor"},
-
   402: {message:"MustBeLtPercentageFactor"},
-
   403: {message:"MustBeGtPercentageFactor"},
-
   404: {message:"MustBeNonNegative"},
-
   500: {message:"AccruedRateMathError"},
-
   501: {message:"CollateralCoeffMathError"},
-
   502: {message:"DebtCoeffMathError"}
 }
+
 
 export interface FlashLoanAsset {
   amount: i128;
@@ -222,10 +195,10 @@ export interface PriceFeedConfigInput {
 export interface ReserveConfiguration {
   borrowing_enabled: boolean;
   /**
- * Specifies what fraction of the underlying asset counts toward
- * the portfolio collateral value [0%, 100%].
- */
-discount: u32;
+   * Specifies what fraction of the underlying asset counts toward
+   * the portfolio collateral value [0%, 100%].
+   */
+  discount: u32;
   is_active: boolean;
   liquidity_cap: i128;
   pen_order: u32;
@@ -238,9 +211,9 @@ export interface ReserveData {
   borrower_ir: i128;
   configuration: ReserveConfiguration;
   /**
- * The id of the reserve (position in the list of the active reserves).
- */
-id: Buffer;
+   * The id of the reserve (position in the list of the active reserves).
+   */
+  id: Buffer;
   last_update_timestamp: u64;
   lender_ar: i128;
   lender_ir: i128;
@@ -252,6 +225,7 @@ export type ReserveType = {tag: "Fungible", values: readonly [string, string]} |
 export type TimestampPrecision = {tag: "Msec", values: void} | {tag: "Sec", values: void};
 
 export type UserConfiguration = readonly [u128,  u32];
+
 export type Asset = {tag: "Stellar", values: readonly [string]} | {tag: "Other", values: readonly [string]};
 
 
@@ -259,7 +233,6 @@ export interface PriceData {
   price: i128;
   timestamp: u64;
 }
-
 
 export interface Client {
   /**
@@ -904,9 +877,36 @@ export interface Client {
 
 }
 export class Client extends ContractClient {
+  static async deploy<T = Client>(
+    /** Options for initializing a Client as well as for calling a method, with extras specific to deploying. */
+    options: MethodOptions &
+      Omit<ContractClientOptions, "contractId"> & {
+      /** The hash of the Wasm blob, which must already be installed on-chain. */
+      wasmHash: Buffer | string;
+      /** Salt used to generate the contract's ID. Passed through to {@link Operation.createCustomContract}. Default: random. */
+      salt?: Buffer | Uint8Array;
+      /** The format used to decode `wasmHash`, if it's provided as a string. */
+      format?: "hex" | "base64";
+    }
+  ): Promise<AssembledTransaction<T>> {
+    return ContractClient.deploy(null, options)
+  }
   constructor(public readonly options: ContractClientOptions) {
     super(
-      new ContractSpec([ "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAACgAAAAAAAAAAAAAABUFkbWluAAAAAAAAAAAAAAAAAAAIUmVzZXJ2ZXMAAAABAAAAAAAAAA9SZXNlcnZlQXNzZXRLZXkAAAAAAQAAABMAAAABAAAAAAAAAApVc2VyQ29uZmlnAAAAAAABAAAAEwAAAAEAAAAAAAAACVByaWNlRmVlZAAAAAAAAAEAAAATAAAAAAAAAAAAAAAFUGF1c2UAAAAAAAABAAAAAAAAAAtUb2tlblN1cHBseQAAAAABAAAAEwAAAAEAAAAAAAAADFRva2VuQmFsYW5jZQAAAAIAAAATAAAAEwAAAAAAAAAAAAAAClBvb2xDb25maWcAAAAAAAEAAAAAAAAAEFByb3RvY29sRmVlVmF1bHQAAAABAAAAEw==",
+      new ContractSpec([ "AAAABQAAAAAAAAAAAAAAEEluaXRpYWxpemVkRXZlbnQAAAABAAAACmluaXRpYWxpemUAAAAAAA8AAAAAAAAABWFkbWluAAAAAAAAEwAAAAEAAAAAAAAAEmJhc2VfYXNzZXRfYWRkcmVzcwAAAAAAEwAAAAEAAAAAAAAACGlyX2FscGhhAAAABAAAAAAAAAAAAAAAD2lyX2luaXRpYWxfcmF0ZQAAAAAEAAAAAAAAAAAAAAALaXJfbWF4X3JhdGUAAAAABAAAAAAAAAAAAAAAEGlyX3NjYWxpbmdfY29lZmYAAAAEAAAAAAAAAAAAAAATYmFzZV9hc3NldF9kZWNpbWFscwAAAAAEAAAAAAAAAAAAAAAOaW5pdGlhbF9oZWFsdGgAAAAAAAQAAAAAAAAAAAAAAAxncmFjZV9wZXJpb2QAAAAGAAAAAAAAAAAAAAAQdGltZXN0YW1wX3dpbmRvdwAAAAYAAAAAAAAAAAAAAA5mbGFzaF9sb2FuX2ZlZQAAAAAABAAAAAAAAAAAAAAAEXVzZXJfYXNzZXRzX2xpbWl0AAAAAAAABAAAAAAAAAAAAAAAEW1pbl9jb2xsYXRfYW1vdW50AAAAAAAACwAAAAAAAAAAAAAAD21pbl9kZWJ0X2Ftb3VudAAAAAALAAAAAAAAAAAAAAAYbGlxdWlkYXRpb25fcHJvdG9jb2xfZmVlAAAABAAAAAAAAAAC",
+        "AAAABQAAAAAAAAAAAAAAHVJlc2VydmVVc2VkQXNDb2xsRW5hYmxlZEV2ZW50AAAAAAAAAQAAABxyZXNlcnZlX3VzZWRfYXNfY29sbF9lbmFibGVkAAAAAgAAAAAAAAADd2hvAAAAABMAAAABAAAAAAAAAAVhc3NldAAAAAAAABMAAAAAAAAAAA==",
+        "AAAABQAAAAAAAAAAAAAAHlJlc2VydmVVc2VkQXNDb2xsRGlzYWJsZWRFdmVudAAAAAAAAQAAAB1yZXNlcnZlX3VzZWRfYXNfY29sbF9kaXNhYmxlZAAAAAAAAAIAAAAAAAAAA3dobwAAAAATAAAAAQAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAAAAAAA=",
+        "AAAABQAAAAAAAAAAAAAADERlcG9zaXRFdmVudAAAAAEAAAAHZGVwb3NpdAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAEAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAAAAAABmFtb3VudAAAAAAACwAAAAAAAAAC",
+        "AAAABQAAAAAAAAAAAAAADVdpdGhkcmF3RXZlbnQAAAAAAAABAAAACHdpdGhkcmF3AAAABAAAAAAAAAADd2hvAAAAABMAAAABAAAAAAAAAAJ0bwAAAAAAEwAAAAAAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAAAAAABmFtb3VudAAAAAAACwAAAAAAAAAC",
+        "AAAABQAAAAAAAAAAAAAAC0JvcnJvd0V2ZW50AAAAAAEAAAAGYm9ycm93AAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAEAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAAAAAABmFtb3VudAAAAAAACwAAAAAAAAAC",
+        "AAAABQAAAAAAAAAAAAAAClJlcGF5RXZlbnQAAAAAAAEAAAAFcmVwYXkAAAAAAAADAAAAAAAAAAN3aG8AAAAAEwAAAAEAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAAAAAAAAAAABmFtb3VudAAAAAAACwAAAAAAAAAC",
+        "AAAABQAAAAAAAAAAAAAAF0NvbGxhdENvbmZpZ0NoYW5nZUV2ZW50AAAAAAEAAAAUY29sbGF0X2NvbmZpZ19jaGFuZ2UAAAAFAAAAAAAAAAVhc3NldAAAAAAAABMAAAABAAAAAAAAAAdsaXFfY2FwAAAAAAsAAAAAAAAAAAAAAAlwZW5fb3JkZXIAAAAAAAAEAAAAAAAAAAAAAAAIdXRpbF9jYXAAAAAEAAAAAAAAAAAAAAAIZGlzY291bnQAAAAEAAAAAAAAAAI=",
+        "AAAABQAAAAAAAAAAAAAAFUJvcnJvd2luZ0VuYWJsZWRFdmVudAAAAAAAAAEAAAARYm9ycm93aW5nX2VuYWJsZWQAAAAAAAABAAAAAAAAAAVhc3NldAAAAAAAABMAAAABAAAAAA==",
+        "AAAABQAAAAAAAAAAAAAAFkJvcnJvd2luZ0Rpc2FibGVkRXZlbnQAAAAAAAEAAAASYm9ycm93aW5nX2Rpc2FibGVkAAAAAAABAAAAAAAAAAVhc3NldAAAAAAAABMAAAABAAAAAA==",
+        "AAAABQAAAAAAAAAAAAAAGVJlc2VydmVTdGF0dXNDaGFuZ2VkRXZlbnQAAAAAAAABAAAAFnJlc2VydmVfc3RhdHVzX2NoYW5nZWQAAAAAAAIAAAAAAAAABWFzc2V0AAAAAAAAEwAAAAEAAAAAAAAACWFjdGl2YXRlZAAAAAAAAAEAAAAAAAAAAA==",
+        "AAAABQAAAAAAAAAAAAAAEExpcXVpZGF0aW9uRXZlbnQAAAABAAAAC2xpcXVpZGF0aW9uAAAAAAMAAAAAAAAAA3dobwAAAAATAAAAAQAAAAAAAAAMY292ZXJlZF9kZWJ0AAAACwAAAAAAAAAAAAAAFWxpcXVpZGF0ZWRfY29sbGF0ZXJhbAAAAAAAAAsAAAAAAAAAAg==",
+        "AAAABQAAAAAAAAAAAAAADkZsYXNoTG9hbkV2ZW50AAAAAAABAAAACmZsYXNoX2xvYW4AAAAAAAYAAAAAAAAAA3dobwAAAAATAAAAAQAAAAAAAAAIcmVjZWl2ZXIAAAATAAAAAQAAAAAAAAAFYXNzZXQAAAAAAAATAAAAAQAAAAAAAAAGYW1vdW50AAAAAAALAAAAAAAAAAAAAAAHcHJlbWl1bQAAAAALAAAAAAAAAAAAAAAGYm9ycm93AAAAAAABAAAAAAAAAAI=",
+        "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAACgAAAAAAAAAAAAAABUFkbWluAAAAAAAAAAAAAAAAAAAIUmVzZXJ2ZXMAAAABAAAAAAAAAA9SZXNlcnZlQXNzZXRLZXkAAAAAAQAAABMAAAABAAAAAAAAAApVc2VyQ29uZmlnAAAAAAABAAAAEwAAAAEAAAAAAAAACVByaWNlRmVlZAAAAAAAAAEAAAATAAAAAAAAAAAAAAAFUGF1c2UAAAAAAAABAAAAAAAAAAtUb2tlblN1cHBseQAAAAABAAAAEwAAAAEAAAAAAAAADFRva2VuQmFsYW5jZQAAAAIAAAATAAAAEwAAAAAAAAAAAAAAClBvb2xDb25maWcAAAAAAAEAAAAAAAAAEFByb3RvY29sRmVlVmF1bHQAAAABAAAAEw==",
         "AAAAAQAAAAAAAAAAAAAAEExpcXVpZGF0aW9uQXNzZXQAAAAFAAAAAAAAAAVhc3NldAAAAAAAABMAAAAAAAAABWNvZWZmAAAAAAAD6AAAAAsAAAAAAAAADGNvbXBfYmFsYW5jZQAAAAsAAAAAAAAACmxwX2JhbGFuY2UAAAAAA+gAAAALAAAAAAAAAAdyZXNlcnZlAAAAB9AAAAALUmVzZXJ2ZURhdGEA",
         "AAAAAAAAAAAAAAAKaW5pdGlhbGl6ZQAAAAAAAgAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAtwb29sX2NvbmZpZwAAAAfQAAAAClBvb2xDb25maWcAAAAAAAEAAAPpAAAD7QAAAAAAAAAD",
         "AAAAAAAAAAAAAAAHdXBncmFkZQAAAAABAAAAAAAAAA1uZXdfd2FzbV9oYXNoAAAAAAAD7gAAACAAAAABAAAD6QAAA+0AAAAAAAAAAw==",
@@ -965,36 +965,36 @@ export class Client extends ContractClient {
   }
   public readonly fromJSON = {
     initialize: this.txFromJSON<Result<void>>,
-        upgrade: this.txFromJSON<Result<void>>,
-        upgrade_token: this.txFromJSON<Result<void>>,
-        version: this.txFromJSON<u32>,
-        init_reserve: this.txFromJSON<Result<void>>,
-        set_reserve_status: this.txFromJSON<Result<void>>,
-        enable_borrowing_on_reserve: this.txFromJSON<Result<void>>,
-        configure_as_collateral: this.txFromJSON<Result<void>>,
-        get_reserve: this.txFromJSON<Option<ReserveData>>,
-        collat_coeff: this.txFromJSON<Result<i128>>,
-        debt_coeff: this.txFromJSON<Result<i128>>,
-        set_pool_configuration: this.txFromJSON<Result<void>>,
-        pool_configuration: this.txFromJSON<Result<PoolConfig>>,
-        set_price_feeds: this.txFromJSON<Result<void>>,
-        price_feeds: this.txFromJSON<Option<PriceFeedConfig>>,
-        deposit: this.txFromJSON<Result<void>>,
-        repay: this.txFromJSON<Result<void>>,
-        finalize_transfer: this.txFromJSON<Result<void>>,
-        withdraw: this.txFromJSON<Result<void>>,
-        borrow: this.txFromJSON<Result<void>>,
-        set_pause: this.txFromJSON<Result<void>>,
-        pause_info: this.txFromJSON<PauseInfo>,
-        account_position: this.txFromJSON<Result<AccountPosition>>,
-        liquidate: this.txFromJSON<Result<void>>,
-        set_as_collateral: this.txFromJSON<Result<void>>,
-        user_configuration: this.txFromJSON<Result<UserConfiguration>>,
-        token_balance: this.txFromJSON<i128>,
-        token_total_supply: this.txFromJSON<i128>,
-        flash_loan: this.txFromJSON<Result<void>>,
-        twap_median_price: this.txFromJSON<Result<i128>>,
-        protocol_fee: this.txFromJSON<i128>,
-        claim_protocol_fee: this.txFromJSON<Result<void>>
+    upgrade: this.txFromJSON<Result<void>>,
+    upgrade_token: this.txFromJSON<Result<void>>,
+    version: this.txFromJSON<u32>,
+    init_reserve: this.txFromJSON<Result<void>>,
+    set_reserve_status: this.txFromJSON<Result<void>>,
+    enable_borrowing_on_reserve: this.txFromJSON<Result<void>>,
+    configure_as_collateral: this.txFromJSON<Result<void>>,
+    get_reserve: this.txFromJSON<Option<ReserveData>>,
+    collat_coeff: this.txFromJSON<Result<i128>>,
+    debt_coeff: this.txFromJSON<Result<i128>>,
+    set_pool_configuration: this.txFromJSON<Result<void>>,
+    pool_configuration: this.txFromJSON<Result<PoolConfig>>,
+    set_price_feeds: this.txFromJSON<Result<void>>,
+    price_feeds: this.txFromJSON<Option<PriceFeedConfig>>,
+    deposit: this.txFromJSON<Result<void>>,
+    repay: this.txFromJSON<Result<void>>,
+    finalize_transfer: this.txFromJSON<Result<void>>,
+    withdraw: this.txFromJSON<Result<void>>,
+    borrow: this.txFromJSON<Result<void>>,
+    set_pause: this.txFromJSON<Result<void>>,
+    pause_info: this.txFromJSON<PauseInfo>,
+    account_position: this.txFromJSON<Result<AccountPosition>>,
+    liquidate: this.txFromJSON<Result<void>>,
+    set_as_collateral: this.txFromJSON<Result<void>>,
+    user_configuration: this.txFromJSON<Result<UserConfiguration>>,
+    token_balance: this.txFromJSON<i128>,
+    token_total_supply: this.txFromJSON<i128>,
+    flash_loan: this.txFromJSON<Result<void>>,
+    twap_median_price: this.txFromJSON<Result<i128>>,
+    protocol_fee: this.txFromJSON<i128>,
+    claim_protocol_fee: this.txFromJSON<Result<void>>
   }
 }

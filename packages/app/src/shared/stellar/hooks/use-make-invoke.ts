@@ -1,42 +1,84 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { SorobanRpc } from '@stellar/stellar-sdk';
+import { rpc as StellarRpc } from '@stellar/stellar-sdk';
 
 import { useContextSelector } from 'use-context-selector';
 import { WalletContext } from '@/shared/contexts/wallet';
 import { useCallback } from 'react';
 import { server } from '@/shared/stellar/server';
 import { scValToJs } from '@/shared/stellar/decoders';
-import { Wallet } from '@bindings/pool/src/method-options';
 import { logError } from '@/shared/logger';
 import { Tx } from '@stellar/stellar-sdk/lib/contract';
+import * as wallet from '@stellar/freighter-api';
 import { NETWORK_DETAILS } from '../constants/networks';
 import { parseMetaXdrToJs } from './parse-result-xdr';
 
-const FEE = '100';
 const PLACEHOLDER_NULL_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
 const ACCOUNT_SEQUENCE = '0';
 
-async function getAccount(wallet: Wallet): Promise<StellarSdk.Account | null> {
-  if (!(await wallet.isConnected()) || !(await wallet.isAllowed())) {
-    return null;
-  }
-  const { publicKey } = await wallet.getUserInfo();
-  if (!publicKey) {
-    return null;
-  }
-  return server.getAccount(publicKey);
+const readPoolFuncNames: Set<string> = new Set([
+  'protocol_fee',
+  'twap_median_price',
+  'user_configuration',
+  'account_position',
+  'pause_info',
+  'token_total_supply',
+  'token_balance',
+  'price_feeds',
+  'pool_configuration',
+  'debt_coeff',
+  'collat_coeff',
+  'get_reserve',
+  'version',
+]);
+const readPoolSTokenNames: Set<string> = new Set([
+  'pool',
+  'underlying_asset',
+  'total_supply',
+  'symbol',
+  'name',
+  'decimals',
+  'authorized',
+  'spendable_balance',
+  'balance',
+  'allowance',
+  'version',
+]);
+const readPoolDebtTokenNames: Set<string> = new Set([
+  'total_supply',
+  'symbol',
+  'name',
+  'decimals',
+  'authorized',
+  'spendable_balance',
+  'balance',
+  'version',
+]);
+
+function isReadOnlyFunction(name: string): boolean {
+  return (
+    readPoolFuncNames.has(name) || readPoolSTokenNames.has(name) || readPoolDebtTokenNames.has(name)
+  );
 }
 
-async function signTx(wallet: Wallet, tx: Tx, networkPassphrase: string): Promise<Tx> {
-  const signed = await wallet.signTransaction(tx.toXDR(), {
-    networkPassphrase,
-  });
+async function getAccount(): Promise<StellarSdk.Account | null> {
+  const { isConnected, error: isConnectedError } = await wallet.isConnected();
+  if (isConnectedError || !isConnected) {
+    return null;
+  }
+  const { isAllowed, error: isAllowedError } = await wallet.isAllowed();
+  if (isAllowedError || !isAllowed) {
+    return null;
+  }
 
-  return StellarSdk.TransactionBuilder.fromXDR(signed, networkPassphrase) as Tx;
+  const { address, error: addressError } = await wallet.getAddress();
+  if (addressError || !address) {
+    return null;
+  }
+  return server.getAccount(address);
 }
 
-type SendTx = SorobanRpc.Api.SendTransactionResponse;
-type GetTx = SorobanRpc.Api.GetTransactionResponse;
+type SendTx = StellarRpc.Api.SendTransactionResponse;
+type GetTx = StellarRpc.Api.GetTransactionResponse;
 
 async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
   const sendTransactionResponse = await server.sendTransaction(tx);
@@ -54,7 +96,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
 
   while (
     Date.now() < waitUntil &&
-    getTransactionResponse.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND
+    getTransactionResponse.status === StellarRpc.Api.GetTransactionStatus.NOT_FOUND
   ) {
     // Wait a beat
     // eslint-disable-next-line no-await-in-loop,no-loop-func
@@ -67,7 +109,7 @@ async function sendTx(tx: Tx, secondsToWait: number): Promise<SendTx | GetTx> {
     getTransactionResponse = await server.getTransaction(sendTransactionResponse.hash);
   }
 
-  if (getTransactionResponse.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
+  if (getTransactionResponse.status === StellarRpc.Api.GetTransactionStatus.NOT_FOUND) {
     logError(
       `Waited ${secondsToWait} seconds for transaction to complete, but it did not. Returning anyway. Check the transaction status manually. Info: ${JSON.stringify(
         sendTransactionResponse,
@@ -85,38 +127,42 @@ export function useMakeInvoke() {
     useContextSelector(WalletContext, (state) => state.address) || PLACEHOLDER_NULL_ACCOUNT;
 
   return useCallback(
-    (contractAddress: string, { secondsToWait = 10 }: { secondsToWait?: number } = {}) => {
+    (contractAddress: string, { secondsToWait = 25 }: { secondsToWait?: number } = {}) => {
       const contract = new StellarSdk.Contract(contractAddress);
       return async <T>(
         methodName: string,
         txParams: StellarSdk.xdr.ScVal[] = [],
-      ): Promise<T | undefined> => {
-        const wallet = await import('@stellar/freighter-api');
-
+      ): Promise<T | null | undefined> => {
         // getAccount gives an error if stellar account is not activated (does not have 1 XML)
-        const walletAccount = await getAccount(wallet).catch(() => null);
+        const walletAccount = await getAccount().catch(() => {
+          throw new Error('Not connected to Freighter');
+        });
+
+        if (!walletAccount) {
+          throw new Error('Not connected to Freighter');
+        }
 
         const sourceAccount =
           walletAccount ?? new StellarSdk.Account(userAddress, ACCOUNT_SEQUENCE);
 
         let tx = new StellarSdk.TransactionBuilder(sourceAccount, {
-          fee: FEE,
+          fee: StellarSdk.BASE_FEE,
           networkPassphrase: NETWORK_DETAILS.networkPassphrase,
         })
           .addOperation(contract.call(methodName, ...txParams))
           .setTimeout(StellarSdk.TimeoutInfinite)
           .build();
         const simulated = await server.simulateTransaction(tx);
-        if (SorobanRpc.Api.isSimulationError(simulated)) {
+        if (StellarRpc.Api.isSimulationError(simulated)) {
           throw new Error(simulated.error);
         } else if (!simulated.result) {
           throw new Error(`invalid simulation: no result in ${simulated}`);
         }
 
         const authsCount = simulated.result.auth.length;
-        const writeLength = simulated.transactionData.getReadWrite().length;
-        const isViewCall = authsCount === 0 && writeLength === 0;
-        if (isViewCall) {
+        const isViewCall = !simulated.stateChanges?.length;
+
+        if (isViewCall || isReadOnlyFunction(methodName)) {
           return scValToJs(simulated.result.retval);
         }
 
@@ -124,19 +170,46 @@ export function useMakeInvoke() {
           throw new Error('Multiple auths not yet supported');
         }
 
-        if (!walletAccount) {
-          throw new Error('Not connected to Freighter');
-        }
+        const operation = StellarRpc.assembleTransaction(tx, simulated).build();
+        // eslint-disable-next-line no-console
+        console.log(
+          `Processing simulated traction for method: ${methodName}, walletAccount${walletAccount.accountId()}, address: ${contractAddress}`,
+        );
+        // eslint-disable-next-line no-console
+        console.log(simulated);
+        // eslint-disable-next-line no-console
+        console.log(operation);
 
-        const operation = SorobanRpc.assembleTransaction(tx, simulated).build();
+        const signed = await wallet.signTransaction(operation.toXDR(), {
+          networkPassphrase: NETWORK_DETAILS.networkPassphrase,
+        });
 
-        tx = await signTx(wallet, operation, NETWORK_DETAILS.networkPassphrase);
+        // eslint-disable-next-line no-console
+        console.log('signed transaction:');
+        // eslint-disable-next-line no-console
+        console.log(signed);
+
+        tx = StellarSdk.TransactionBuilder.fromXDR(
+          signed.signedTxXdr,
+          NETWORK_DETAILS.networkPassphrase,
+        ) as Tx;
 
         const raw = await sendTx(tx, secondsToWait);
+
+        // eslint-disable-next-line no-console
+        console.log('TX fromXDR:');
+        // eslint-disable-next-line no-console
+        console.log(tx);
+
+        // eslint-disable-next-line no-console
+        console.log('Raw result:');
+        // eslint-disable-next-line no-console
+        console.log(raw);
+
         // if `sendTx` awaited the inclusion of the tx in the ledger, it used
         // `getTransaction`, which has a `resultXdr` field
         if ('resultXdr' in raw) {
-          if (raw.status !== SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+          if (raw.status !== StellarRpc.Api.GetTransactionStatus.SUCCESS) {
             throw new Error('Transaction submission failed! Returning full RPC response.');
           }
 

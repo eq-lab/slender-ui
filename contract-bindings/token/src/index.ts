@@ -4,6 +4,7 @@ import {
   AssembledTransaction,
   Client as ContractClient,
   ClientOptions as ContractClientOptions,
+  MethodOptions,
   Result,
   Spec as ContractSpec,
 } from '@stellar/stellar-sdk/contract';
@@ -33,7 +34,7 @@ if (typeof window !== 'undefined') {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CAOODR344VWG6LIL3J72IQ5CSJDAIQMBEO4DPRZMV3AYD36VCL47Y5OH",
+    contractId: "CAFNYPN3X4Q5DQ2YK65OZUK4LRJILA76Z6HMKPIOSCUIMRF4YEPQPAIS",
   }
 } as const
 
@@ -59,7 +60,7 @@ export interface TokenMetadata {
 }
 
 export const Errors = {
-  
+
 }
 
 export interface Client {
@@ -325,6 +326,20 @@ export interface Client {
 
 }
 export class Client extends ContractClient {
+  static async deploy<T = Client>(
+    /** Options for initializing a Client as well as for calling a method, with extras specific to deploying. */
+    options: MethodOptions &
+      Omit<ContractClientOptions, "contractId"> & {
+      /** The hash of the Wasm blob, which must already be installed on-chain. */
+      wasmHash: Buffer | string;
+      /** Salt used to generate the contract's ID. Passed through to {@link Operation.createCustomContract}. Default: random. */
+      salt?: Buffer | Uint8Array;
+      /** The format used to decode `wasmHash`, if it's provided as a string. */
+      format?: "hex" | "base64";
+    }
+  ): Promise<AssembledTransaction<T>> {
+    return ContractClient.deploy(null, options)
+  }
   constructor(public readonly options: ContractClientOptions) {
     super(
       new ContractSpec([ "AAAAAAAAAAAAAAAKaW5pdGlhbGl6ZQAAAAAABAAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAdkZWNpbWFsAAAAAAQAAAAAAAAABG5hbWUAAAAQAAAAAAAAAAZzeW1ib2wAAAAAABAAAAAA",
@@ -349,17 +364,17 @@ export class Client extends ContractClient {
   }
   public readonly fromJSON = {
     initialize: this.txFromJSON<null>,
-        mint: this.txFromJSON<null>,
-        set_admin: this.txFromJSON<null>,
-        allowance: this.txFromJSON<i128>,
-        approve: this.txFromJSON<null>,
-        balance: this.txFromJSON<i128>,
-        transfer: this.txFromJSON<null>,
-        transfer_from: this.txFromJSON<null>,
-        burn: this.txFromJSON<null>,
-        burn_from: this.txFromJSON<null>,
-        decimals: this.txFromJSON<u32>,
-        name: this.txFromJSON<string>,
-        symbol: this.txFromJSON<string>
+    mint: this.txFromJSON<null>,
+    set_admin: this.txFromJSON<null>,
+    allowance: this.txFromJSON<i128>,
+    approve: this.txFromJSON<null>,
+    balance: this.txFromJSON<i128>,
+    transfer: this.txFromJSON<null>,
+    transfer_from: this.txFromJSON<null>,
+    burn: this.txFromJSON<null>,
+    burn_from: this.txFromJSON<null>,
+    decimals: this.txFromJSON<u32>,
+    name: this.txFromJSON<string>,
+    symbol: this.txFromJSON<string>
   }
 }
