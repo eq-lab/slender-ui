@@ -55,7 +55,9 @@ const readPoolDebtTokenNames: Set<string> = new Set([
 ]);
 
 function isReadOnlyFunction(name: string): boolean {
-  return readPoolFuncNames.has(name) || readPoolSTokenNames.has(name) || readPoolDebtTokenNames.has(name);
+  return (
+    readPoolFuncNames.has(name) || readPoolSTokenNames.has(name) || readPoolDebtTokenNames.has(name)
+  );
 }
 
 async function getAccount(): Promise<StellarSdk.Account | null> {
@@ -132,7 +134,9 @@ export function useMakeInvoke() {
         txParams: StellarSdk.xdr.ScVal[] = [],
       ): Promise<T | null | undefined> => {
         // getAccount gives an error if stellar account is not activated (does not have 1 XML)
-        const walletAccount = await getAccount().catch(() => null);
+        const walletAccount = await getAccount().catch(() => {
+          throw new Error('Not connected to Freighter');
+        });
 
         if (!walletAccount) {
           throw new Error('Not connected to Freighter');
@@ -167,10 +171,23 @@ export function useMakeInvoke() {
         }
 
         const operation = StellarRpc.assembleTransaction(tx, simulated).build();
+        // eslint-disable-next-line no-console
+        console.log(
+          `Processing simulated traction for method: ${methodName}, walletAccount${walletAccount.accountId()}, address: ${contractAddress}`,
+        );
+        // eslint-disable-next-line no-console
+        console.log(simulated);
+        // eslint-disable-next-line no-console
+        console.log(operation);
 
         const signed = await wallet.signTransaction(operation.toXDR(), {
           networkPassphrase: NETWORK_DETAILS.networkPassphrase,
         });
+
+        // eslint-disable-next-line no-console
+        console.log('signed transaction:');
+        // eslint-disable-next-line no-console
+        console.log(signed);
 
         tx = StellarSdk.TransactionBuilder.fromXDR(
           signed.signedTxXdr,
@@ -178,6 +195,17 @@ export function useMakeInvoke() {
         ) as Tx;
 
         const raw = await sendTx(tx, secondsToWait);
+
+        // eslint-disable-next-line no-console
+        console.log('TX fromXDR:');
+        // eslint-disable-next-line no-console
+        console.log(tx);
+
+        // eslint-disable-next-line no-console
+        console.log('Raw result:');
+        // eslint-disable-next-line no-console
+        console.log(raw);
+
         // if `sendTx` awaited the inclusion of the tx in the ledger, it used
         // `getTransaction`, which has a `resultXdr` field
         if ('resultXdr' in raw) {
