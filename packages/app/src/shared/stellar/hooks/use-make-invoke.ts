@@ -145,8 +145,12 @@ export function useMakeInvoke() {
         const sourceAccount =
           walletAccount ?? new StellarSdk.Account(userAddress, ACCOUNT_SEQUENCE);
 
+        const feeStats = await server.getFeeStats();
+
+        const fee = feeStats.sorobanInclusionFee.max;
+
         let tx = new StellarSdk.TransactionBuilder(sourceAccount, {
-          fee: StellarSdk.BASE_FEE,
+          fee,
           networkPassphrase: NETWORK_DETAILS.networkPassphrase,
         })
           .addOperation(contract.call(methodName, ...txParams))
