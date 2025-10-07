@@ -147,7 +147,7 @@ export function useMakeInvoke() {
 
         const feeStats = await server.getFeeStats();
 
-        const fee = feeStats.sorobanInclusionFee.max
+        const fee = feeStats.sorobanInclusionFee.max;
 
         let tx = new StellarSdk.TransactionBuilder(sourceAccount, {
           fee,
