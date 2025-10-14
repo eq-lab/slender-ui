@@ -134,13 +134,7 @@ export function useMakeInvoke() {
         txParams: StellarSdk.xdr.ScVal[] = [],
       ): Promise<T | null | undefined> => {
         // getAccount gives an error if stellar account is not activated (does not have 1 XML)
-        const walletAccount = await getAccount().catch(() => {
-          throw new Error('Not connected to Freighter');
-        });
-
-        if (!walletAccount) {
-          throw new Error('Not connected to Freighter');
-        }
+        const walletAccount = await getAccount().catch(() => null);
 
         const sourceAccount =
           walletAccount ?? new StellarSdk.Account(userAddress, ACCOUNT_SEQUENCE);
@@ -175,10 +169,6 @@ export function useMakeInvoke() {
         }
 
         const operation = StellarRpc.assembleTransaction(tx, simulated).build();
-        // eslint-disable-next-line no-console
-        console.log(
-          `Processing simulated traction for method: ${methodName}, walletAccount${walletAccount.accountId()}, address: ${contractAddress}`,
-        );
         // eslint-disable-next-line no-console
         console.log(simulated);
         // eslint-disable-next-line no-console
