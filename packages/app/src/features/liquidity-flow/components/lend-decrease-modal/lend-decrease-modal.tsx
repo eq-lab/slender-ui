@@ -36,6 +36,8 @@ export function LendDecreaseModal({
 
   const depositTokenInfo = useTokenInfo(tokenName);
 
+  console.log('deposit', deposit.toString());
+  console.log('value', value);
   const inputDepositSumUsd = getDepositUsd(
     value,
     depositTokenInfo.priceInUsd,
@@ -97,7 +99,7 @@ export function LendDecreaseModal({
           onChange={setValue}
           value={value}
           title="To withdraw"
-          badgeValue={formatCompactCryptoCurrency(deposit.toNumber())}
+          badgeValue={deposit.toString(10)}
           tokenSymbol={tokenSymbol}
         />
       </FormLayout>

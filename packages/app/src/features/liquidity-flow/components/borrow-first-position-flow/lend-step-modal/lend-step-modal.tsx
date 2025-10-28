@@ -156,7 +156,7 @@ export function LendStepModal({
             value={coreValue}
             title="To deposit"
             tokenSymbol={coreTokenSymbol}
-            badgeValue={String(coreInputMax)}
+            badgeValue={coreInputMax.toString(10)}
             className={cn(firstInputError && Error)}
           >
             {!showExtraInput && assetsInfo.length > 1 && (

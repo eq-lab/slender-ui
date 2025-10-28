@@ -149,7 +149,7 @@ export function LendIncreaseModal({
             onChange={setValue}
             value={value}
             title="To deposit"
-            badgeValue={String(coreInputMax)}
+            badgeValue={coreInputMax.toString(10)}
             tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
           >
