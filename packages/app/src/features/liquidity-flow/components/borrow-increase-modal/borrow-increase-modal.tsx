@@ -183,7 +183,7 @@ export function BorrowIncreaseModal({
             onChange={setValue}
             value={value}
             title={minimumRequired ? `Min ${minimumRequired.toFixed(2)} to borrow` : 'To borrow'}
-            badgeValue={String(coreInputMax)}
+            badgeValue={coreInputMax.toString(10)}
             tokenSymbol={coreTokenSymbol}
             className={cn(coreInputError && Error)}
           >
@@ -211,7 +211,7 @@ export function BorrowIncreaseModal({
                 ? `Min ${extraMinimumRequired.toFixed(2)} to borrow`
                 : 'To borrow'
             }
-            badgeValue={String(extraInputMax)}
+            badgeValue={extraInputMax?.toString(10) ?? ''}
             tokenSymbol={extraTokenSymbol}
             className={cn(extraInputError && Error)}
           />

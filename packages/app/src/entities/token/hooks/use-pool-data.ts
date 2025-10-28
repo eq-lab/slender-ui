@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { networks, ReserveData } from '@bindings/pool';
+import { networks } from '@bindings/pool';
 import { i128 } from '@stellar/stellar-sdk/lib/contract';
 import { TokenAddress } from '@/shared/stellar/constants/tokens';
 import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke';
 import { addressToScVal } from '@/shared/stellar/encoders';
 import BigNumber from 'bignumber.js';
+import { ReserveDataCustom } from '@/shared/types';
 import { CONTRACT_MATH_PRECISION, PERCENT_PRECISION } from '../constants/contract-constants';
 
 type PoolData = {
@@ -28,16 +29,16 @@ export function usePoolData(tokenAddress: TokenAddress): PoolData & {
       const invoke = makeInvoke(networks.unknown.contractId);
       const assetArg = [addressToScVal(tokenAddress)];
       const [poolReserve, collateralCoefficient, debtCoefficient] = await Promise.all([
-        invoke<ReserveData>('get_reserve', assetArg),
+        invoke<ReserveDataCustom>('get_reserve', assetArg),
         invoke<i128>('collat_coeff', assetArg),
         invoke<i128>('debt_coeff', assetArg),
       ]);
-
+      if (!poolReserve || !collateralCoefficient || !debtCoefficient) return;
       setData({
-        borrowInterestRate: getBigNumber(poolReserve?.borrower_ir),
-        lendInterestRate: getBigNumber(poolReserve?.lender_ir),
-        collateralCoefficient: getBigNumber(collateralCoefficient ?? undefined),
-        debtCoefficient: getBigNumber(debtCoefficient ?? undefined),
+        borrowInterestRate: getBigNumber(poolReserve.borrower_ir),
+        lendInterestRate: getBigNumber(poolReserve.lender_ir),
+        collateralCoefficient: getBigNumber(collateralCoefficient),
+        debtCoefficient: getBigNumber(debtCoefficient),
       });
     })();
   }, [tokenAddress, makeInvoke]);

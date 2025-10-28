@@ -73,7 +73,7 @@ export function BorrowStepModal({
           initFocus
           value={value}
           title="To borrow"
-          badgeValue={String(maxDebt)}
+          badgeValue={maxDebt.toString(10)}
           tokenSymbol={debtTokenSymbol}
         />
       </FormLayout>
