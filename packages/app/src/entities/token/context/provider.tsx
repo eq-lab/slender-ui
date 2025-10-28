@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { networks, ReserveData } from '@bindings/pool';
+import { networks } from '@bindings/pool';
 import { u32 } from '@stellar/stellar-sdk/lib/contract';
 import { useMakeInvoke } from '@/shared/stellar/hooks/use-make-invoke';
 import { debtToken, sToken, underlying } from '@/shared/stellar/constants/tokens';
 import { addressToScVal } from '@/shared/stellar/encoders';
+import { ReserveDataCustom } from '@/shared/types';
 import { CachedTokens, MarketContext, PoolData } from './context';
 import { CONTRACT_MATH_PRECISION } from '../constants/contract-constants';
 import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision';
@@ -45,12 +46,12 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
       }, []);
       const poolInvoke = makeInvoke(networks.unknown.contractId);
       const marketTxs = CACHED_POOL_ADDRESSES.map((asset) =>
-        poolInvoke<ReserveData>('get_reserve', [addressToScVal(asset)]),
+        poolInvoke<ReserveDataCustom>('get_reserve', [addressToScVal(asset)]),
       );
       const [restValues, marketValues] = (await Promise.all([
         Promise.all(cacheTxs),
         Promise.all(marketTxs),
-      ])) as [[...Rest, ...Rest[]], ReserveData[]];
+      ])) as [[...Rest, ...Rest[]], ReserveDataCustom[]];
 
       const newCachedTokens = CACHED_TOKEN_ADDRESSES.reduce<CachedTokens>(
         (cached, tokenAddress) => {
@@ -71,8 +72,8 @@ export function TokenProvider({ children }: { children: JSX.Element }) {
 
       const newMarketData = marketValues.reduce<PoolData>((cached, poolReserve, currentIndex) => {
         cached[CACHED_POOL_ADDRESSES[currentIndex]!] = {
-          discount: poolReserve.configuration.discount,
-          utilizationCapacity: poolReserve.configuration.util_cap,
+          discount: poolReserve.configuration.get('discount'),
+          utilizationCapacity: poolReserve.configuration.get('util_cap'),
           borrowInterestRate: formatInterestRate(poolReserve.borrower_ir),
           lendInterestRate: formatInterestRate(poolReserve.lender_ir),
         };
