@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { SubscriptionSection } from '@/widgets/landing/components/subscription-section/subscription-section';
 import Typography from '@marginly/ui/components/typography';
 import Button from '@marginly/ui/components/button';
 import NextLink from 'next/link';
@@ -203,7 +202,6 @@ export function Landing({ posts }: Props) {
               }}
             />
           </LaunchBg>
-          <SubscriptionSection />
         </Launch>
         <Container>
           <QuestionSection subscriptionAnchor={SUBSCRIPTION_ANCHOR} />

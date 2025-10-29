@@ -104,10 +104,11 @@ export function BorrowIncreaseModal({
   const minDebtUsd = useMinDebtUsd();
 
   const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates);
-  const currencyRate = Number(currencyRates?.[tokenName.toUpperCase() || '']);
+  const coreCurrencyRate = Number(currencyRates?.[coreDebtTokenName.toUpperCase() || '']);
+  const extraCurrencyRate = Number(currencyRates?.[extraDebtTokenName?.toUpperCase() || '']);
 
-  const minimumRequired = currencyRate * minDebtUsd;
-  const extraMinimumRequired = currencyRate * minDebtUsd;
+  const minimumRequired = coreCurrencyRate * minDebtUsd;
+  const extraMinimumRequired = extraCurrencyRate * minDebtUsd;
 
   const isDebtBiggerThanMinimum = Number(value) >= minimumRequired;
 
