@@ -22,6 +22,7 @@ import { getMaxDebt } from '../../utils/get-max-debt';
 import { getExtraTokenName } from '../../utils/get-extra-token-name';
 import { getRequiredError } from '../../utils/get-required-error';
 import { useGetAssetsInfo } from '../../hooks/use-get-assets-info';
+import { useMinDebtUsd } from './use-min-debt-usd';
 
 interface Props {
   debtSumUsd: number;
@@ -100,12 +101,13 @@ export function BorrowIncreaseModal({
   const extraToken = getTokenByTokenName(extraDebtTokenName);
   const extraTokenSymbol = extraToken?.symbol;
 
-  const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates);
-  const minimumRequired = currencyRates ? Number(currencyRates[tokenName.toUpperCase()]) * 10 : 0;
+  const minDebtUsd = useMinDebtUsd();
 
-  const extraMinimumRequired = currencyRates
-    ? Number(currencyRates[extraTokenSymbol?.toUpperCase() || '']) * 10
-    : 0;
+  const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates);
+  const currencyRate = Number(currencyRates?.[tokenName.toUpperCase() || '']);
+
+  const minimumRequired = currencyRate * minDebtUsd;
+  const extraMinimumRequired = currencyRate * minDebtUsd;
 
   const isDebtBiggerThanMinimum = Number(value) >= minimumRequired;
 

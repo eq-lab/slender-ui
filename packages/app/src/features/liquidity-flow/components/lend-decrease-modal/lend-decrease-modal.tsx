@@ -36,8 +36,6 @@ export function LendDecreaseModal({
 
   const depositTokenInfo = useTokenInfo(tokenName);
 
-  console.log('deposit', deposit.toString());
-  console.log('value', value);
   const inputDepositSumUsd = getDepositUsd(
     value,
     depositTokenInfo.priceInUsd,
