@@ -20,7 +20,7 @@ export function useMinDebtUsd() {
 
   if (!tokenCache || !minDebt) return 0;
 
-  const decimalsUsdc = tokenCache[tokenContracts['usdc'].address]?.decimals ?? 0;
+  const decimalsUsdc = tokenCache[tokenContracts.usdc.address]?.decimals ?? 0;
   const minDebtUsd = minDebt / 10 ** decimalsUsdc;
 
   return minDebtUsd;
