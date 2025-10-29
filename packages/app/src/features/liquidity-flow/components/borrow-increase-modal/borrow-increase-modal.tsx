@@ -23,6 +23,7 @@ import { getExtraTokenName } from '../../utils/get-extra-token-name';
 import { getRequiredError } from '../../utils/get-required-error';
 import { useGetAssetsInfo } from '../../hooks/use-get-assets-info';
 
+const MINIMUM_REQUIRED_USD_MULTIPLIER = 2;
 interface Props {
   debtSumUsd: number;
   depositSumUsd: number;
@@ -101,10 +102,12 @@ export function BorrowIncreaseModal({
   const extraTokenSymbol = extraToken?.symbol;
 
   const currencyRates = useContextSelector(CurrencyRatesContext, (state) => state.currencyRates);
-  const minimumRequired = currencyRates ? Number(currencyRates[tokenName.toUpperCase()]) * 10 : 0;
+  const minimumRequired = currencyRates
+    ? Number(currencyRates[tokenName.toUpperCase()]) * MINIMUM_REQUIRED_USD_MULTIPLIER
+    : 0;
 
   const extraMinimumRequired = currencyRates
-    ? Number(currencyRates[extraTokenSymbol?.toUpperCase() || '']) * 10
+    ? Number(currencyRates[extraTokenSymbol?.toUpperCase() || '']) * MINIMUM_REQUIRED_USD_MULTIPLIER
     : 0;
 
   const isDebtBiggerThanMinimum = Number(value) >= minimumRequired;
