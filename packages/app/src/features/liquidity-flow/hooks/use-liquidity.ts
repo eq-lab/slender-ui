@@ -52,7 +52,7 @@ export function useLiquidity(
       return true;
     } catch (e) {
       logError(e);
-      return false;
+      throw new Error(e);
     } finally {
       setWaitModalIsOpen(false);
     }
