@@ -29,7 +29,8 @@
     "sharp": "^0.32.5",
     "soroban-client": "^1.0.0-beta.2",
     "styled-components": "^6.0.7",
-    "use-context-selector": "^1.4.1"
+    "use-context-selector": "^1.4.1",
+    "react-toastify": "11.0.5"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.2.1",

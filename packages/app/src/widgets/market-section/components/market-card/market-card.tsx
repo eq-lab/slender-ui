@@ -56,8 +56,8 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
 
   const availablePercent = +Number((availableToBorrow / totalSupplied) * 100).toFixed() || 0;
 
-  const totalSuppliedAmount = Math.floor(totalSupplied);
-  const availableToBorrowAmount = Math.floor(availableToBorrow);
+  const totalSuppliedAmount = totalSupplied;
+  const availableToBorrowAmount = availableToBorrow;
 
   if (discount === undefined) {
     return 'Loading...';

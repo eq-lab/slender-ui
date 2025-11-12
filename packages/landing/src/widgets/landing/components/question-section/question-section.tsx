@@ -2,7 +2,7 @@ import { Title } from '../styled';
 import { Wrapper } from './styled';
 import { Faq } from './faq';
 import { FaqLink } from './FaqLink';
-import { DISCORD_LINK, NOTION_LINK } from '../../links';
+import { NOTION_LINK } from '../../links';
 
 export function QuestionSection({ subscriptionAnchor }: { subscriptionAnchor: string }) {
   return (
@@ -25,14 +25,6 @@ export function QuestionSection({ subscriptionAnchor }: { subscriptionAnchor: st
         <Faq title="Does Slender have a token?">
           Slender doesn’t have a token at this moment. We will introduce the SLNR token after
           carefully crafting the protocol tokenomics and launching it in production.
-        </Faq>
-        <Faq title="Where can I get more info?">
-          <FaqLink href={`#${subscriptionAnchor}`} sameTab>
-            Subscribe to our newsletter
-          </FaqLink>{' '}
-          and follow Slender project posts on{' '}
-          <FaqLink href={DISCORD_LINK}>Stellar’s Discord</FaqLink>. Our Social networks like Twitter
-          and Discord will launch a bit later.
         </Faq>
       </div>
     </Wrapper>

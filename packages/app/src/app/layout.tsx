@@ -5,6 +5,7 @@ import { MobilePlaceholder } from '@/global/mobile-placeholder/mobile-placeholde
 import { LayoutSwitcher } from '@/global/mobile-placeholder/layout-switcher';
 import '@marginly/ui/styles/theme.css';
 import { GlobalStyle } from '@/global/styles';
+import { ToasterContainer } from '@/global/providers/toaster-container';
 
 export const metadata: Metadata = {
   title: 'Slender',
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </head>
         <body>
           <GlobalStyle />
+          <ToasterContainer />
           <LayoutSwitcher desktop={children} mobile={<MobilePlaceholder />} />
         </body>
       </html>
