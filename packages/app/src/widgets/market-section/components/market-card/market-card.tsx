@@ -10,6 +10,7 @@ import { colorByToken } from '@/entities/token/constants/token-colors';
 import { getIconByTokenName } from '@/entities/token/utils/get-icon-by-token-name';
 import { TooltipText } from '@/shared/components/tooltip';
 import { formatCompactCryptoCurrency } from '@/shared/formatters';
+import { makeFormatPercentWithPrecision } from '@/entities/token/utils/make-format-percent-with-precision';
 import { PercentPieChart } from './percent-pie-chart';
 import { useActionModal } from '../../hooks/use-action-modal';
 import { TooltipThumbnail } from './tooltip-thumbnail';
@@ -48,20 +49,18 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
     totalBorrowed,
     reserved,
     availableToBorrow,
+    percentMultiplier,
   } = useMarketDataForDisplay(token);
   const tokenCache = useTokenCache()?.[token.address];
 
   const tokenBackgroundColor = colorByToken[tokenName];
   const TokenIcon = getIconByTokenName(tokenName);
+  const formatPercentage = makeFormatPercentWithPrecision(percentMultiplier);
 
   const availablePercent = +Number((availableToBorrow / totalSupplied) * 100).toFixed() || 0;
 
   const totalSuppliedAmount = totalSupplied;
   const availableToBorrowAmount = availableToBorrow;
-
-  if (discount === undefined) {
-    return 'Loading...';
-  }
 
   return (
     <S.MarketCardWrapper>
@@ -107,14 +106,16 @@ export function MarketCard({ tokenName }: { tokenName: SupportedTokenName }) {
             <div className="tooltip-container">
               <TooltipThumbnail>
                 <TooltipText>
-                  Only {discount} of the asset’s value <br /> counts as collateral
+                  Only {formatPercentage(discount)} of the asset’s value <br /> counts as collateral
                 </TooltipText>
               </TooltipThumbnail>
             </div>
             <Typography className="upper-text-container" caption secondary>
               Discount:
             </Typography>
-            <Typography className="bottom-text-container">{discount}</Typography>
+            <Typography className="bottom-text-container">
+              {formatPercentage(discount ? percentMultiplier - discount : undefined)}
+            </Typography>
           </S.MarketCardTextCell>
         </S.MarketCardBottomInfo>
         <S.MarketCardButtonsContainer>

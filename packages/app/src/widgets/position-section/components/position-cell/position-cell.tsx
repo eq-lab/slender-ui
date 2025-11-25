@@ -12,6 +12,7 @@ import { useTokenCache } from '@/entities/token/context/hooks';
 import { ReactComponent as PlusIcon } from '@/shared/icons/plus.svg';
 import { ReactComponent as MinusIcon } from '@/shared/icons/minus.svg';
 import Button from '@marginly/ui/components/button';
+import { makeFormatPercentWithPrecision } from '@/entities/token/utils/make-format-percent-with-precision';
 import * as S from './position-cell.styled';
 
 export function PositionCell({
@@ -34,10 +35,10 @@ export function PositionCell({
 
   const tokenColor = colorByToken[tokenName];
 
-  const { lendInterestRate, borrowInterestRate, discount } = useMarketDataForDisplay(
-    tokenContracts[tokenName],
-  );
+  const { lendInterestRate, borrowInterestRate, discount, percentMultiplier } =
+    useMarketDataForDisplay(tokenContracts[tokenName]);
   const tokenCache = useTokenCache()?.[tokenContracts[tokenName].address];
+  const formatPercentage = makeFormatPercentWithPrecision(percentMultiplier);
 
   const interestRate = isLendPosition ? lendInterestRate : borrowInterestRate;
 
@@ -66,7 +67,7 @@ export function PositionCell({
         {isLendPosition && (
           <S.PositionCellInfoItem>
             <Typography caption secondary>
-              {discount} discount
+              {formatPercentage(discount ? percentMultiplier - discount : undefined)} discount
             </Typography>
             {valueInUsd && <Typography>{formatCompactUsd(valueInUsd)}</Typography>}
           </S.PositionCellInfoItem>

@@ -8,6 +8,7 @@ import { useMarketDataForDisplay } from '@/entities/token/hooks/use-market-data-
 import { formatCompactUsd } from '@/shared/formatters';
 import BigNumber from 'bignumber.js';
 import { TokenSuperField } from '@/shared/components/token-super-field';
+import { makeFormatPercentWithPrecision } from '@/entities/token/utils/make-format-percent-with-precision';
 import { useTokenInfo } from '../../hooks/use-token-info';
 import { LiquidityModal } from '../modal/liquidity-modal';
 import { getPositionInfo } from '../../utils/get-position-info';
@@ -85,6 +86,8 @@ export function LendIncreaseModal({
 
   const marketData = useMarketDataForDisplay(tokenContracts[coreDepositTokenName]);
 
+  const formatPercentage = makeFormatPercentWithPrecision(marketData.percentMultiplier);
+
   const getSaveData = (): PositionUpdate => {
     const core = {
       [coreDepositTokenName]: BigNumber(value),
@@ -115,7 +118,9 @@ export function LendIncreaseModal({
   const renderDescription = () => {
     if (!formError) return `${formatCompactUsd(inputDepositSumUsd)} will be counted as collateral`;
     if (hasExtraDepositToken) return 'Add deposit amount first';
-    return `With ${marketData.discount} discount`;
+    return `With ${formatPercentage(
+      marketData.discount ? marketData.percentMultiplier - marketData.discount : undefined,
+    )} discount`;
   };
 
   return (
