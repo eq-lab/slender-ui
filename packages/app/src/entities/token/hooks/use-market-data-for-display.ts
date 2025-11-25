@@ -5,13 +5,14 @@ import { useAvailableToBorrow } from './use-available-to-borrow';
 import { makeFormatPercentWithPrecision } from '../utils/make-format-percent-with-precision';
 
 export function useMarketDataForDisplay(token: TokenContracts): {
-  discount: string;
   borrowInterestRate: string;
   lendInterestRate: string;
   totalSupplied: number;
   totalBorrowed: number;
   reserved: number;
   availableToBorrow: number;
+  percentMultiplier: number;
+  discount: number | undefined;
 } {
   const { percentMultiplier, borrowInterestRate, lendInterestRate, contractMultiplier } =
     usePoolData(token.address);
@@ -20,16 +21,16 @@ export function useMarketDataForDisplay(token: TokenContracts): {
 
   const { availableToBorrow, reserved, totalBorrowed, totalSupplied } = useAvailableToBorrow(token);
 
-  const formatPercentage = makeFormatPercentWithPrecision(percentMultiplier);
   const formatInterestRate = makeFormatPercentWithPrecision(contractMultiplier);
 
   return {
-    discount: formatPercentage(discount),
+    discount,
     borrowInterestRate: formatInterestRate(borrowInterestRate?.toNumber()),
     lendInterestRate: formatInterestRate(lendInterestRate?.toNumber()),
     totalSupplied,
     totalBorrowed,
     reserved,
     availableToBorrow,
+    percentMultiplier,
   };
 }

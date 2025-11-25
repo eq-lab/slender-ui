@@ -8,6 +8,7 @@ import { useGetTokenByTokenName } from '@/entities/token/hooks/use-get-token-by-
 import { formatCompactCryptoCurrency, formatCompactUsd } from '@/shared/formatters';
 import { PositionCell } from '@/entities/position/types';
 import { TokenSuperField } from '@/shared/components/token-super-field';
+import { makeFormatPercentWithPrecision } from '@/entities/token/utils/make-format-percent-with-precision';
 import { LiquidityModal } from '../modal/liquidity-modal';
 import { FormLayout } from '../form-layout';
 import { useTokenInfo } from '../../hooks/use-token-info';
@@ -28,9 +29,13 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   const { balance = 0 } = useGetBalance([tokenContracts[depositTokenName].address]).value[0] || {};
   const max = Number(balance);
 
-  const { lendInterestRate, discount } = useMarketDataForDisplay(tokenContracts[depositTokenName]);
+  const { lendInterestRate, discount, percentMultiplier } = useMarketDataForDisplay(
+    tokenContracts[depositTokenName],
+  );
+
   const tokenInfo = useTokenInfo(depositTokenName);
 
+  const formatPercentage = makeFormatPercentWithPrecision(percentMultiplier);
   const getTokenByTokenName = useGetTokenByTokenName();
   const token = getTokenByTokenName(depositTokenName);
   const tokenSymbol = token?.symbol;
@@ -43,7 +48,10 @@ export function LendFirstPositionModal({ onClose, onSend, depositTokenName }: Pr
   const infoSlot = (
     <InfoLayout title={token?.title} mediaSection={<TokenThumbnail tokenName={depositTokenName} />}>
       <InfoRow label="Lend APR" value={lendInterestRate} />
-      <InfoRow label="Discount" value={discount} />
+      <InfoRow
+        label="Discount"
+        value={formatPercentage(discount ? percentMultiplier - discount : undefined)}
+      />
     </InfoLayout>
   );
 
